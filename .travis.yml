@@ -3,5 +3,5 @@ python:
 - 3.6
 install:
 - pip install numpy==1.16.0
-script:
-- pytest -vs tests
+# script:
+# - pytest -vs tests
