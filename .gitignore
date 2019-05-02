@@ -223,3 +223,7 @@ venv.bak/
 # End of https://www.gitignore.io/api/linux,macos,python,pycharm
 
 # Customized
+Untitled
+imagededup/Untitled.ipynb
+imagededup/all_average_metrics.pkl
+tests/data/
