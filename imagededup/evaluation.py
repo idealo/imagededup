@@ -4,8 +4,8 @@ import numpy as np
 
 class EvalPerformance:
     def __init__(self, dict_correct, dict_retrieved):
-        self.dict_correct =  dict_correct
-        self.dict_retrieved  = dict_retrieved
+        self.dict_correct = dict_correct
+        self.dict_retrieved = dict_retrieved
 
     @staticmethod
     def avg_prec(correct_duplicates, retrieved_duplicates):
@@ -56,6 +56,6 @@ class EvalPerformance:
 
         if save:
             with open('all_average_metrics.pkl', 'wb') as f:
-                pickle.dump(f)
+                pickle.dump(dict_average_metrics, f)
         return dict_average_metrics
 
