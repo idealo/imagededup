@@ -9,6 +9,9 @@ class EvalPerformance:
 
     @staticmethod
     def avg_prec(correct_duplicates, retrieved_duplicates):
+        """Input: (list of correct duplicates (i.e., ground truth), list of retrieved duplicates) for one single query
+        return: float representing average precision for one input query"""
+
         count_real_correct = len(correct_duplicates)
         relevance = np.array([1 if i in correct_duplicates else 0 for i in retrieved_duplicates])
         relevance_cumsum = np.cumsum(relevance)
@@ -19,6 +22,8 @@ class EvalPerformance:
 
     @staticmethod
     def ndcg(correct_duplicates, retrieved_duplicates):
+        """Input: (list of correct duplicates (i.e., ground truth), list of retrieved duplicates) for one single query
+                return: float representing Normalized discounted Cumulative Gain (NDCG) for one input query"""
         relevance = np.array([1 if i in correct_duplicates else 0 for i in retrieved_duplicates])
         relevance_numerator = [2 ** (k) - 1 for k in relevance]
         relevance_denominator = [np.log2(k + 2) for k in
@@ -32,6 +37,8 @@ class EvalPerformance:
 
     @staticmethod
     def jaccard_similarity(correct_duplicates, retrieved_duplicates):
+        """Input: (list of correct duplicates (i.e., ground truth), list of retrieved duplicates) for one single query
+                return: float representing jaccard similarity for one input query"""
         set_correct_duplicates = set(correct_duplicates)
         set_retrieved_duplicates = set(retrieved_duplicates)
 
@@ -42,12 +49,16 @@ class EvalPerformance:
         return jacc_sim
 
     def mean_all_func(self, metric_func):
+        """Input: metric function on which mean is to be calculated across all queries
+                return: float representing mean of the metric across all queries"""
         all_metrics = []
         for k in self.dict_correct.keys():
             all_metrics.append(metric_func(self.dict_correct[k], self.dict_retrieved[k]))
         return np.mean(all_metrics)
 
     def get_all_metrics(self, save=True):
+        """Input: Save flag indicating whether the dictionary below should be saved
+        return: dictionary of all mean metrics"""
         dict_average_metrics = {
             'MAP': self.mean_all_func(self.avg_prec),
             'NDCG': self.mean_all_func(self.ndcg),

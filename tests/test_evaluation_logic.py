@@ -1,18 +1,18 @@
 from imagededup.evaluation import EvalPerformance
 import os
 import pickle
-
+"""Run from project root with: python -m pytest -vs tests/test_evaluation_logic.py --cov=imagededup.evaluation"""
 
 def load_pickle(filename):
-    # The path of the path below is set since the test suite is run using python -m pytest command from the image-dedup
-    # directory
+    """The path of the path below is set since the test suite is run using python -m pytest command from the image-dedup
+    directory"""
     with open(os.path.join('tests', 'data', filename), 'rb') as f:
         dict_loaded = pickle.load(f)
     return dict_loaded
 
 
 def run_before_main_metrics(ground_truth_file, retrieval_file):
-    """Loads ground truth and retrieval dicts, declare an eval object, return initialized object"""
+    """Loads ground truth and retrieval dicts, declares an eval object, returns initialized object"""
     dict_ground_truth = load_pickle(ground_truth_file)
     dict_retrievals = load_pickle(retrieval_file)
     evalobj = EvalPerformance(dict_ground_truth, dict_retrievals)
