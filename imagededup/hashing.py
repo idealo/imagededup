@@ -31,3 +31,17 @@ class Hashing:
 
         return ''.join(calculated_hash)
 
+    def ahash(self, path_image):
+        im = Image.open(path_image)
+        im_res = im.resize((8, 8))
+        im_gray = im_res.convert('L')
+        im_gray_arr = np.array(im_gray)
+        avg_val = np.mean(im_gray_arr)
+        hash_mat = im_gray_arr >= avg_val
+
+        calculated_hash = []
+        for i in np.array_split(np.ndarray.flatten(hash_mat), 16):
+            calculated_hash.append(self._bool_to_hex(i))
+
+        return ''.join(calculated_hash)
+
