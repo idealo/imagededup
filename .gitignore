@@ -219,6 +219,9 @@ venv.bak/
 ### Python Patch ###
 .venv/
 
+# Dataset files
+*_dataset/
+.vscode
 
 # End of https://www.gitignore.io/api/linux,macos,python,pycharm
 
