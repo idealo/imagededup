@@ -3,8 +3,9 @@ import os
 import pickle
 """Run from project root with: python -m pytest -vs tests/test_evaluation_logic.py --cov=imagededup.evaluation"""
 
+
 def load_pickle(filename):
-    """The path of the path below is set since the test suite is run using python -m pytest command from the image-dedup
+    """The path of the file below is set since the test suite is run using python -m pytest command from the image-dedup
     directory"""
     with open(os.path.join('tests', 'data', filename), 'rb') as f:
         dict_loaded = pickle.load(f)
@@ -19,28 +20,88 @@ def run_before_main_metrics(ground_truth_file, retrieval_file):
     return evalobj
 
 
-def initialize_fake_data():
+def initialize_fake_data_retrieved_same():
+    """Number of retrievals = Number of ground truth retrievals"""
+    corr_dup = ['1.jpg', '2.jpg', '3.jpg', '4.jpg']
+    ret_dups = ['1.jpg', '33.jpg', '2.jpg', '4.jpg']
+    return corr_dup, ret_dups
+
+
+def initialize_fake_data_retrieved_less():
+    """Number of retrievals < Number of ground truth retrievals"""
     corr_dup = ['1.jpg', '2.jpg', '3.jpg', '4.jpg']
     ret_dups = ['1.jpg', '42.jpg']
     return corr_dup, ret_dups
 
 
-def test_avg_prec():
-    corr_dup, ret_dups = initialize_fake_data()
+def initialize_fake_data_retrieved_more():
+    """Number of retrievals > Number of ground truth retrievals"""
+    corr_dup = ['1.jpg', '2.jpg', '3.jpg', '4.jpg']
+    ret_dups = ['1.jpg', '42.jpg', '2.jpg', '3.jpg', '4.jpg']
+    return corr_dup, ret_dups
+
+
+def test_avg_prec_same():
+    """Number of retrievals = Number of ground truth retrievals"""
+    corr_dup, ret_dups = initialize_fake_data_retrieved_same()
+    av_prec_val = EvalPerformance.avg_prec(corr_dup, ret_dups)
+    assert av_prec_val == 0.6041666666666666
+
+
+def test_ndcg_same():
+    """Number of retrievals = Number of ground truth retrievals"""
+    corr_dup, ret_dups = initialize_fake_data_retrieved_same()
+    ndcg_val = EvalPerformance.ndcg(corr_dup, ret_dups)
+    assert ndcg_val == 0.75369761125927
+
+
+def test_jaccard_same():
+    """Number of retrievals = Number of ground truth retrievals"""
+    corr_dup, ret_dups = initialize_fake_data_retrieved_same()
+    jac_val = EvalPerformance.jaccard_similarity(corr_dup, ret_dups)
+    assert jac_val == 0.6
+
+
+def test_avg_prec_less():
+    """Number of retrievals < Number of ground truth retrievals"""
+    corr_dup, ret_dups = initialize_fake_data_retrieved_less()
     av_prec_val = EvalPerformance.avg_prec(corr_dup, ret_dups)
     assert av_prec_val == 0.25
 
 
-def test_ndcg():
-    corr_dup, ret_dups = initialize_fake_data()
+def test_ndcg_less():
+    """Number of retrievals < Number of ground truth retrievals"""
+    corr_dup, ret_dups = initialize_fake_data_retrieved_less()
     ndcg_val = EvalPerformance.ndcg(corr_dup, ret_dups)
     assert ndcg_val == 0.6131471927654584
 
 
-def test_jaccard():
-    corr_dup, ret_dups = initialize_fake_data()
+def test_jaccard_less():
+    """Number of retrievals < Number of ground truth retrievals"""
+    corr_dup, ret_dups = initialize_fake_data_retrieved_less()
     jac_val = EvalPerformance.jaccard_similarity(corr_dup, ret_dups)
     assert jac_val == 0.2
+
+
+def test_avg_prec_retrieved_more():
+    """Number of retrievals > Number of ground truth retrievals"""
+    corr_dup, ret_dups = initialize_fake_data_retrieved_more()
+    av_prec_val = EvalPerformance.avg_prec(corr_dup, ret_dups)
+    assert av_prec_val == 0.8041666666666667
+
+
+def test_ndcg_retrieved_more():
+    """Number of retrievals > Number of ground truth retrievals"""
+    corr_dup, ret_dups = initialize_fake_data_retrieved_more()
+    ndcg_val = EvalPerformance.ndcg(corr_dup, ret_dups)
+    assert ndcg_val == 0.9047172294870751
+
+
+def test_jaccard_retrieved_more():
+    """Number of retrievals > Number of ground truth retrievals"""
+    corr_dup, ret_dups = initialize_fake_data_retrieved_more()
+    jac_val = EvalPerformance.jaccard_similarity(corr_dup, ret_dups)
+    assert jac_val == 0.8
 
 
 def test_map_is_1_for_all_correct():

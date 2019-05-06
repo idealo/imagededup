@@ -32,8 +32,20 @@ class EvalPerformance:
 
         dcg_terms = [relevance_numerator[k] / relevance_denominator[k] for k in range(len(relevance))]
         dcg_k = np.sum(dcg_terms)
-        ideal_dcg = np.sum([1 / np.log2(k + 2) for k in range(len(relevance))])
-        ndcg = dcg_k / ideal_dcg
+
+        # get #retrievals
+        # if #retrievals <= #ground truth retrievals, set score=1 for calculating idcg
+        # else score=1 for first #ground truth retrievals entries, score=0 for remaining positions
+
+        if len(dcg_terms) <= len(correct_duplicates):
+            ideal_dcg = np.sum([1 / np.log2(k + 2) for k in range(len(dcg_terms))])
+            ndcg = dcg_k / ideal_dcg
+        else:
+            ideal_dcg_terms = [1] * len(correct_duplicates) + [0] * (len(dcg_terms) - len(correct_duplicates))
+            ideal_dcg_numerator = [(2 ** ideal_dcg_terms[k]) - 1 for k in range(len(ideal_dcg_terms))]
+            ideal_dcg_denominator = [np.log2(k + 2) for k in range(len(ideal_dcg_terms))]
+            ideal_dcg = np.sum([ideal_dcg_numerator[k] / ideal_dcg_denominator[k] for k in range(len(ideal_dcg_numerator))])
+            ndcg = dcg_k / ideal_dcg
         return ndcg
 
     @staticmethod
