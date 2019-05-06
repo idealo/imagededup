@@ -1,3 +1,4 @@
+import os
 import scipy.fftpack
 import numpy as np
 from PIL import Image
@@ -6,7 +7,6 @@ from pathlib import Path
 """
 TODO:
 refactor: Make another function for hash generation given 8 by 8 hash matrix
-Add functions to calculate hashes given a directory
 Add wavelet hash?
 """
 
@@ -39,6 +39,14 @@ class Hashing:
             calculated_hash.append(self._bool_to_hex(i))
         return ''.join(calculated_hash)
 
+    def run_hash_on_dir(self, path_dir, hashing_function):
+        filenames = [os.path.join(path_dir, i) for i in os.listdir(path_dir) if i != '.DS_Store']
+        hash_dict = dict(zip(filenames, [None] * len(filenames)))
+
+        for i in filenames:
+            hash_dict[i] = hashing_function(i)
+        return hash_dict
+
     def phash(self, path_image: Path) -> str:
         """Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html"""
         im_gray_arr = self.image_preprocess(path_image, (32, 32))
@@ -49,17 +57,26 @@ class Hashing:
         hash_mat = dct_reduced_coef >= mean_coef_val # All coefficients greater than mean of coefficients
         return self.get_hash(hash_mat, 16) # 16 character output
 
+    def phash_dir(self, path_dir: Path) -> dict:
+        return self.run_hash_on_dir(path_dir, self.phash)
+
     def ahash(self, path_image: Path) -> str:
         im_gray_arr = self.image_preprocess(path_image, (8, 8))
         avg_val = np.mean(im_gray_arr)
         hash_mat = im_gray_arr >= avg_val
         return self.get_hash(hash_mat, 16) # 16 character output
 
+    def ahash_dir(self, path_dir: Path) -> dict:
+        return self.run_hash_on_dir(path_dir, self.ahash)
+
     def dhash(self, path_image: Path) -> str:
         """Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html"""
         im_gray_arr = self.image_preprocess(path_image, (9, 8))
         hash_mat = im_gray_arr[:, :-1] > im_gray_arr[:, 1:] # Calculates difference between consecutive columns
         return self.get_hash(hash_mat, 16) # 16 character output
+
+    def dhash_dir(self, path_dir: Path) -> dict:
+        return self.run_hash_on_dir(path_dir, self.dhash)
 
 
 
