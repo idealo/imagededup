@@ -3,6 +3,7 @@ import scipy.fftpack
 import numpy as np
 from PIL import Image
 from pathlib import Path
+from types import FunctionType
 
 """
 TODO:
@@ -39,7 +40,7 @@ class Hashing:
             calculated_hash.append(self._bool_to_hex(i))
         return ''.join(calculated_hash)
 
-    def run_hash_on_dir(self, path_dir, hashing_function):
+    def run_hash_on_dir(self, path_dir: Path, hashing_function: FunctionType) -> dict:
         filenames = [os.path.join(path_dir, i) for i in os.listdir(path_dir) if i != '.DS_Store']
         hash_dict = dict(zip(filenames, [None] * len(filenames)))
 
