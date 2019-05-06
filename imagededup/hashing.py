@@ -5,8 +5,7 @@ from pathlib import Path
 
 """
 TODO:
-Make another function for hash generation given 64 by 64 hash matrix
-Add function to calculate hamming distance between hashes of 2 images
+refactor: Make another function for hash generation given 8 by 8 hash matrix
 Add functions to calculate hashes given a directory
 Add wavelet hash?
 """
@@ -19,16 +18,20 @@ class Hashing:
     @staticmethod
     def _bool_to_hex(x: np.array) -> str:
         str_bool = ''.join([str(int(i)) for i in x])
-        int_bool = int(str_bool, 2) # int base 2
-        return '{:0x}'.format(int_bool)
+        int_base2 = int(str_bool, 2) # int base 2
+        return '{:0x}'.format(int_base2)
 
     @staticmethod
-    def image_preprocess(path_image: Path, resize_dims = (int, int)) -> np.array:
+    def image_preprocess(path_image: Path, resize_dims: (int, int)) -> np.array:
         im = Image.open(path_image)
         im_res = im.resize(resize_dims)
         im_gray = im_res.convert('L') # convert to grayscale (i.e., single channel)
         im_gray_arr = np.array(im_gray)
         return im_gray_arr
+
+    @staticmethod
+    def hamming_distance(hash1: str, hash2: str) -> str:
+        return np.sum([i!=j for i,j in zip(hash1, hash2)])
 
     def get_hash(self, hash_mat: np.array, n_blocks: int) -> str:
         calculated_hash = []
