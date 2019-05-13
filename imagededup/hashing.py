@@ -20,12 +20,12 @@ class Hashing:
     @staticmethod
     def _bool_to_hex(x: np.array) -> str:
         str_bool = ''.join([str(int(i)) for i in x])
-        int_base2 = int(str_bool, 2) # int base 2
+        int_base2 = int(str_bool, 2)  # int base 2
         return '{:0x}'.format(int_base2)
 
     @staticmethod
     def hamming_distance(hash1: str, hash2: str) -> float:
-        return np.sum([i!=j for i,j in zip(hash1, hash2)])
+        return np.sum([i != j for i, j in zip(hash1, hash2)])
 
     @staticmethod
     def run_hash_on_dir(path_dir: Path, hashing_function: FunctionType) -> dict:
@@ -68,9 +68,9 @@ class Hashing:
         res_dims = (32, 32)
         im_gray_arr = self.convert_to_array(path_image, resize_dims=res_dims)
         dct_coef = scipy.fftpack.dct(scipy.fftpack.dct(im_gray_arr, axis=0), axis=1)
-        dct_reduced_coef = dct_coef[:8, :8] # retain top left 8 by 8 dct coefficients
-        mean_coef_val = np.mean(np.ndarray.flatten(dct_reduced_coef)[1:]) # average of coefficients excluding the DC
-                                                                          # term (0th term)
+        dct_reduced_coef = dct_coef[:8, :8]  # retain top left 8 by 8 dct coefficients
+        mean_coef_val = np.mean(np.ndarray.flatten(dct_reduced_coef)[1:])  # average of coefficients excluding the DC
+        # term (0th term)
         hash_mat = dct_reduced_coef >= mean_coef_val  # All coefficients greater than mean of coefficients
         return self.get_hash(hash_mat, 16)  # 16 character output
 
@@ -79,14 +79,14 @@ class Hashing:
         im_gray_arr = self.convert_to_array(path_image, resize_dims=res_dims)
         avg_val = np.mean(im_gray_arr)
         hash_mat = im_gray_arr >= avg_val
-        return self.get_hash(hash_mat, 16) # 16 character output
+        return self.get_hash(hash_mat, 16)  # 16 character output
 
     def dhash(self, path_image: Path) -> str:
         """Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html"""
         res_dims = (9, 8)
         im_gray_arr = self.convert_to_array(path_image, resize_dims=res_dims)
-        hash_mat = im_gray_arr[:, :-1] > im_gray_arr[:, 1:] # Calculates difference between consecutive columns
-        return self.get_hash(hash_mat, 16) # 16 character output
+        hash_mat = im_gray_arr[:, :-1] > im_gray_arr[:, 1:]  # Calculates difference between consecutive columns
+        return self.get_hash(hash_mat, 16)  # 16 character output
 
     def phash_dir(self, path_dir: Path) -> dict:
         return self.run_hash_on_dir(path_dir, self.phash)
@@ -96,7 +96,3 @@ class Hashing:
 
     def dhash_dir(self, path_dir: Path) -> dict:
         return self.run_hash_on_dir(path_dir, self.dhash)
-
-
-
-
