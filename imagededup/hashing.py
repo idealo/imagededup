@@ -31,7 +31,7 @@ class Hashing:
         return im_gray_arr
 
     @staticmethod
-    def hamming_distance(hash1: str, hash2: str) -> str:
+    def hamming_distance(hash1: str, hash2: str) -> float:
         return np.sum([i!=j for i,j in zip(hash1, hash2)])
 
     @staticmethod
@@ -66,14 +66,23 @@ class Hashing:
         dct_reduced_coef = dct_coef[:8, :8] # retain top left 8 by 8 dct coefficients
         mean_coef_val = np.mean(np.ndarray.flatten(dct_reduced_coef)[1:]) # average of coefficients excluding the DC
                                                                           # term (0th term)
-        hash_mat = dct_reduced_coef >= mean_coef_val # All coefficients greater than mean of coefficients
-        return self.get_hash(hash_mat, 16) # 16 character output
+        hash_mat = dct_reduced_coef >= mean_coef_val  # All coefficients greater than mean of coefficients
+        return self.get_hash(hash_mat, 16)  # 16 character output
 
     def phash_dir(self, path_dir: Path) -> dict:
         return self.run_hash_on_dir(path_dir, self.phash)
 
     def ahash(self, path_image: Path) -> str:
-        im_gray_arr = self.image_preprocess(path_image, (8, 8))
+        try:
+            if isinstance(path_image, Path):
+                im_gray_arr = self.image_preprocess(path_image, (8, 8))
+            elif isinstance(path_image, np.ndarray):
+                im = Image.fromarray(path_image)
+                im_res = im.resize((8, 8), Image.ANTIALIAS)
+                im_gray = im_res.convert('L')
+                im_gray_arr = np.array(im_gray)
+        except Exception as e:
+            print(f'{e}: Check Input Format! Input should be either a Path Variable or a numpy array!')
         avg_val = np.mean(im_gray_arr)
         hash_mat = im_gray_arr >= avg_val
         return self.get_hash(hash_mat, 16) # 16 character output
@@ -83,7 +92,16 @@ class Hashing:
 
     def dhash(self, path_image: Path) -> str:
         """Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html"""
-        im_gray_arr = self.image_preprocess(path_image, (9, 8))
+        try:
+            if isinstance(path_image, Path):
+                im_gray_arr = self.image_preprocess(path_image, (9, 8))
+            elif isinstance(path_image, np.ndarray):
+                im = Image.fromarray(path_image)
+                im_res = im.resize((9, 8), Image.ANTIALIAS)
+                im_gray = im_res.convert('L')
+                im_gray_arr = np.array(im_gray)
+        except Exception as e:
+            print(f'{e}: Check Input Format! Input should be either a Path Variable or a numpy array!')
         hash_mat = im_gray_arr[:, :-1] > im_gray_arr[:, 1:] # Calculates difference between consecutive columns
         return self.get_hash(hash_mat, 16) # 16 character output
 
