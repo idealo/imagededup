@@ -1,9 +1,9 @@
 from imagededup.hashing import Hashing
 import pytest
 import numpy as np
-# from pytest_mock import mocker
 from pathlib import Path
 from PIL import Image
+import os
 
 """ Run from project root with: python -m pytest -vs tests/test_hash.py"""
 
@@ -89,13 +89,13 @@ class TestCommon:
         assert hamdist > 10
 
     def test_hash_on_dir_returns_dict(self, hash_function):
-        path_dir = Path('/Users/tanuj.jain/Documents/dedup-data/base_images')
+        path_dir = Path('tests/data/base_images')
         hash_obj = Hashing()
         hash_dict = hash_obj.run_hash_on_dir(path_dir, hash_function)
         assert isinstance(hash_dict, dict)
 
     def test_hash_on_dir_return_non_none_hashes(self, hash_function):
-        path_dir = Path('/Users/tanuj.jain/Documents/dedup-data/base_images')
+        path_dir = Path('tests/data/base_images')
         hash_obj = Hashing()
         hash_dict = hash_obj.run_hash_on_dir(path_dir, hash_function)
         for v in hash_dict.values():
@@ -103,14 +103,14 @@ class TestCommon:
 
     def test_hash_on_dir_runs_for_all_files_in_dir(self, hash_function):
         """There are 10 images in the directory below"""
-        path_dir = Path('/Users/tanuj.jain/Documents/dedup-data/base_images')
+        path_dir = Path('tests/data/base_images')
         hash_obj = Hashing()
         hash_dict = hash_obj.run_hash_on_dir(path_dir, hash_function)
         assert len(hash_dict.keys()) == 10
 
 
 def test_phash_dir(mocker):
-    path_dir = Path('/Users/tanuj.jain/Documents/dedup-data/base_images')
+    path_dir = Path('tests/data/base_images')
     hash_obj = Hashing()
     hash_func = hash_obj.phash
     mocker.patch.object(hash_obj, 'run_hash_on_dir')
@@ -119,7 +119,7 @@ def test_phash_dir(mocker):
 
 
 def test_ahash_dir(mocker):
-    path_dir = Path('/Users/tanuj.jain/Documents/dedup-data/base_images')
+    path_dir = Path('tests/data/base_images')
     hash_obj = Hashing()
     hash_func = hash_obj.ahash
     mocker.patch.object(hash_obj, 'run_hash_on_dir')
@@ -128,7 +128,7 @@ def test_ahash_dir(mocker):
 
 
 def test_dhash_dir(mocker):
-    path_dir = Path('/Users/tanuj.jain/Documents/dedup-data/base_images')
+    path_dir = Path('tests/data/base_images')
     hash_obj = Hashing()
     hash_func = hash_obj.dhash
     mocker.patch.object(hash_obj, 'run_hash_on_dir')
