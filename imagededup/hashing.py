@@ -18,7 +18,7 @@ class Hashing:
         pass
 
     @staticmethod
-    def _bool_to_hex(x: np.array) -> str:
+    def bool_to_hex(x: np.array) -> str:
         str_bool = ''.join([str(int(i)) for i in x])
         int_base2 = int(str_bool, 2)  # int base 2
         return '{:0x}'.format(int_base2)
@@ -31,9 +31,9 @@ class Hashing:
     def run_hash_on_dir(path_dir: Path, hashing_function: FunctionType) -> dict:
         filenames = [os.path.join(path_dir, i) for i in os.listdir(path_dir) if i != '.DS_Store']
         hash_dict = dict(zip(filenames, [None] * len(filenames)))
-
         for i in filenames:
-            hash_dict[i] = hashing_function(i)
+            # print(i)
+            hash_dict[i] = hashing_function(Path(i))
         return hash_dict
 
     @staticmethod
@@ -60,7 +60,7 @@ class Hashing:
     def get_hash(self, hash_mat: np.array, n_blocks: int) -> str:
         calculated_hash = []
         for i in np.array_split(np.ndarray.flatten(hash_mat), n_blocks):
-            calculated_hash.append(self._bool_to_hex(i))
+            calculated_hash.append(self.bool_to_hex(i))
         return ''.join(calculated_hash)
 
     def phash(self, path_image: None) -> str:
