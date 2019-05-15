@@ -32,7 +32,6 @@ class Hashing:
         filenames = [os.path.join(path_dir, i) for i in os.listdir(path_dir) if i != '.DS_Store']
         hash_dict = dict(zip(filenames, [None] * len(filenames)))
         for i in filenames:
-            # print(i)
             hash_dict[i] = hashing_function(Path(i))
         return hash_dict
 
@@ -53,9 +52,12 @@ class Hashing:
                 im_res = im.resize(resize_dims, Image.ANTIALIAS)
                 im_gray = im_res.convert('L')
                 im_gray_arr = np.array(im_gray)
-        except Exception as e:
-            print(f'{e}: Check Input Format! Input should be either a Path Variable or a numpy array!')
-        return im_gray_arr
+            else:
+                raise Exception
+            return im_gray_arr
+        except Exception:
+            print('Check Input Format! Input should be either a Path Variable or a numpy array!')
+            raise
 
     def get_hash(self, hash_mat: np.array, n_blocks: int) -> str:
         calculated_hash = []

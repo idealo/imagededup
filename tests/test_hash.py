@@ -53,6 +53,14 @@ def test_if_using_numpy_input_works(path_image=Image.open(Path('tests/data/image
     assert len(hash_im)
 
 
+def test_any_input_not_path_or_nparray_raises_exception():
+    """Tries to input pillow image, should raise exception"""
+    im_pil = Image.open(Path('tests/data/images/ukbench00120.jpg'))
+    hash_obj = Hashing()
+    with pytest.raises(Exception):
+        hash_obj.convert_to_array(im_pil)
+
+
 hash_obj = Hashing()
 
 
