@@ -12,7 +12,8 @@ class EvalPerformance:
     def avg_prec(correct_duplicates: list, retrieved_duplicates: list) -> float:
         """Input: (list of correct duplicates (i.e., ground truth), list of retrieved duplicates) for one single query
         return: float representing average precision for one input query"""
-
+        if not len(retrieved_duplicates):
+            return 0.0
         count_real_correct = len(correct_duplicates)
         relevance = np.array([1 if i in correct_duplicates else 0 for i in retrieved_duplicates])
         relevance_cumsum = np.cumsum(relevance)
@@ -25,6 +26,8 @@ class EvalPerformance:
     def ndcg(correct_duplicates: list, retrieved_duplicates: list) -> float:
         """Input: (list of correct duplicates (i.e., ground truth), list of retrieved duplicates) for one single query
                 return: float representing Normalized discounted Cumulative Gain (NDCG) for one input query"""
+        if not len(retrieved_duplicates):
+            return 0.0
         relevance = np.array([1 if i in correct_duplicates else 0 for i in retrieved_duplicates])
         relevance_numerator = [2 ** (k) - 1 for k in relevance]
         relevance_denominator = [np.log2(k + 2) for k in
@@ -52,6 +55,8 @@ class EvalPerformance:
     def jaccard_similarity(correct_duplicates: list, retrieved_duplicates: list) -> float:
         """Input: (list of correct duplicates (i.e., ground truth), list of retrieved duplicates) for one single query
                 return: float representing jaccard similarity for one input query"""
+        if not len(retrieved_duplicates):
+            return 0.0
         set_correct_duplicates = set(correct_duplicates)
         set_retrieved_duplicates = set(retrieved_duplicates)
 
