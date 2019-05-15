@@ -3,7 +3,6 @@ import pytest
 import numpy as np
 from pathlib import Path
 from PIL import Image
-import os
 
 """ Run from project root with: python -m pytest -vs tests/test_hash.py"""
 
