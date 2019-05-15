@@ -1,6 +1,7 @@
 from imagededup.evaluation import EvalPerformance
 import os
 import pickle
+import pytest
 """Run from project root with: python -m pytest -vs tests/test_evaluation_logic.py --cov=imagededup.evaluation"""
 
 
@@ -184,3 +185,11 @@ def test_get_metrics_does_not_save_when_save_false():
     evalobj = run_before_main_metrics('ground_truth.pkl', 'incorrect_retrievals.pkl')
     evalobj.get_all_metrics(save=False)
     assert not os.path.exists('all_average_metrics.pkl')
+
+
+@pytest.mark.parametrize('metric_func', [EvalPerformance.avg_prec, EvalPerformance.ndcg, EvalPerformance.jaccard_similarity])
+def test_zero_retrieval(metric_func):
+    corr_dup = ['1.jpg', '2.jpg', '3.jpg', '4.jpg']
+    ret_dups = []
+    av_val = metric_func(corr_dup, ret_dups)
+    assert av_val == 0.0
