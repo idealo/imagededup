@@ -228,4 +228,5 @@ venv.bak/
 # Customized
 Untitled
 imagededup/Untitled.ipynb
-imagededup/all_average_metrics.pkl
+*.pkl
+*.db
