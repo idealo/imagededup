@@ -87,7 +87,8 @@ class Hashing:
         """Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html"""
         res_dims = (9, 8)
         im_gray_arr = self.convert_to_array(path_image, resize_dims=res_dims)
-        hash_mat = im_gray_arr[:, :-1] > im_gray_arr[:, 1:]  # Calculates difference between consecutive columns
+        # hash_mat = im_gray_arr[:, :-1] > im_gray_arr[:, 1:]  # Calculates difference between consecutive columns
+        hash_mat = im_gray_arr[:, 1:] > im_gray_arr[:, :-1]
         return self.get_hash(hash_mat, 16)  # 16 character output
 
     def phash_dir(self, path_dir: Path) -> dict:
