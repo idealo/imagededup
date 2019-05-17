@@ -8,6 +8,7 @@ class ResultSet:
 
     Takes input dictionary of image hashes for which DB has to be created."""
     def __init__(self, index_save_path: str, candidates:dict, queries: dict) -> None:
+        self.db_file_path = index_save_path
         self.db_path = f'{index_save_path}.db'
         self.db = self.create_db_index(index_save_path)
         self.populate_db(candidates)
@@ -20,7 +21,7 @@ class ResultSet:
 
 
     def refresh_db_buffer(self) -> shelve.DbfilenameShelf:
-        return shelve.open(self.db_path)
+        return shelve.open(self.db_file_path)
 
 
     def populate_db(self, candidates: dict):
