@@ -5,8 +5,8 @@ from types import FunctionType
 
 class EvalPerformance:
     def __init__(self, dict_correct: dict, dict_retrieved: dict) -> None:
-        self.dict_correct = dict_correct # dict of correct retrievals for each query(= ground truth), {'1.jpg': ['correct_dup1.jpg']}
-        self.dict_retrieved = dict_retrieved # dict of all retrievals for each query, {'1.jpg': ['retrieval_1.jpg']}
+        self.dict_correct = dict_correct # dict of correct retrievals for each query(= ground truth), {'1.jpg': 'correct_dup1.jpg'}
+        self.dict_retrieved = dict_retrieved # dict of all retrievals for each query, {'1.jpg': 'retrieval_1.jpg'}
 
     @staticmethod
     def avg_prec(correct_duplicates: list, retrieved_duplicates: list) -> float:
@@ -87,4 +87,3 @@ class EvalPerformance:
             with open('all_average_metrics.pkl', 'wb') as f:
                 pickle.dump(dict_average_metrics, f)
         return dict_average_metrics
-
