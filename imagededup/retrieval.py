@@ -1,45 +1,50 @@
-import shelve
-import os
+from hashing import Hashing
 
 class ResultSet:
-    """In order to retrieve duplicate images an index needs to be built against which
-    search operations are run. The ResultSe Class serves as a search and retrieval
-    interface, essential for driving interfacing for downstream tasks.
+    def __init__(self, test:dict, queries: dict) -> None:
+        # self.db_path = f'{index_save_path}.db'
+        # self.db = self.create_db_index(index_save_path)
+        self.candidates = test
+        self.queries = queries
+        self.fetch_nearest_neighbors()
+        #self.destroy_db_index()
 
-    Takes input dictionary of image hashes for which DB has to be created."""
-    def __init__(self, index_save_path: str, candidates:dict, queries: dict) -> None:
-        self.db_file_path = index_save_path
-        self.db_path = f'{index_save_path}.db'
-        self.db = self.create_db_index(index_save_path)
-        self.populate_db(candidates)
-        self.fetch_nearest_neighbors(queries)
-        self.destroy_db_index()
+#     @staticmethod
+#     def create_db_index(path) -> shelve.DbfilenameShelf:
+#         return shelve.open(path, writeback=True)
+   
 
     @staticmethod
-    def create_db_index(path) -> shelve.DbfilenameShelf:
-        return shelve.open(path, writeback=True)
+    def build_query_vector(query) -> list:
+        return [query] * self.n_candidates
 
 
-    def refresh_db_buffer(self) -> shelve.DbfilenameShelf:
-        return shelve.open(self.db_file_path)
+#     def refresh_db_buffer(self) -> shelve.DbfilenameShelf:
+#         return shelve.open(self.db_path)
+
+    def fetch_query_result(self, query: str) -> dict:
+        return {item: Hashing().hamming_distance(query, item) for item in self.candidates}
 
 
-    def populate_db(self, candidates: dict):
-        for each in candidates:
-            self.db[candidates[each]] = self.db.get(candidates[each], []) + [each]
-        # Close the shelf database
-        self.db.close()
+#     def populate_db(self, candidates: dict):
+#         for each in candidates:
+#             self.db[candidates[each]] = self.db.get(candidates[each], []) + [each]
+#         # Close the shelf database
+#         self.db.close()
 
 
-    def fetch_nearest_neighbors(self, queries) -> None:
-        self.db = self.refresh_db_buffer()
-        self.query_results = {query: self.db[queries[query]] for query in queries}
-        self.db.close()
+    def fetch_nearest_neighbors(self) -> None:
+        results = []
+        for each in self.queries:
+            res = self.fetch_query_result(each)
+            sorted_res = {each: sorted(res, key=lambda x: res[x], reverse=False)}
+            results.append(sorted_res)
+        self.query_results = results
 
         
-    def destroy_db_index(self) -> None:
-        if self.query_results and os.path.exists(self.db_path):
-            os.remove(self.db_path)
+#     def destroy_db_index(self) -> None:
+#         if self.query_results and os.path.exists(self.db_path):
+#             os.remove(self.db_path)
             
-    def retrieve_results(self):
+    def retrieve_results(self) -> dict:
         return self.query_results
