@@ -34,8 +34,8 @@ class HashedDataset(Dataset):
 
     
     def fingerprint(self) -> None:
-        self.test_hashes = {doc: str(self.hasher(Image.open(self.test_docs[doc]))) for doc in self.test_docs}
-        self.query_hashes = {doc: str(self.hasher(Image.open(self.query_docs[doc]))) for doc in self.query_docs}
+        self.test_hashes = {doc: str(self.hasher(array(Image.open(self.test_docs[doc])))) for doc in self.test_docs}
+        self.query_hashes = {doc: str(self.hasher(array(Image.open(self.query_docs[doc])))) for doc in self.query_docs}
         
         
     def get_hashes(self) -> dict:
