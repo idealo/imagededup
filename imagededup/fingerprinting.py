@@ -20,7 +20,7 @@ class Dataset:
     def load_image_set(path: str) -> dict: 
         return {doc: os.path.join(path, doc) for doc in os.listdir(path) if doc.endswith('.jpg')}
 
-    
+
 class HashedDataset(Dataset):
     def __init__(self, hashing_function: FunctionType, *args, **kwargs) -> None:
         super(HashedDataset, self).__init__(*args, **kwargs)
@@ -34,8 +34,8 @@ class HashedDataset(Dataset):
 
     
     def fingerprint(self) -> None:
-        self.test_hashes = {doc: self.hasher(array(Image.open(self.test_docs[doc]))) for doc in self.test_docs}
-        self.query_hashes = {doc: self.hasher(array(Image.open(self.query_docs[doc]))) for doc in self.query_docs}
+        self.test_hashes = {doc: str(self.hasher(Image.open(self.test_docs[doc]))) for doc in self.test_docs}
+        self.query_hashes = {doc: str(self.hasher(Image.open(self.query_docs[doc]))) for doc in self.query_docs}
         
         
     def get_hashes(self) -> dict:
@@ -48,7 +48,3 @@ class HashedDataset(Dataset):
 
     def get_test_hashes(self) -> dict:
         return self.test_hashes
-
-
-    def get_images_from_hashes(self) -> dict:
-        return self.hash2doc
