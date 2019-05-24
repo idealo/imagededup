@@ -14,10 +14,10 @@ def test_bool_to_hex():
 
 def test_hamming_distance():
     """Put two numbers and check if hamming distance is correct"""
-    number_1 = "1101"
-    number_2 = "1100"
+    number_1 = "a"
+    number_2 = "f"
     hamdist = Hashing.hamming_distance(number_1, number_2)
-    assert hamdist == 1
+    assert hamdist == 2
 
 
 def test_image_preprocess_return_type():
