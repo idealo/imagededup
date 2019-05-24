@@ -21,7 +21,10 @@ class Hashing:
 
     @staticmethod
     def hamming_distance(hash1: str, hash2: str) -> float:
-        return np.sum([i != j for i, j in zip(hash1, hash2)])
+        hash1_bin = bin(int(hash1, 16))[2:].zfill(64)
+        hash2_bin = bin(int(hash2, 16))[2:].zfill(64)
+        assert len(hash1_bin) == len(hash2_bin)
+        return np.sum([i != j for i, j in zip(hash1_bin, hash2_bin)])
 
     @staticmethod
     def run_hash_on_dir(path_dir: Path, hashing_function: FunctionType) -> dict:
