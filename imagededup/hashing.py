@@ -1,4 +1,5 @@
 import os
+import pywt
 import scipy.fftpack
 import numpy as np
 from PIL import Image
@@ -7,7 +8,15 @@ from types import FunctionType
 from typing import Tuple
 import random
 from copy import deepcopy
+"""
+TODO:
 
+Wavelet hash: Zero the LL coeff, reconstruct image, the get wavelet transform
+Wavelet hash: Allow possibility of different wavelet functions
+
+For all: Restrict image sizes to be greater than a certain size
+Allow acceptance of os.path in addition to already existing Path and numpy image array.
+"""
 
 class Hashing:
     def __init__(self):
@@ -21,7 +30,7 @@ class Hashing:
 
     @staticmethod
     def hamming_distance(hash1: str, hash2: str) -> float:
-        hash1_bin = bin(int(hash1, 16))[2:].zfill(64)
+        hash1_bin = bin(int(hash1, 16))[2:].zfill(64)  # zfill ensures that len of hash is 64 and pads MSB if it is < A
         hash2_bin = bin(int(hash2, 16))[2:].zfill(64)
         assert len(hash1_bin) == len(hash2_bin)
         return np.sum([i != j for i, j in zip(hash1_bin, hash2_bin)])
@@ -88,6 +97,16 @@ class Hashing:
         im_gray_arr = self.convert_to_array(path_image, resize_dims=res_dims)
         # hash_mat = im_gray_arr[:, :-1] > im_gray_arr[:, 1:]  # Calculates difference between consecutive columns
         hash_mat = im_gray_arr[:, 1:] > im_gray_arr[:, :-1]
+        return self.get_hash(hash_mat, 16)  # 16 character output
+
+    def whash(self, path_image: None) -> str:
+        res_dims = (256, 256)
+        im_gray_arr = self.convert_to_array(path_image, resize_dims=res_dims)
+        coeffs = pywt.wavedec2(im_gray_arr, 'haar', level=5)  # decomposition level set to 5 to get 8 by 8 hash matrix
+        LL_coeff = coeffs[0]
+
+        mean_coef_val = np.mean(np.ndarray.flatten(LL_coeff))  # average of LL coefficients
+        hash_mat = LL_coeff >= mean_coef_val  # All coefficients greater than mean of coefficients
         return self.get_hash(hash_mat, 16)  # 16 character output
 
     def phash_dir(self, path_dir: Path) -> dict:
