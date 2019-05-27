@@ -32,7 +32,6 @@ class Hashing:
     def hamming_distance(hash1: str, hash2: str) -> float:
         hash1_bin = bin(int(hash1, 16))[2:].zfill(64)  # zfill ensures that len of hash is 64 and pads MSB if it is < A
         hash2_bin = bin(int(hash2, 16))[2:].zfill(64)
-        assert len(hash1_bin) == len(hash2_bin)
         return np.sum([i != j for i, j in zip(hash1_bin, hash2_bin)])
 
     @staticmethod
