@@ -1,7 +1,5 @@
 from imagededup.retrieval import ResultSet
 from imagededup.hashing import Hashing
-import os
-import pytest
 
 """Run from project root with: python -m pytest -vs tests/test_retrieval.py --cov=imagededup.retrieval"""
 
