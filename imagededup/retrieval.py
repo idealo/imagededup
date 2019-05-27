@@ -3,16 +3,17 @@ from pickle import dump
 
 
 class ResultSet:
-    def __init__(self, test: dict, queries: dict, hammer: FunctionType) -> None:
+    def __init__(self, test: dict, queries: dict, hammer: FunctionType, cutoff: int =5) -> None:
         self.candidates = test
         self.queries = queries
         self.hamming_distance_invoker = hammer
+        self.max_d = cutoff
         self.fetch_nearest_neighbors()
 
     def fetch_query_result(self, query) -> dict:
         hammer = self.hamming_distance_invoker
         candidates = self.candidates
-        return {item: hammer(query, candidates[item]) for item in candidates if hammer(query, candidates[item]) < 5}
+        return {item: hammer(query, candidates[item]) for item in candidates if hammer(query, candidates[item]) < self.max_d}
 
     def fetch_nearest_neighbors(self) -> None:
         sorted_results, sorted_distances = {}, {}
