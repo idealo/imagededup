@@ -3,7 +3,6 @@ import pytest
 import numpy as np
 from pathlib import Path
 from PIL import Image
-import os
 
 """ Run from project root with: python -m pytest -vs tests/test_hashing.py"""
 
@@ -163,26 +162,26 @@ def test_fingerprint_hashes_images_succesfully(path_dir=Path('tests/data/base_im
         'ukbench08996.jpg': 'fe27656362723d7f',
         'ukbench09268.jpg': 'ac9c72f8e1c2c448',
         'ukbench01380.jpg': 'c129654d4d4d0d25'
-     }
+    }
     dummy_hasher = Hashing().dhash
-    dummy_set = HashedDataset(dummy_hasher,path_dir, path_dir)
+    dummy_set = HashedDataset(dummy_hasher, path_dir, path_dir)
     assert dummy_set.test_hashes == dummy_hashes
 
 
 def test_dataset_hashing_lacks_collisions(path_dir=Path('tests/data/base_images'), test_path=Path('tests/data/transformed_images')):
     dummy_hasher = Hashing().dhash
-    dummy_set = HashedDataset(dummy_hasher,path_dir, test_path)
+    dummy_set = HashedDataset(dummy_hasher, path_dir, test_path)
     assert len(dummy_set.doc2hash) == len(dummy_set.test_hashes) + len(dummy_set.query_hashes)
 
 
 def test_dataset_hashing_completeness(path_dir=Path('tests/data/base_images'), test_path=Path('tests/data/transformed_images')):
     dummy_hasher = Hashing().dhash
-    dummy_set = HashedDataset(dummy_hasher,path_dir, test_path)
+    dummy_set = HashedDataset(dummy_hasher, path_dir, test_path)
     all_dummy_hashes = {**dummy_set.test_hashes, **dummy_set.query_hashes}
     assert dummy_set.doc2hash.keys() == all_dummy_hashes.keys()
 
 
 def test_dataset_hashmaps_veracity(path_dir=Path('tests/data/base_images'), test_path=Path('tests/data/transformed_images')):
     dummy_hasher = Hashing().dhash
-    dummy_set = HashedDataset(dummy_hasher,path_dir, test_path)
+    dummy_set = HashedDataset(dummy_hasher, path_dir, test_path)
     assert set(dummy_set.doc2hash.keys()) == set(dummy_set.hash2doc.values())
