@@ -1,4 +1,5 @@
 from types import FunctionType
+from pickle import dump
 
 
 class ResultSet:
@@ -23,6 +24,11 @@ class ResultSet:
         self.query_distances = sorted_distances
 
     def retrieve_results(self) -> dict:
+        return self.query_results
+
+    def save_results(self) -> None:
+        with open('retrieved_results_map.pkl', 'wb') as f:
+            dump(self.query_results, f)
         return self.query_results
 
     def retrieve_distances(self) -> dict:
