@@ -1,5 +1,3 @@
-import sys
-sys.path.append('/Users/zubin.john/forge/image-dedup/')
 from imagededup.hashing import Hashing, HashedDataset
 from imagededup.retrieval import ResultSet
 from imagededup.evaluation import EvalPerformance
