@@ -18,6 +18,7 @@ For all: Restrict image sizes to be greater than a certain size
 Allow acceptance of os.path in addition to already existing Path and numpy image array.
 """
 
+
 class Hashing:
     def __init__(self):
         pass

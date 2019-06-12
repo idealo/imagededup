@@ -11,8 +11,7 @@
     -----------------------------------------------------------
     
 """
-import sys
-sys.path.append('/Users/zubin.john/forge/image-dedup/')
+
 from imagededup.hashing import Hashing, HashedDataset
 from imagededup.retrieval import ResultSet
 from imagededup.evaluation import EvalPerformance
@@ -25,7 +24,7 @@ TEST_PATH = '/Users/zubin.john/forge/image-dedup/Transformed_dataset/Retrieval/'
 GOLD_PATH = '/Users/zubin.john/forge/image-dedup/Transformed_dataset/ground_truth_transformed.pkl'
 
 if __name__ == '__main__':
-    hasher = Hashing() ## Instantiate a hashing function to be used for fingerprinting
+    hasher = Hashing()  # Instantiate a hashing function to be used for fingerprinting
     start = datetime.utcnow()
     ds = HashedDataset(hasher.dhash, QUERY_PATH, TEST_PATH)
     end = datetime.utcnow()
@@ -35,7 +34,7 @@ if __name__ == '__main__':
     queries = ds.get_query_hashes()
     doc_mapper = ds.get_docmap()
     start = datetime.utcnow()
-    rs =  ResultSet(hashes, queries, hasher.hamming_distance)
+    rs = ResultSet(hashes, queries, hasher.hamming_distance)
     end = datetime.utcnow()
 
     print(f'Stage 2: SEARCH & RETRIEVAL completed in {(end-start).total_seconds()} seconds')

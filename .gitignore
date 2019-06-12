@@ -228,6 +228,11 @@ venv.bak/
 # Customized
 Untitled
 imagededup/Untitled.ipynb
+notebooks/Untitled.ipynb
+notebooks/post_analysis_hashing_transformationDS.ipynb
+notebooks/efficient_nets.ipynb
+notebooks/mobilenet.ipynb
+notebooks/resnet.ipynb
 *.pkl
 *.db
 notebooks
