@@ -12,7 +12,7 @@ class ResultSet:
         self.queries = queries
         self.hamming_distance_invoker = hammer
         # self.fetch_nearest_neighbors_brute_force()
-        self.fetch_nearest_neighbors_bktree()
+        self.fetch_nearest_neighbors_bktree() # Keep bktree as the default search method instead of brute force
 
     def fetch_query_result_brute_force(self, query) -> dict:
         hammer = self.hamming_distance_invoker
