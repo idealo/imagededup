@@ -1,4 +1,5 @@
 import copy
+# Implementation reference: https://signal-to-noise.xyz/post/bk-tree/
 
 
 class BkTreeNode:
@@ -17,7 +18,7 @@ class BKTree:
         self.ROOT = self.all_keys[0]
         self.all_keys.remove(self.ROOT)
         self.dict_all = {self.ROOT: BkTreeNode(self.ROOT, self.hash_dict[self.ROOT])}
-        self.candidates = [self.dict_all[self.ROOT].node_name]
+        self.candidates = [self.dict_all[self.ROOT].node_name] # Initial value is root
         self.construct_tree()
 
     def __insert_in_tree(self, k, current_node):
@@ -40,7 +41,7 @@ class BKTree:
         for k in self.all_keys:
             self.__insert_in_tree(k, self.ROOT)
 
-    def __get_next_candidates(self, query, candidate_obj, tolerance):
+    def _get_next_candidates(self, query, candidate_obj, tolerance):
         dist = self.distance_function(candidate_obj.node_value, query)
         if dist <= tolerance:
             validity = 1
@@ -56,7 +57,7 @@ class BKTree:
         candidates_local = copy.deepcopy(self.candidates)
         while len(candidates_local) != 0:
             candidate_name = candidates_local.pop()
-            cand_list, valid_flag, dist = self.__get_next_candidates(query, self.dict_all[candidate_name],
+            cand_list, valid_flag, dist = self._get_next_candidates(query, self.dict_all[candidate_name],
                                                                      tolerance=tol)
             if valid_flag:
                 valid_retrievals[candidate_name] = dist
