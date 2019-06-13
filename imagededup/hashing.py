@@ -11,16 +11,19 @@ from copy import deepcopy
 """
 TODO:
 
-Wavelet hash: Zero the LL coeff, reconstruct image, the get wavelet transform
+Wavelet hash: Zero the LL coeff, reconstruct image, then get wavelet transform
 Wavelet hash: Allow possibility of different wavelet functions
 
 For all: Restrict image sizes to be greater than a certain size
 Allow acceptance of os.path in addition to already existing Path and numpy image array.
+Refactor: image_preprocess and convert_to_array as done in cnn.py
+
+Test: test convert_to_array wot input array having datatype other than unit8 (float32/64)
 """
 
 
 class Hashing:
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     @staticmethod
@@ -57,7 +60,8 @@ class Hashing:
             if isinstance(path_image, Path):
                 im_gray_arr = self.image_preprocess(path_image, resize_dims)
             elif isinstance(path_image, np.ndarray):
-                im = Image.fromarray(path_image)
+                im = path_image.astype('uint8')  # fromarray can't take float32/64
+                im = Image.fromarray(im)
                 im_res = im.resize(resize_dims, Image.ANTIALIAS)
                 im_gray = im_res.convert('L')
                 im_gray_arr = np.array(im_gray)
