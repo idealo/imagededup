@@ -7,7 +7,6 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Flatten
 from pathlib import Path, PosixPath
 from typing import Tuple
-from collections import OrderedDict
 from PIL import Image
 import os
 import numpy as np
@@ -34,7 +33,7 @@ class CNN:
         im_arr = np.array(im_res)
         return im_arr
 
-    def _convert_to_array(self, path_image: None) -> np.ndarray:
+    """def _convert_to_array(self, path_image: None) -> np.ndarray:
         try:
             if isinstance(path_image, Path):
                 im = Image.open(path_image)
@@ -47,7 +46,18 @@ class CNN:
             return im_arr
         except Exception:
             print('Check Input Format! Input should be either a Path Variable or a numpy array!')
-            raise
+            raise"""
+
+    def _convert_to_array(self, path_image: None) -> np.ndarray:
+        if isinstance(path_image, Path):
+            im = Image.open(path_image)
+        elif isinstance(path_image, np.ndarray):
+            im = path_image.astype('uint8')  # fromarray can't take float32/64
+            im = Image.fromarray(im)
+        # else:
+        # raise TypeError('Check Input Format! Input should be either a Path Variable or a numpy array!')
+        im_arr = self._image_preprocess(im)
+        return im_arr
 
     def cnn_image(self, path_image: str) -> np.ndarray:
         im_arr = self._convert_to_array(path_image)
@@ -89,9 +99,15 @@ class CNN:
         self.file_mapping = dict(zip(range(len(image_generator.filenames)), filenames))
         return dict_file_feature
 
-    def find_duplicates_dir(self, path_dir: PosixPath, threshold: float = 0.8) -> dict:
+    @staticmethod
+    def _check_threshold_bounds(thresh):
+        if not isinstance(thresh, float) or (thresh < -1.0 or thresh > 1.0):
+            raise TypeError('Threshold must be a float between -1.0 and 1.0')
+
+    def _find_duplicates_dir(self, path_dir: PosixPath, threshold: float = 0.8) -> dict:
         """Takes in path of the directory on which duplicates are to be detected.
         Returns dictionary containing key as filename and value as a list of duplicate filenames"""
+        self._check_threshold_bounds(thresh=threshold)
         _ = self.cnn_dir(path_dir)
         self.logger.info('Start: Evaluating similarity for getting duplicates')
         dict_ret = CosEval(self.feat_vec, self.feat_vec).get_retrievals_at_thresh(file_mapping_query=self.file_mapping,
@@ -100,17 +116,43 @@ class CNN:
         self.logger.info('End: Evaluating similarity for getting duplicates')
         return dict_ret
 
-    @staticmethod
-    def find_duplicates_dict(dict_file_feature: dict, threshold: float = 0.8) -> dict:
+    def _find_duplicates_dict(self, dict_file_feature: dict, threshold: float = 0.8) -> dict:
         """Takes in dictionary {filename: vector}, detects duplicates and
                 returns dictionary containing key as filename and value as a list of duplicate filenames"""
-        dict_file_feature = OrderedDict(dict_file_feature)
-        feat_vec_in = np.array(list(dict_file_feature.values()))
-        filenames_generated = list(dict_file_feature.keys())
+        # order the dictionary to ensure consistent mapping between filenames and order of rows vector in similarity
+        # matrix
+        self._check_threshold_bounds(thresh=threshold)
+        keys_in_order = [i for i in dict_file_feature]
+        feat_vec_in = np.array([dict_file_feature[i] for i in keys_in_order])
+        filenames_generated = keys_in_order
         filemapping_generated = dict(zip(range(len(filenames_generated)), filenames_generated))
-
         dict_ret = CosEval(feat_vec_in, feat_vec_in).get_retrievals_at_thresh(file_mapping_query=filemapping_generated,
                                                                               file_mapping_ret=filemapping_generated,
                                                                               thresh=threshold)
         return dict_ret
+
+    def find_duplicates(self, path_or_dict, *args):
+        if isinstance(path_or_dict, PosixPath) and len(args) == 1:
+            dict_ret = self._find_duplicates_dir(path_dir=path_or_dict, threshold=args[0])
+        elif isinstance(path_or_dict, PosixPath) and len(args) == 0:
+            dict_ret = self._find_duplicates_dir(path_dir=path_or_dict)
+        elif isinstance(path_or_dict, dict) and len(args) == 1:
+            dict_ret = self._find_duplicates_dict(dict_file_feature=path_or_dict, threshold=args[0])
+        elif isinstance(path_or_dict, dict) and len(args) == 0:
+            dict_ret = self._find_duplicates_dict(dict_file_feature=path_or_dict)
+        else:
+            raise TypeError('Provide either a directory path to deduplicate or a dictionary of filenames and vectors!')
+        return dict_ret
+        """
+        if len(args) == 1:
+            print('fsdf')
+            if isinstance(args[0], PosixPath) and isinstance(args[1], float):
+                dict_ret = self._find_duplicates_dir(args[0], args[1])
+            elif isinstance(args[0], dict) and isinstance(args[1], float):
+                dict_ret = self._find_duplicates_dict(args[0], args[1])
+        else:
+            print('Provide either a directory path to deduplicate or a dictionary of filenames and vectors!')
+            raise TypeError
+        return dict_ret"""
+
 
