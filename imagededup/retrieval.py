@@ -18,7 +18,7 @@ class ResultSet:
         self.hamming_distance_invoker = hammer
         # self.fetch_nearest_neighbors_brute_force()
         self.fetch_nearest_neighbors_bktree()  # Keep bktree as the default search method instead of brute force
-        # self.logger = return_logger(__name__, os.getcwd())
+        self.logger = return_logger(__name__, os.getcwd())
 
     def fetch_query_result_brute_force(self, query) -> dict:
         hammer = self.hamming_distance_invoker
@@ -26,7 +26,7 @@ class ResultSet:
         return {item: hammer(query, candidates[item]) for item in candidates if hammer(query, candidates[item]) < 5}
 
     def fetch_nearest_neighbors_brute_force(self) -> None:
-        # self.logger.info('Start: Retrieving duplicates using Brute force algorithm')  # TODO: Add max hamming distance
+        self.logger.info('Start: Retrieving duplicates using Brute force algorithm')  # TODO: Add max hamming distance
         # after it is parmatrized
         sorted_results, sorted_distances = {}, {}
         for each in self.queries.values():
@@ -37,7 +37,7 @@ class ResultSet:
         self.query_distances = sorted_distances  # REQUEST: Change return types from dict_values to list, also have key as filenames and not hashes
 
     def fetch_nearest_neighbors_bktree(self) -> None:
-        # self.logger.info('Start: Retrieving duplicates using BKTree algorithm')  # TODO: Add max hamming distance after
+        self.logger.info('Start: Retrieving duplicates using BKTree algorithm')  # TODO: Add max hamming distance after
         # it is parmatrized
         dist_func = self.hamming_distance_invoker
         built_tree = BKTree(self.candidates, dist_func)  # construct bktree

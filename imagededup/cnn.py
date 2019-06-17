@@ -7,11 +7,12 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Flatten
 from pathlib import Path, PosixPath
 from typing import Tuple
+from collections import OrderedDict
 from PIL import Image
 import os
 import numpy as np
 
-# TODO: Add a function for deleting detected duplicates
+# TODO: Add a function for deleting detected duplicates (How?)
 # TODO: Write tests
 
 
@@ -88,7 +89,7 @@ class CNN:
         self.file_mapping = dict(zip(range(len(image_generator.filenames)), filenames))
         return dict_file_feature
 
-    def find_duplicates(self, path_dir: PosixPath, threshold: float = 0.8) -> dict:
+    def find_duplicates_dir(self, path_dir: PosixPath, threshold: float = 0.8) -> dict:
         """Takes in path of the directory on which duplicates are to be detected.
         Returns dictionary containing key as filename and value as a list of duplicate filenames"""
         _ = self.cnn_dir(path_dir)
@@ -98,3 +99,18 @@ class CNN:
                                                                                   thresh=threshold)
         self.logger.info('End: Evaluating similarity for getting duplicates')
         return dict_ret
+
+    @staticmethod
+    def find_duplicates_dict(dict_file_feature: dict, threshold: float = 0.8) -> dict:
+        """Takes in dictionary {filename: vector}, detects duplicates and
+                returns dictionary containing key as filename and value as a list of duplicate filenames"""
+        dict_file_feature = OrderedDict(dict_file_feature)
+        feat_vec_in = np.array(list(dict_file_feature.values()))
+        filenames_generated = list(dict_file_feature.keys())
+        filemapping_generated = dict(zip(range(len(filenames_generated)), filenames_generated))
+
+        dict_ret = CosEval(feat_vec_in, feat_vec_in).get_retrievals_at_thresh(file_mapping_query=filemapping_generated,
+                                                                              file_mapping_ret=filemapping_generated,
+                                                                              thresh=threshold)
+        return dict_ret
+
