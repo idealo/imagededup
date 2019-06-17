@@ -21,7 +21,7 @@ class BKTree:
         self.ROOT = self.all_keys[0]
         self.all_keys.remove(self.ROOT)
         self.dict_all = {self.ROOT: BkTreeNode(self.ROOT, self.hash_dict[self.ROOT])}
-        self.candidates = [self.dict_all[self.ROOT].node_name] # Initial value is root
+        self.candidates = [self.dict_all[self.ROOT].node_name]  # Initial value is root
         self.construct_tree()
 
     def __insert_in_tree(self, k: str, current_node: str) -> int:
