@@ -5,7 +5,7 @@ from keras.applications import MobileNet as ConvNet
 from keras.applications.mobilenet import preprocess_input
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Flatten
-from pathlib import Path, PosixPath
+from pathlib import PosixPath
 from typing import Tuple, Dict, List
 from PIL import Image
 import os
@@ -14,6 +14,8 @@ import numpy as np
 # TODO: Add a function for deleting detected duplicates (How?)
 # TODO: Write tests
 # TODO: Split the class into feature generation and search components (?)
+# TODO: check whether a valid path is given as input at very function
+
 
 class CNN:
     def __init__(self) -> None:
@@ -33,7 +35,7 @@ class CNN:
         return im_arr
 
     def _convert_to_array(self, path_image=None) -> np.ndarray:
-        if isinstance(path_image, Path):
+        if isinstance(path_image, PosixPath):
             im = Image.open(path_image)
         elif isinstance(path_image, np.ndarray):
             im = path_image.astype('uint8')  # fromarray can't take float32/64
