@@ -13,13 +13,15 @@ TODO: Choose whether to run brute force or bktree search.
 
 
 class ResultSet:
-    def __init__(self, test: dict, queries: dict, hammer: FunctionType) -> None:
+    def __init__(self, test: dict, queries: dict, hammer: FunctionType, save: bool = False) -> None:
         self.candidates = test
         self.queries = queries
         self.hamming_distance_invoker = hammer
         self.logger = return_logger(__name__, os.getcwd())
         # self.fetch_nearest_neighbors_brute_force()
         self.fetch_nearest_neighbors_bktree()  # Keep bktree as the default search method instead of brute force
+        if save:
+            self.save_results()
 
     def fetch_query_result_brute_force(self, query) -> dict:
         hammer = self.hamming_distance_invoker
