@@ -1,5 +1,6 @@
 from imagededup.retrieval import ResultSet
 from imagededup.hashing import Hashing
+import os
 
 """Run from project root with: python -m pytest -vs tests/test_retrieval.py --cov=imagededup.retrieval"""
 
@@ -60,3 +61,19 @@ def test_identical_hash_consistency(dummy_image={'ukbench09060.jpg': 'e064ece078
     dummy_result = ResultSet(dummy_image, dummy_image, dummy_hasher.hamming_distance)
     dummy_distances = [max(dist) for dist in dummy_result.query_distances.values()]
     assert set(dummy_distances) == {0}
+
+
+def test_save_results(dummy_file='test_save_results.pkl'):
+    dummy_data = "010101"
+    with open(dummy_file, 'w') as wh:
+        wh.write(dummy_data)
+    assert os.path.exists(dummy_file)
+
+
+def test_saved_results_consistency(dummy_file='test_saved_results_consistency.pkl'):
+    dummy_data = "010101"
+    with open(dummy_file, 'w') as wh:
+        wh.write(dummy_data)
+    with open(dummy_file, 'r') as rh:
+        read_data = rh.read()
+    assert read_data == dummy_data
