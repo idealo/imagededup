@@ -235,3 +235,7 @@ notebooks/mobilenet.ipynb
 notebooks/resnet.ipynb
 *.pkl
 *.db
+notebooks
+notebooks/all_average_metrics.pkl
+notebooks/cnn_explorer.ipynb
+notebooks/cnn_variants.ipynb
