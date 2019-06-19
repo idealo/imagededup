@@ -6,7 +6,6 @@ from PIL import Image
 from pathlib import Path
 from types import FunctionType
 from typing import Tuple
-import random
 from copy import deepcopy
 """
 TODO:
@@ -36,7 +35,6 @@ class Hashing:
     def hamming_distance(hash1: str, hash2: str) -> float:
         hash1_bin = bin(int(hash1, 16))[2:].zfill(64)  # zfill ensures that len of hash is 64 and pads MSB if it is < A
         hash2_bin = bin(int(hash2, 16))[2:].zfill(64)
-        assert len(hash1_bin) == len(hash2_bin)
         return np.sum([i != j for i, j in zip(hash1_bin, hash2_bin)])
 
     @staticmethod
@@ -135,7 +133,7 @@ class Dataset:
         self.test_docs = self.load_image_set(path_to_test)
 
     @staticmethod
-    def load_image_set(path: str) -> dict: 
+    def load_image_set(path: str) -> dict:
         return {doc: os.path.join(path, doc) for doc in os.listdir(path) if doc.endswith('.jpg')}
 
 
@@ -148,22 +146,18 @@ class HashedDataset(Dataset):
         self.doc2hash.update(self.query_hashes)
         self.hash2doc = {self.doc2hash[doc]: doc for doc in self.doc2hash}
 
-    
     def fingerprint(self) -> None:
         self.test_hashes = {doc: str(self.hasher(np.array(Image.open(self.test_docs[doc])))) for doc in self.test_docs}
         self.query_hashes = {doc: str(self.hasher(np.array(Image.open(self.query_docs[doc])))) for doc in self.query_docs}
-        
-        
+
     def get_docmap(self) -> dict:
         return self.hash2doc
-    
+
     def get_hashmap(self) -> dict:
         return self.doc2hash
 
-
     def get_query_hashes(self) -> dict:
         return self.query_hashes
-
 
     def get_test_hashes(self) -> dict:
         return self.test_hashes
