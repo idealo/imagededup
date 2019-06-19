@@ -1,8 +1,12 @@
 import copy
+from types import FunctionType
+from typing import Tuple
+
+# Implementation reference: https://signal-to-noise.xyz/post/bk-tree/
 
 
 class BkTreeNode:
-    def __init__(self, node_name, node_value, parent_name=None):
+    def __init__(self, node_name: str, node_value: str, parent_name: str = None) -> None:
         self.node_name = node_name
         self.node_value = node_value
         self.parent_name = parent_name
@@ -10,17 +14,17 @@ class BkTreeNode:
 
 
 class BKTree:
-    def __init__(self, hash_dict, distance_function):
+    def __init__(self, hash_dict: dict, distance_function: FunctionType) -> None:
         self.hash_dict = hash_dict
         self.distance_function = distance_function
         self.all_keys = list(self.hash_dict.keys())
         self.ROOT = self.all_keys[0]
         self.all_keys.remove(self.ROOT)
         self.dict_all = {self.ROOT: BkTreeNode(self.ROOT, self.hash_dict[self.ROOT])}
-        self.candidates = [self.dict_all[self.ROOT].node_name]
+        self.candidates = [self.dict_all[self.ROOT].node_name]  # Initial value is root
         self.construct_tree()
 
-    def __insert_in_tree(self, k, current_node):
+    def __insert_in_tree(self, k: str, current_node: str) -> int:
         dist_current_node = self.distance_function(self.hash_dict[k], self.dict_all[current_node].node_value)
         if not self.dict_all[current_node].children:
             self.dict_all[current_node].children[k] = dist_current_node
@@ -36,11 +40,11 @@ class BKTree:
             self.__insert_in_tree(k, node_to_add_to)
         return 0
 
-    def construct_tree(self):
+    def construct_tree(self) -> None:
         for k in self.all_keys:
             self.__insert_in_tree(k, self.ROOT)
 
-    def __get_next_candidates(self, query, candidate_obj, tolerance):
+    def _get_next_candidates(self, query: str, candidate_obj: BkTreeNode, tolerance: int) -> Tuple[list, int, float]:
         dist = self.distance_function(candidate_obj.node_value, query)
         if dist <= tolerance:
             validity = 1
@@ -51,12 +55,12 @@ class BKTree:
         candidates = [k for k in candidate_children.keys() if candidate_children[k] in search_range_dist]
         return candidates, validity, dist
 
-    def search(self, query, tol=10):
+    def search(self, query: str, tol: int = 10) -> dict:
         valid_retrievals = {}
         candidates_local = copy.deepcopy(self.candidates)
         while len(candidates_local) != 0:
             candidate_name = candidates_local.pop()
-            cand_list, valid_flag, dist = self.__get_next_candidates(query, self.dict_all[candidate_name],
+            cand_list, valid_flag, dist = self._get_next_candidates(query, self.dict_all[candidate_name],
                                                                      tolerance=tol)
             if valid_flag:
                 valid_retrievals[candidate_name] = dist
