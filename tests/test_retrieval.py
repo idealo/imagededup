@@ -37,7 +37,7 @@ def test_resultset_correctness(
         'ukbench09268.jpg': 'ac9c72f8e1c2c448'
     }
     dummy_hasher = Hashing()
-    dummy_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance)
+    dummy_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance, cutoff=3)
     dummy_distances = [max(dist) for dist in dummy_result.query_distances.values()]
     print(dummy_distances)
     assert max(dummy_distances) == 3
@@ -51,7 +51,7 @@ def test_max_hamming_threshold_not_violated(
         'ukbench09268.jpg': 'ac9c72f8e1c2c448'
     }
     dummy_hasher = Hashing()
-    dummy_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance)
+    dummy_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance, search_method='brute_force')
     dummy_distances = [max(dist) for dist in dummy_result.query_distances.values()]
     assert max(dummy_distances) < 5
 
@@ -64,6 +64,8 @@ def test_identical_hash_consistency(dummy_image={'ukbench09060.jpg': 'e064ece078
 
 
 def test_save_results(dummy_file='test_save_results.pkl'):
+    if os.path.exists(dummy_file):
+        os.remove(dummy_file)
     dummy_data = "010101"
     with open(dummy_file, 'w') as wh:
         wh.write(dummy_data)
@@ -71,6 +73,8 @@ def test_save_results(dummy_file='test_save_results.pkl'):
 
 
 def test_saved_results_consistency(dummy_file='test_saved_results_consistency.pkl'):
+    if os.path.exists(dummy_file):
+        os.remove(dummy_file)
     dummy_data = "010101"
     with open(dummy_file, 'w') as wh:
         wh.write(dummy_data)
