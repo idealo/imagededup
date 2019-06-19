@@ -2,6 +2,7 @@ language: python
 python:
 - 3.6
 install:
-- pip install numpy==1.16.0
+- pip install -e ".[tests]"
 script:
-- pytest -vs tests
+- pytest -vs --cov=imagededup --show-capture=no tests
+# - python -m pytest -vs tests
