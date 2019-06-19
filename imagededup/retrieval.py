@@ -5,6 +5,7 @@ from numpy.linalg import norm
 from typing import Tuple
 import os
 import numpy as np
+import pickle
 
 """
 TODO: Choose whether to run brute force or bktree search.
@@ -12,18 +13,23 @@ TODO: Choose whether to run brute force or bktree search.
 
 
 class ResultSet:
-    def __init__(self, test: dict, queries: dict, hammer: FunctionType) -> None:
+    def __init__(self, test: dict, queries: dict, hammer: FunctionType, cutoff: int = 5, search_method: str = 'bktree', save: bool = False) -> None:
         self.candidates = test
         self.queries = queries
         self.hamming_distance_invoker = hammer
-        # self.fetch_nearest_neighbors_brute_force()
-        self.fetch_nearest_neighbors_bktree()  # Keep bktree as the default search method instead of brute force
+        self.max_d = cutoff
         self.logger = return_logger(__name__, os.getcwd())
+        if search_method == 'bktree':
+            self.fetch_nearest_neighbors_bktree()  # Keep bktree as the default search method instead of brute force
+        else:
+            self.fetch_nearest_neighbors_brute_force()
+        if save:
+            self.save_results()
 
     def fetch_query_result_brute_force(self, query) -> dict:
         hammer = self.hamming_distance_invoker
         candidates = self.candidates
-        return {item: hammer(query, candidates[item]) for item in candidates if hammer(query, candidates[item]) < 5}
+        return {item: hammer(query, candidates[item]) for item in candidates if hammer(query, candidates[item]) <= self.max_d}
 
     def fetch_nearest_neighbors_brute_force(self) -> None:
         self.logger.info('Start: Retrieving duplicates using Brute force algorithm')  # TODO: Add max hamming distance
@@ -32,7 +38,7 @@ class ResultSet:
         for each in self.queries.values():
             res = self.fetch_query_result_brute_force(each)
             sorted_results[each] = sorted(res, key=lambda x: res[x], reverse=False)
-            sorted_distances[each] = res.values() # REQUEST: Sort values too
+            sorted_distances[each] = res.values()  # REQUEST: Sort values too
         self.query_results = sorted_results  # REQUEST: Have key as filenames and not hashes
         self.query_distances = sorted_distances  # REQUEST: Change return types from dict_values to list, also have key as filenames and not hashes
 
@@ -52,7 +58,12 @@ class ResultSet:
 
     def retrieve_results(self) -> dict:
         return self.query_results
-    
+
+    def save_results(self) -> None:
+        with open('retrieved_results_map.pkl', 'wb') as f:
+            pickle.dump(self.query_results, f)
+        return self.query_results
+
     def retrieve_distances(self) -> dict:
         return self.query_distances
 
@@ -102,4 +113,3 @@ class CosEval:
             dict_ret[query_name] = dict(zip(retrieved_files, valid_vals))
         self.logger.info(f'End: Getting duplicates with similarity above threshold = {thresh}')
         return dict_ret
-
