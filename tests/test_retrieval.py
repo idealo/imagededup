@@ -1,6 +1,9 @@
 from imagededup.retrieval import ResultSet
 from imagededup.hashing import Hashing
+from imagededup.retrieval import CosEval
+from mock import patch
 import os
+import numpy as np
 
 """Run from project root with: python -m pytest -vs tests/test_retrieval.py --cov=imagededup.retrieval"""
 
@@ -67,7 +70,7 @@ def test_save_true(dummy_image={'ukbench09060.jpg': 'e064ece078d7c96a'}, dummy_f
     if os.path.exists(dummy_file):
         os.remove(dummy_file)
     dummy_hasher = Hashing()
-    dummy_result = ResultSet(dummy_image, dummy_image, dummy_hasher.hamming_distance, save=True)
+    _ = ResultSet(dummy_image, dummy_image, dummy_hasher.hamming_distance, save=True)
     assert os.path.exists(dummy_file)
 
 
@@ -75,6 +78,56 @@ def test_save_false(dummy_image={'ukbench09060.jpg': 'e064ece078d7c96a'}, dummy_
     if os.path.exists(dummy_file):
         os.remove(dummy_file)
     dummy_hasher = Hashing()
-    dummy_result = ResultSet(dummy_image, dummy_image, dummy_hasher.hamming_distance)
+    _ = ResultSet(dummy_image, dummy_image, dummy_hasher.hamming_distance)
     assert not os.path.exists(dummy_file)
 
+
+def test_coseval_normalization():
+    inp_arr = np.array([[1, 0], [1, 1]])
+    normed_mat = CosEval.get_normalized_matrix(inp_arr)
+    np.testing.assert_array_equal(normed_mat[0], inp_arr[0])
+    np.testing.assert_array_equal(normed_mat[1], inp_arr[1]/np.sqrt(2))
+    assert normed_mat.shape == (2, 2)
+
+
+@patch('imagededup.retrieval.CosEval.normalize_vector_matrices')
+def test_normalize_vector_matrices(mocker):
+    inp_arr_1 = np.array([[1, 0], [1, 1]])
+    inp_arr_2 = np.array([[1, 0], [1, 1]])
+    cosev = CosEval(inp_arr_1, inp_arr_2)
+    cosev.normalize_vector_matrices.assert_called()
+
+
+def test__get_similarity():
+    inp_arr_1 = np.array([[1, 0], [1, 1]])
+    inp_arr_2 = np.array([[1, 0], [1, 1], [1, 0], [1, 1]])
+    cosev = CosEval(inp_arr_1, inp_arr_2)
+    assert cosev.sim_mat is None
+    _ = cosev._get_similarity()
+    assert cosev.sim_mat.shape == (2, 4)
+
+
+def test_get_matches_above_threshold():
+    rets_ind, rets_val = CosEval.get_matches_above_threshold(row=np.array([0.1, -0.1, 0.2, 1.9]), thresh=0.8)
+    assert rets_ind == np.array([3])
+    np.testing.assert_array_equal(rets_val, np.array([1.9]))
+
+
+def test_get_retrievals_at_thresh():
+    inp_arr_1 = np.array([[1, 0], [1, 1]])
+    inp_arr_2 = np.array([[1, 0], [1, 1], [1, 0], [1, 1]])
+    cosev = CosEval(inp_arr_1, inp_arr_2)
+    filemapping_query = {0: 'ukbench00002.jpg', 1: 'ukbench00003.jpg'}
+    filemapping_ret = {0: 'ukbench00004.jpg', 1: 'ukbench00005.jpg', 2: 'ukbench00006.jpg', 3: 'ukbench00007.jpg'}
+    dict_ret = cosev.get_retrievals_at_thresh(filemapping_query, filemapping_ret, thresh=0.99)
+    assert set(dict_ret['ukbench00002.jpg'].keys()) == set(['ukbench00004.jpg', 'ukbench00006.jpg'])
+
+
+def test_get_retrievals_at_thresh_query_name_in_retrieval():
+    inp_arr_1 = np.array([[1, 0], [1, 1]])
+    inp_arr_2 = np.array([[1, 0], [1, 1], [1, 0], [1, 1]])
+    cosev = CosEval(inp_arr_1, inp_arr_2)
+    filemapping_query = {0: 'ukbench00002.jpg', 1: 'ukbench00003.jpg'}
+    filemapping_ret = {0: 'ukbench00002.jpg', 1: 'ukbench00005.jpg', 2: 'ukbench00006.jpg', 3: 'ukbench00007.jpg'}
+    dict_ret = cosev.get_retrievals_at_thresh(filemapping_query, filemapping_ret, thresh=0.99)
+    assert set(dict_ret['ukbench00002.jpg'].keys()) == set(['ukbench00006.jpg'])

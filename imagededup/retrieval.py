@@ -95,7 +95,8 @@ class CosEval:
         self.sim_mat = np.dot(self.normed_query_vector, self.normed_ret_vector.T)
         self.logger.info('End: Cosine similarity matrix computation')
 
-    def get_matches_above_threshold(self, row: int, thresh: float) -> Tuple[np.ndarray, np.ndarray]:
+    @staticmethod
+    def get_matches_above_threshold(row: np.ndarray, thresh: float) -> Tuple[np.ndarray, np.ndarray]:
         valid_inds = np.where(row >= thresh)[0]
         valid_vals = row[valid_inds]
         return valid_inds, valid_vals
