@@ -90,12 +90,12 @@ def test_coseval_normalization():
     assert normed_mat.shape == (2, 2)
 
 
-@patch('imagededup.retrieval.CosEval.normalize_vector_matrices')
+@patch('imagededup.retrieval.CosEval._normalize_vector_matrices')
 def test_normalize_vector_matrices(mocker):
     inp_arr_1 = np.array([[1, 0], [1, 1]])
     inp_arr_2 = np.array([[1, 0], [1, 1]])
     cosev = CosEval(inp_arr_1, inp_arr_2)
-    cosev.normalize_vector_matrices.assert_called()
+    cosev._normalize_vector_matrices.assert_called()
 
 
 def test__get_similarity():
@@ -107,8 +107,8 @@ def test__get_similarity():
     assert cosev.sim_mat.shape == (2, 4)
 
 
-def test_get_matches_above_threshold():
-    rets_ind, rets_val = CosEval.get_matches_above_threshold(row=np.array([0.1, -0.1, 0.2, 1.9]), thresh=0.8)
+def test__get_matches_above_threshold():
+    rets_ind, rets_val = CosEval._get_matches_above_threshold(row=np.array([0.1, -0.1, 0.2, 1.9]), thresh=0.8)
     assert rets_ind == np.array([3])
     np.testing.assert_array_equal(rets_val, np.array([1.9]))
 

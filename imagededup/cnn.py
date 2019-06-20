@@ -76,7 +76,7 @@ class CNN:
     def _image_preprocess(self, pillow_image: Image) -> np.ndarray:
         """
         Resizes and typecasts a pillow image to numpy array.
-        Arguments:
+
         :param pillow_image: A Pillow type image to be processed.
         :return: A numpy array of processed image.
         """
@@ -87,7 +87,7 @@ class CNN:
     def _convert_to_array(self, path_image=None) -> np.ndarray:
         """
         Accepts either path of an image or a numpy array and processes it to feed it to CNN.
-        Arguments:
+
         :param path_image: PosixPath to the image file or Image typecast to numpy array.
         :return: A processed image as numpy array
         """
@@ -102,7 +102,7 @@ class CNN:
     def cnn_image(self, path_image: str) -> np.ndarray:
         """
         Generates CNN features for a single image.
-        Aguments:
+
         :param path_image: PosixPath to the image file or Image typecast to numpy array.
         :return: Features for the image in the form of numpy array.
 
@@ -122,7 +122,7 @@ class CNN:
     def _get_sub_dir(path_dir: PosixPath) -> str:
         """
         Extracts sub directory of a PosixPath to a directory.
-        Arguments:
+
         :param path_dir: PosixPath to a directory.
         :return: Name of the subdirectory as a string.
         """
@@ -132,7 +132,7 @@ class CNN:
     def _get_parent_dir(path_dir: PosixPath) -> PosixPath:
         """
         Extracts parent directory of a PosixPath to a directory.
-        Arguments:
+
         :param path_dir: PosixPath to a directory.
         :return: Name of the parent directory as a PosixPath.
         """
@@ -141,7 +141,7 @@ class CNN:
     def _generator(self, path_dir: PosixPath) -> ImageDataGenerator:
         """
         Declares a keras ImageDataGenerator to obtain CNN features for all the images in a given directory.
-        Arguments:
+
         :param path_dir: PosixPath to the directory containing all the images.
         :return: An initialized keras ImageDataGenerator.
         """
@@ -163,7 +163,7 @@ class CNN:
     def cnn_dir(self, path_dir: PosixPath) -> Dict[str, np.ndarray]:
         """
         Generates CNN features for all images in a given directory of images.
-        Arguments:
+
         :param path_dir: PosixPath to the directory containing all the images.
         :return: A dictionary that contains a mapping of filenames and corresponding numpy array of CNN features.
         For example:
@@ -190,7 +190,7 @@ class CNN:
         """
         Splits mapping dictionary into feature vector matrix and a dictionray that maintains mapping between the row of
         the feature matrix and the image filename.
-        Arguments:
+
         :param dict_file_feature: {'Image1.jpg': np.array([1.0, -0.2, ...]), 'Image2.jpg': np.array([0.3, 0.06, ...]), ...}
         :return: feat_vec_in: A numpy ndarray of size (number of queries, number of features).
         filemapping_generated: A dictionary mapping the row number of 'feat_vec_in' to the image filename.
@@ -207,10 +207,10 @@ class CNN:
     def _get_only_filenames(dict_of_dict_dups: Dict[str, Dict[str, float]]) -> Dict[str, List[str]]:
         """
         Derives list of file names of duplicates for each query image.
-        Arguments:
+
         :param dict_of_dict_dups: dictionary of dictionaries {'image1.jpg': {'image1_duplicate1.jpg':<similarity-score>,
         'image1_duplicate2.jpg':<similarity-score>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<similarity-score>,..}}
-        :return: dict_ret: A dictionary consisting query file names as key and a list of duplciate file names as value.
+        :return: dict_ret: A dictionary consisting query file names as key and a list of duplicate file names as value.
         {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg']
         'image2.jpg':['image1_duplicate1.jpg',..], ..}
         """
@@ -223,7 +223,7 @@ class CNN:
         """Takes in dictionary {filename: vector}, detects duplicates above the given threshold and
                 returns dictionary containing key as filename and value as a list of duplicate filenames. Optionally,
                 the similarity scores could be returned instead of duplicate file name for each query file.
-        Arguments:
+
         :param dict_file_feature: Dictionary with keys as file names and values as numpy arrays which represent the CNN
         feature for the key image file.
         :param threshold: Cosine similarity above which retrieved duplicates are valid.
@@ -249,7 +249,7 @@ class CNN:
     def _find_duplicates_dir(self, path_dir: PosixPath, threshold: float = 0.8, scores: bool = False):
         """Takes in path of the directory on which duplicates are to be detected above the given threshold.
         Returns dictionary containing key as filename and value as a list of duplicate file names.
-        Arguments:
+
         :param path_dir: PosixPath to the directory containing all the images.
         :param threshold: Cosine similarity above which retrieved duplicates are valid.
         :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
@@ -267,7 +267,7 @@ class CNN:
         """
         Checks if provided threshold is valid. Raises TypeError is wrong threshold variable type is passed or a value out
         of range is supplied.
-        Arguments:
+
         :param thresh: Threshold value (must be float between -1.0 and 1.0)
         """
         if not isinstance(thresh, float) or (thresh < -1.0 or thresh > 1.0):
@@ -277,7 +277,7 @@ class CNN:
         """
         Finds duplicates. Raises TypeError if supplied directory path isn't a Path variable or a valid dictionary isn't
         supplied.
-        Arguments:
+
         :param path_or_dict: PosixPath to the directory containing all the images or dictionary with keys as file names
         and values as numpy arrays which represent the CNN feature for the key image file.
         :param threshold: Threshold value (must be float between -1.0 and 1.0)
