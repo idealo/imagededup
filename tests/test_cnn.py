@@ -113,6 +113,15 @@ def test__get_file_mapping_feat_vec(initialized_cnn_obj):
     assert out_filename == expected_filename
 
 
+def test__get_file_mapping_feat_vec_order_correctness(initialized_cnn_obj):
+    expected_featvec = np.array([[1, 0, 0, 1], [1, 1, 0, 1], [1, 0, 1, 1], [1, 1, 1, 1]])
+    expected_filename = {0: 'ukbench00002.jpg', 1: 'ukbench00003.jpg', 2: 'ukbench00004.jpg', 3: 'ukbench00005.jpg'}
+    in_dict = {expected_filename[i]: expected_featvec[i] for i in range(len(expected_filename))}
+    out_feat_vec, out_filename = initialized_cnn_obj._get_file_mapping_feat_vec(in_dict)
+    for i in out_filename.keys():
+        np.testing.assert_array_equal(in_dict[out_filename[i]], out_feat_vec[i])
+
+
 def test__get_only_filenames(initialized_cnn_obj):
     dict_with_scores = {'ukbench00002.jpg': {'ukbench00002_hflip.jpg': 0.9999999, 'ukbench00002_resize.jpg': 0.96390784,
                           'ukbench00002_vflip.jpg': 0.9600804},'ukbench00002_cropped.jpg': {'ukbench00002_hflip.jpg': 1.0}}

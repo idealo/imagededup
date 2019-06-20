@@ -7,10 +7,6 @@ import os
 import numpy as np
 import pickle
 
-"""
-TODO: Choose whether to run brute force or bktree search.
-"""
-
 
 class ResultSet:
     def __init__(self, test: dict, queries: dict, hammer: FunctionType, cutoff: int = 5, search_method: str = 'bktree', save: bool = False) -> None:
