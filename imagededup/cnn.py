@@ -38,6 +38,7 @@ class CNN:
     mycnn = cnn.CNN()
     dict_file_feat = mycnn.cnn_dir(Path('path/to/directory'))
     ```
+
     Duplicate detection:
     Find duplicates either using the feature mapping generated previously using 'cnn_dir' or using a Path to the
     directory that contains the images that need to be deduplicated. There are 2 inputs that can be provided to the
@@ -57,12 +58,14 @@ class CNN:
     dict_ret_path = mycnn.find_duplicates(Path('path/to/directory'), threshold=0.9, scores=True)
     ```
     """
+
     def __init__(self) -> None:
         """
         Initializes a keras MobileNet model that is sliced at the convolutional layer closest to the output layer.
         Sets the batch size for keras generators to be 64 samples. Sets the input image size to (224, 224) for providing
         as input to MobileNet model. Initiates a results_score variable to None.
         """
+
         model_full = ConvNet(include_top=True)
         x = Flatten()(model_full.layers[-3].output)  # hard-coded slice at -3 (conv layer closest to output layer)
         self.model = Model(inputs=model_full.input, outputs=[x])
@@ -80,6 +83,7 @@ class CNN:
         :param pillow_image: A Pillow type image to be processed.
         :return: A numpy array of processed image.
         """
+
         im_res = pillow_image.resize(self.TARGET_SIZE)
         im_arr = np.array(im_res)
         return im_arr
@@ -91,6 +95,7 @@ class CNN:
         :param path_image: PosixPath to the image file or Image typecast to numpy array.
         :return: A processed image as numpy array
         """
+
         if isinstance(path_image, PosixPath):
             im = Image.open(path_image)
         elif isinstance(path_image, np.ndarray):
@@ -113,6 +118,7 @@ class CNN:
         feature_vector = mycnn.cnn_image(Path('path/to/image.jpg'))
         ```
         """
+
         im_arr = self._convert_to_array(path_image)
         im_arr_proc = preprocess_input(im_arr)
         im_arr_shaped = np.array(im_arr_proc)[np.newaxis, :]
@@ -126,6 +132,7 @@ class CNN:
         :param path_dir: PosixPath to a directory.
         :return: Name of the subdirectory as a string.
         """
+
         return path_dir.parts[-1]
 
     @staticmethod
@@ -136,6 +143,7 @@ class CNN:
         :param path_dir: PosixPath to a directory.
         :return: Name of the parent directory as a PosixPath.
         """
+
         return path_dir.parent
 
     def _generator(self, path_dir: PosixPath) -> ImageDataGenerator:
@@ -145,6 +153,7 @@ class CNN:
         :param path_dir: PosixPath to the directory containing all the images.
         :return: An initialized keras ImageDataGenerator.
         """
+
         sub_dir = self._get_sub_dir(path_dir)
         img_gen = ImageDataGenerator(preprocessing_function=preprocess_input)
         parent_dir = self._get_parent_dir(path_dir)
@@ -177,6 +186,7 @@ class CNN:
         dict_file_feat = mycnn.cnn_dir(Path('path/to/directory'))
         ```
         """
+
         self.logger.info('Start: Image feature generation')
         image_generator = self._generator(path_dir)
         feat_vec = self.model.predict_generator(image_generator, len(image_generator), verbose=1)
@@ -195,6 +205,7 @@ class CNN:
         :return: feat_vec_in: A numpy ndarray of size (number of queries, number of features).
         filemapping_generated: A dictionary mapping the row number of 'feat_vec_in' to the image filename.
         """
+
         # order the dictionary to ensure consistent mapping between filenames and order of rows vector in similarity
         # matrix
         keys_in_order = [i for i in dict_file_feature]
@@ -214,6 +225,7 @@ class CNN:
         {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg']
         'image2.jpg':['image1_duplicate1.jpg',..], ..}
         """
+
         dict_ret = {}
         for k, v in dict_of_dict_dups.items():
             dict_ret[k] = list(v.keys())
@@ -233,6 +245,7 @@ class CNN:
         if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg']
         'image2.jpg':['image1_duplicate1.jpg',..], ..}
                 """
+
         feat_vec_in, filemapping_generated = self._get_file_mapping_feat_vec(dict_file_feature)
         self.logger.info('Start: Evaluating similarity for getting duplicates')
         self.result_score = CosEval(feat_vec_in, feat_vec_in).\
@@ -258,6 +271,7 @@ class CNN:
         if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg']
         'image2.jpg':['image1_duplicate1.jpg',..], ..}
         """
+
         dict_file_feature = self.cnn_dir(path_dir)
         dict_ret = self._find_duplicates_dict(dict_file_feature=dict_file_feature, threshold=threshold, scores=scores)
         return dict_ret
@@ -270,6 +284,7 @@ class CNN:
 
         :param thresh: Threshold value (must be float between -1.0 and 1.0)
         """
+
         if not isinstance(thresh, float) or (thresh < -1.0 or thresh > 1.0):
             raise TypeError('Threshold must be a float between -1.0 and 1.0')
 
@@ -300,6 +315,7 @@ class CNN:
         dict_ret_path = mycnn.find_duplicates(Path('path/to/directory'), threshold=0.9, scores=True)
         ```
         """
+
         self._check_threshold_bounds(thresh=threshold)
         if isinstance(path_or_dict, PosixPath):
             dict_ret = self._find_duplicates_dir(path_dir=path_or_dict, threshold=threshold, scores=scores)
