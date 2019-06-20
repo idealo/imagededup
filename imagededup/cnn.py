@@ -12,9 +12,7 @@ import os
 import numpy as np
 
 # TODO: Add a function for deleting detected duplicates (How?)
-# TODO: Write tests
-# TODO: Split the class into feature generation and search components (?)
-# TODO: check whether a valid path is given as input at very function
+# TODO: check whether a valid path is given as input at every function
 
 
 class CNN:
