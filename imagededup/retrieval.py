@@ -2,7 +2,7 @@ from imagededup.bktree import BKTree
 from imagededup.logger import return_logger
 from types import FunctionType
 from numpy.linalg import norm
-from typing import Tuple
+from typing import Tuple, Dict
 import os
 import numpy as np
 import pickle
@@ -22,7 +22,7 @@ class ResultSet:
         if save:
             self.save_results()
 
-    def fetch_query_result_brute_force(self, query) -> dict:
+    def fetch_query_result_brute_force(self, query) -> Dict:
         hammer = self.hamming_distance_invoker
         candidates = self.candidates
         return {item: hammer(query, candidates[item]) for item in candidates if hammer(query, candidates[item]) <= self.max_d}
@@ -52,7 +52,7 @@ class ResultSet:
         self.query_results = sorted_results
         self.query_distances = sorted_distances
 
-    def retrieve_results(self) -> dict:
+    def retrieve_results(self) -> Dict:
         return self.query_results
 
     def save_results(self) -> None:
@@ -60,7 +60,7 @@ class ResultSet:
             pickle.dump(self.query_results, f)
         return self.query_results
 
-    def retrieve_distances(self) -> dict:
+    def retrieve_distances(self) -> Dict:
         return self.query_distances
 
 
@@ -97,7 +97,7 @@ class CosEval:
         valid_vals = row[valid_inds]
         return valid_inds, valid_vals
 
-    def get_retrievals_at_thresh(self, file_mapping_query: dict, file_mapping_ret: dict, thresh=0.8) -> dict:
+    def get_retrievals_at_thresh(self, file_mapping_query: Dict, file_mapping_ret: Dict, thresh=0.8) -> Dict:
         self.logger.info(f'Start: Getting duplicates with similarity above threshold = {thresh}')
         dict_ret = {}
         self._get_similarity()
