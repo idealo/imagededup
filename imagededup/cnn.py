@@ -11,8 +11,8 @@ from PIL import Image
 import os
 import numpy as np
 
-# TODO: Add a function for deleting detected duplicates (How?)
 # TODO: check whether a valid path is given as input at every function
+# TODO: Add options for making CNN forward pass quicker. (in _generator)
 
 
 class CNN:
