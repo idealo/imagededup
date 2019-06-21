@@ -204,3 +204,15 @@ def test_find_duplicates_unacceptable_input(initialized_cnn_obj):
     with pytest.raises(TypeError):
         initialized_cnn_obj.find_duplicates('tests/data/mixed_images')
 
+
+def test_find_duplicates_to_remove(initialized_cnn_obj, monkeypatch):
+    path_dir = Path('tests/data/mixed_images')
+
+    def mock_find_duplicates(path_or_dict=path_dir, threshold=0.8, scores=False):
+        from collections import OrderedDict
+        dict_a = OrderedDict({'1': ['2'], '2': ['1', '3'], '3': ['4'], '4': ['3'], '5': []})
+        return dict_a
+    monkeypatch.setattr(initialized_cnn_obj, 'find_duplicates', mock_find_duplicates)
+    dups_to_remove = initialized_cnn_obj.find_duplicates_to_remove(path_or_dict=path_dir)
+    assert dups_to_remove == ['2', '4']
+
