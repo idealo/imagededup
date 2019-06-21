@@ -71,7 +71,7 @@ class CosEval:
 
     Needs to be initialized with a query matrix and a retrieval matrix.
     """
-    
+
     def __init__(self, query_vector: np.ndarray, ret_vector: np.ndarray) -> None:
         """
         Initializes local query and retrieval vectors and performs row-wise normalization of both the vectors.
