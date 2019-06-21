@@ -326,7 +326,23 @@ class CNN:
                             'vectors!')
         return dict_ret
 
+    def find_duplicates_to_remove(self, path_or_dict, threshold: float = 0.8) -> List:
+        """
+        Gives out a list of image filenames to remove based on the similarity threshold.
+        :param path_or_dict:
+        :param threshold:
+        :param scores:
+        :return:
+        """
+        dict_ret = self.find_duplicates(path_or_dict=path_or_dict, threshold=threshold, scores=False)
+        # iterate over dict_ret keys, get value for the key and delete the dict keys that are in thie value list
 
+        marked_for_removal = []
+
+        for k, v in dict_ret.items():
+            if k not in marked_for_removal:
+                marked_for_removal.extend(v)
+        return marked_for_removal
 
 
 
