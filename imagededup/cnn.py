@@ -57,6 +57,17 @@ class CNN:
     mycnn = cnn.CNN()
     dict_ret_path = mycnn.find_duplicates(Path('path/to/directory'), threshold=0.9, scores=True)
     ```
+
+    If a list of file names to remove are desired, then the function find_duplicates_to_remove can be used with either the
+    path to the image directory as input or the dictionary with features. A threshold for similarity should be considered.
+
+    Example usage:
+        ```
+        from imagededup import cnn
+        mycnn = cnn.CNN()
+        list_of_files_to_remove = mycnn.find_duplicates_to_remove(Path('path/to/images/directory'), threshold=0.9)
+        ```
+
     """
 
     def __init__(self) -> None:
@@ -328,21 +339,29 @@ class CNN:
 
     def find_duplicates_to_remove(self, path_or_dict, threshold: float = 0.8) -> List:
         """
-        Gives out a list of image filenames to remove based on the similarity threshold.
-        :param path_or_dict:
-        :param threshold:
-        :param scores:
-        :return:
-        """
-        dict_ret = self.find_duplicates(path_or_dict=path_or_dict, threshold=threshold, scores=False)
-        # iterate over dict_ret keys, get value for the key and delete the dict keys that are in thie value list
+        Gives out a list of image file names to remove based on the similarity threshold.
+        :param path_or_dict: PosixPath to the directory containing all the images or dictionary with keys as file names
+        and values as numpy arrays which represent the CNN feature for the key image file.
+        :param threshold: Threshold value (must be float between -1.0 and 1.0)
+        :return: List of image file names that should be removed.
 
-        marked_for_removal = []
+        Example usage:
+        ```
+        from imagededup import cnn
+        mycnn = cnn.CNN()
+        list_of_files_to_remove = mycnn.find_duplicates_to_remove(Path('path/to/images/directory'), threshold=0.9)
+        ```
+        """
+
+        dict_ret = self.find_duplicates(path_or_dict=path_or_dict, threshold=threshold, scores=False)
+        # iterate over dict_ret keys, get value for the key and delete the dict keys that are in the value list
+
+        list_of_files_to_remove = []
 
         for k, v in dict_ret.items():
-            if k not in marked_for_removal:
-                marked_for_removal.extend(v)
-        return marked_for_removal
+            if k not in list_of_files_to_remove:
+                list_of_files_to_remove.extend(v)
+        return list_of_files_to_remove
 
 
 
