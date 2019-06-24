@@ -32,12 +32,11 @@ if __name__ == '__main__':
     queries = ds.get_query_hashes()
     doc_mapper = ds.get_docmap()
     start = datetime.utcnow()
-    rs = ResultSet(hashes, queries, hasher.hamming_distance)
+    rs = ResultSet(hashes, queries, hasher.hamming_distance, search_method='brute')
     end = datetime.utcnow()
 
     print(f'Stage 2: SEARCH & RETRIEVAL completed in {(end-start).total_seconds()} seconds')
     returned_dict = rs.retrieve_results()
-    returned_dict = {doc_mapper[row]: returned_dict[row] for row in returned_dict}
     with open(GOLD_PATH, 'rb') as buf:
         correct_dict = pickle_loader(buf)
     start = datetime.utcnow()
