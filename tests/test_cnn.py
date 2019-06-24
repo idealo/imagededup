@@ -36,7 +36,6 @@ def test__convert_to_array_array(initialized_cnn_obj, mocker):
     path_image = Path('tests/data/mixed_images/ukbench00120.jpg')
     im_arr = np.array(Image.open(path_image))
     expected_called = Image.fromarray(im_arr)
-
     mocker.patch.object(initialized_cnn_obj, '_image_preprocess')
     initialized_cnn_obj._convert_to_array(im_arr)
     initialized_cnn_obj._image_preprocess.assert_called_with(expected_called)
@@ -46,7 +45,6 @@ def test__convert_to_array_float_array(initialized_cnn_obj, mocker):
     path_image = Path('tests/data/mixed_images/ukbench00120.jpg')
     im_arr = np.array(Image.open(path_image)).astype('float32')
     expected_called = Image.fromarray(im_arr.astype('uint8'))
-
     mocker.patch.object(initialized_cnn_obj, '_image_preprocess')
     initialized_cnn_obj._convert_to_array(im_arr)
     initialized_cnn_obj._image_preprocess.assert_called_with(expected_called)
@@ -106,25 +104,115 @@ def test_cnn_dir(initialized_cnn_obj):
     assert dict_ret['ukbench00120_hflip.jpg'] is not None
 
 
-def test__get_file_mapping_feat_vec():
-    pass
+def test__get_file_mapping_feat_vec(initialized_cnn_obj):
+    expected_featvec = np.array([1, 0, 0, 1])
+    expected_filename = {0: 'ukbench00002.jpg'}
+    in_dict = {expected_filename[i]: expected_featvec for i in range(len(expected_filename))}
+    out_feat_vec, out_filename = initialized_cnn_obj._get_file_mapping_feat_vec(in_dict)
+    np.testing.assert_array_equal(out_feat_vec[0], expected_featvec)
+    assert out_filename == expected_filename
 
 
-def test__get_only_filenames():
-    pass
+def test__get_file_mapping_feat_vec_order_correctness(initialized_cnn_obj):
+    expected_featvec = np.array([[1, 0, 0, 1], [1, 1, 0, 1], [1, 0, 1, 1], [1, 1, 1, 1]])
+    expected_filename = {0: 'ukbench00002.jpg', 1: 'ukbench00003.jpg', 2: 'ukbench00004.jpg', 3: 'ukbench00005.jpg'}
+    in_dict = {expected_filename[i]: expected_featvec[i] for i in range(len(expected_filename))}
+    out_feat_vec, out_filename = initialized_cnn_obj._get_file_mapping_feat_vec(in_dict)
+    for i in out_filename.keys():
+        np.testing.assert_array_equal(in_dict[out_filename[i]], out_feat_vec[i])
 
 
-def test__find_duplicates_dict():
-    pass
+def test__get_only_filenames(initialized_cnn_obj):
+    dict_with_scores = {'ukbench00002.jpg': {'ukbench00002_hflip.jpg': 0.9999999, 'ukbench00002_resize.jpg': 0.96390784,
+                          'ukbench00002_vflip.jpg': 0.9600804},'ukbench00002_cropped.jpg': {'ukbench00002_hflip.jpg': 1.0}}
+    dict_ret = initialized_cnn_obj._get_only_filenames(dict_with_scores)
+    assert set(dict_ret['ukbench00002.jpg']) == set(dict_with_scores['ukbench00002.jpg'].keys())
 
 
-def test__find_duplicates_dir():
-    pass
+def test__find_duplicates_dict_scores_true(initialized_cnn_obj):
+    # check correctness, check that result_score has dictionary, check return dict
+    expected_featvec = [np.array([1, 0, 0, 1]), np.array([1, 1, 0, 1]), np.array([1, 0, 0, 1])]
+    expected_filename = {0: 'ukbench00002.jpg', 1: 'ukbench00003.jpg', 2: 'ukbench00002_dup.jpg'}
+    in_dict = {expected_filename[i]: expected_featvec[i] for i in range(len(expected_filename))}
+    assert initialized_cnn_obj.result_score is None
+    dict_ret = initialized_cnn_obj._find_duplicates_dict(in_dict, threshold=0.9, scores=True)
+    assert type(dict_ret['ukbench00002.jpg']) == dict
+    assert set(dict_ret['ukbench00002.jpg'].keys()) == set(['ukbench00002_dup.jpg'])
+    assert initialized_cnn_obj.result_score == dict_ret
 
 
-def test__check_threshold_bounds():
-    pass
+def test__find_duplicates_dict_scores_false():
+    initialized_cnn_obj = cnn.CNN()
+    # check correctness, check that result_score has dictionary, check return dict
+    expected_featvec = [np.array([1, 0, 0, 1]), np.array([1, 1, 0, 1]), np.array([1, 0, 0, 1])]
+    expected_filename = {0: 'ukbench00002.jpg', 1: 'ukbench00003.jpg', 2: 'ukbench00002_dup.jpg'}
+    in_dict = {expected_filename[i]: expected_featvec[i] for i in range(len(expected_filename))}
+    assert initialized_cnn_obj.result_score is None
+    dict_ret = initialized_cnn_obj._find_duplicates_dict(in_dict, threshold=0.9, scores=False)
+    assert dict_ret['ukbench00002.jpg'] == ['ukbench00002_dup.jpg']
+    assert initialized_cnn_obj.result_score is not None
 
 
-def test_find_duplicates():
-    pass
+def test__find_duplicates_dir(initialized_cnn_obj, monkeypatch):
+    path_dir = Path('tests/data/mixed_images')
+
+    def mock_cnn_dir(path_dir):
+        expected_featvec = [np.array([1, 0, 0, 1]), np.array([1, 1, 0, 1]), np.array([1, 0, 0, 1])]
+        expected_filename = {0: 'ukbench00002.jpg', 1: 'ukbench00003.jpg', 2: 'ukbench00002_dup.jpg'}
+        in_dict = {expected_filename[i]: expected_featvec[i] for i in range(len(expected_filename))}
+        return in_dict
+
+    monkeypatch.setattr(initialized_cnn_obj, 'cnn_dir', mock_cnn_dir)
+    dict_ret = initialized_cnn_obj._find_duplicates_dir(path_dir, threshold=0.9)
+    assert set(dict_ret['ukbench00002.jpg']) == set(['ukbench00002_dup.jpg'])
+
+
+def test__check_threshold_bounds_input_not_float(initialized_cnn_obj):
+    with pytest.raises(TypeError):
+        initialized_cnn_obj._check_threshold_bounds(thresh=1)
+
+
+def test__check_threshold_bounds_input_out_of_range(initialized_cnn_obj):
+    with pytest.raises(TypeError):
+        initialized_cnn_obj._check_threshold_bounds(thresh=1.1)
+
+
+def test_find_duplicates_path(initialized_cnn_obj, mocker):
+    path_dir = Path('tests/data/mixed_images')
+    threshold = 0.8
+    mocker.patch.object(initialized_cnn_obj, '_check_threshold_bounds')
+    mocker.patch.object(initialized_cnn_obj, '_find_duplicates_dir')
+    initialized_cnn_obj.find_duplicates(path_dir, threshold=threshold)
+    initialized_cnn_obj._check_threshold_bounds.assert_called_with(thresh=threshold)
+    initialized_cnn_obj._find_duplicates_dir.assert_called_with(path_dir=path_dir, scores=False, threshold=threshold)
+
+
+def test_find_duplicates_dict(initialized_cnn_obj, mocker):
+    expected_featvec = [np.array([1, 0, 0, 1]), np.array([1, 1, 0, 1]), np.array([1, 0, 0, 1])]
+    expected_filename = {0: 'ukbench00002.jpg', 1: 'ukbench00003.jpg', 2: 'ukbench00002_dup.jpg'}
+    in_dict = {expected_filename[i]: expected_featvec[i] for i in range(len(expected_filename))}
+
+    threshold = 0.8
+    mocker.patch.object(initialized_cnn_obj, '_check_threshold_bounds')
+    mocker.patch.object(initialized_cnn_obj, '_find_duplicates_dict')
+    initialized_cnn_obj.find_duplicates(in_dict, threshold=threshold)
+    initialized_cnn_obj._check_threshold_bounds.assert_called_with(thresh=threshold)
+    initialized_cnn_obj._find_duplicates_dict.assert_called_with(dict_file_feature=in_dict, scores=False, threshold=threshold)
+
+
+def test_find_duplicates_unacceptable_input(initialized_cnn_obj):
+    with pytest.raises(TypeError):
+        initialized_cnn_obj.find_duplicates('tests/data/mixed_images')
+
+
+def test_find_duplicates_to_remove(initialized_cnn_obj, monkeypatch):
+    path_dir = Path('tests/data/mixed_images')
+
+    def mock_find_duplicates(path_or_dict=path_dir, threshold=0.8, scores=False):
+        from collections import OrderedDict
+        dict_a = OrderedDict({'1': ['2'], '2': ['1', '3'], '3': ['4'], '4': ['3'], '5': []})
+        return dict_a
+    monkeypatch.setattr(initialized_cnn_obj, 'find_duplicates', mock_find_duplicates)
+    dups_to_remove = initialized_cnn_obj.find_duplicates_to_remove(path_or_dict=path_dir)
+    assert dups_to_remove == ['2', '4']
+
