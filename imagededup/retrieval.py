@@ -23,15 +23,21 @@ class ResultSet:
             self.save_results()
 
     def fetch_query_result_brute_force(self, query) -> Dict:
+        """
+        Implements a brute force search to identify duplicates for an image
+
+        :param query: A document/image identifier denoting key of the image to be de-duplicated.
+        :return: A numpy array of processed image.
+        """
         hammer = self.hamming_distance_invoker
         candidates = self.candidates
-        return {item: hammer(query, candidates[item]) for item in candidates if hammer(query, candidates[item]) <= self.max_d}
+        queries = self.queries
+        return {item: hammer(queries[query], candidates[item]) for item in candidates if hammer(queries[query], candidates[item]) <= self.max_d}
 
     def fetch_nearest_neighbors_brute_force(self) -> None:
         self.logger.info('Start: Retrieving duplicates using Brute force algorithm')  # TODO: Add max hamming distance
-        # after it is parmatrized
         sorted_results, sorted_distances = {}, {}
-        for each in self.queries.values():
+        for each in self.queries:
             res = self.fetch_query_result_brute_force(each)
             sorted_results[each] = sorted(res, key=lambda x: res[x], reverse=False)
             sorted_distances[each] = res.values()  # REQUEST: Sort values too
@@ -45,8 +51,8 @@ class ResultSet:
         built_tree = BKTree(self.candidates, dist_func)  # construct bktree
 
         sorted_results, sorted_distances = {}, {}
-        for each in self.queries.values():
-            res = built_tree.search(each)
+        for each in self.queries:
+            res = built_tree.search(self.queries[each])
             sorted_results[each] = sorted(res, key=lambda x: res[x], reverse=False)
             sorted_distances[each] = sorted(res.values())
         self.query_results = sorted_results
