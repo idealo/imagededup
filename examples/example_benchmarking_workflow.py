@@ -32,7 +32,7 @@ if __name__ == '__main__':
     queries = ds.get_query_hashes()
     doc_mapper = ds.get_docmap()
     start = datetime.utcnow()
-    rs = ResultSet(hashes, queries, hasher.hamming_distance, search_method='brute')
+    rs = ResultSet(hashes, queries, hasher.hamming_distance)
     end = datetime.utcnow()
 
     print(f'Stage 2: SEARCH & RETRIEVAL completed in {(end-start).total_seconds()} seconds')
