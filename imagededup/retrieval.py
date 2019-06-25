@@ -51,8 +51,8 @@ class ResultSet:
         built_tree = BKTree(self.candidates, dist_func)  # construct bktree
 
         sorted_results, sorted_distances = {}, {}
-        for each in self.queries.values():
-            res = built_tree.search(each)
+        for each in self.queries:
+            res = built_tree.search(self.queries[each])
             sorted_results[each] = sorted(res, key=lambda x: res[x], reverse=False)
             sorted_distances[each] = sorted(res.values())
         self.query_results = sorted_results
