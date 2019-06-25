@@ -55,7 +55,7 @@ class BKTree:
         candidates = [k for k in candidate_children.keys() if candidate_children[k] in search_range_dist]
         return candidates, validity, dist
 
-    def search(self, query: str, tol: int = 10) -> dict:
+    def search(self, query: str, tol: int = 5) -> dict:
         valid_retrievals = {}
         candidates_local = copy.deepcopy(self.candidates)
         while len(candidates_local) != 0:
