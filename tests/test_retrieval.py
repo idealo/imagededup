@@ -102,7 +102,7 @@ def test_coseval_normalization():
     inp_arr = np.array([[1, 0], [1, 1]])
     normed_mat = CosEval.get_normalized_matrix(inp_arr)
     np.testing.assert_array_equal(normed_mat[0], inp_arr[0])
-    np.testing.assert_array_equal(normed_mat[1], inp_arr[1]/np.sqrt(2))
+    np.testing.assert_array_equal(normed_mat[1], inp_arr[1] / np.sqrt(2))
     assert normed_mat.shape == (2, 2)
 
 

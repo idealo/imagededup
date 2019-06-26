@@ -37,7 +37,6 @@ if __name__ == '__main__':
 
     print(f'Stage 2: SEARCH & RETRIEVAL completed in {(end-start).total_seconds()} seconds')
     returned_dict = rs.retrieve_results()
-    returned_dict = {doc_mapper[row]: returned_dict[row] for row in returned_dict}
     with open(GOLD_PATH, 'rb') as buf:
         correct_dict = pickle_loader(buf)
     start = datetime.utcnow()

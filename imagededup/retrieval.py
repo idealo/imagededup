@@ -27,9 +27,16 @@ class ResultSet:
             self.save_results()
 
     def fetch_query_result_brute_force(self, query) -> Dict:
+        """
+        Implements a brute force search to identify duplicates for an image
+
+        :param query: A document/image identifier denoting key of the image to be de-duplicated.
+        :return: A numpy array of processed image.
+        """
         hammer = self.hamming_distance_invoker
         candidates = self.candidates
-        return {item: hammer(query, candidates[item]) for item in candidates if hammer(query, candidates[item]) <= self.max_d}
+        queries = self.queries
+        return {item: hammer(queries[query], candidates[item]) for item in candidates if hammer(queries[query], candidates[item]) <= self.max_d}
 
     def fetch_nearest_neighbors_brute_force(self) -> None:
         """
@@ -38,11 +45,11 @@ class ResultSet:
         self.logger.info('Start: Retrieving duplicates using Brute force algorithm')  # TODO: Add max hamming distance
         # after it is parmatrized
         sorted_result_list, result_map = {}, {}
-        for each in self.queries.values():
+        for each in self.queries:
             res = self.fetch_query_result_brute_force(each)
             result_map[each] = res
             sorted_result_list[each] = sorted(res, key=lambda x: res[x], reverse=False)
-        self.query_results_map = result_map  
+        self.query_results_map = result_map
         self.query_results_list = sorted_result_list
 
     def fetch_nearest_neighbors_bktree(self) -> None:
@@ -55,11 +62,11 @@ class ResultSet:
         built_tree = BKTree(self.candidates, dist_func)  # construct bktree
 
         sorted_result_list, result_map = {}, {}
-        for each in self.queries.values():
-            res = built_tree.search(each)
+        for each in self.queries:
+            res = built_tree.search(self.queries[each])
             result_map[each] = res
             sorted_result_list[each] = sorted(res, key=lambda x: res[x], reverse=False)
-        self.query_results_map = result_map  
+        self.query_results_map = result_map
         self.query_results_list = sorted_result_list
 
     def retrieve_results(self) -> Dict:
