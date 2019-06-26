@@ -10,6 +10,10 @@ import pickle
 
 class ResultSet:
     def __init__(self, test: dict, queries: dict, hammer: FunctionType, cutoff: int = 5, search_method: str = 'bktree', save: bool = False) -> None:
+        """
+        Initializes a ResultSet object which offers an interface to control hashing and search methods for desired dataset.
+        Computes a map of duplicate images in the document space given certain input control parameters.
+        """
         self.candidates = test
         self.queries = queries
         self.hamming_distance_invoker = hammer
@@ -28,40 +32,61 @@ class ResultSet:
         return {item: hammer(query, candidates[item]) for item in candidates if hammer(query, candidates[item]) <= self.max_d}
 
     def fetch_nearest_neighbors_brute_force(self) -> None:
+        """
+        Wrapper function to retrieve results for all queries in dataset using brute-force search
+        """
         self.logger.info('Start: Retrieving duplicates using Brute force algorithm')  # TODO: Add max hamming distance
         # after it is parmatrized
-        sorted_results, sorted_distances = {}, {}
+        sorted_result_list, result_map = {}, {}
         for each in self.queries.values():
             res = self.fetch_query_result_brute_force(each)
-            sorted_results[each] = sorted(res, key=lambda x: res[x], reverse=False)
-            sorted_distances[each] = res.values()  # REQUEST: Sort values too
-        self.query_results = sorted_results  # REQUEST: Have key as filenames and not hashes
-        self.query_distances = sorted_distances  # REQUEST: Change return types from dict_values to list, also have key as filenames and not hashes
+            result_map[each] = res
+            sorted_result_list[each] = sorted(res, key=lambda x: res[x], reverse=False)
+        self.query_results_map = result_map  
+        self.query_results_list = sorted_result_list
 
     def fetch_nearest_neighbors_bktree(self) -> None:
+        """
+        Wrapper function to retrieve results for all queries in dataset using a BKTree search.
+        """
         self.logger.info('Start: Retrieving duplicates using BKTree algorithm')  # TODO: Add max hamming distance after
         # it is parmatrized
         dist_func = self.hamming_distance_invoker
         built_tree = BKTree(self.candidates, dist_func)  # construct bktree
 
-        sorted_results, sorted_distances = {}, {}
+        sorted_result_list, result_map = {}, {}
         for each in self.queries.values():
             res = built_tree.search(each)
-            sorted_results[each] = sorted(res, key=lambda x: res[x], reverse=False)
-            sorted_distances[each] = sorted(res.values())
-        self.query_results = sorted_results
-        self.query_distances = sorted_distances
+            result_map[each] = res
+            sorted_result_list[each] = sorted(res, key=lambda x: res[x], reverse=False)
+        self.query_results_map = result_map  
+        self.query_results_list = sorted_result_list
 
     def retrieve_results(self) -> Dict:
-        return self.query_results
+        """
+        Accessor function returning all results.
+
+        :return: A dictionary of dictionaries.
+        """
+        return self.query_results_map
 
     def save_results(self) -> None:
-        with open('retrieved_results_map.pkl', 'wb') as f:
-            pickle.dump(self.query_results, f)
-        return self.query_results
+        """
+        Accessor function to write results to a default path
 
-    def retrieve_distances(self) -> Dict:
-        return self.query_distances
+        :return: A dictionary of dictionaries.
+        """
+        with open('retrieved_results_map.pkl', 'wb') as f:
+            pickle.dump(self.query_results_map, f)
+        return self.query_results_map
+
+    def retrieve_result_list(self) -> Dict:
+        """
+        Accessor function returning all results.
+
+        :return: A dictionary of lists.
+        """
+        return self.query_results_list
 
 
 class CosEval:
