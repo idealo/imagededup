@@ -41,9 +41,23 @@ def test_resultset_correctness(
     }
     dummy_hasher = Hashing()
     dummy_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance, cutoff=3)
-    dummy_distances = [max(dist) for dist in dummy_result.retrieve_distances().values()]
+    res = dummy_result.retrieve_results()
+    dummy_distances = [max(res[dist].values()) for dist in res]
     print(dummy_distances)
     assert max(dummy_distances) == 3
+
+
+def test_result_consistency_across_search_methods(
+        dummy_query={'ukbench00120.jpg': '2b69707551f1b87a', 'ukbench09268.jpg': 'ac9c72f8e1c2c448'}):
+    dummy_db = {
+        'ukbench00120_hflip.jpg': '2b69f1517570e2a1',
+        'ukbench00120_resize.jpg': '2b69707551f1b87a',
+        'ukbench09268.jpg': 'ac9c72f8e1c2c448'
+    }
+    dummy_hasher = Hashing()
+    left_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance, search_method='brute_force').retrieve_results()
+    right_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance).retrieve_results()
+    assert left_result == right_result
 
 
 def test_max_hamming_threshold_not_violated(
@@ -55,14 +69,16 @@ def test_max_hamming_threshold_not_violated(
     }
     dummy_hasher = Hashing()
     dummy_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance, search_method='brute_force')
-    dummy_distances = [max(dist) for dist in dummy_result.query_distances.values()]
+    res = dummy_result.retrieve_results()
+    dummy_distances = [max(res[dist].values()) for dist in res]
     assert max(dummy_distances) < 5
 
 
 def test_identical_hash_consistency(dummy_image={'ukbench09060.jpg': 'e064ece078d7c96a'}):
     dummy_hasher = Hashing()
     dummy_result = ResultSet(dummy_image, dummy_image, dummy_hasher.hamming_distance)
-    dummy_distances = [max(dist) for dist in dummy_result.query_distances.values()]
+    res = dummy_result.retrieve_results()
+    dummy_distances = dummy_distances = [max(res[dist].values()) for dist in res]
     assert set(dummy_distances) == {0}
 
 
