@@ -161,6 +161,15 @@ def test_dhash_dir(mocker):
     hash_obj.run_hash_on_dir.assert_called_with(path_dir, hash_func)
 
 
+def test_whash_dir(mocker):
+    path_dir = Path('tests/data/base_images')
+    hash_obj = Hashing()
+    hash_func = hash_obj.whash
+    mocker.patch.object(hash_obj, 'run_hash_on_dir')
+    hash_obj.whash_dir(path_dir)
+    hash_obj.run_hash_on_dir.assert_called_with(path_dir, hash_func)
+
+
 def test_load_image_initializes_docs(path_dir=Path('tests/data/base_images')):
     dummy = Dataset(path_dir, path_dir)
     assert dummy.query_docs and dummy.test_docs
