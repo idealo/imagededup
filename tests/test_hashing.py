@@ -116,13 +116,13 @@ class TestCommon:
     def test_hash_on_dir_returns_dict(self, hash_function):
         path_dir = Path('tests/data/base_images')
         hash_obj = Hashing()
-        hash_dict = hash_obj.run_hash_on_dir(path_dir, hash_function)
+        hash_dict = hash_obj._run_hash_on_dir(path_dir, hash_function)
         assert isinstance(hash_dict, dict)
 
     def test_hash_on_dir_return_non_none_hashes(self, hash_function):
         path_dir = Path('tests/data/base_images')
         hash_obj = Hashing()
-        hash_dict = hash_obj.run_hash_on_dir(path_dir, hash_function)
+        hash_dict = hash_obj._run_hash_on_dir(path_dir, hash_function)
         for v in hash_dict.values():
             assert v is not None
 
@@ -130,7 +130,7 @@ class TestCommon:
         """There are 10 images in the directory below"""
         path_dir = Path('tests/data/base_images')
         hash_obj = Hashing()
-        hash_dict = hash_obj.run_hash_on_dir(path_dir, hash_function)
+        hash_dict = hash_obj._run_hash_on_dir(path_dir, hash_function)
         assert len(hash_dict.keys()) == 10
 
 
@@ -138,36 +138,36 @@ def test_phash_dir(mocker):
     path_dir = Path('tests/data/base_images')
     hash_obj = Hashing()
     hash_func = hash_obj.phash
-    mocker.patch.object(hash_obj, 'run_hash_on_dir')
+    mocker.patch.object(hash_obj, '_run_hash_on_dir')
     hash_obj.phash_dir(path_dir)
-    hash_obj.run_hash_on_dir.assert_called_with(path_dir, hash_func)
+    hash_obj._run_hash_on_dir.assert_called_with(path_dir, hash_func)
 
 
 def test_ahash_dir(mocker):
     path_dir = Path('tests/data/base_images')
     hash_obj = Hashing()
     hash_func = hash_obj.ahash
-    mocker.patch.object(hash_obj, 'run_hash_on_dir')
+    mocker.patch.object(hash_obj, '_run_hash_on_dir')
     hash_obj.ahash_dir(path_dir)
-    hash_obj.run_hash_on_dir.assert_called_with(path_dir, hash_func)
+    hash_obj._run_hash_on_dir.assert_called_with(path_dir, hash_func)
 
 
 def test_dhash_dir(mocker):
     path_dir = Path('tests/data/base_images')
     hash_obj = Hashing()
     hash_func = hash_obj.dhash
-    mocker.patch.object(hash_obj, 'run_hash_on_dir')
+    mocker.patch.object(hash_obj, '_run_hash_on_dir')
     hash_obj.dhash_dir(path_dir)
-    hash_obj.run_hash_on_dir.assert_called_with(path_dir, hash_func)
+    hash_obj._run_hash_on_dir.assert_called_with(path_dir, hash_func)
 
 
 def test_whash_dir(mocker):
     path_dir = Path('tests/data/base_images')
     hash_obj = Hashing()
     hash_func = hash_obj.whash
-    mocker.patch.object(hash_obj, 'run_hash_on_dir')
+    mocker.patch.object(hash_obj, '_run_hash_on_dir')
     hash_obj.whash_dir(path_dir)
-    hash_obj.run_hash_on_dir.assert_called_with(path_dir, hash_func)
+    hash_obj._run_hash_on_dir.assert_called_with(path_dir, hash_func)
 
 
 def test_load_image_initializes_docs(path_dir=Path('tests/data/base_images')):

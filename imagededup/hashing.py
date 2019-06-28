@@ -1,3 +1,4 @@
+from imagededup.retrieval import ResultSet
 import os
 import pywt
 import scipy.fftpack
@@ -5,7 +6,7 @@ import numpy as np
 from PIL import Image
 from pathlib import Path, PosixPath
 from types import FunctionType
-from typing import Tuple, Dict
+from typing import Tuple, Dict, List
 from copy import deepcopy
 """
 TODO:
@@ -18,13 +19,15 @@ Allow acceptance of os.path in addition to already existing Path and numpy image
 
 Raise TypeError if an input other than Path or numpy array is provided as input to duplicates functions. (Check Input 
 Format! Input should be either a Path Variable or a numpy array!)
+Write test for _get_hash method
+Add logging
 
 """
 
 
 class Hashing:
     def __init__(self) -> None:
-        pass
+        self.result_score = None  # {query_filename: {retrieval_filename:hamming distance, ...}, ..}
 
     @staticmethod
     def bool_to_hex(x: np.array) -> str:
@@ -37,14 +40,6 @@ class Hashing:
         hash1_bin = bin(int(hash1, 16))[2:].zfill(64)  # zfill ensures that len of hash is 64 and pads MSB if it is < A
         hash2_bin = bin(int(hash2, 16))[2:].zfill(64)
         return np.sum([i != j for i, j in zip(hash1_bin, hash2_bin)])
-
-    @staticmethod
-    def run_hash_on_dir(path_dir: Path, hashing_function: FunctionType) -> Dict:
-        filenames = [os.path.join(path_dir, i) for i in os.listdir(path_dir) if i != '.DS_Store']
-        hash_dict = dict(zip(filenames, [None] * len(filenames)))
-        for i in filenames:
-            hash_dict[i] = hashing_function(Path(i))
-        return hash_dict
 
     @staticmethod
     def _image_preprocess(pillow_image: Image, resize_dims: Tuple[int, int] = (8, 8)) -> np.ndarray:
@@ -76,7 +71,8 @@ class Hashing:
         im_arr = self._image_preprocess(im, resize_dims)
         return im_arr
 
-    def get_hash(self, hash_mat: np.array, n_blocks: int) -> str:
+    # Feature generation part
+    def _get_hash(self, hash_mat: np.array, n_blocks: int) -> str:
         calculated_hash = []
         for i in np.array_split(np.ndarray.flatten(hash_mat), n_blocks):
             calculated_hash.append(self.bool_to_hex(i))
@@ -91,22 +87,22 @@ class Hashing:
         mean_coef_val = np.mean(np.ndarray.flatten(dct_reduced_coef)[1:])  # average of coefficients excluding the DC
         # term (0th term)
         hash_mat = dct_reduced_coef >= mean_coef_val  # All coefficients greater than mean of coefficients
-        return self.get_hash(hash_mat, 16)  # 16 character output
+        return self._get_hash(hash_mat, 16)  # 16 character output
 
-    def ahash(self, path_image: Path) -> str:
+    def ahash(self, path_image: PosixPath) -> str:
         res_dims = (8, 8)
         im_gray_arr = self._convert_to_array(path_image, resize_dims=res_dims)
         avg_val = np.mean(im_gray_arr)
         hash_mat = im_gray_arr >= avg_val
-        return self.get_hash(hash_mat, 16)  # 16 character output
+        return self._get_hash(hash_mat, 16)  # 16 character output
 
-    def dhash(self, path_image: Path) -> str:
+    def dhash(self, path_image: PosixPath) -> str:
         """Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html"""
         res_dims = (9, 8)
         im_gray_arr = self._convert_to_array(path_image, resize_dims=res_dims)
         # hash_mat = im_gray_arr[:, :-1] > im_gray_arr[:, 1:]  # Calculates difference between consecutive columns
         hash_mat = im_gray_arr[:, 1:] > im_gray_arr[:, :-1]
-        return self.get_hash(hash_mat, 16)  # 16 character output
+        return self._get_hash(hash_mat, 16)  # 16 character output
 
     def whash(self, path_image: None) -> str:
         res_dims = (256, 256)
@@ -116,19 +112,144 @@ class Hashing:
 
         mean_coef_val = np.mean(np.ndarray.flatten(LL_coeff))  # average of LL coefficients
         hash_mat = LL_coeff >= mean_coef_val  # All coefficients greater than mean of coefficients
-        return self.get_hash(hash_mat, 16)  # 16 character output
+        return self._get_hash(hash_mat, 16)  # 16 character output
 
-    def phash_dir(self, path_dir: Path) -> Dict:
-        return self.run_hash_on_dir(path_dir, self.phash)
+    @staticmethod
+    def _run_hash_on_dir(path_dir: Path, hashing_function: FunctionType) -> Dict:
+        filenames = [os.path.join(path_dir, i) for i in os.listdir(path_dir) if
+                     i != '.DS_Store']  # TODO: replace with endswith
+        hash_dict = dict(zip(filenames, [None] * len(filenames)))
+        for i in filenames:
+            hash_dict[i] = hashing_function(Path(i))
+        return hash_dict  # dict_file_feature in cnn
 
-    def ahash_dir(self, path_dir: Path) -> Dict:
-        return self.run_hash_on_dir(path_dir, self.ahash)
+    def phash_dir(self, path_dir: PosixPath) -> Dict:
+        return self._run_hash_on_dir(path_dir, self.phash)
 
-    def dhash_dir(self, path_dir: Path) -> Dict:
-        return self.run_hash_on_dir(path_dir, self.dhash)
+    def ahash_dir(self, path_dir: PosixPath) -> Dict:
+        return self._run_hash_on_dir(path_dir, self.ahash)
 
-    def whash_dir(self, path_dir: Path) -> Dict:
-        return self.run_hash_on_dir(path_dir, self.whash)
+    def dhash_dir(self, path_dir: PosixPath) -> Dict:
+        return self._run_hash_on_dir(path_dir, self.dhash)
+
+    def whash_dir(self, path_dir: PosixPath) -> Dict:
+        return self._run_hash_on_dir(path_dir, self.whash)
+
+    # Search part
+
+    def _find_duplicates_dict(self, dict_file_feature: Dict[str, str], threshold: int = 10,
+                              scores: bool = False):
+        """Takes in dictionary {filename: hash string}, detects duplicates above the given hamming distance threshold
+            and returns dictionary containing key as filename and value as a list of duplicate filenames. Optionally,
+            the hamming distances could be returned instead of just duplicate file name for each query file.
+
+        :param dict_file_feature: Dictionary with keys as file names and values as hash strings for the key image file.
+        :param threshold: Cosine similarity above which retrieved duplicates are valid.
+        :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
+        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<similarity-score>, 'image1_duplicate2.jpg':<similarity-score>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<similarity-score>,..}}
+        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg']
+        'image2.jpg':['image1_duplicate1.jpg',..], ..}"""
+        rs=ResultSet(test=dict_file_feature, queries=dict_file_feature, hammer=self.hamming_distance,cutoff=threshold,
+                  search_method='bktree', save=False)
+        self.result_score = rs.retrieve_results()
+        if scores:
+            return self.result_score
+        else:
+            return rs.retrieve_result_list()
+
+    def _find_duplicates_dir(self, path_dir: PosixPath, method='phash', threshold: int = 10, scores: bool = False):
+        """Takes in path of the directory on which duplicates are to be detected above the given threshold.
+        Returns dictionary containing key as filename and value as a list of duplicate file names.
+
+        :param path_dir: PosixPath to the directory containing all the images.
+        :param threshold: Hamming distance above which retrieved duplicates are valid.
+        :param scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
+        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<ham-dist>, 'image1_duplicate2.jpg':<ham-dist>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<ham-dist>,..}}
+        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg']
+        'image2.jpg':['image1_duplicate1.jpg',..], ..}"""
+        method_dict = {'phash': self.phash_dir, 'dhash': self.dhash_dir, 'ahash': self.ahash_dir,
+                       'whash': self.whash_dir}
+        try:
+            hash_func = method_dict[method]
+        except KeyError:
+            raise Exception('Choose a correct hashing method. The available hashing methods are: phash, dhash, ahash '
+                            'and whash')
+        dict_file_feature = hash_func(path_dir)
+        dict_ret = self._find_duplicates_dict(dict_file_feature=dict_file_feature, threshold=threshold, scores=scores)
+        return dict_ret
+
+    @staticmethod
+    def _check_hamming_distance_bounds(thresh: int) -> None:
+        """
+        Checks if provided threshold is valid. Raises TypeError is wrong threshold variable type is passed or a value out
+        of range is supplied.
+
+        :param thresh: Threshold value (must be float between -1.0 and 1.0)
+        """
+
+        if not isinstance(thresh, int) or (thresh < 0 or thresh > 64):
+            raise TypeError('Threshold must be a int between 0 and 64')
+
+    def find_duplicates(self, path_or_dict, method='phash', threshold: float = 0.8, scores: bool = False):
+        """
+        Finds duplicates. Raises TypeError if supplied directory path isn't a Path variable or a valid dictionary isn't
+        supplied.
+
+        :param path_or_dict: PosixPath to the directory containing all the images or dictionary with keys as file names
+        and values as numpy arrays which represent the CNN feature for the key image file.
+        :param threshold: Threshold value (must be float between -1.0 and 1.0)
+        :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
+        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<similarity-score>, 'image1_duplicate2.jpg':<similarity-score>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<similarity-score>,..}}
+        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
+
+            Example usage:
+        ```
+        from imagededup import cnn
+        mycnn = cnn.CNN()
+        dict_ret_with_dict_inp = mycnn.find_duplicates(dict_file_feat, threshold=0.9, scores=True)
+
+        OR
+
+        from imagededup import cnn
+        mycnn = cnn.CNN()
+        dict_ret_path = mycnn.find_duplicates(Path('path/to/directory'), threshold=0.9, scores=True)
+        ```
+        """
+        self._check_hamming_distance_bounds(thresh=threshold)
+        if isinstance(path_or_dict, PosixPath):
+            dict_ret = self._find_duplicates_dir(path_dir=path_or_dict, method=method, threshold=threshold, scores=scores)
+        elif isinstance(path_or_dict, dict):
+            dict_ret = self._find_duplicates_dict(dict_file_feature=path_or_dict, threshold=threshold, scores=scores)
+        else:
+            raise TypeError('Provide either a directory path variable to deduplicate or a dictionary of filenames and '
+                            'vectors!')
+        return dict_ret
+
+    def find_duplicates_to_remove(self, path_or_dict, method='phash', threshold: int = 10) -> List:
+        """
+        Gives out a list of image file names to remove based on the similarity threshold.
+        :param path_or_dict: PosixPath to the directory containing all the images or dictionary with keys as file names
+        and values as numpy arrays which represent the CNN feature for the key image file.
+        :param threshold: Threshold value (must be float between -1.0 and 1.0)
+        :return: List of image file names that should be removed.
+
+        Example usage:
+        ```
+        from imagededup import cnn
+        mycnn = cnn.CNN()
+        list_of_files_to_remove = mycnn.find_duplicates_to_remove(Path('path/to/images/directory'), threshold=0.9)
+        ```
+        """
+
+        dict_ret = self.find_duplicates(path_or_dict=path_or_dict,  method=method, threshold=threshold, scores=False)
+        # iterate over dict_ret keys, get value for the key and delete the dict keys that are in the value list
+
+        list_of_files_to_remove = []
+
+        for k, v in dict_ret.items():
+            if k not in list_of_files_to_remove:
+                list_of_files_to_remove.extend(v)
+        return list_of_files_to_remove
 
 
 class Dataset:
@@ -162,7 +283,7 @@ class HashedDataset(Dataset):
     def get_docmap(self) -> Dict:
         return self.hash2doc
 
-    def get_hashmap(self) -> Dict:
+    def _get_hashmap(self) -> Dict:
         return self.doc2hash
 
     def get_query_hashes(self) -> Dict:
