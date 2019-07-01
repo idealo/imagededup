@@ -127,19 +127,15 @@ class Hashing:
         return hash_dict  # dict_file_feature in cnn
 
     def phash_dir(self, path_dir: PosixPath) -> Dict:
-        self.logger.info('Start: Calculating perceptual hashes!')
         return self._run_hash_on_dir(path_dir, self.phash)
 
     def ahash_dir(self, path_dir: PosixPath) -> Dict:
-        self.logger.info('Start: Calculating perceptual hashes!')
         return self._run_hash_on_dir(path_dir, self.ahash)
 
     def dhash_dir(self, path_dir: PosixPath) -> Dict:
-        self.logger.info('Start: Calculating perceptual hashes!')
         return self._run_hash_on_dir(path_dir, self.dhash)
 
     def whash_dir(self, path_dir: PosixPath) -> Dict:
-        self.logger.info('Start: Calculating perceptual hashes!')
         return self._run_hash_on_dir(path_dir, self.whash)
 
     # Search part
