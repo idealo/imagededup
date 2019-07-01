@@ -217,6 +217,10 @@ def initialized_hash_obj():
     return hashobj
 
 
+def test__get_hash(initialized_hash_obj):
+    hash_mat = np.array([1, 0, 0, 1, 0, 0, 0, 1])
+    assert initialized_hash_obj._get_hash(hash_mat, 2) == '91'
+
 def test__find_duplicates_dict_scores_true(initialized_hash_obj):
     # check correctness, check that result_score has dictionary, check return dict
 
