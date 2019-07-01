@@ -7,8 +7,9 @@ import os
 import numpy as np
 import pickle
 
-
 # Todo: Change class name ResultSet to HashEval
+
+
 class ResultSet:
     def __init__(self, test: dict, queries: dict, hammer: FunctionType, cutoff: int = 5, search_method: str = 'bktree', save: bool = False) -> None:
         """
@@ -48,6 +49,8 @@ class ResultSet:
         sorted_result_list, result_map = {}, {}
         for each in self.queries:
             res = self.fetch_query_result_brute_force(each)
+            if each in res:# to avoid self retrieval
+                res.pop(each)
             result_map[each] = res
             sorted_result_list[each] = sorted(res, key=lambda x: res[x], reverse=False)
         self.query_results_map = result_map
@@ -58,13 +61,15 @@ class ResultSet:
         Wrapper function to retrieve results for all queries in dataset using a BKTree search.
         """
         self.logger.info('Start: Retrieving duplicates using BKTree algorithm')  # TODO: Add max hamming distance after
-        # it is parmatrized
+        # it is parametrized
         dist_func = self.hamming_distance_invoker
         built_tree = BKTree(self.candidates, dist_func)  # construct bktree
 
         sorted_result_list, result_map = {}, {}
         for each in self.queries:
-            res = built_tree.search(self.queries[each])
+            res = built_tree.search(self.queries[each], tol=self.max_d)
+            if each in res:# to avoid self retrieval
+                res.pop(each)
             result_map[each] = res
             sorted_result_list[each] = sorted(res, key=lambda x: res[x], reverse=False)
         self.query_results_map = result_map

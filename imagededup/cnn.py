@@ -112,6 +112,8 @@ class CNN:
         elif isinstance(path_image, np.ndarray):
             im = path_image.astype('uint8')  # fromarray can't take float32/64
             im = Image.fromarray(im)
+        else:
+            raise TypeError('Check Input Format! Input should be either a Path Variable or a numpy array!')
         im_arr = self._image_preprocess(im)
         return im_arr
 
@@ -357,7 +359,7 @@ class CNN:
         for k, v in dict_ret.items():
             if k not in list_of_files_to_remove:
                 list_of_files_to_remove.extend(v)
-        return list_of_files_to_remove
+        return list(set(list_of_files_to_remove))
 
 
 

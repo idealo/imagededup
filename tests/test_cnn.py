@@ -50,6 +50,11 @@ def test__convert_to_array_float_array(initialized_cnn_obj, mocker):
     initialized_cnn_obj._image_preprocess.assert_called_with(expected_called)
 
 
+def test__convert_to_array_unacceptable_input(initialized_cnn_obj):
+    with pytest.raises(TypeError):
+        initialized_cnn_obj._convert_to_array('tests/data/mixed_images')
+
+
 def test__get_parent_dir(initialized_cnn_obj):
     path_dir = Path('tests/data/mixed_images')
     assert initialized_cnn_obj._get_parent_dir(path_dir) == PosixPath('tests/data')
@@ -214,5 +219,5 @@ def test_find_duplicates_to_remove(initialized_cnn_obj, monkeypatch):
         return dict_a
     monkeypatch.setattr(initialized_cnn_obj, 'find_duplicates', mock_find_duplicates)
     dups_to_remove = initialized_cnn_obj.find_duplicates_to_remove(path_or_dict=path_dir)
-    assert dups_to_remove == ['2', '4']
+    assert set(dups_to_remove) == set(['2', '4'])
 
