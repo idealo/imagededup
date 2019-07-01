@@ -2,7 +2,7 @@ from imagededup.retrieval import ResultSet
 from imagededup.hashing import Hashing
 from imagededup.retrieval import CosEval
 from mock import patch
-import os
+import os, pdb
 import numpy as np
 
 """Run from project root with: python -m pytest -vs tests/test_retrieval.py --cov=imagededup.retrieval"""
@@ -37,11 +37,13 @@ def test_resultset_correctness(
     dummy_db = {
         'ukbench00120_fake.jpg': '2b69707551f1b87d',
         'ukbench00120_resize.jpg': '2b69707551f1b87a',
-        'ukbench09268.jpg': 'ac9c72f8e1c2c448'
+        'ukbench09268_2.jpg': 'ac9c72f8e1c2c448'
     }
     dummy_hasher = Hashing()
     dummy_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance, cutoff=3)
+    # pdb.set_trace()
     res = dummy_result.retrieve_results()
+    print(res)
     dummy_distances = [max(res[dist].values()) for dist in res]
     print(dummy_distances)
     assert max(dummy_distances) == 3
@@ -55,9 +57,26 @@ def test_result_consistency_across_search_methods(
         'ukbench09268.jpg': 'ac9c72f8e1c2c448'
     }
     dummy_hasher = Hashing()
-    left_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance, search_method='brute_force').retrieve_results()
+    left_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance, search_method='brute_force')\
+        .retrieve_results()
     right_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance).retrieve_results()
     assert left_result == right_result
+
+
+def test_no_self_retrieval():
+    dummy_query = {'ukbench00120.jpg': '2b69707551f1b87a', 'ukbench09268.jpg': 'ac9c72f8e1c2c448'}
+    dummy_db = {
+    'ukbench00120_hflip.jpg': '2b69f1517570e2a1',
+    'ukbench00120_resize.jpg': '2b69707551f1b87a',
+    'ukbench09268.jpg': 'ac9c72f8e1c2c448'
+
+    }
+    dummy_hasher = Hashing()
+    brute_res = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance, search_method='brute_force') \
+        .retrieve_results()
+    bktree_res = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance).retrieve_results()
+    assert len(brute_res['ukbench09268.jpg']) == 0
+    assert len(bktree_res['ukbench09268.jpg']) == 0
 
 
 def test_max_hamming_threshold_not_violated(
@@ -65,21 +84,13 @@ def test_max_hamming_threshold_not_violated(
     dummy_db = {
         'ukbench00120_hflip.jpg': '2b69f1517570e2a1',
         'ukbench00120_resize.jpg': '2b69707551f1b87a',
-        'ukbench09268.jpg': 'ac9c72f8e1c2c448'
+        'ukbench09268_2.jpg': 'ac9c72f8e1c2c448'
     }
     dummy_hasher = Hashing()
     dummy_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance, search_method='brute_force')
     res = dummy_result.retrieve_results()
     dummy_distances = [max(res[dist].values()) for dist in res]
     assert max(dummy_distances) < 5
-
-
-def test_identical_hash_consistency(dummy_image={'ukbench09060.jpg': 'e064ece078d7c96a'}):
-    dummy_hasher = Hashing()
-    dummy_result = ResultSet(dummy_image, dummy_image, dummy_hasher.hamming_distance)
-    res = dummy_result.retrieve_results()
-    dummy_distances = dummy_distances = [max(res[dist].values()) for dist in res]
-    assert set(dummy_distances) == {0}
 
 
 def test_save_true(dummy_image={'ukbench09060.jpg': 'e064ece078d7c96a'}, dummy_file='retrieved_results_map.pkl'):

@@ -79,7 +79,6 @@ def test_if_using_numpy_floattype_works():
 
 hash_obj = Hashing()
 
-
 @pytest.mark.parametrize('hash_function', [hash_obj.phash, hash_obj.ahash, hash_obj.dhash, hash_obj.whash])
 class TestCommon:
     def test_len_hash(self, hash_function):
@@ -210,3 +209,121 @@ def test_dataset_hashmaps_veracity(path_dir=Path('tests/data/base_images'), test
     dummy_hasher = Hashing().dhash
     dummy_set = HashedDataset(dummy_hasher, path_dir, test_path)
     assert set(dummy_set.doc2hash.keys()) == set(dummy_set.hash2doc.values())
+
+
+@pytest.fixture(scope='module')
+def initialized_hash_obj():
+    hashobj = Hashing()
+    return hashobj
+
+
+def test__find_duplicates_dict_scores_true(initialized_hash_obj):
+    # check correctness, check that result_score has dictionary, check return dict
+
+    dummy_hashes = {
+        'ukbench09060.jpg': 'e064ece078d7c96a',
+        'ukbench09060_dup.jpg': 'd064ece078d7c96a',
+        'ukbench09061.jpg': 'e051ece099d7faea',
+        'ukbench09062.jpg': 'd465fd2078d8936c',
+    }
+
+    assert initialized_hash_obj.result_score is None
+
+    dict_ret = initialized_hash_obj._find_duplicates_dict(dummy_hashes, threshold=10, scores=True)
+    assert type(dict_ret['ukbench09060.jpg']) == dict
+    assert set(dict_ret['ukbench09060.jpg'].keys()) == set(['ukbench09060_dup.jpg'])
+    assert initialized_hash_obj.result_score == dict_ret
+
+
+def test__find_duplicates_dict_scores_false():
+    initialized_hash_obj = Hashing()
+    # check correctness, check that result_score has dictionary, check return dict
+
+    dummy_hashes = {
+        'ukbench09060.jpg': 'e064ece078d7c96a',
+        'ukbench09060_dup.jpg': 'd064ece078d7c96a',
+        'ukbench09061.jpg': 'e051ece099d7faea',
+        'ukbench09062.jpg': 'd465fd2078d8936c',
+    }
+
+    assert initialized_hash_obj.result_score is None
+    dict_ret = initialized_hash_obj._find_duplicates_dict(dummy_hashes, threshold=10, scores=False)
+    assert dict_ret['ukbench09060.jpg'] == ['ukbench09060_dup.jpg']
+    assert initialized_hash_obj.result_score is not None
+
+
+def test__find_duplicates_dir(initialized_hash_obj):
+    path_dir = Path('tests/data/mixed_images')
+    dict_ret = initialized_hash_obj._find_duplicates_dir(path_dir=path_dir)
+    assert dict_ret is not None
+
+
+def test__find_duplicates_dir_wrong_hashing_method_raises_error(initialized_hash_obj):
+    path_dir = Path('tests/data/mixed_images')
+    with pytest.raises(Exception):
+        initialized_hash_obj._find_duplicates_dir(path_dir=path_dir, method='hash')
+
+
+def test__check_hamming_distance_bounds_input_not_int(initialized_hash_obj):
+    with pytest.raises(TypeError):
+        initialized_hash_obj._check_hamming_distance_bounds(thresh=1.0)
+
+
+def test_find_duplicates_path(initialized_hash_obj, mocker):
+    path_dir = Path('tests/data/mixed_images')
+    threshold = 10
+    mocker.patch.object(initialized_hash_obj, '_check_hamming_distance_bounds')
+    mocker.patch.object(initialized_hash_obj, '_find_duplicates_dir')
+    initialized_hash_obj.find_duplicates(path_dir, threshold=threshold)
+    initialized_hash_obj._check_hamming_distance_bounds.assert_called_with(thresh=threshold)
+    initialized_hash_obj._find_duplicates_dir.assert_called_with(path_dir=path_dir, method='phash', scores=False, threshold=threshold)
+
+
+def test_find_duplicates_dict(initialized_hash_obj, mocker):
+    dummy_hashes = {
+        'ukbench09060.jpg': 'e064ece078d7c96a',
+        'ukbench09060_dup.jpg': 'd064ece078d7c96a',
+        'ukbench09061.jpg': 'e051ece099d7faea',
+        'ukbench09062.jpg': 'd465fd2078d8936c',
+    }
+
+    threshold = 10
+    mocker.patch.object(initialized_hash_obj, '_check_hamming_distance_bounds')
+    mocker.patch.object(initialized_hash_obj, '_find_duplicates_dict')
+    initialized_hash_obj.find_duplicates(dummy_hashes, threshold=threshold)
+    initialized_hash_obj._check_hamming_distance_bounds.assert_called_with(thresh=threshold)
+    initialized_hash_obj._find_duplicates_dict.assert_called_with(dict_file_feature=dummy_hashes, scores=False, threshold=threshold)
+
+
+def test__check_hamming_distance_bounds_input_out_of_range(initialized_hash_obj):
+    with pytest.raises(TypeError):
+        initialized_hash_obj._check_hamming_distance_bounds(thresh=65)
+
+
+def test_find_duplicates_unacceptable_input(initialized_hash_obj):
+    with pytest.raises(TypeError):
+        initialized_hash_obj.find_duplicates('tests/data/mixed_images')
+
+
+def test_retrieve_dups(initialized_hash_obj, monkeypatch):
+    def mock_find_duplicates(path_or_dict, method, threshold, scores):
+        dict_ret = {'1': ['3', '4'], '2': ['3'], '3': ['1'], '4': ['1']}
+        return dict_ret
+
+    monkeypatch.setattr(initialized_hash_obj, 'find_duplicates', mock_find_duplicates)
+    list_to_rem = initialized_hash_obj.find_duplicates_to_remove(path_or_dict=dict())
+    assert set(list_to_rem) == set(['3', '4'])
+
+
+def test_dict_dir_same_results(initialized_hash_obj):
+    path_dir = Path('tests/data/base_images')
+
+    dup_dir = initialized_hash_obj._find_duplicates_dir(path_dir=path_dir, method='phash')
+    dict_hash = initialized_hash_obj.phash_dir(path_dir)
+    dup_dict = initialized_hash_obj._find_duplicates_dict(dict_hash)
+    assert dup_dir == dup_dict
+
+
+def test__convert_to_array_unacceptable_input(initialized_hash_obj):
+    with pytest.raises(TypeError):
+        initialized_hash_obj._convert_to_array('tests/data/mixed_images')
