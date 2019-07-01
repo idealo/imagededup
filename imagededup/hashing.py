@@ -15,13 +15,11 @@ TODO:
 Wavelet hash: Zero the LL coeff, reconstruct image, then get wavelet transform
 Wavelet hash: Allow possibility of different wavelet functions
 
-Write test for _get_hash method
-
 Better image reading
 Validation of directory images
 For all: Restrict image sizes to be greater than a certain size
-Allow acceptance of os.path in addition to already existing Path and numpy image array
 Increase image input acceptance type for single images(jpg, bmp, png, jpeg, etc.)
+? Allow acceptance of os.path in addition to already existing Path and numpy image array
 
 """
 
