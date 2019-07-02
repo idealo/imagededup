@@ -77,7 +77,7 @@ class CNN:
         as input to MobileNet model. Initiates a results_score variable to None.
         """
 
-        model_full = ConvNet(include_top=True)
+        model_full = ConvNet(include_top=True)  # MobileNet pretrained on Imagenet dataset
         x = Flatten()(model_full.layers[-3].output)  # hard-coded slice at -3 (conv layer closest to output layer)
         self.model = Model(inputs=model_full.input, outputs=[x])
         self.TARGET_SIZE = (224, 224)

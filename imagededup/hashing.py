@@ -1,5 +1,6 @@
 from imagededup.retrieval import ResultSet
 from imagededup.logger import return_logger
+from imagededup.image_utils import check_directory_files, convert_to_array
 import os
 import pywt
 import scipy.fftpack
@@ -15,10 +16,6 @@ TODO:
 Wavelet hash: Zero the LL coeff, reconstruct image, then get wavelet transform
 Wavelet hash: Allow possibility of different wavelet functions
 
-Better image reading
-Validation of directory images
-For all: Restrict image sizes to be greater than a certain size
-Increase image input acceptance type for single images(jpg, bmp, png, jpeg, etc.)
 ? Allow acceptance of os.path in addition to already existing Path and numpy image array
 
 """
@@ -41,37 +38,38 @@ class Hashing:
         hash2_bin = bin(int(hash2, 16))[2:].zfill(64)
         return np.sum([i != j for i, j in zip(hash1_bin, hash2_bin)])
 
-    @staticmethod
-    def _image_preprocess(pillow_image: Image, resize_dims: Tuple[int, int] = (8, 8)) -> np.ndarray:
-        """
-        Resizes and typecasts a pillow image to numpy array.
-
-        :param pillow_image: A Pillow type image to be processed.
-        :return: A numpy array of processed image.
-        """
-
-        im_res = pillow_image.resize(resize_dims, Image.ANTIALIAS)
-        im_gray = im_res.convert('L')  # convert to grayscale (i.e., single channel)
-        im_arr = np.array(im_gray)
-        return im_arr
-
-    def _convert_to_array(self, path_image=None, resize_dims: Tuple[int, int] = (8, 8)) -> np.ndarray:
-        """
-        Accepts either path of an image or a numpy array and processes it to feed it to CNN.
-
-        :param path_image: PosixPath to the image file or Image typecast to numpy array.
-        :return: A processed image as numpy array
-        """
-
-        if isinstance(path_image, PosixPath):
-            im = Image.open(path_image)
-        elif isinstance(path_image, np.ndarray):
-            im = path_image.astype('uint8')  # fromarray can't take float32/64
-            im = Image.fromarray(im)
-        else:
-            raise TypeError('Check Input Format! Input should be either a Path Variable or a numpy array!')
-        im_arr = self._image_preprocess(im, resize_dims)
-        return im_arr
+    # @staticmethod
+    # def _image_preprocess(pillow_image: Image, resize_dims: Tuple[int, int] = (8, 8)) -> np.ndarray:
+    #     """
+    #     Resizes and typecasts a pillow image to numpy array.
+    #
+    #     :param pillow_image: A Pillow type image to be processed.
+    #     :return: A numpy array of processed image.
+    #     """
+    #
+    #     im_res = pillow_image.resize(resize_dims, Image.ANTIALIAS)
+    #     im_gray = im_res.convert('L')  # convert to grayscale (i.e., single channel)
+    #     im_arr = np.array(im_gray)
+    #     return im_arr
+    #
+    # def _convert_to_array(self, path_image=None, resize_dims: Tuple[int, int] = (8, 8)) -> np.ndarray:
+    #     """
+    #     Accepts either path of an image or a numpy array and processes it to feed it to CNN.
+    #
+    #     :param path_image: PosixPath to the image file or Image typecast to numpy array.
+    #     :return: A processed image as numpy array
+    #     """
+    #
+    #     if isinstance(path_image, PosixPath):
+    #         # im = Image.open(path_image)
+    #         im = load_valid_image(path_image=path_image, load=True)
+    #     elif isinstance(path_image, np.ndarray):
+    #         im = path_image.astype('uint8')  # fromarray can't take float32/64
+    #         im = Image.fromarray(im)
+    #     else:
+    #         raise TypeError('Check Input Format! Input should be either a Path Variable or a numpy array!')
+    #     im_arr = self._image_preprocess(im, resize_dims)
+    #     return im_arr
 
     # Feature generation part
     def _get_hash(self, hash_mat: np.array, n_blocks: int) -> str:
@@ -83,7 +81,8 @@ class Hashing:
     def phash(self, path_image: None) -> str:
         """Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html"""
         res_dims = (32, 32)
-        im_gray_arr = self._convert_to_array(path_image, resize_dims=res_dims)
+        im_gray_arr = convert_to_array(path_image, resize_dims=res_dims, hashmethod=False)
+        # im_gray_arr = self._convert_to_array(path_image, resize_dims=res_dims)
         dct_coef = scipy.fftpack.dct(scipy.fftpack.dct(im_gray_arr, axis=0), axis=1)
         dct_reduced_coef = dct_coef[:8, :8]  # retain top left 8 by 8 dct coefficients
         mean_coef_val = np.mean(np.ndarray.flatten(dct_reduced_coef)[1:])  # average of coefficients excluding the DC
@@ -93,7 +92,7 @@ class Hashing:
 
     def ahash(self, path_image: PosixPath) -> str:
         res_dims = (8, 8)
-        im_gray_arr = self._convert_to_array(path_image, resize_dims=res_dims)
+        im_gray_arr = convert_to_array(path_image, resize_dims=res_dims)
         avg_val = np.mean(im_gray_arr)
         hash_mat = im_gray_arr >= avg_val
         return self._get_hash(hash_mat, 16)  # 16 character output
@@ -101,14 +100,14 @@ class Hashing:
     def dhash(self, path_image: PosixPath) -> str:
         """Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html"""
         res_dims = (9, 8)
-        im_gray_arr = self._convert_to_array(path_image, resize_dims=res_dims)
+        im_gray_arr = convert_to_array(path_image, resize_dims=res_dims)
         # hash_mat = im_gray_arr[:, :-1] > im_gray_arr[:, 1:]  # Calculates difference between consecutive columns
         hash_mat = im_gray_arr[:, 1:] > im_gray_arr[:, :-1]
         return self._get_hash(hash_mat, 16)  # 16 character output
 
     def whash(self, path_image: None) -> str:
         res_dims = (256, 256)
-        im_gray_arr = self._convert_to_array(path_image, resize_dims=res_dims)
+        im_gray_arr = convert_to_array(path_image, resize_dims=res_dims)
         coeffs = pywt.wavedec2(im_gray_arr, 'haar', level=5)  # decomposition level set to 5 to get 8 by 8 hash matrix
         LL_coeff = coeffs[0]
 
@@ -117,6 +116,7 @@ class Hashing:
         return self._get_hash(hash_mat, 16)  # 16 character output
 
     def _run_hash_on_dir(self, path_dir: Path, hashing_function: FunctionType) -> Dict:
+        check_directory_files(path_dir)
         self.logger.info(f'Start: Calculating hashes using {hashing_function}!')
         filenames = [os.path.join(path_dir, i) for i in os.listdir(path_dir) if
                      i != '.DS_Store']  # TODO: replace with endswith
