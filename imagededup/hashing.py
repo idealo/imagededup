@@ -8,8 +8,9 @@ import numpy as np
 from PIL import Image
 from pathlib import Path, PosixPath
 from types import FunctionType
-from typing import Tuple, Dict, List
+from typing import Dict, List
 from copy import deepcopy
+
 """
 TODO:
 
@@ -38,39 +39,6 @@ class Hashing:
         hash2_bin = bin(int(hash2, 16))[2:].zfill(64)
         return np.sum([i != j for i, j in zip(hash1_bin, hash2_bin)])
 
-    # @staticmethod
-    # def _image_preprocess(pillow_image: Image, resize_dims: Tuple[int, int] = (8, 8)) -> np.ndarray:
-    #     """
-    #     Resizes and typecasts a pillow image to numpy array.
-    #
-    #     :param pillow_image: A Pillow type image to be processed.
-    #     :return: A numpy array of processed image.
-    #     """
-    #
-    #     im_res = pillow_image.resize(resize_dims, Image.ANTIALIAS)
-    #     im_gray = im_res.convert('L')  # convert to grayscale (i.e., single channel)
-    #     im_arr = np.array(im_gray)
-    #     return im_arr
-    #
-    # def _convert_to_array(self, path_image=None, resize_dims: Tuple[int, int] = (8, 8)) -> np.ndarray:
-    #     """
-    #     Accepts either path of an image or a numpy array and processes it to feed it to CNN.
-    #
-    #     :param path_image: PosixPath to the image file or Image typecast to numpy array.
-    #     :return: A processed image as numpy array
-    #     """
-    #
-    #     if isinstance(path_image, PosixPath):
-    #         # im = Image.open(path_image)
-    #         im = load_valid_image(path_image=path_image, load=True)
-    #     elif isinstance(path_image, np.ndarray):
-    #         im = path_image.astype('uint8')  # fromarray can't take float32/64
-    #         im = Image.fromarray(im)
-    #     else:
-    #         raise TypeError('Check Input Format! Input should be either a Path Variable or a numpy array!')
-    #     im_arr = self._image_preprocess(im, resize_dims)
-    #     return im_arr
-
     # Feature generation part
     def _get_hash(self, hash_mat: np.array, n_blocks: int) -> str:
         calculated_hash = []
@@ -81,7 +49,7 @@ class Hashing:
     def phash(self, path_image: None) -> str:
         """Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html"""
         res_dims = (32, 32)
-        im_gray_arr = convert_to_array(path_image, resize_dims=res_dims, hashmethod=False)
+        im_gray_arr = convert_to_array(path_image, resize_dims=res_dims, for_hashing=True)
         # im_gray_arr = self._convert_to_array(path_image, resize_dims=res_dims)
         dct_coef = scipy.fftpack.dct(scipy.fftpack.dct(im_gray_arr, axis=0), axis=1)
         dct_reduced_coef = dct_coef[:8, :8]  # retain top left 8 by 8 dct coefficients
@@ -92,7 +60,7 @@ class Hashing:
 
     def ahash(self, path_image: PosixPath) -> str:
         res_dims = (8, 8)
-        im_gray_arr = convert_to_array(path_image, resize_dims=res_dims)
+        im_gray_arr = convert_to_array(path_image, resize_dims=res_dims, for_hashing=True)
         avg_val = np.mean(im_gray_arr)
         hash_mat = im_gray_arr >= avg_val
         return self._get_hash(hash_mat, 16)  # 16 character output
@@ -100,14 +68,14 @@ class Hashing:
     def dhash(self, path_image: PosixPath) -> str:
         """Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html"""
         res_dims = (9, 8)
-        im_gray_arr = convert_to_array(path_image, resize_dims=res_dims)
+        im_gray_arr = convert_to_array(path_image, resize_dims=res_dims, for_hashing=True)
         # hash_mat = im_gray_arr[:, :-1] > im_gray_arr[:, 1:]  # Calculates difference between consecutive columns
         hash_mat = im_gray_arr[:, 1:] > im_gray_arr[:, :-1]
         return self._get_hash(hash_mat, 16)  # 16 character output
 
     def whash(self, path_image: None) -> str:
         res_dims = (256, 256)
-        im_gray_arr = convert_to_array(path_image, resize_dims=res_dims)
+        im_gray_arr = convert_to_array(path_image, resize_dims=res_dims, for_hashing=True)
         coeffs = pywt.wavedec2(im_gray_arr, 'haar', level=5)  # decomposition level set to 5 to get 8 by 8 hash matrix
         LL_coeff = coeffs[0]
 

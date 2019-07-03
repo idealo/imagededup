@@ -1,4 +1,5 @@
 from imagededup.retrieval import CosEval
+from imagededup.image_utils import check_directory_files, convert_to_array
 from imagededup.logger import return_logger
 from keras.models import Model
 from keras.applications import MobileNet as ConvNet
@@ -7,11 +8,9 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Flatten
 from pathlib import PosixPath
 from typing import Tuple, Dict, List
-from PIL import Image
 import os
 import numpy as np
 
-# TODO: check whether a valid path is given as input at every function
 # TODO: Add options for making CNN forward pass quicker. (in _generator)
 
 
@@ -87,36 +86,6 @@ class CNN:
                          'to o/p layer')
         self.result_score = None  # {query_filename: {retrieval_filename:score, ...}, ..}
 
-    def _image_preprocess(self, pillow_image: Image) -> np.ndarray:
-        """
-        Resizes and typecasts a pillow image to numpy array.
-
-        :param pillow_image: A Pillow type image to be processed.
-        :return: A numpy array of processed image.
-        """
-
-        im_res = pillow_image.resize(self.TARGET_SIZE)
-        im_arr = np.array(im_res)
-        return im_arr
-
-    def _convert_to_array(self, path_image=None) -> np.ndarray:
-        """
-        Accepts either path of an image or a numpy array and processes it to feed it to CNN.
-
-        :param path_image: PosixPath to the image file or Image typecast to numpy array.
-        :return: A processed image as numpy array
-        """
-
-        if isinstance(path_image, PosixPath):
-            im = Image.open(path_image)
-        elif isinstance(path_image, np.ndarray):
-            im = path_image.astype('uint8')  # fromarray can't take float32/64
-            im = Image.fromarray(im)
-        else:
-            raise TypeError('Check Input Format! Input should be either a Path Variable or a numpy array!')
-        im_arr = self._image_preprocess(im)
-        return im_arr
-
     def cnn_image(self, path_image: str) -> np.ndarray:
         """
         Generates CNN features for a single image.
@@ -131,8 +100,8 @@ class CNN:
         feature_vector = mycnn.cnn_image(Path('path/to/image.jpg'))
         ```
         """
-
-        im_arr = self._convert_to_array(path_image)
+        im_arr = convert_to_array(path_image, resize_dims=self.TARGET_SIZE, for_hashing=False)
+        # im_arr = self._convert_to_array(path_image)
         im_arr_proc = preprocess_input(im_arr)
         im_arr_shaped = np.array(im_arr_proc)[np.newaxis, :]
         return self.model.predict(im_arr_shaped)
@@ -199,7 +168,7 @@ class CNN:
         dict_file_feat = mycnn.cnn_dir(Path('path/to/directory'))
         ```
         """
-
+        check_directory_files(path_dir)
         self.logger.info('Start: Image feature generation')
         image_generator = self._generator(path_dir)
         feat_vec = self.model.predict_generator(image_generator, len(image_generator), verbose=1)
