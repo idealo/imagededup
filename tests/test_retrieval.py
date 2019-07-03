@@ -1,4 +1,4 @@
-from imagededup.retrieval import ResultSet
+from imagededup.retrieval import HashEval
 from imagededup.hashing import Hashing
 from imagededup.retrieval import CosEval
 from mock import patch
@@ -10,13 +10,13 @@ import numpy as np
 
 def test_resultset_initialization(dummy_image={'ukbench09060.jpg': 'e064ece078d7c96a'}):
     dummy_hasher = Hashing()
-    dummy_result = ResultSet(dummy_image, dummy_image, dummy_hasher.hamming_distance)
+    dummy_result = HashEval(dummy_image, dummy_image, dummy_hasher.hamming_distance)
     assert dummy_result.queries and dummy_result.candidates
 
 
 def test_invoker_initialization(dummy_image={'ukbench09060.jpg': 'e064ece078d7c96a'}):
     dummy_hasher = Hashing()
-    dummy_result = ResultSet(dummy_image, dummy_image, dummy_hasher.hamming_distance)
+    dummy_result = HashEval(dummy_image, dummy_image, dummy_hasher.hamming_distance)
     assert dummy_result.hamming_distance_invoker('e064ece078d7c96a', 'a064ece078d7c96e') == 2
 
 
@@ -28,7 +28,7 @@ def test_resultset_completeness(
         'ukbench09268.jpg': 'ac9c72f8e1c2c448'
     }
     dummy_hasher = Hashing()
-    dummy_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance)
+    dummy_result = HashEval(dummy_db, dummy_query, dummy_hasher.hamming_distance)
     assert len(dummy_result.retrieve_results()) == len(dummy_query)
 
 
@@ -40,7 +40,7 @@ def test_resultset_correctness(
         'ukbench09268_2.jpg': 'ac9c72f8e1c2c448'
     }
     dummy_hasher = Hashing()
-    dummy_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance, cutoff=3)
+    dummy_result = HashEval(dummy_db, dummy_query, dummy_hasher.hamming_distance, cutoff=3)
     # pdb.set_trace()
     res = dummy_result.retrieve_results()
     print(res)
@@ -57,9 +57,9 @@ def test_result_consistency_across_search_methods(
         'ukbench09268.jpg': 'ac9c72f8e1c2c448'
     }
     dummy_hasher = Hashing()
-    left_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance, search_method='brute_force')\
+    left_result = HashEval(dummy_db, dummy_query, dummy_hasher.hamming_distance, search_method='brute_force')\
         .retrieve_results()
-    right_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance).retrieve_results()
+    right_result = HashEval(dummy_db, dummy_query, dummy_hasher.hamming_distance).retrieve_results()
     assert left_result == right_result
 
 
@@ -72,9 +72,9 @@ def test_no_self_retrieval():
 
     }
     dummy_hasher = Hashing()
-    brute_res = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance, search_method='brute_force') \
+    brute_res = HashEval(dummy_db, dummy_query, dummy_hasher.hamming_distance, search_method='brute_force') \
         .retrieve_results()
-    bktree_res = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance).retrieve_results()
+    bktree_res = HashEval(dummy_db, dummy_query, dummy_hasher.hamming_distance).retrieve_results()
     assert len(brute_res['ukbench09268.jpg']) == 0
     assert len(bktree_res['ukbench09268.jpg']) == 0
 
@@ -87,7 +87,7 @@ def test_max_hamming_threshold_not_violated(
         'ukbench09268_2.jpg': 'ac9c72f8e1c2c448'
     }
     dummy_hasher = Hashing()
-    dummy_result = ResultSet(dummy_db, dummy_query, dummy_hasher.hamming_distance, search_method='brute_force')
+    dummy_result = HashEval(dummy_db, dummy_query, dummy_hasher.hamming_distance, search_method='brute_force')
     res = dummy_result.retrieve_results()
     dummy_distances = [max(res[dist].values()) for dist in res]
     assert max(dummy_distances) < 5
@@ -97,7 +97,7 @@ def test_save_true(dummy_image={'ukbench09060.jpg': 'e064ece078d7c96a'}, dummy_f
     if os.path.exists(dummy_file):
         os.remove(dummy_file)
     dummy_hasher = Hashing()
-    _ = ResultSet(dummy_image, dummy_image, dummy_hasher.hamming_distance, save=True)
+    _ = HashEval(dummy_image, dummy_image, dummy_hasher.hamming_distance, save=True)
     assert os.path.exists(dummy_file)
 
 
@@ -105,7 +105,7 @@ def test_save_false(dummy_image={'ukbench09060.jpg': 'e064ece078d7c96a'}, dummy_
     if os.path.exists(dummy_file):
         os.remove(dummy_file)
     dummy_hasher = Hashing()
-    _ = ResultSet(dummy_image, dummy_image, dummy_hasher.hamming_distance)
+    _ = HashEval(dummy_image, dummy_image, dummy_hasher.hamming_distance)
     assert not os.path.exists(dummy_file)
 
 

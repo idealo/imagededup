@@ -1,6 +1,6 @@
 from imagededup.hashing import Hashing, HashedDataset
 from imagededup.bktree import BKTree
-from imagededup.retrieval import ResultSet
+from imagededup.retrieval import HashEval
 from imagededup.evaluation import EvalPerformance
 from pickle import load as pickle_loader
 import pickle
@@ -23,7 +23,7 @@ if __name__ == '__main__':
     queries = ds.get_query_hashes()
     doc_mapper = ds.get_docmap()
     start = datetime.utcnow()
-    rs = ResultSet(hashes, queries, hasher.hamming_distance)
+    rs = HashEval(hashes, queries, hasher.hamming_distance)
     end = datetime.utcnow()
 
     print(f'Stage 2: SEARCH & RETRIEVAL completed in {(end - start).total_seconds()} seconds')

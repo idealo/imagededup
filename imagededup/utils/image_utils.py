@@ -9,6 +9,7 @@ from typing import Tuple
 Todo:
 1. parallelize files validation
 2. Add possibilities to ignore invalid directory images and still run hashes and cnn feat gen
+3. ? save invalid images to a file
 """
 
 
@@ -36,8 +37,8 @@ def _validate_single_image(path_image: PosixPath):
     return 1  # returns 1 if validation successful
 
 
-def check_directory_files(path_dir: PosixPath):
-    """Checks if all files in path_dir are valid images.
+def check_directory_files(path_dir: PosixPath, return_file=False):
+    """Checks if all files in path_dir are valid images and return valid files if return_file set to True
     """
 
     files = [Path(i.absolute()) for i in path_dir.glob('*') if not i.name.startswith('.')]  # ignore hidden files
@@ -51,6 +52,8 @@ def check_directory_files(path_dir: PosixPath):
             
     if len(invalid_image_files) != 0:
         raise Exception(f'Please remove the following invalid files to run deduplication: {invalid_image_files}')
+    if return_file:
+        return files  # The logic reaches here only if there are no invalid files
 
 
 def _image_preprocess(pillow_image: Image, resize_dims: Tuple[int, int], for_hashing: bool = True) -> np.ndarray:
