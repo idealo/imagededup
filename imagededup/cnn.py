@@ -1,5 +1,6 @@
 from imagededup.retrieval import CosEval
-from imagededup.image_utils import check_directory_files, convert_to_array
+from imagededup.utils.image_utils import check_directory_files, convert_to_array
+from imagededup.utils.general_utils import get_files_to_remove
 from imagededup.logger import return_logger
 from keras.models import Model
 from keras.applications import MobileNet as ConvNet
@@ -101,7 +102,6 @@ class CNN:
         ```
         """
         im_arr = convert_to_array(path_image, resize_dims=self.TARGET_SIZE, for_hashing=False)
-        # im_arr = self._convert_to_array(path_image)
         im_arr_proc = preprocess_input(im_arr)
         im_arr_shaped = np.array(im_arr_proc)[np.newaxis, :]
         return self.model.predict(im_arr_shaped)
@@ -168,7 +168,7 @@ class CNN:
         dict_file_feat = mycnn.cnn_dir(Path('path/to/directory'))
         ```
         """
-        check_directory_files(path_dir)
+        check_directory_files(path_dir, return_file=False)
         self.logger.info('Start: Image feature generation')
         image_generator = self._generator(path_dir)
         feat_vec = self.model.predict_generator(image_generator, len(image_generator), verbose=1)
@@ -321,14 +321,15 @@ class CNN:
         """
 
         dict_ret = self.find_duplicates(path_or_dict=path_or_dict, threshold=threshold, scores=False)
-        # iterate over dict_ret keys, get value for the key and delete the dict keys that are in the value list
-
-        list_of_files_to_remove = []
-
-        for k, v in dict_ret.items():
-            if k not in list_of_files_to_remove:
-                list_of_files_to_remove.extend(v)
-        return list(set(list_of_files_to_remove))
+        return get_files_to_remove(dict_ret)
+        # # iterate over dict_ret keys, get value for the key and delete the dict keys that are in the value list
+        #
+        # list_of_files_to_remove = []
+        #
+        # for k, v in dict_ret.items():
+        #     if k not in list_of_files_to_remove:
+        #         list_of_files_to_remove.extend(v)
+        # return list(set(list_of_files_to_remove))
 
 
 

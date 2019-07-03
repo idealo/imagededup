@@ -1,6 +1,7 @@
-from imagededup.retrieval import ResultSet
+from imagededup.retrieval import HashEval
 from imagededup.logger import return_logger
-from imagededup.image_utils import check_directory_files, convert_to_array
+from imagededup.utils.image_utils import check_directory_files, convert_to_array
+from imagededup.utils.general_utils import get_files_to_remove
 import os
 import pywt
 import scipy.fftpack
@@ -13,11 +14,8 @@ from copy import deepcopy
 
 """
 TODO:
-
 Wavelet hash: Zero the LL coeff, reconstruct image, then get wavelet transform
 Wavelet hash: Allow possibility of different wavelet functions
-
-? Allow acceptance of os.path in addition to already existing Path and numpy image array
 
 """
 
@@ -84,10 +82,8 @@ class Hashing:
         return self._get_hash(hash_mat, 16)  # 16 character output
 
     def _run_hash_on_dir(self, path_dir: Path, hashing_function: FunctionType) -> Dict:
-        check_directory_files(path_dir)
+        filenames = check_directory_files(path_dir, return_file=True)
         self.logger.info(f'Start: Calculating hashes using {hashing_function}!')
-        filenames = [os.path.join(path_dir, i) for i in os.listdir(path_dir) if
-                     i != '.DS_Store']  # TODO: replace with endswith
         hash_dict = dict(zip(filenames, [None] * len(filenames)))
         for i in filenames:
             hash_dict[i] = hashing_function(Path(i))
@@ -122,8 +118,8 @@ class Hashing:
         'image2.jpg':['image1_duplicate1.jpg',..], ..}"""
 
         self.logger.info('Start: Evaluating hamming distances for getting duplicates')
-        rs = ResultSet(test=dict_file_feature, queries=dict_file_feature, hammer=self.hamming_distance,
-                       cutoff=threshold, search_method='bktree', save=False)
+        rs = HashEval(test=dict_file_feature, queries=dict_file_feature, hammer=self.hamming_distance,
+                      cutoff=threshold, search_method='bktree', save=False)
         self.logger.info('End: Evaluating hamming distances for getting duplicates')
         self.result_score = rs.retrieve_results()
         if scores:
@@ -224,14 +220,14 @@ class Hashing:
         """
 
         dict_ret = self.find_duplicates(path_or_dict=path_or_dict,  method=method, threshold=threshold, scores=False)
-        # iterate over dict_ret keys, get value for the key and delete the dict keys that are in the value list
-
-        list_of_files_to_remove = []
-
-        for k, v in dict_ret.items():
-            if k not in list_of_files_to_remove:
-                list_of_files_to_remove.extend(v)
-        return list(set(list_of_files_to_remove)) # set to remove duplicates
+        return get_files_to_remove(dict_ret)
+        #
+        # list_of_files_to_remove = []
+        #
+        # for k, v in dict_ret.items():
+        #     if k not in list_of_files_to_remove:
+        #         list_of_files_to_remove.extend(v)
+        # return list(set(list_of_files_to_remove))  # set to remove duplicates
 
 
 class Dataset:

@@ -7,13 +7,12 @@ import os
 import numpy as np
 import pickle
 
-# Todo: Change class name ResultSet to HashEval
 
-
-class ResultSet:
-    def __init__(self, test: dict, queries: dict, hammer: FunctionType, cutoff: int = 5, search_method: str = 'bktree', save: bool = False) -> None:
+class HashEval:
+    def __init__(self, test: dict, queries: dict, hammer: FunctionType, cutoff: int = 5, search_method: str = 'bktree',
+                 save: bool = False) -> None:
         """
-        Initializes a ResultSet object which offers an interface to control hashing and search methods for desired dataset.
+        Initializes a HashEval object which offers an interface to control hashing and search methods for desired dataset.
         Computes a map of duplicate images in the document space given certain input control parameters.
         """
         self.candidates = test
