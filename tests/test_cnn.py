@@ -1,7 +1,10 @@
 from imagededup import cnn
+from imagededup import utils
 from pathlib import Path
 from PIL import Image
 from pathlib import PosixPath
+from mock import patch
+import mock
 import pytest
 import numpy as np
 
@@ -202,7 +205,8 @@ def test_find_duplicates_dict(initialized_cnn_obj, mocker):
     mocker.patch.object(initialized_cnn_obj, '_find_duplicates_dict')
     initialized_cnn_obj.find_duplicates(in_dict, threshold=threshold)
     initialized_cnn_obj._check_threshold_bounds.assert_called_with(thresh=threshold)
-    initialized_cnn_obj._find_duplicates_dict.assert_called_with(dict_file_feature=in_dict, scores=False, threshold=threshold)
+    initialized_cnn_obj._find_duplicates_dict.assert_called_with(dict_file_feature=in_dict, scores=False,
+                                                                 threshold=threshold)
 
 
 def test_find_duplicates_unacceptable_input(initialized_cnn_obj):
@@ -210,14 +214,10 @@ def test_find_duplicates_unacceptable_input(initialized_cnn_obj):
         initialized_cnn_obj.find_duplicates('tests/data/mixed_images')
 
 
-def test_find_duplicates_to_remove(initialized_cnn_obj, monkeypatch):
-    path_dir = Path('tests/data/mixed_images')
+# def test_find_duplicates_to_remove(initialized_cnn_obj, mocker):
+#     path_dir = Path('tests/data/mixed_images')
+#     mocker.patch.object(utils.general_utils, 'get_files_to_remove')
+#     initialized_cnn_obj.find_duplicates_to_remove(path_dir)
+#     assert utils.general_utils.get_files_to_remove.assert_called()
 
-    def mock_find_duplicates(path_or_dict=path_dir, threshold=0.8, scores=False):
-        from collections import OrderedDict
-        dict_a = OrderedDict({'1': ['2'], '2': ['1', '3'], '3': ['4'], '4': ['3'], '5': []})
-        return dict_a
-    monkeypatch.setattr(initialized_cnn_obj, 'find_duplicates', mock_find_duplicates)
-    dups_to_remove = initialized_cnn_obj.find_duplicates_to_remove(path_or_dict=path_dir)
-    assert set(dups_to_remove) == set(['2', '4'])
 
