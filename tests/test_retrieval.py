@@ -117,7 +117,7 @@ def test_coseval_normalization():
     assert normed_mat.shape == (2, 2)
 
 
-@patch('imagededup.retrieval.CosEval._normalize_vector_matrices')
+@patch('imagededup.retrieve.retrieval.CosEval._normalize_vector_matrices')
 def test_normalize_vector_matrices(mocker):
     inp_arr_1 = np.array([[1, 0], [1, 1]])
     inp_arr_2 = np.array([[1, 0], [1, 1]])
