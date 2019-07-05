@@ -1,6 +1,6 @@
 import copy
 from types import FunctionType
-from typing import Tuple
+from typing import Tuple, Dict
 
 # Implementation reference: https://signal-to-noise.xyz/post/bk-tree/
 
@@ -14,8 +14,8 @@ class BkTreeNode:
 
 
 class BKTree:
-    def __init__(self, hash_dict: dict, distance_function: FunctionType) -> None:
-        self.hash_dict = hash_dict
+    def __init__(self, hash_dict: Dict, distance_function: FunctionType) -> None:
+        self.hash_dict = hash_dict  # database
         self.distance_function = distance_function
         self.all_keys = list(self.hash_dict.keys())
         self.ROOT = self.all_keys[0]
@@ -55,7 +55,13 @@ class BKTree:
         candidates = [k for k in candidate_children.keys() if candidate_children[k] in search_range_dist]
         return candidates, validity, dist
 
-    def search(self, query: str, tol: int = 5) -> dict:
+    def search(self, query: str, tol: int = 5) -> Dict:
+        """
+        Function to search the bktree given a hash of the query image
+        :param query: hash string
+        :param tol: distance upto which duplicate is valid
+        :return: {valid_retrieval_filename: distance, ...}
+        """
         valid_retrievals = {}
         candidates_local = copy.deepcopy(self.candidates)
         while len(candidates_local) != 0:

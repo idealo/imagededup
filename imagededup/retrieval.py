@@ -1,4 +1,5 @@
 from imagededup.bktree import BKTree
+from imagededup.brute_force import BruteForce
 from imagededup.logger import return_logger
 from types import FunctionType
 from numpy.linalg import norm
@@ -9,35 +10,34 @@ import pickle
 
 
 class HashEval:
-    def __init__(self, test: dict, queries: dict, hammer: FunctionType, cutoff: int = 5, search_method: str = 'bktree',
+    def __init__(self, test: Dict, queries: Dict, hammer: FunctionType, cutoff: int = 5, search_method: str = 'bktree',
                  save: bool = False) -> None:
         """
-        Initializes a HashEval object which offers an interface to control hashing and search methods for desired dataset.
-        Computes a map of duplicate images in the document space given certain input control parameters.
+        Initializes a HashEval object which offers an interface to control hashing and search methods for desired
+        dataset. Computes a map of duplicate images in the document space given certain input control parameters.
         """
-        self.candidates = test
+        self.candidates = test  # database
         self.queries = queries
         self.hamming_distance_invoker = hammer
         self.max_d = cutoff
         self.logger = return_logger(__name__, os.getcwd())
         if search_method == 'bktree':
-            self.fetch_nearest_neighbors_bktree()  # Keep bktree as the default search method instead of brute force
+            self.fetch_nearest_neighbors_bktree()  # bktree is the default search method
         else:
             self.fetch_nearest_neighbors_brute_force()
         if save:
             self.save_results()
 
-    def fetch_query_result_brute_force(self, query) -> Dict:
-        """
-        Implements a brute force search to identify duplicates for an image
-
-        :param query: A document/image identifier denoting key of the image to be de-duplicated.
-        :return: A numpy array of processed image.
-        """
-        hammer = self.hamming_distance_invoker
-        candidates = self.candidates
-        queries = self.queries
-        return {item: hammer(queries[query], candidates[item]) for item in candidates if hammer(queries[query], candidates[item]) <= self.max_d}
+    def _get_query_results(self, search_method_object):
+        sorted_result_list, result_map = {}, {}
+        for each in self.queries:
+            res = search_method_object.search(query=self.queries[each], tol=self.max_d)
+            if each in res:  # to avoid self retrieval
+                res.pop(each)
+            result_map[each] = res
+            sorted_result_list[each] = sorted(res, key=lambda x: res[x], reverse=False)
+        self.query_results_map = result_map
+        self.query_results_list = sorted_result_list
 
     def fetch_nearest_neighbors_brute_force(self) -> None:
         """
@@ -45,15 +45,9 @@ class HashEval:
         """
         self.logger.info('Start: Retrieving duplicates using Brute force algorithm')  # TODO: Add max hamming distance
         # after it is parmatrized
-        sorted_result_list, result_map = {}, {}
-        for each in self.queries:
-            res = self.fetch_query_result_brute_force(each)
-            if each in res: # to avoid self retrieval
-                res.pop(each)
-            result_map[each] = res
-            sorted_result_list[each] = sorted(res, key=lambda x: res[x], reverse=False)
-        self.query_results_map = result_map
-        self.query_results_list = sorted_result_list
+
+        bruteforce = BruteForce(self.candidates, self.hamming_distance_invoker)
+        self._get_query_results(bruteforce)
 
     def fetch_nearest_neighbors_bktree(self) -> None:
         """
@@ -61,18 +55,8 @@ class HashEval:
         """
         self.logger.info('Start: Retrieving duplicates using BKTree algorithm')  # TODO: Add max hamming distance after
         # it is parametrized
-        dist_func = self.hamming_distance_invoker
-        built_tree = BKTree(self.candidates, dist_func)  # construct bktree
-
-        sorted_result_list, result_map = {}, {}
-        for each in self.queries:
-            res = built_tree.search(self.queries[each], tol=self.max_d)
-            if each in res: # to avoid self retrieval
-                res.pop(each)
-            result_map[each] = res
-            sorted_result_list[each] = sorted(res, key=lambda x: res[x], reverse=False)
-        self.query_results_map = result_map
-        self.query_results_list = sorted_result_list
+        built_tree = BKTree(self.candidates, self.hamming_distance_invoker)  # construct bktree
+        self._get_query_results(built_tree)
 
     def retrieve_results(self) -> Dict:
         """

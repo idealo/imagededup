@@ -2,7 +2,7 @@ from imagededup.retrieval import HashEval
 from imagededup.hashing import Hashing
 from imagededup.retrieval import CosEval
 from mock import patch
-import os, pdb
+import os
 import numpy as np
 
 """Run from project root with: python -m pytest -vs tests/test_retrieval.py --cov=imagededup.retrieval"""
