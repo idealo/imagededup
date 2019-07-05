@@ -1,5 +1,5 @@
 from imagededup.hashing import Hashing, HashedDataset
-from imagededup.retrieval import HashEval
+from imagededup.retrieve.retrieval import HashEval
 from imagededup.evaluation import EvalPerformance
 from pickle import load as pickle_loader
 from datetime import datetime

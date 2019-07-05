@@ -1,12 +1,8 @@
 from imagededup.hashing import Hashing, HashedDataset
-from imagededup.bktree import BKTree
-from imagededup.retrieval import HashEval
+from imagededup.retrieve.retrieval import HashEval
 from imagededup.evaluation import EvalPerformance
 from pickle import load as pickle_loader
-import pickle
 from datetime import datetime
-import time
-
 
 QUERY_PATH = '/Users/tanuj.jain/Documents/dedup-data/Transformed_dataset/Query'
 TEST_PATH = '/Users/tanuj.jain/Documents/dedup-data/Transformed_dataset/Retrieval'

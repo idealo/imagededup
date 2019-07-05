@@ -1,4 +1,4 @@
-from imagededup.retrieval import CosEval
+from imagededup.retrieve.retrieval import CosEval
 from imagededup.utils.image_utils import check_directory_files, convert_to_array
 from imagededup.utils.general_utils import get_files_to_remove
 from imagededup.logger import return_logger
