@@ -153,14 +153,14 @@ class Hashing:
     @staticmethod
     def _check_hamming_distance_bounds(thresh: int) -> None:
         """
-        Checks if provided threshold is valid. Raises TypeError is wrong threshold variable type is passed or a value out
-        of range is supplied.
+        Checks if provided threshold is valid. Raises TypeError is wrong threshold variable type is passed or a value
+        out of range is supplied.
 
         :param thresh: Threshold value (must be int between 0 and 64 inclusive)
         """
 
         if not isinstance(thresh, int) or (thresh < 0 or thresh > 64):
-            raise TypeError('Threshold must be a int between 0 and 64')
+            raise TypeError('Threshold must be an int between 0 and 64')
 
     def find_duplicates(self, path_or_dict, method='phash', threshold: int = 10, scores: bool = False):
         """
