@@ -1,6 +1,6 @@
 from imagededup.retrieve.bktree import BKTree
 from imagededup.retrieve.brute_force import BruteForce
-from imagededup.logger import return_logger
+from imagededup.utils.logger import return_logger
 from types import FunctionType
 from numpy.linalg import norm
 from typing import Tuple, Dict
@@ -43,20 +43,19 @@ class HashEval:
         """
         Wrapper function to retrieve results for all queries in dataset using brute-force search
         """
-        self.logger.info('Start: Retrieving duplicates using Brute force algorithm')  # TODO: Add max hamming distance
-        # after it is parmatrized
-
+        self.logger.info('Start: Retrieving duplicates using Brute force algorithm')
         bruteforce = BruteForce(self.candidates, self.hamming_distance_invoker)
         self._get_query_results(bruteforce)
+        self.logger.info('End: Retrieving duplicates using Brute force algorithm')
 
     def fetch_nearest_neighbors_bktree(self) -> None:
         """
         Wrapper function to retrieve results for all queries in dataset using a BKTree search.
         """
-        self.logger.info('Start: Retrieving duplicates using BKTree algorithm')  # TODO: Add max hamming distance after
-        # it is parametrized
+        self.logger.info('Start: Retrieving duplicates using BKTree algorithm')
         built_tree = BKTree(self.candidates, self.hamming_distance_invoker)  # construct bktree
         self._get_query_results(built_tree)
+        self.logger.info('End: Retrieving duplicates using BKTree algorithm')
 
     def retrieve_results(self) -> Dict:
         """
