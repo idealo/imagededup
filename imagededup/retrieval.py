@@ -39,19 +39,6 @@ class HashEval:
         queries = self.queries
         return {item: hammer(queries[query], candidates[item]) for item in candidates if hammer(queries[query], candidates[item]) <= self.max_d}
 
-    # def retriever_method(self):
-    #
-    # def fetch_results(self):
-    #     sorted_result_list, result_map = {}, {}
-    #     for each in self.queries:
-    #         res = retriever_method(each)
-    #         if each in res:  # to avoid self retrieval
-    #             res.pop(each)
-    #         result_map[each] = res
-    #         sorted_result_list[each] = sorted(res, key=lambda x: res[x], reverse=False)
-    #     self.query_results_map = result_map
-    #     self.query_results_list = sorted_result_list
-
     def fetch_nearest_neighbors_brute_force(self) -> None:
         """
         Wrapper function to retrieve results for all queries in dataset using brute-force search
