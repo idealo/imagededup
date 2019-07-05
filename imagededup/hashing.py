@@ -221,13 +221,6 @@ class Hashing:
 
         dict_ret = self.find_duplicates(path_or_dict=path_or_dict,  method=method, threshold=threshold, scores=False)
         return get_files_to_remove(dict_ret)
-        #
-        # list_of_files_to_remove = []
-        #
-        # for k, v in dict_ret.items():
-        #     if k not in list_of_files_to_remove:
-        #         list_of_files_to_remove.extend(v)
-        # return list(set(list_of_files_to_remove))  # set to remove duplicates
 
 
 class Dataset:
