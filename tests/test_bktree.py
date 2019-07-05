@@ -1,5 +1,5 @@
 from imagededup.hashing import Hashing
-from imagededup.bktree import BKTree, BkTreeNode
+from imagededup.retrieve.bktree import BKTree, BkTreeNode
 from collections import OrderedDict
 
 """ Run from project root with: python -m pytest -vs tests/test_bktree.py"""
