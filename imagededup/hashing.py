@@ -83,9 +83,11 @@ class Hashing:
         ```
         """
     def __init__(self) -> None:
+        """
+        Initializes a result_score variable to hold deduplication results later if desired.
+        """
         self.result_score = None  # {query_filename: {retrieval_filename:hamming distance, ...}, ..}
         self.logger = return_logger(__name__, os.getcwd())
-        self.result_score = None
 
     @staticmethod
     def bool_to_hex(x: np.array) -> str:
@@ -327,7 +329,7 @@ class Hashing:
         :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<distance>,
         'image1_duplicate2.jpg':<distance>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<distance>,..}}
         if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
-        'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}"""
+        'image1_duplicate2.jpg'], 'image2.jpg':['image2_duplicate1.jpg',..], ..}"""
 
         method_dict = {'phash': self.phash_dir, 'dhash': self.dhash_dir, 'ahash': self.ahash_dir,
                        'whash': self.whash_dir}

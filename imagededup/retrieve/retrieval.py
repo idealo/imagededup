@@ -30,6 +30,11 @@ class HashEval:
             self.save_results()
 
     def _get_query_results(self, search_method_object: Union[BruteForce, BKTree]) -> None:
+        """
+        Gets result for the query using specified search object. Populates the global query_results_map and
+        query_results_list attributes.
+        :param search_method_object: BruteForce or BKTree object to get results for the query.
+        """
         sorted_result_list, result_map = {}, {}
         for each in self.queries:
             res = search_method_object.search(query=self.queries[each], tol=self.max_d)
@@ -42,7 +47,7 @@ class HashEval:
 
     def fetch_nearest_neighbors_brute_force(self) -> None:
         """
-        Wrapper function to retrieve results for all queries in dataset using brute-force search
+        Wrapper function to retrieve results for all queries in dataset using brute-force search.
         """
         self.logger.info('Start: Retrieving duplicates using Brute force algorithm')
         bruteforce = BruteForce(self.candidates, self.hamming_distance_invoker)
@@ -62,7 +67,9 @@ class HashEval:
         """
         Accessor function returning all results.
 
-        :return: A dictionary of dictionaries.
+        :return: A dictionary of dictionaries of form {'image1.jpg': {'image1_duplicate1.jpg':
+        <distance>, 'image1_duplicate2.jpg':<distance>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':
+        <distance>,..}}
         """
         return self.query_results_map
 
@@ -70,7 +77,8 @@ class HashEval:
         """
         Accessor function returning all results.
 
-        :return: A dictionary of lists.
+        :return: A dictionary of lists of the form {'image1.jpg': ['image1_duplicate1.jpg',
+        'image1_duplicate2.jpg'], 'image2.jpg':['image2_duplicate1.jpg',..], ..}
         """
         return self.query_results_list
 
@@ -78,7 +86,9 @@ class HashEval:
         """
         Accessor function to write results to a default path
 
-        :return: A dictionary of dictionaries.
+        :return: A dictionary of dictionaries of form {'image1.jpg': {'image1_duplicate1.jpg':
+        <distance>, 'image1_duplicate2.jpg':<distance>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':
+        <distance>,..}}
         """
         with open('retrieved_results_map.pkl', 'wb') as f:
             pickle.dump(self.query_results_map, f)
