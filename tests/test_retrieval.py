@@ -41,11 +41,8 @@ def test_resultset_correctness(
     }
     dummy_hasher = Hashing()
     dummy_result = HashEval(dummy_db, dummy_query, dummy_hasher.hamming_distance, cutoff=3)
-    # pdb.set_trace()
     res = dummy_result.retrieve_results()
-    print(res)
     dummy_distances = [max(res[dist].values()) for dist in res]
-    print(dummy_distances)
     assert max(dummy_distances) == 3
 
 
