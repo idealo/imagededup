@@ -64,7 +64,7 @@ def test__image_preprocess_forhashing_false():
 
 
 def test__image_preprocess_size():
-    """Give Pillow image and check that returned array has size=self.TARGET_SIZE"""
+    """Give Pillow image and check that returned array has size=resize_dims"""
     pillow_image = Image.open(Path('tests/data/mixed_images/ukbench00120.jpg'))
     res_dim = (8, 8)
     assert image_utils._image_preprocess(pillow_image, resize_dims=res_dim).shape == res_dim
@@ -90,3 +90,9 @@ def test_convert_to_array_float_array():
 def test__convert_to_array_unacceptable_input():
     with pytest.raises(TypeError):
         image_utils.convert_to_array('tests/data/mixed_images', resize_dims=(8, 8))
+
+
+def test__convert_to_array_pillow_input_raises_typeerror():
+    im_pil = Image.open(Path('tests/data/base_images/ukbench00120.jpg'))
+    with pytest.raises(TypeError):
+        image_utils.convert_to_array(im_pil, resize_dims=(8, 8))

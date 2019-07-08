@@ -1,5 +1,7 @@
 from imagededup.utils import general_utils
 
+"""Run from project root with: python -m pytest -vs tests/test_general_utils.py"""
+
 
 def test_get_files_to_remove():
     from collections import OrderedDict

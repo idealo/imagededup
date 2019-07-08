@@ -173,7 +173,7 @@ class Hashing:
         :param threshold: Threshold value (must be float between -1.0 and 1.0)
         :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
         :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg'::<ham-dist>,
-        'image1_duplicate2.jpg'::<ham-dist>, ..}, 'image2.jpg':{'image1_duplicate1.jpg'::<ham-dist>,..}}
+        'image1_duplicate2.jpg':<ham-dist>, ..}, 'image2.jpg':{'image1_duplicate1.jpg'::<ham-dist>,..}}
         if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
         'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
 

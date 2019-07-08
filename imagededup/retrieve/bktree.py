@@ -4,6 +4,12 @@ from typing import Tuple, Dict
 
 # Implementation reference: https://signal-to-noise.xyz/post/bk-tree/
 
+"""
+TODO: 
+1. Check if LRU caching decorator on __insert_in_tree makes it quicker
+2. Refactor duplicate code in __insert_in_tree
+"""
+
 
 class BkTreeNode:
     def __init__(self, node_name: str, node_value: str, parent_name: str = None) -> None:
