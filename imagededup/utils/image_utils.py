@@ -14,6 +14,11 @@ Todo:
 
 
 def _load_image(path_image: PosixPath) -> Image:
+    """
+    Load image given the PosixPath path to the image.
+    :param path_image: A PosixPath to the image.
+    :return: A Pillow Image if image gets loaded successfully.
+    """
     try:
         img = Image.open(path_image)
 
@@ -27,6 +32,11 @@ def _load_image(path_image: PosixPath) -> Image:
 
 
 def _validate_single_image(path_image: PosixPath) -> int:
+    """
+    Checks if a files is a valid images (check for existence and correct extension).
+    :param path_image: A PosixPath to the image.
+    :return: integer 1 for a successful check.
+    """
     if not os.path.exists(path_image):
         raise FileNotFoundError('Ensure that the file exists at the specified path!')
     str_name = path_image.name
@@ -37,8 +47,10 @@ def _validate_single_image(path_image: PosixPath) -> int:
     return 1  # returns 1 if validation successful
 
 
-def check_directory_files(path_dir: PosixPath, return_file=False) -> List:
-    """Checks if all files in path_dir are valid images and return valid files if return_file set to True
+def check_directory_files(path_dir: PosixPath, return_file: bool = False) -> List:
+    """Checks if all files in path_dir are valid images and return valid files if return_file set to True.
+    :param path_dir: A PosixPath to the image directory.
+    :param return_file: Boolean indicating if a list of valid files is to be returned.
     """
 
     files = [Path(i.absolute()) for i in path_dir.glob('*') if not i.name.startswith('.')]  # ignore hidden files
