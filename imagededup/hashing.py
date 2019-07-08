@@ -34,22 +34,40 @@ class Hashing:
 
     @staticmethod
     def hamming_distance(hash1: str, hash2: str) -> float:
+        """
+        Calculates the hamming distance between two hashes. If length of hashes is not 64 bits, then pads the length
+        to be 64 for each hash and then calculates the hamming distance.
+        :param hash1: hash string
+        :param hash2: hash string
+        :return: Hamming distance between the two hashes.
+        """
         hash1_bin = bin(int(hash1, 16))[2:].zfill(64)  # zfill ensures that len of hash is 64 and pads MSB if it is < A
         hash2_bin = bin(int(hash2, 16))[2:].zfill(64)
         return np.sum([i != j for i, j in zip(hash1_bin, hash2_bin)])
 
     # Feature generation part
+
     def _get_hash(self, hash_mat: np.array, n_blocks: int) -> str:
+        """
+        Convert a matrix of binary numerals to an n_blocks length hash.
+        :param hash_mat: A numpy array consisting of 0/1 values.
+        :param n_blocks: Hash length required.
+        :return: An n_blocks length hash string.
+        """
         calculated_hash = []
         for i in np.array_split(np.ndarray.flatten(hash_mat), n_blocks):
             calculated_hash.append(self.bool_to_hex(i))
         return ''.join(calculated_hash)
 
     def phash(self, path_image: None) -> str:
-        """Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html"""
+        """
+        Get perceptual hash of the input image.
+        :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
+        :return: A string representing the perceptual hash of the image.
+        Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html"""
+
         res_dims = (32, 32)
         im_gray_arr = convert_to_array(path_image, resize_dims=res_dims, for_hashing=True)
-        # im_gray_arr = self._convert_to_array(path_image, resize_dims=res_dims)
         dct_coef = scipy.fftpack.dct(scipy.fftpack.dct(im_gray_arr, axis=0), axis=1)
         dct_reduced_coef = dct_coef[:8, :8]  # retain top left 8 by 8 dct coefficients
         mean_coef_val = np.mean(np.ndarray.flatten(dct_reduced_coef)[1:])  # average of coefficients excluding the DC
@@ -58,6 +76,11 @@ class Hashing:
         return self._get_hash(hash_mat, 16)  # 16 character output
 
     def ahash(self, path_image: PosixPath) -> str:
+        """
+        Get average hash of the input image.
+        :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
+        :return: A string representing the average hash of the image."""
+
         res_dims = (8, 8)
         im_gray_arr = convert_to_array(path_image, resize_dims=res_dims, for_hashing=True)
         avg_val = np.mean(im_gray_arr)
@@ -65,7 +88,13 @@ class Hashing:
         return self._get_hash(hash_mat, 16)  # 16 character output
 
     def dhash(self, path_image: PosixPath) -> str:
-        """Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html"""
+        """
+        Get difference hash of the input image.
+        :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
+        :return: A string representing the difference hash of the image.
+
+        Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html"""
+
         res_dims = (9, 8)
         im_gray_arr = convert_to_array(path_image, resize_dims=res_dims, for_hashing=True)
         # hash_mat = im_gray_arr[:, :-1] > im_gray_arr[:, 1:]  # Calculates difference between consecutive columns
@@ -73,6 +102,12 @@ class Hashing:
         return self._get_hash(hash_mat, 16)  # 16 character output
 
     def whash(self, path_image: None) -> str:
+        """
+        Get wavelet hash of the input image.
+        :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
+        :return: A string representing the wavelet hash of the image.
+        """
+
         res_dims = (256, 256)
         im_gray_arr = convert_to_array(path_image, resize_dims=res_dims, for_hashing=True)
         coeffs = pywt.wavedec2(im_gray_arr, 'haar', level=5)  # decomposition level set to 5 to get 8 by 8 hash matrix
@@ -83,6 +118,13 @@ class Hashing:
         return self._get_hash(hash_mat, 16)  # 16 character output
 
     def _run_hash_on_dir(self, path_dir: Path, hashing_function: FunctionType) -> Dict:
+        """
+        Apply the given hashing function to all images in a directory.
+        :param path_dir: PosixPath to the directory containing images for which hashes are to be obtained.
+        :param hashing_function: The hashing function that needs to be applied to each image.
+        :return: Dictionary containing file names as keys and corresponding hash string as value.
+        """
+
         filenames = check_directory_files(path_dir, return_file=True)
         self.logger.info(f'Start: Calculating hashes using {hashing_function}!')
         hash_dict = dict(zip(filenames, [None] * len(filenames)))
@@ -92,15 +134,38 @@ class Hashing:
         return hash_dict  # dict_file_feature in cnn
 
     def phash_dir(self, path_dir: PosixPath) -> Dict:
+        """
+        Returns a perceptual hash for each image in the specified directory path.
+        :param path_dir: PosixPath to the directory containing images for which perceptual hashes are to be obtained.
+        :return: Dictionary containing file names as keys and corresponding perceptual hash string as value.
+        """
+
         return self._run_hash_on_dir(path_dir, self.phash)
 
     def ahash_dir(self, path_dir: PosixPath) -> Dict:
+        """
+        Returns an average hash for each image in the specified directory path.
+        :param path_dir: PosixPath to the directory containing images for which average hashes are to be obtained.
+        :return: Dictionary containing file names as keys and corresponding average hash string as value.
+        """
+
         return self._run_hash_on_dir(path_dir, self.ahash)
 
     def dhash_dir(self, path_dir: PosixPath) -> Dict:
+        """
+        Returns a difference hash for each image in the specified directory path.
+        :param path_dir: PosixPath to the directory containing images for which difference hashes are to be obtained.
+        :return: Dictionary containing file names as keys and corresponding difference hash string as value.
+        """
+
         return self._run_hash_on_dir(path_dir, self.dhash)
 
     def whash_dir(self, path_dir: PosixPath) -> Dict:
+        """
+        Returns a wavelet hash for each image in the specified directory path.
+        :param path_dir: PosixPath to the directory containing images for which wavelet hashes are to be obtained.
+        :return: Dictionary containing file names as keys and corresponding wavelet hash string as value.
+        """
         return self._run_hash_on_dir(path_dir, self.whash)
 
     # Search part
@@ -115,8 +180,8 @@ class Hashing:
         :param threshold: Cosine similarity above which retrieved duplicates are valid.
         :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
         :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':
-        <similarity-score>, 'image1_duplicate2.jpg':<similarity-score>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':
-        <similarity-score>,..}}
+        <distance>, 'image1_duplicate2.jpg':<distance>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':
+        <distance>,..}}
         if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
         'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}"""
 
@@ -139,8 +204,8 @@ class Hashing:
         :param method: hashing method
         :param threshold: Hamming distance above which retrieved duplicates are valid.
         :param scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
-        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<ham-dist>,
-        'image1_duplicate2.jpg':<ham-dist>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<ham-dist>,..}}
+        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<distance>,
+        'image1_duplicate2.jpg':<distance>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<distance>,..}}
         if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
         'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}"""
 
@@ -177,8 +242,8 @@ class Hashing:
         :param method: hashing method
         :param threshold: Threshold value (must be float between -1.0 and 1.0)
         :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
-        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg'::<ham-dist>,
-        'image1_duplicate2.jpg':<ham-dist>, ..}, 'image2.jpg':{'image1_duplicate1.jpg'::<ham-dist>,..}}
+        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg'::<distance>,
+        'image1_duplicate2.jpg':<distance>, ..}, 'image2.jpg':{'image1_duplicate1.jpg'::<distance>,..}}
         if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
         'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
 
