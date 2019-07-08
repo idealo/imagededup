@@ -1,10 +1,7 @@
 from imagededup import cnn
-from imagededup import utils
 from pathlib import Path
 from PIL import Image
 from pathlib import PosixPath
-from mock import patch
-import mock
 import pytest
 import numpy as np
 
@@ -13,6 +10,7 @@ import numpy as np
 def initialized_cnn_obj():
     cnn_obj = cnn.CNN()
     return cnn_obj
+
 
 def test__get_parent_dir(initialized_cnn_obj):
     path_dir = Path('tests/data/mixed_images')

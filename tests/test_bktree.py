@@ -36,6 +36,7 @@ def test_bktreenode_children_correct_initialization():
     node = BkTreeNode(node_name, node_value, parent_name)
     assert len(node.children) == 0
 
+# test BKTree class
 
 def test_insert_tree():
     # initialize root node and add 1 new node, check it goes as root's child and has it's parent as root
