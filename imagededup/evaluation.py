@@ -1,15 +1,17 @@
 import pickle
 import numpy as np
 from types import FunctionType
+from typing import List, Dict
 
 
 class EvalPerformance:
-    def __init__(self, dict_correct: dict, dict_retrieved: dict) -> None:
-        self.dict_correct = dict_correct  # dict of correct retrievals for each query(= ground truth), {'1.jpg': 'correct_dup1.jpg'}
+    def __init__(self, dict_correct: Dict, dict_retrieved: Dict) -> None:
+        self.dict_correct = dict_correct  # dict of correct retrievals for each query(= ground truth),
+        # {'1.jpg': 'correct_dup1.jpg'}
         self.dict_retrieved = dict_retrieved  # dict of all retrievals for each query, {'1.jpg': 'retrieval_1.jpg'}
 
     @staticmethod
-    def avg_prec(correct_duplicates: list, retrieved_duplicates: list) -> float:
+    def avg_prec(correct_duplicates: List, retrieved_duplicates: List) -> float:
         """Input: (list of correct duplicates (i.e., ground truth), list of retrieved duplicates) for one single query
         return: float representing average precision for one input query"""
         if not len(retrieved_duplicates):
@@ -23,7 +25,7 @@ class EvalPerformance:
         return avg_precision
 
     @staticmethod
-    def ndcg(correct_duplicates: list, retrieved_duplicates: list) -> float:
+    def ndcg(correct_duplicates: List, retrieved_duplicates: List) -> float:
         """Input: (list of correct duplicates (i.e., ground truth), list of retrieved duplicates) for one single query
                 return: float representing Normalized discounted Cumulative Gain (NDCG) for one input query"""
         if not len(retrieved_duplicates):
@@ -52,7 +54,7 @@ class EvalPerformance:
         return ndcg
 
     @staticmethod
-    def jaccard_similarity(correct_duplicates: list, retrieved_duplicates: list) -> float:
+    def jaccard_similarity(correct_duplicates: List, retrieved_duplicates: List) -> float:
         """Input: (list of correct duplicates (i.e., ground truth), list of retrieved duplicates) for one single query
                 return: float representing jaccard similarity for one input query"""
         if not len(retrieved_duplicates):
@@ -74,7 +76,7 @@ class EvalPerformance:
             all_metrics.append(metric_func(self.dict_correct[k], self.dict_retrieved[k]))
         return np.mean(all_metrics)
 
-    def get_all_metrics(self, save: bool=True) -> dict:
+    def get_all_metrics(self, save: bool = True) -> Dict:
         """Input: Save flag indicating whether the dictionary below should be saved
         return: dictionary of all mean metrics"""
         dict_average_metrics = {

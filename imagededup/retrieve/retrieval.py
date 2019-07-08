@@ -3,7 +3,7 @@ from imagededup.retrieve.brute_force import BruteForce
 from imagededup.utils.logger import return_logger
 from types import FunctionType
 from numpy.linalg import norm
-from typing import Tuple, Dict, Type
+from typing import Tuple, Dict, List, Union
 import os
 import numpy as np
 import pickle
@@ -29,7 +29,7 @@ class HashEval:
         if save:
             self.save_results()
 
-    def _get_query_results(self, search_method_object: Type):
+    def _get_query_results(self, search_method_object: Union[BruteForce, BKTree]) -> None:
         sorted_result_list, result_map = {}, {}
         for each in self.queries:
             res = search_method_object.search(query=self.queries[each], tol=self.max_d)
@@ -58,7 +58,7 @@ class HashEval:
         self._get_query_results(built_tree)
         self.logger.info('End: Retrieving duplicates using BKTree algorithm')
 
-    def retrieve_results(self) -> Dict:
+    def retrieve_results(self) -> Dict[str, Dict[str, int]]:
         """
         Accessor function returning all results.
 
@@ -66,7 +66,7 @@ class HashEval:
         """
         return self.query_results_map
 
-    def retrieve_result_list(self) -> Dict:
+    def retrieve_result_list(self) -> Dict[str, List]:
         """
         Accessor function returning all results.
 
@@ -155,7 +155,8 @@ class CosEval:
         valid_vals = row[valid_inds]
         return valid_inds, valid_vals
 
-    def get_retrievals_at_thresh(self, file_mapping_query: Dict, file_mapping_ret: Dict, thresh=0.8) -> Dict:
+    def get_retrievals_at_thresh(self, file_mapping_query: Dict, file_mapping_ret: Dict, thresh=0.8) -> \
+            Dict[str, Dict[str, float]]:
         """
         Get valid retrievals for all queries given a similarity threshold.
         :param file_mapping_query: Dictionary mapping row number of query vector to filename.

@@ -2,7 +2,7 @@ import os
 import numpy as np
 from PIL import Image
 from pathlib import Path, PosixPath
-from typing import Tuple
+from typing import Tuple, List
 
 """
 ? Allow acceptance of os.path in addition to already existing Path and numpy image array
@@ -26,7 +26,7 @@ def _load_image(path_image: PosixPath) -> Image:
         raise Exception(f'{type(e)} Image can not be loaded!')
 
 
-def _validate_single_image(path_image: PosixPath):
+def _validate_single_image(path_image: PosixPath) -> int:
     if not os.path.exists(path_image):
         raise FileNotFoundError('Ensure that the file exists at the specified path!')
     str_name = path_image.name
@@ -37,7 +37,7 @@ def _validate_single_image(path_image: PosixPath):
     return 1  # returns 1 if validation successful
 
 
-def check_directory_files(path_dir: PosixPath, return_file=False):
+def check_directory_files(path_dir: PosixPath, return_file=False) -> List:
     """Checks if all files in path_dir are valid images and return valid files if return_file set to True
     """
 
