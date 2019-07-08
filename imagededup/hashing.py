@@ -21,6 +21,67 @@ Wavelet hash: Allow possibility of different wavelet functions
 
 
 class Hashing:
+    """
+    Finds duplicates using hashing methods and/or generates hashes given a single image or a directory of images.
+    The module can be used for 2 purposes: Feature generation and duplicate detection.
+    Feature generation:
+    To use a hashing method to generate hash for an image or a directory of images. The generated
+    hashes can be used at a later time for deduplication. There are two possibilities to get hashes:
+    1. At a single image level: Using the function for particular hashing method, the hash for a single image can be obtained.
+    There are 4 methods to be chosen from:
+        a. Perceptual hash: phash
+        b. Wavelet hash: whash
+        c. Difference hash: dhash
+        d. Average hash: ahash
+
+    Example usage:
+        ```
+        from imagededup import hashing
+        myhasher = hashing.Hashing()
+        perceptual_hash_string = myhasher.phash(Path('path/to/image.jpg'))
+        ```
+    2. At a directory level: In case hashes for several images need to be generated, the images can be placed in a
+    directory and hashes for all of the images can be obtained using the corresponding directory function. There Average4 functions that can be used:
+        a. Perceptual hash: phash_dir
+        b. Wavelet hash: whash_dir
+        c. Difference hash: dhash_dir
+        d. Average hash: ahash_dir
+
+    Example usage:
+        ```
+        from imagededup import hashing
+        myhasher = hashing.Hashing()
+        dict_file_hash = myhasher.phash_dir(Path('path/to/directory'))
+        ```
+
+    Duplicate detection:
+    Find duplicates either using the hashes generated previously(dict_file_hash) using directory functions or using a Path to the
+    directory that contains the images that need to be deduplicated. There are 2 inputs that can be provided to the
+    find_duplicates function:
+    1. Dictionary generated using directory functions(eg: phash_dir) function above.
+    Example usage:
+        ```
+        from imagededup import hashing
+        myhasher = hashing.Hashing()
+        dict_ret_with_dict_inp = myhasher.find_duplicates(dict_file_feat, method='phash', threshold=15, scores=True)
+        ```
+    2. Using the Path of the directory where all images are present.
+    Example usage:
+        ```
+        from imagededup import hashing
+        myhasher = hashing.Hashing()
+        dict_ret_path = myhasher.find_duplicates(Path('path/to/directory'), method='phash', threshold=15, scores=True)
+        ```
+    If a list of file names to remove are desired, then the function find_duplicates_to_remove can be used with either
+    the path to the image directory as input or the dictionary with hashes. A threshold for distance should be
+    considered.
+    Example usage:
+        ```
+        from imagededup import hashing
+        myhasher = hashing.Hashing()
+        list_of_files_to_remove = myhasher.find_duplicates_to_remove(Path('path/to/images/directory'), threshold=15)
+        ```
+        """
     def __init__(self) -> None:
         self.result_score = None  # {query_filename: {retrieval_filename:hamming distance, ...}, ..}
         self.logger = return_logger(__name__, os.getcwd())
@@ -64,7 +125,15 @@ class Hashing:
         Get perceptual hash of the input image.
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
         :return: A string representing the perceptual hash of the image.
-        Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html"""
+        Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
+
+        Example usage:
+        ```
+        from imagededup import hashing
+        myhasher = hashing.Hashing()
+        perceptual_hash_string = myhasher.phash(Path('path/to/image.jpg'))
+        ```
+        """
 
         res_dims = (32, 32)
         im_gray_arr = convert_to_array(path_image, resize_dims=res_dims, for_hashing=True)
@@ -79,7 +148,15 @@ class Hashing:
         """
         Get average hash of the input image.
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
-        :return: A string representing the average hash of the image."""
+        :return: A string representing the average hash of the image.
+
+        Example usage:
+        ```
+        from imagededup import hashing
+        myhasher = hashing.Hashing()
+        average_hash_string = myhasher.ahash(Path('path/to/image.jpg'))
+        ```
+        """
 
         res_dims = (8, 8)
         im_gray_arr = convert_to_array(path_image, resize_dims=res_dims, for_hashing=True)
@@ -93,7 +170,15 @@ class Hashing:
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
         :return: A string representing the difference hash of the image.
 
-        Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html"""
+        Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html
+
+        Example usage:
+        ```
+        from imagededup import hashing
+        myhasher = hashing.Hashing()
+        difference_hash_string = myhasher.dhash(Path('path/to/image.jpg'))
+        ```
+        """
 
         res_dims = (9, 8)
         im_gray_arr = convert_to_array(path_image, resize_dims=res_dims, for_hashing=True)
@@ -106,6 +191,13 @@ class Hashing:
         Get wavelet hash of the input image.
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
         :return: A string representing the wavelet hash of the image.
+
+        Example usage:
+        ```
+        from imagededup import hashing
+        myhasher = hashing.Hashing()
+        wavelet_hash_string = myhasher.whash(Path('path/to/image.jpg'))
+        ```
         """
 
         res_dims = (256, 256)
@@ -138,6 +230,13 @@ class Hashing:
         Returns a perceptual hash for each image in the specified directory path.
         :param path_dir: PosixPath to the directory containing images for which perceptual hashes are to be obtained.
         :return: Dictionary containing file names as keys and corresponding perceptual hash string as value.
+
+        Example usage:
+        ```
+        from imagededup import hashing
+        myhasher = hashing.Hashing()
+        dict_file_hash = myhasher.phash_dir(Path('path/to/directory'))
+        ```
         """
 
         return self._run_hash_on_dir(path_dir, self.phash)
@@ -147,6 +246,13 @@ class Hashing:
         Returns an average hash for each image in the specified directory path.
         :param path_dir: PosixPath to the directory containing images for which average hashes are to be obtained.
         :return: Dictionary containing file names as keys and corresponding average hash string as value.
+
+        Example usage:
+        ```
+        from imagededup import hashing
+        myhasher = hashing.Hashing()
+        dict_file_hash = myhasher.ahash_dir(Path('path/to/directory'))
+        ```
         """
 
         return self._run_hash_on_dir(path_dir, self.ahash)
@@ -156,6 +262,13 @@ class Hashing:
         Returns a difference hash for each image in the specified directory path.
         :param path_dir: PosixPath to the directory containing images for which difference hashes are to be obtained.
         :return: Dictionary containing file names as keys and corresponding difference hash string as value.
+
+        Example usage:
+        ```
+        from imagededup import hashing
+        myhasher = hashing.Hashing()
+        dict_file_hash = myhasher.dhash_dir(Path('path/to/directory'))
+        ```
         """
 
         return self._run_hash_on_dir(path_dir, self.dhash)
@@ -165,6 +278,13 @@ class Hashing:
         Returns a wavelet hash for each image in the specified directory path.
         :param path_dir: PosixPath to the directory containing images for which wavelet hashes are to be obtained.
         :return: Dictionary containing file names as keys and corresponding wavelet hash string as value.
+
+        Example usage:
+        ```
+        from imagededup import hashing
+        myhasher = hashing.Hashing()
+        dict_file_hash = myhasher.whash_dir(Path('path/to/directory'))
+        ```
         """
         return self._run_hash_on_dir(path_dir, self.whash)
 
@@ -234,8 +354,8 @@ class Hashing:
 
     def find_duplicates(self, path_or_dict, method='phash', threshold: int = 10, scores: bool = False) -> Dict:
         """
-        Finds duplicates. Raises TypeError if supplied directory path isn't a Path variable or a valid dictionary isn't
-        supplied.
+        Finds duplicates. Raises TypeError if the supplied directory path isn't a Path variable or a valid dictionary
+        isn't supplied.
 
         :param path_or_dict: PosixPath to the directory containing all the images or dictionary with keys as file names
         and values as numpy arrays which represent the CNN feature for the key image file.
@@ -260,6 +380,7 @@ class Hashing:
         dict_ret_path = myhasher.find_duplicates(Path('path/to/directory'), method='phash', threshold=15, scores=True)
         ```
         """
+
         self._check_hamming_distance_bounds(thresh=threshold)
         if isinstance(path_or_dict, PosixPath):
             dict_ret = self._find_duplicates_dir(path_dir=path_or_dict, method=method, threshold=threshold,
