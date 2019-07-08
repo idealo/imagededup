@@ -3,7 +3,7 @@ from imagededup.retrieve.brute_force import BruteForce
 from imagededup.utils.logger import return_logger
 from types import FunctionType
 from numpy.linalg import norm
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Type
 import os
 import numpy as np
 import pickle
@@ -21,6 +21,7 @@ class HashEval:
         self.hamming_distance_invoker = hammer
         self.max_d = cutoff
         self.logger = return_logger(__name__, os.getcwd())
+
         if search_method == 'bktree':
             self.fetch_nearest_neighbors_bktree()  # bktree is the default search method
         else:
@@ -28,7 +29,7 @@ class HashEval:
         if save:
             self.save_results()
 
-    def _get_query_results(self, search_method_object):
+    def _get_query_results(self, search_method_object: Type):
         sorted_result_list, result_map = {}, {}
         for each in self.queries:
             res = search_method_object.search(query=self.queries[each], tol=self.max_d)
@@ -65,6 +66,14 @@ class HashEval:
         """
         return self.query_results_map
 
+    def retrieve_result_list(self) -> Dict:
+        """
+        Accessor function returning all results.
+
+        :return: A dictionary of lists.
+        """
+        return self.query_results_list
+
     def save_results(self) -> None:
         """
         Accessor function to write results to a default path
@@ -74,14 +83,6 @@ class HashEval:
         with open('retrieved_results_map.pkl', 'wb') as f:
             pickle.dump(self.query_results_map, f)
         return self.query_results_map
-
-    def retrieve_result_list(self) -> Dict:
-        """
-        Accessor function returning all results.
-
-        :return: A dictionary of lists.
-        """
-        return self.query_results_list
 
 
 class CosEval:

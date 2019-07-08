@@ -20,6 +20,15 @@ def test_invoker_initialization(dummy_image={'ukbench09060.jpg': 'e064ece078d7c9
     assert dummy_result.hamming_distance_invoker('e064ece078d7c96a', 'a064ece078d7c96e') == 2
 
 
+def test__retrieve_results_dtypes(dummy_image={'ukbench09060.jpg': 'e064ece078d7c96a'}):
+    dummy_hasher = Hashing()
+    dummy_result = HashEval(dummy_image, dummy_image, dummy_hasher.hamming_distance)
+    assert isinstance(dummy_result.retrieve_results(), dict)
+    assert isinstance(list(dummy_result.retrieve_results().values())[0], dict)
+    assert isinstance(dummy_result.retrieve_result_list(), dict)
+    assert isinstance(list(dummy_result.retrieve_result_list().values())[0], list)
+
+
 def test_resultset_completeness(
         dummy_query={'ukbench00120.jpg': '2b69707551f1b87a', 'ukbench09268.jpg': 'ac9c72f8e1c2c448'}):
     dummy_db = {
@@ -57,6 +66,20 @@ def test_result_consistency_across_search_methods(
     left_result = HashEval(dummy_db, dummy_query, dummy_hasher.hamming_distance, search_method='brute_force')\
         .retrieve_results()
     right_result = HashEval(dummy_db, dummy_query, dummy_hasher.hamming_distance).retrieve_results()
+    assert left_result == right_result
+
+
+def test_result_consistency_across_search_methods_list(
+        dummy_query={'ukbench00120.jpg': '2b69707551f1b87a', 'ukbench09268.jpg': 'ac9c72f8e1c2c448'}):
+    dummy_db = {
+        'ukbench00120_hflip.jpg': '2b69f1517570e2a1',
+        'ukbench00120_resize.jpg': '2b69707551f1b87a',
+        'ukbench09268.jpg': 'ac9c72f8e1c2c448'
+    }
+    dummy_hasher = Hashing()
+    left_result = HashEval(dummy_db, dummy_query, dummy_hasher.hamming_distance, search_method='brute_force')\
+        .retrieve_result_list()
+    right_result = HashEval(dummy_db, dummy_query, dummy_hasher.hamming_distance).retrieve_result_list()
     assert left_result == right_result
 
 

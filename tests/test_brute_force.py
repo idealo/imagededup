@@ -9,18 +9,18 @@ def initialize():
     return hash_dict, dist_func
 
 
-def test_correctness():
+def test_search_correctness():
     hash_dict, dist_func = initialize()
     bf = BruteForce(hash_dict, dist_func)
     query = '5'
     valid_retrievals = bf.search(query, tol=2)
-    assert len(valid_retrievals) == 5
-
-
-def test_search_correctness():
-    # Input a tree and send a search query, check whether correct retrievals are returned
-    hash_dict, dist_func = initialize()
-    bk = BruteForce(hash_dict, dist_func)
-    query = '5'
-    valid_retrievals = bk.search(query, tol=2)
     assert set(valid_retrievals.keys()) == set(['a', 'f', 'g', 'd', 'b'])
+
+
+def test_tolerance_value_effect():
+    hash_dict, dist_func = initialize()
+    bf = BruteForce(hash_dict, dist_func)
+    query = '5'
+    valid_retrievals_2 = bf.search(query, tol=2)
+    valid_retrievals_3 = bf.search(query, tol=3)
+    assert set(valid_retrievals_2.keys()) != set(valid_retrievals_3.keys())
