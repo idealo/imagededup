@@ -58,8 +58,9 @@ class CNN:
     dict_ret_path = mycnn.find_duplicates(Path('path/to/directory'), threshold=0.9, scores=True)
     ```
 
-    If a list of file names to remove are desired, then the function find_duplicates_to_remove can be used with either the
-    path to the image directory as input or the dictionary with features. A threshold for similarity should be considered.
+    If a list of file names to remove are desired, then the function find_duplicates_to_remove can be used with either
+    the path to the image directory as input or the dictionary with features. A threshold for similarity should be
+    considered.
 
     Example usage:
         ```
@@ -183,7 +184,8 @@ class CNN:
         Splits mapping dictionary into feature vector matrix and a dictionray that maintains mapping between the row of
         the feature matrix and the image filename.
 
-        :param dict_file_feature: {'Image1.jpg': np.array([1.0, -0.2, ...]), 'Image2.jpg': np.array([0.3, 0.06, ...]), ...}
+        :param dict_file_feature: {'Image1.jpg': np.array([1.0, -0.2, ...]),
+        'Image2.jpg': np.array([0.3, 0.06, ...]), ...}
         :return: feat_vec_in: A numpy ndarray of size (number of queries, number of features).
         filemapping_generated: A dictionary mapping the row number of 'feat_vec_in' to the image filename.
         """
@@ -223,9 +225,11 @@ class CNN:
         feature for the key image file.
         :param threshold: Cosine similarity above which retrieved duplicates are valid.
         :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
-        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<similarity-score>, 'image1_duplicate2.jpg':<similarity-score>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<similarity-score>,..}}
-        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg']
-        'image2.jpg':['image1_duplicate1.jpg',..], ..}
+        :return: if scores is True, then a dictionary of the form {'image1.jpg':
+        {'image1_duplicate1.jpg':<similarity-score>, 'image1_duplicate2.jpg':<similarity-score>, ..}, 'image2.jpg':
+        {'image1_duplicate1.jpg':<similarity-score>,..}}
+        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
+        'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
                 """
 
         feat_vec_in, filemapping_generated = self._get_file_mapping_feat_vec(dict_file_feature)
@@ -248,9 +252,11 @@ class CNN:
         :param path_dir: PosixPath to the directory containing all the images.
         :param threshold: Cosine similarity above which retrieved duplicates are valid.
         :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
-        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<similarity-score>, 'image1_duplicate2.jpg':<similarity-score>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<similarity-score>,..}}
-        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg']
-        'image2.jpg':['image1_duplicate1.jpg',..], ..}
+        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':
+        <similarity-score>, 'image1_duplicate2.jpg':<similarity-score>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':
+        <similarity-score>,..}}
+        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
+        'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
         """
 
         dict_file_feature = self.cnn_dir(path_dir)
@@ -278,8 +284,12 @@ class CNN:
         and values as numpy arrays which represent the CNN feature for the key image file.
         :param threshold: Threshold value (must be float between -1.0 and 1.0)
         :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
-        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<similarity-score>, 'image1_duplicate2.jpg':<similarity-score>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<similarity-score>,..}}
-        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
+        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':
+        <similarity-score>, 'image1_duplicate2.jpg':<similarity-score>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':
+        <similarity-score>,..}}
+
+        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
+        'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
 
             Example usage:
         ```

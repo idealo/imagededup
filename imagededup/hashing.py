@@ -24,6 +24,7 @@ class Hashing:
     def __init__(self) -> None:
         self.result_score = None  # {query_filename: {retrieval_filename:hamming distance, ...}, ..}
         self.logger = return_logger(__name__, os.getcwd())
+        self.result_score = None
 
     @staticmethod
     def bool_to_hex(x: np.array) -> str:
@@ -113,9 +114,11 @@ class Hashing:
         :param dict_file_feature: Dictionary with keys as file names and values as hash strings for the key image file.
         :param threshold: Cosine similarity above which retrieved duplicates are valid.
         :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
-        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<similarity-score>, 'image1_duplicate2.jpg':<similarity-score>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<similarity-score>,..}}
-        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg']
-        'image2.jpg':['image1_duplicate1.jpg',..], ..}"""
+        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':
+        <similarity-score>, 'image1_duplicate2.jpg':<similarity-score>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':
+        <similarity-score>,..}}
+        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
+        'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}"""
 
         self.logger.info('Start: Evaluating hamming distances for getting duplicates')
         rs = HashEval(test=dict_file_feature, queries=dict_file_feature, hammer=self.hamming_distance,
@@ -136,9 +139,10 @@ class Hashing:
         :param method: hashing method
         :param threshold: Hamming distance above which retrieved duplicates are valid.
         :param scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
-        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<ham-dist>, 'image1_duplicate2.jpg':<ham-dist>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<ham-dist>,..}}
-        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg']
-        'image2.jpg':['image1_duplicate1.jpg',..], ..}"""
+        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<ham-dist>,
+        'image1_duplicate2.jpg':<ham-dist>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<ham-dist>,..}}
+        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
+        'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}"""
 
         method_dict = {'phash': self.phash_dir, 'dhash': self.dhash_dir, 'ahash': self.ahash_dir,
                        'whash': self.whash_dir}
