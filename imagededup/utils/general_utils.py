@@ -1,7 +1,7 @@
-from typing import Dict
+from typing import Dict, List
 
 
-def get_files_to_remove(dict_ret: Dict):
+def get_files_to_remove(dict_ret: Dict) -> List:
     # iterate over dict_ret keys, get value for the key and delete the dict keys that are in the value list
     list_of_files_to_remove = []
 

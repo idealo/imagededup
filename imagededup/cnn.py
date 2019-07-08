@@ -213,7 +213,8 @@ class CNN:
             dict_ret[k] = list(v.keys())
         return dict_ret
 
-    def _find_duplicates_dict(self, dict_file_feature: Dict[str, np.ndarray], threshold: float = 0.8, scores: bool = False):
+    def _find_duplicates_dict(self, dict_file_feature: Dict[str, np.ndarray], threshold: float = 0.8,
+                              scores: bool = False) -> Dict:
         """Takes in dictionary {filename: vector}, detects duplicates above the given threshold and
                 returns dictionary containing key as filename and value as a list of duplicate filenames. Optionally,
                 the similarity scores could be returned instead of duplicate file name for each query file.
@@ -240,7 +241,7 @@ class CNN:
         else:
             return self._get_only_filenames(self.result_score)
 
-    def _find_duplicates_dir(self, path_dir: PosixPath, threshold: float = 0.8, scores: bool = False):
+    def _find_duplicates_dir(self, path_dir: PosixPath, threshold: float = 0.8, scores: bool = False) -> Dict:
         """Takes in path of the directory on which duplicates are to be detected above the given threshold.
         Returns dictionary containing key as filename and value as a list of duplicate file names.
 
@@ -268,7 +269,7 @@ class CNN:
         if not isinstance(thresh, float) or (thresh < -1.0 or thresh > 1.0):
             raise TypeError('Threshold must be a float between -1.0 and 1.0')
 
-    def find_duplicates(self, path_or_dict, threshold: float = 0.8, scores: bool = False):
+    def find_duplicates(self, path_or_dict, threshold: float = 0.8, scores: bool = False) -> Dict:
         """
         Finds duplicates. Raises TypeError if supplied directory path isn't a Path variable or a valid dictionary isn't
         supplied.

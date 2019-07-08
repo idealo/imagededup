@@ -105,7 +105,7 @@ class Hashing:
     # Search part
 
     def _find_duplicates_dict(self, dict_file_feature: Dict[str, str], threshold: int = 10,
-                              scores: bool = False):
+                              scores: bool = False) -> Dict:
         """Takes in dictionary {filename: hash string}, detects duplicates above the given hamming distance threshold
             and returns dictionary containing key as filename and value as a list of duplicate filenames. Optionally,
             the hamming distances could be returned instead of just duplicate file name for each query file.
@@ -127,7 +127,8 @@ class Hashing:
         else:
             return rs.retrieve_result_list()
 
-    def _find_duplicates_dir(self, path_dir: PosixPath, method='phash', threshold: int = 10, scores: bool = False):
+    def _find_duplicates_dir(self, path_dir: PosixPath, method='phash', threshold: int = 10,
+                             scores: bool = False)-> Dict:
         """Takes in path of the directory on which duplicates are to be detected above the given threshold.
         Returns dictionary containing key as filename and value as a list of duplicate file names.
 
@@ -162,7 +163,7 @@ class Hashing:
         if not isinstance(thresh, int) or (thresh < 0 or thresh > 64):
             raise TypeError('Threshold must be an int between 0 and 64')
 
-    def find_duplicates(self, path_or_dict, method='phash', threshold: int = 10, scores: bool = False):
+    def find_duplicates(self, path_or_dict, method='phash', threshold: int = 10, scores: bool = False) -> Dict:
         """
         Finds duplicates. Raises TypeError if supplied directory path isn't a Path variable or a valid dictionary isn't
         supplied.
