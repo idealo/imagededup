@@ -14,50 +14,6 @@ def initialized_cnn_obj():
     cnn_obj = cnn.CNN()
     return cnn_obj
 
-
-# def test__image_preprocess_return_type(initialized_cnn_obj):
-#     """Give Pillow image and check that return type array"""
-#     pillow_image = Image.open(Path('tests/data/mixed_images/ukbench00120.jpg'))
-#     assert isinstance(initialized_cnn_obj._image_preprocess(pillow_image), np.ndarray)
-#
-#
-# def test__image_preprocess_size(initialized_cnn_obj):
-#     """Give Pillow image and check that returned array has size=self.TARGET_SIZE"""
-#     pillow_image = Image.open(Path('tests/data/mixed_images/ukbench00120.jpg'))
-#     assert initialized_cnn_obj._image_preprocess(pillow_image).shape == (initialized_cnn_obj.TARGET_SIZE[0],
-#                                                                          initialized_cnn_obj.TARGET_SIZE[1], 3)
-#
-#
-# def test__convert_to_array_path(initialized_cnn_obj, mocker):
-#     path_dir = Path('tests/data/mixed_images/ukbench00120.jpg')
-#     mocker.patch.object(initialized_cnn_obj, '_image_preprocess')
-#     initialized_cnn_obj._convert_to_array(path_dir)
-#     initialized_cnn_obj._image_preprocess.assert_called_with(Image.open(path_dir))
-#
-#
-# def test__convert_to_array_array(initialized_cnn_obj, mocker):
-#     path_image = Path('tests/data/mixed_images/ukbench00120.jpg')
-#     im_arr = np.array(Image.open(path_image))
-#     expected_called = Image.fromarray(im_arr)
-#     mocker.patch.object(initialized_cnn_obj, '_image_preprocess')
-#     initialized_cnn_obj._convert_to_array(im_arr)
-#     initialized_cnn_obj._image_preprocess.assert_called_with(expected_called)
-#
-#
-# def test__convert_to_array_float_array(initialized_cnn_obj, mocker):
-#     path_image = Path('tests/data/mixed_images/ukbench00120.jpg')
-#     im_arr = np.array(Image.open(path_image)).astype('float32')
-#     expected_called = Image.fromarray(im_arr.astype('uint8'))
-#     mocker.patch.object(initialized_cnn_obj, '_image_preprocess')
-#     initialized_cnn_obj._convert_to_array(im_arr)
-#     initialized_cnn_obj._image_preprocess.assert_called_with(expected_called)
-#
-#
-# def test__convert_to_array_unacceptable_input(initialized_cnn_obj):
-#     with pytest.raises(TypeError):
-#         initialized_cnn_obj._convert_to_array('tests/data/mixed_images')
-
-
 def test__get_parent_dir(initialized_cnn_obj):
     path_dir = Path('tests/data/mixed_images')
     assert initialized_cnn_obj._get_parent_dir(path_dir) == PosixPath('tests/data')

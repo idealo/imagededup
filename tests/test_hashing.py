@@ -25,59 +25,8 @@ def test_hamming_distance():
     assert hamdist == 2
 
 
-# def test___image_preprocess_return_type():
-#     path_image = Path('tests/data/base_images/ukbench00120.jpg')
-#     pillow_image = Image.open(path_image)
-#     resize_dims = (8, 8)
-#     im_gray_arr = Hashing._image_preprocess(pillow_image, resize_dims)
-#     assert isinstance(im_gray_arr, np.ndarray)
-#
-#
-# def test__image_preprocess_return_shape():
-#     path_image = Path('tests/data/base_images/ukbench00120.jpg')
-#     pillow_image = Image.open(path_image)
-#     resize_dims = (8, 8)
-#     im_gray_arr = Hashing._image_preprocess(pillow_image, resize_dims)
-#     assert im_gray_arr.shape == resize_dims
-#
-#
-# def test__image_preprocess_return_nonempty():
-#     path_image = Path('tests/data/base_images/ukbench00120.jpg')
-#     pillow_image = Image.open(path_image)
-#     resize_dims = (8, 8)
-#     im_gray_arr = Hashing._image_preprocess(pillow_image, resize_dims)
-#     assert im_gray_arr.size != 0
-
-
-# def test_if_using_path_works(path_image=Path('tests/data/base_images/ukbench00120.jpg')):
-#     hash_obj = Hashing()
-#     hash_im = hash_obj._convert_to_array(path_image)
-#     assert len(hash_im)
-#
-#
-# def test_if_using_numpy_input_works(path_image=Image.open(Path('tests/data/base_images/ukbench00120.jpg'))):
-#     hash_obj = Hashing()
-#     hash_im = hash_obj._convert_to_array(np.array(path_image))
-#     assert len(hash_im)
-#
-#
-# def test_if_using_numpy_floattype_works():
-#     path_image = Image.open(Path('tests/data/base_images/ukbench00120.jpg'))
-#     arrayed_image = np.array(path_image, dtype='float')
-#     hash_obj = Hashing()
-#     hash_im = hash_obj._convert_to_array(arrayed_image)
-#     assert len(hash_im)
-
-
-# def test_any_input_not_path_or_nparray_raises_exception():
-#     """Tries to input pillow image, should raise exception"""
-#     im_pil = Image.open(Path('tests/data/base_images/ukbench00120.jpg'))
-#     hash_obj = Hashing()
-#     with pytest.raises(Exception):
-#         hash_obj._convert_to_array(im_pil)
-
-
 hash_obj = Hashing()
+
 
 @pytest.mark.parametrize('hash_function', [hash_obj.phash, hash_obj.ahash, hash_obj.dhash, hash_obj.whash])
 class TestCommon:
@@ -326,8 +275,3 @@ def test_dict_dir_same_results(initialized_hash_obj):
     dict_hash = initialized_hash_obj.phash_dir(path_dir)
     dup_dict = initialized_hash_obj._find_duplicates_dict(dict_hash)
     assert dup_dir == dup_dict
-
-
-# def test__convert_to_array_unacceptable_input(initialized_hash_obj):
-#     with pytest.raises(TypeError):
-#         initialized_hash_obj._convert_to_array('tests/data/mixed_images')

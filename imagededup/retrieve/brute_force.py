@@ -2,7 +2,7 @@ from typing import Dict
 
 
 class BruteForce:
-    def __init__(self, hash_dict, distance_function) -> None:
+    def __init__(self, hash_dict: Dict, distance_function) -> None:
         self.distance_function = distance_function
         self.hash_dict = hash_dict  # database
 
