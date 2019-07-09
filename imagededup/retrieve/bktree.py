@@ -4,11 +4,6 @@ from typing import Tuple, Dict
 
 # Implementation reference: https://signal-to-noise.xyz/post/bk-tree/
 
-"""
-TODO:
-2. Refactor duplicate code in __insert_in_tree
-"""
-
 
 class BkTreeNode:
     """
