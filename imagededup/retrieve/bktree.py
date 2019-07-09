@@ -5,8 +5,7 @@ from typing import Tuple, Dict
 # Implementation reference: https://signal-to-noise.xyz/post/bk-tree/
 
 """
-TODO: 
-1. Check if LRU caching decorator on __insert_in_tree makes it quicker
+TODO:
 2. Refactor duplicate code in __insert_in_tree
 """
 
@@ -50,10 +49,9 @@ class BKTree:
         :return: 0 for successful execution.
         """
         dist_current_node = self.distance_function(self.hash_dict[k], self.dict_all[current_node].node_value)
-        if not self.dict_all[current_node].children:
-            self.dict_all[current_node].children[k] = dist_current_node
-            self.dict_all[k] = BkTreeNode(k, self.hash_dict[k], parent_name=current_node)
-        elif dist_current_node not in list(self.dict_all[current_node].children.values()):
+        condition_insert_current_node_child = (not self.dict_all[current_node].children) or (dist_current_node not in
+                                                                   list(self.dict_all[current_node].children.values()))
+        if condition_insert_current_node_child:
             self.dict_all[current_node].children[k] = dist_current_node
             self.dict_all[k] = BkTreeNode(k, self.hash_dict[k], parent_name=current_node)
         else:

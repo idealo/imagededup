@@ -13,30 +13,16 @@ def initialize_for_bktree():
     return hash_dict, dist_func
 
 
-def test_bktreenode_nodename_correct_initialization():
+def test_bktreenode_correct_initialization():
     node_name, node_value, parent_name = 'test_node', '1aef', None
     node = BkTreeNode(node_name, node_value, parent_name)
     assert node.node_name == 'test_node'
-
-
-def test_bktreenode_nodevalue_correct_initialization():
-    node_name, node_value, parent_name = 'test_node', '1aef', None
-    node = BkTreeNode(node_name, node_value, parent_name)
     assert node.node_value == '1aef'
-
-
-def test_bktreenode_parentname_correct_initialization():
-    node_name, node_value, parent_name = 'test_node', '1aef', None
-    node = BkTreeNode(node_name, node_value, parent_name)
     assert node.parent_name is None
-
-
-def test_bktreenode_children_correct_initialization():
-    node_name, node_value, parent_name = 'test_node', '1aef', None
-    node = BkTreeNode(node_name, node_value, parent_name)
     assert len(node.children) == 0
 
 # test BKTree class
+
 
 def test_insert_tree():
     # initialize root node and add 1 new node, check it goes as root's child and has it's parent as root
@@ -133,12 +119,6 @@ def test_search_dist():
     assert valid_retrievals['a'] == 2
 
 
-"""
-
-
-These tests built during TTD to test functionality of a protected function. 
-
-
 def test_get_next_candidates_valid():
     # Give a partial tree as input and check that for a query, expected candidates and validity flag are obtained
     hash_dict, dist_func = initialize_for_bktree()
@@ -170,10 +150,8 @@ def test_tolerance_affects_retrievals():
     query = '5'
     candidates, _, _ = bk._get_next_candidates(query, bk.dict_all[bk.ROOT], tolerance=1)
     low_tolerance_candidate_len = len(candidates)
-
     candidates, _, _ = bk._get_next_candidates(query, bk.dict_all[bk.ROOT], tolerance=2)
     high_tolerance_candidate_len = len(candidates)
-
     assert high_tolerance_candidate_len > low_tolerance_candidate_len
-"""
+
 
