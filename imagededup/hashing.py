@@ -27,50 +27,46 @@ class Hashing:
     Feature generation:
     To use a hashing method to generate hash for an image or a directory of images. The generated
     hashes can be used at a later time for deduplication. There are two possibilities to get hashes:
-    1. At a single image level: Using the function for particular hashing method, the hash for a single image can be obtained.
-    There are 4 methods to be chosen from:
-        a. Perceptual hash: phash
-        b. Wavelet hash: whash
-        c. Difference hash: dhash
-        d. Average hash: ahash
+    1. At a single image level: Using the function for particular hashing method, the hash for a single image can be
+    obtained. There are 4 methods to be chosen from by passing the appropriate method string during object instantiation:
+        a. Perceptual hash: 'phash'
+        b. Wavelet hash: 'whash'
+        c. Difference hash: 'dhash'
+        d. Average hash: 'ahash'
 
     Example usage:
         ```
         from imagededup import hashing
-        myhasher = hashing.Hashing()
-        perceptual_hash_string = myhasher.phash(Path('path/to/image.jpg'))
+        myhasher = hashing.Hashing(method='phash')
+        perceptual_hash_string = myhasher.hash_image(Path('path/to/image.jpg'))
         ```
     2. At a directory level: In case hashes for several images need to be generated, the images can be placed in a
-    directory and hashes for all of the images can be obtained using the corresponding directory function. There Average4 functions that can be used:
-        a. Perceptual hash: phash_dir
-        b. Wavelet hash: whash_dir
-        c. Difference hash: dhash_dir
-        d. Average hash: ahash_dir
+    directory and hashes for all of the images can be obtained using the hash_dir function:
 
     Example usage:
         ```
         from imagededup import hashing
-        myhasher = hashing.Hashing()
-        dict_file_hash = myhasher.phash_dir(Path('path/to/directory'))
+        myhasher = hashing.Hashing(method='phash')
+        dict_file_hash = myhasher.hash_dir(Path('path/to/directory'))
         ```
 
     Duplicate detection:
-    Find duplicates either using the hashes generated previously(dict_file_hash) using directory functions or using a Path to the
-    directory that contains the images that need to be deduplicated. There are 2 inputs that can be provided to the
-    find_duplicates function:
-    1. Dictionary generated using directory functions(eg: phash_dir) function above.
+    Find duplicates either using the hashes generated previously(dict_file_hash) using directory functions or using a
+    Path to the directory that contains the images that need to be deduplicated. There are 2 inputs that can be provided
+     to the find_duplicates function:
+    1. Dictionary generated using directory function(hash_dir) above.
     Example usage:
         ```
         from imagededup import hashing
-        myhasher = hashing.Hashing()
-        dict_ret_with_dict_inp = myhasher.find_duplicates(dict_file_feat, method='phash', threshold=15, scores=True)
+        myhasher = hashing.Hashing(method='phash')
+        dict_ret_with_dict_inp = myhasher.find_duplicates(dict_file_feat, threshold=15, scores=True)
         ```
     2. Using the Path of the directory where all images are present.
     Example usage:
         ```
         from imagededup import hashing
-        myhasher = hashing.Hashing()
-        dict_ret_path = myhasher.find_duplicates(Path('path/to/directory'), method='phash', threshold=15, scores=True)
+        myhasher = hashing.Hashing(method='phash')
+        dict_ret_path = myhasher.find_duplicates(Path('path/to/directory'), threshold=15, scores=True)
         ```
     If a list of file names to remove are desired, then the function find_duplicates_to_remove can be used with either
     the path to the image directory as input or the dictionary with hashes. A threshold for distance should be
@@ -78,14 +74,37 @@ class Hashing:
     Example usage:
         ```
         from imagededup import hashing
-        myhasher = hashing.Hashing()
+        myhasher = hashing.Hashing(method='phash')
         list_of_files_to_remove = myhasher.find_duplicates_to_remove(Path('path/to/images/directory'), threshold=15)
         ```
         """
-    def __init__(self) -> None:
+
+    def __init__(self, method: str = 'phash') -> None:
         """
-        Initializes a result_score variable to hold deduplication results later if desired.
+        Initializes the hashing method that needs to be applied.
+        here are 4 methods to be chosen from by passing the appropriate method string during object instantiation:
+        a. Perceptual hash: 'phash'
+        b. Wavelet hash: 'whash'
+        c. Difference hash: 'dhash'
+        d. Average hash: 'ahash'
+
+        Also initialize a result_score variable to hold deduplication results later if desired.
+
+        Example usage for selecting average hash:
+        ```
+        from imagededup import hashing
+        myhasher = hashing.Hashing(method='ahash')
+        ```
         """
+
+        self.method = method
+        method_dict = {'phash': self._phash, 'dhash': self._dhash, 'ahash': self._ahash,
+                       'whash': self._whash}
+        try:
+            self.hash_func = method_dict[self.method]
+        except KeyError:
+            raise Exception('Choose a correct hashing method. The available hashing methods are: \'phash\', \'dhash\','
+                            ' \'ahash\' and \'whash\'')
         self.result_score = None  # {query_filename: {retrieval_filename:hamming distance, ...}, ..}
         self.logger = return_logger(__name__, os.getcwd())
 
@@ -122,18 +141,12 @@ class Hashing:
             calculated_hash.append(self.bool_to_hex(i))
         return ''.join(calculated_hash)
 
-    def phash(self, path_image: None) -> str:
+    def _phash(self, path_image: PosixPath) -> str:
         """
         Get perceptual hash of the input image.
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
         :return: A string representing the perceptual hash of the image.
         Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
-
-        Example usage:
-        ```
-        from imagededup import hashing
-        myhasher = hashing.Hashing()
-        perceptual_hash_string = myhasher.phash(Path('path/to/image.jpg'))
         ```
         """
 
@@ -146,18 +159,11 @@ class Hashing:
         hash_mat = dct_reduced_coef >= mean_coef_val  # All coefficients greater than mean of coefficients
         return self._get_hash(hash_mat, 16)  # 16 character output
 
-    def ahash(self, path_image: PosixPath) -> str:
+    def _ahash(self, path_image: PosixPath) -> str:
         """
         Get average hash of the input image.
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
         :return: A string representing the average hash of the image.
-
-        Example usage:
-        ```
-        from imagededup import hashing
-        myhasher = hashing.Hashing()
-        average_hash_string = myhasher.ahash(Path('path/to/image.jpg'))
-        ```
         """
 
         res_dims = (8, 8)
@@ -166,20 +172,13 @@ class Hashing:
         hash_mat = im_gray_arr >= avg_val
         return self._get_hash(hash_mat, 16)  # 16 character output
 
-    def dhash(self, path_image: PosixPath) -> str:
+    def _dhash(self, path_image: PosixPath) -> str:
         """
         Get difference hash of the input image.
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
         :return: A string representing the difference hash of the image.
 
         Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html
-
-        Example usage:
-        ```
-        from imagededup import hashing
-        myhasher = hashing.Hashing()
-        difference_hash_string = myhasher.dhash(Path('path/to/image.jpg'))
-        ```
         """
 
         res_dims = (9, 8)
@@ -188,18 +187,11 @@ class Hashing:
         hash_mat = im_gray_arr[:, 1:] > im_gray_arr[:, :-1]
         return self._get_hash(hash_mat, 16)  # 16 character output
 
-    def whash(self, path_image: None) -> str:
+    def _whash(self, path_image: PosixPath) -> str:
         """
         Get wavelet hash of the input image.
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
         :return: A string representing the wavelet hash of the image.
-
-        Example usage:
-        ```
-        from imagededup import hashing
-        myhasher = hashing.Hashing()
-        wavelet_hash_string = myhasher.whash(Path('path/to/image.jpg'))
-        ```
         """
 
         res_dims = (256, 256)
@@ -211,84 +203,28 @@ class Hashing:
         hash_mat = LL_coeff >= mean_coef_val  # All coefficients greater than mean of coefficients
         return self._get_hash(hash_mat, 16)  # 16 character output
 
-    def _run_hash_on_dir(self, path_dir: Path, hashing_function: FunctionType) -> Dict:
+    def hash_image(self, path_image: PosixPath) -> str:
         """
-        Apply the given hashing function to all images in a directory.
+        Apply a hashing function on the input image.
+        :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
+        :return: A string representing the hash of the image.
+        """
+        return self.hash_func(path_image)
+
+    def hash_dir(self, path_dir: PosixPath) -> Dict:
+        """
+        Apply the hashing method to all images in a directory.
         :param path_dir: PosixPath to the directory containing images for which hashes are to be obtained.
-        :param hashing_function: The hashing function that needs to be applied to each image.
         :return: Dictionary containing file names as keys and corresponding hash string as value.
         """
 
         filenames = check_directory_files(path_dir, return_file=True)
-        self.logger.info(f'Start: Calculating hashes using {hashing_function}!')
+        self.logger.info(f'Start: Calculating hashes using {self.method}!')
         hash_dict = dict(zip(filenames, [None] * len(filenames)))
         for i in filenames:
-            hash_dict[i] = hashing_function(Path(i))
-        self.logger.info(f'End: Calculating hashes using {hashing_function}!')
-        return hash_dict  # dict_file_feature in cnn
-
-    def phash_dir(self, path_dir: PosixPath) -> Dict:
-        """
-        Returns a perceptual hash for each image in the specified directory path.
-        :param path_dir: PosixPath to the directory containing images for which perceptual hashes are to be obtained.
-        :return: Dictionary containing file names as keys and corresponding perceptual hash string as value.
-
-        Example usage:
-        ```
-        from imagededup import hashing
-        myhasher = hashing.Hashing()
-        dict_file_hash = myhasher.phash_dir(Path('path/to/directory'))
-        ```
-        """
-
-        return self._run_hash_on_dir(path_dir, self.phash)
-
-    def ahash_dir(self, path_dir: PosixPath) -> Dict:
-        """
-        Returns an average hash for each image in the specified directory path.
-        :param path_dir: PosixPath to the directory containing images for which average hashes are to be obtained.
-        :return: Dictionary containing file names as keys and corresponding average hash string as value.
-
-        Example usage:
-        ```
-        from imagededup import hashing
-        myhasher = hashing.Hashing()
-        dict_file_hash = myhasher.ahash_dir(Path('path/to/directory'))
-        ```
-        """
-
-        return self._run_hash_on_dir(path_dir, self.ahash)
-
-    def dhash_dir(self, path_dir: PosixPath) -> Dict:
-        """
-        Returns a difference hash for each image in the specified directory path.
-        :param path_dir: PosixPath to the directory containing images for which difference hashes are to be obtained.
-        :return: Dictionary containing file names as keys and corresponding difference hash string as value.
-
-        Example usage:
-        ```
-        from imagededup import hashing
-        myhasher = hashing.Hashing()
-        dict_file_hash = myhasher.dhash_dir(Path('path/to/directory'))
-        ```
-        """
-
-        return self._run_hash_on_dir(path_dir, self.dhash)
-
-    def whash_dir(self, path_dir: PosixPath) -> Dict:
-        """
-        Returns a wavelet hash for each image in the specified directory path.
-        :param path_dir: PosixPath to the directory containing images for which wavelet hashes are to be obtained.
-        :return: Dictionary containing file names as keys and corresponding wavelet hash string as value.
-
-        Example usage:
-        ```
-        from imagededup import hashing
-        myhasher = hashing.Hashing()
-        dict_file_hash = myhasher.whash_dir(Path('path/to/directory'))
-        ```
-        """
-        return self._run_hash_on_dir(path_dir, self.whash)
+            hash_dict[i] = self.hash_func(Path(i))
+        self.logger.info(f'End: Calculating hashes using {self.method}!')
+        return hash_dict  # dict_file_feature from _find_duplicates_dict input
 
     # Search part
 
@@ -308,22 +244,20 @@ class Hashing:
         'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}"""
 
         self.logger.info('Start: Evaluating hamming distances for getting duplicates')
-        rs = HashEval(test=dict_file_feature, queries=dict_file_feature, hammer=self.hamming_distance,
+        result_set = HashEval(test=dict_file_feature, queries=dict_file_feature, hammer=self.hamming_distance,
                       cutoff=threshold, search_method='bktree', save=False)
         self.logger.info('End: Evaluating hamming distances for getting duplicates')
-        self.result_score = rs.retrieve_results()
+        self.result_score = result_set.retrieve_results()
         if scores:
             return self.result_score
         else:
-            return rs.retrieve_result_list()
+            return result_set.retrieve_result_list()
 
-    def _find_duplicates_dir(self, path_dir: PosixPath, method='phash', threshold: int = 10,
-                             scores: bool = False)-> Dict:
+    def _find_duplicates_dir(self, path_dir: PosixPath, threshold: int = 10, scores: bool = False) -> Dict:
         """Takes in path of the directory on which duplicates are to be detected above the given threshold.
         Returns dictionary containing key as filename and value as a list of duplicate file names.
 
         :param path_dir: PosixPath to the directory containing all the images.
-        :param method: hashing method
         :param threshold: Hamming distance above which retrieved duplicates are valid.
         :param scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
         :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<distance>,
@@ -331,14 +265,7 @@ class Hashing:
         if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
         'image1_duplicate2.jpg'], 'image2.jpg':['image2_duplicate1.jpg',..], ..}"""
 
-        method_dict = {'phash': self.phash_dir, 'dhash': self.dhash_dir, 'ahash': self.ahash_dir,
-                       'whash': self.whash_dir}
-        try:
-            hash_func = method_dict[method]
-        except KeyError:
-            raise Exception('Choose a correct hashing method. The available hashing methods are: phash, dhash, ahash '
-                            'and whash')
-        dict_file_feature = hash_func(path_dir)
+        dict_file_feature = self.hash_dir(path_dir)
         dict_ret = self._find_duplicates_dict(dict_file_feature=dict_file_feature, threshold=threshold, scores=scores)
         return dict_ret
 
@@ -354,39 +281,37 @@ class Hashing:
         if not isinstance(thresh, int) or (thresh < 0 or thresh > 64):
             raise TypeError('Threshold must be an int between 0 and 64')
 
-    def find_duplicates(self, path_or_dict, method='phash', threshold: int = 10, scores: bool = False) -> Dict:
+    def find_duplicates(self, path_or_dict, threshold: int = 10, scores: bool = False) -> Dict:
         """
         Finds duplicates. Raises TypeError if the supplied directory path isn't a Path variable or a valid dictionary
         isn't supplied.
 
         :param path_or_dict: PosixPath to the directory containing all the images or dictionary with keys as file names
         and values as numpy arrays which represent the CNN feature for the key image file.
-        :param method: hashing method
         :param threshold: Threshold value (must be float between -1.0 and 1.0)
         :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
-        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg'::<distance>,
-        'image1_duplicate2.jpg':<distance>, ..}, 'image2.jpg':{'image1_duplicate1.jpg'::<distance>,..}}
+        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<distance>,
+        'image1_duplicate2.jpg':<distance>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<distance>,..}}
         if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
         'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
 
             Example usage:
         ```
         from imagededup import hashing
-        myhasher = hashing.Hashing()
-        dict_ret_with_dict_inp = myhasher.find_duplicates(dict_file_feat, method='phash', threshold=15, scores=True)
+        myhasher = hashing.Hashing(method='phash')
+        dict_ret_with_dict_inp = myhasher.find_duplicates(dict_file_feat, threshold=15, scores=True)
 
         OR
 
         from imagededup import hashing
-        myhasher = hashing.Hashing()
-        dict_ret_path = myhasher.find_duplicates(Path('path/to/directory'), method='phash', threshold=15, scores=True)
+        myhasher = hashing.Hashing(method='phash')
+        dict_ret_path = myhasher.find_duplicates(Path('path/to/directory'), threshold=15, scores=True)
         ```
         """
 
         self._check_hamming_distance_bounds(thresh=threshold)
         if isinstance(path_or_dict, PosixPath):
-            dict_ret = self._find_duplicates_dir(path_dir=path_or_dict, method=method, threshold=threshold,
-                                                 scores=scores)
+            dict_ret = self._find_duplicates_dir(path_dir=path_or_dict, threshold=threshold, scores=scores)
         elif isinstance(path_or_dict, dict):
             dict_ret = self._find_duplicates_dict(dict_file_feature=path_or_dict, threshold=threshold, scores=scores)
         else:
@@ -394,25 +319,24 @@ class Hashing:
                             'vectors!')
         return dict_ret
 
-    def find_duplicates_to_remove(self, path_or_dict, method='phash', threshold: int = 10) -> List:
+    def find_duplicates_to_remove(self, path_or_dict, threshold: int = 10) -> List:
         """
         Gives out a list of image file names to remove based on the similarity threshold.
         :param path_or_dict: PosixPath to the directory containing all the images or dictionary with keys as file names
         and values as numpy arrays which represent the CNN feature for the key image file.
-        :param method: hashing method
         :param threshold: Threshold value (must be float between -1.0 and 1.0)
         :return: List of image file names that should be removed.
 
         Example usage:
         ```
         from imagededup import hashing
-        myhasher = hashing.Hashing()
-        list_of_files_to_remove = myhasher.find_duplicates_to_remove(Path('path/to/images/directory'), method='phash',
+        myhasher = hashing.Hashing(method='phash')
+        list_of_files_to_remove = myhasher.find_duplicates_to_remove(Path('path/to/images/directory'),
         threshold=15)
         ```
         """
 
-        dict_ret = self.find_duplicates(path_or_dict=path_or_dict,  method=method, threshold=threshold, scores=False)
+        dict_ret = self.find_duplicates(path_or_dict=path_or_dict, threshold=threshold, scores=False)
         return get_files_to_remove(dict_ret)
 
 

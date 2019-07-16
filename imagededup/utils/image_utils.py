@@ -15,7 +15,7 @@ Todo:
 
 def _load_image(path_image: PosixPath) -> Image:
     """
-    Load image given the PosixPath path to the image.
+    Load image given the PosixPath to the image.
     :param path_image: A PosixPath to the image.
     :return: A Pillow Image if image gets loaded successfully.
     """
@@ -33,7 +33,7 @@ def _load_image(path_image: PosixPath) -> Image:
 
 def _validate_single_image(path_image: PosixPath) -> int:
     """
-    Checks if a files is a valid images (check for existence and correct extension).
+    Checks if a file is a valid image (check for existence and correct extension).
     :param path_image: A PosixPath to the image.
     :return: integer 1 for a successful check.
     """
@@ -87,7 +87,7 @@ def _image_preprocess(pillow_image: Image, resize_dims: Tuple[int, int], for_has
 
 def convert_to_array(path_image, resize_dims: Tuple[int, int], for_hashing: bool = True) -> np.ndarray:
     """
-    Accepts either path of an image or a numpy array and processes it to feed it to CNN.
+    Accepts either path of an image or a numpy array and processes it to feed it to CNN or hashing methods.
 
     :param path_image: PosixPath to the image file or Image typecast to numpy array.
     :param resize_dims: Dimensions for resizing the image
