@@ -24,7 +24,7 @@ GOLD_PATH = '/Users/zubin.john/forge/image-dedup/Transformed_dataset/ground_trut
 if __name__ == '__main__':
     hasher = Hashing()  # Instantiate a hashing function to be used for fingerprinting
     start = datetime.utcnow()
-    ds = HashedDataset(hasher.dhash, QUERY_PATH, TEST_PATH)
+    ds = HashedDataset(hasher.__dhash, QUERY_PATH, TEST_PATH)
     end = datetime.utcnow()
 
     print(f'Stage 1: FINGEPRINTING completed in {(end-start).total_seconds()} seconds')

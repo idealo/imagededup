@@ -36,7 +36,7 @@ class BKTree:
         self.candidates = [self.dict_all[self.ROOT].node_name]  # Initial value is root
         self.construct_tree()
 
-    def __insert_in_tree(self, k: str, current_node: str) -> int:
+    def _insert_in_tree(self, k: str, current_node: str) -> int:
         """
         Function to insert a new node into the BKTree.
         :param k: filename for inserting into the BKTree.
@@ -54,7 +54,7 @@ class BKTree:
                 if val == dist_current_node:
                     node_to_add_to = i
                     break
-            self.__insert_in_tree(k, node_to_add_to)
+            self._insert_in_tree(k, node_to_add_to)
         return 0
 
     def construct_tree(self) -> None:
@@ -62,7 +62,7 @@ class BKTree:
         Construct the BKTree.
         """
         for k in self.all_keys:
-            self.__insert_in_tree(k, self.ROOT)
+            self._insert_in_tree(k, self.ROOT)
 
     def _get_next_candidates(self, query: str, candidate_obj: BkTreeNode, tolerance: int) -> Tuple[list, int, float]:
         """

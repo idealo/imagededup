@@ -11,7 +11,7 @@ GOLD_PATH = '/Users/tanuj.jain/Documents/dedup-data/Transformed_dataset/ground_t
 if __name__ == '__main__':
     hasher = Hashing()
     start = datetime.utcnow()
-    ds = HashedDataset(hasher.phash, QUERY_PATH, TEST_PATH)
+    ds = HashedDataset(hasher.__phash, QUERY_PATH, TEST_PATH)
     end = datetime.utcnow()
     print(f'Stage 1: FINGEPRINTING completed in {(end - start).total_seconds()} seconds')
 
