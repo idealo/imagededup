@@ -21,6 +21,8 @@ class HashEval:
         self.hamming_distance_invoker = hammer
         self.max_d = cutoff
         self.logger = return_logger(__name__, os.getcwd())
+        self.query_results_map = None
+        self.query_results_list = None
 
         if search_method == 'bktree':
             self.fetch_nearest_neighbors_bktree()  # bktree is the default search method

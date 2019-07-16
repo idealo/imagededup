@@ -220,9 +220,9 @@ class Hashing:
 
         filenames = check_directory_files(path_dir, return_file=True)
         self.logger.info(f'Start: Calculating hashes using {self.method}!')
-        hash_dict = dict(zip(filenames, [None] * len(filenames)))
+        hash_dict = dict()
         for i in filenames:
-            hash_dict[i] = self.hash_func(Path(i))
+            hash_dict[i.name] = self.hash_func(Path(i))
         self.logger.info(f'End: Calculating hashes using {self.method}!')
         return hash_dict  # dict_file_feature from _find_duplicates_dict input
 
