@@ -1,4 +1,4 @@
-from imagededup.evaluation import EvalPerformance
+from imagededup.evaluation.performance import Metrics
 import os
 import pickle
 import pytest
@@ -17,7 +17,7 @@ def run_before_main_metrics(ground_truth_file, retrieval_file):
     """Loads ground truth and retrieval dicts, declares an eval object, returns initialized object"""
     dict_ground_truth = load_pickle(ground_truth_file)
     dict_retrievals = load_pickle(retrieval_file)
-    evalobj = EvalPerformance(dict_ground_truth, dict_retrievals)
+    evalobj = Metrics(dict_ground_truth, dict_retrievals)
     return evalobj
 
 
@@ -45,63 +45,63 @@ def initialize_fake_data_retrieved_more():
 def test_avg_prec_same():
     """Number of retrievals = Number of ground truth retrievals"""
     corr_dup, ret_dups = initialize_fake_data_retrieved_same()
-    av_prec_val = EvalPerformance.avg_prec(corr_dup, ret_dups)
+    av_prec_val = Metrics.avg_prec(corr_dup, ret_dups)
     assert av_prec_val == 0.6041666666666666
 
 
 def test_ndcg_same():
     """Number of retrievals = Number of ground truth retrievals"""
     corr_dup, ret_dups = initialize_fake_data_retrieved_same()
-    ndcg_val = EvalPerformance.ndcg(corr_dup, ret_dups)
+    ndcg_val = Metrics.ndcg(corr_dup, ret_dups)
     assert ndcg_val == 0.75369761125927
 
 
 def test_jaccard_same():
     """Number of retrievals = Number of ground truth retrievals"""
     corr_dup, ret_dups = initialize_fake_data_retrieved_same()
-    jac_val = EvalPerformance.jaccard_similarity(corr_dup, ret_dups)
+    jac_val = Metrics.jaccard_similarity(corr_dup, ret_dups)
     assert jac_val == 0.6
 
 
 def test_avg_prec_less():
     """Number of retrievals < Number of ground truth retrievals"""
     corr_dup, ret_dups = initialize_fake_data_retrieved_less()
-    av_prec_val = EvalPerformance.avg_prec(corr_dup, ret_dups)
+    av_prec_val = Metrics.avg_prec(corr_dup, ret_dups)
     assert av_prec_val == 0.25
 
 
 def test_ndcg_less():
     """Number of retrievals < Number of ground truth retrievals"""
     corr_dup, ret_dups = initialize_fake_data_retrieved_less()
-    ndcg_val = EvalPerformance.ndcg(corr_dup, ret_dups)
+    ndcg_val = Metrics.ndcg(corr_dup, ret_dups)
     assert ndcg_val == 0.6131471927654584
 
 
 def test_jaccard_less():
     """Number of retrievals < Number of ground truth retrievals"""
     corr_dup, ret_dups = initialize_fake_data_retrieved_less()
-    jac_val = EvalPerformance.jaccard_similarity(corr_dup, ret_dups)
+    jac_val = Metrics.jaccard_similarity(corr_dup, ret_dups)
     assert jac_val == 0.2
 
 
 def test_avg_prec_retrieved_more():
     """Number of retrievals > Number of ground truth retrievals"""
     corr_dup, ret_dups = initialize_fake_data_retrieved_more()
-    av_prec_val = EvalPerformance.avg_prec(corr_dup, ret_dups)
+    av_prec_val = Metrics.avg_prec(corr_dup, ret_dups)
     assert av_prec_val == 0.8041666666666667
 
 
 def test_ndcg_retrieved_more():
     """Number of retrievals > Number of ground truth retrievals"""
     corr_dup, ret_dups = initialize_fake_data_retrieved_more()
-    ndcg_val = EvalPerformance.ndcg(corr_dup, ret_dups)
+    ndcg_val = Metrics.ndcg(corr_dup, ret_dups)
     assert ndcg_val == 0.9047172294870751
 
 
 def test_jaccard_retrieved_more():
     """Number of retrievals > Number of ground truth retrievals"""
     corr_dup, ret_dups = initialize_fake_data_retrieved_more()
-    jac_val = EvalPerformance.jaccard_similarity(corr_dup, ret_dups)
+    jac_val = Metrics.jaccard_similarity(corr_dup, ret_dups)
     assert jac_val == 0.8
 
 
@@ -187,7 +187,7 @@ def test_get_metrics_does_not_save_when_save_false():
     assert not os.path.exists('all_average_metrics.pkl')
 
 
-@pytest.mark.parametrize('metric_func', [EvalPerformance.avg_prec, EvalPerformance.ndcg, EvalPerformance.jaccard_similarity])
+@pytest.mark.parametrize('metric_func', [Metrics.avg_prec, Metrics.ndcg, Metrics.jaccard_similarity])
 def test_zero_retrieval(metric_func):
     corr_dup = ['1.jpg', '2.jpg', '3.jpg', '4.jpg']
     ret_dups = []
