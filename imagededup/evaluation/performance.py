@@ -4,7 +4,7 @@ from types import FunctionType
 from typing import List, Dict
 
 
-class EvalPerformance:
+class Metrics:
     """
     A class that provides possibilities to run evaluation for judging deduplication performance.
     """
@@ -66,7 +66,8 @@ class EvalPerformance:
             ideal_dcg_terms = [1] * len(correct_duplicates) + [0] * (len(dcg_terms) - len(correct_duplicates))
             ideal_dcg_numerator = [(2 ** ideal_dcg_terms[k]) - 1 for k in range(len(ideal_dcg_terms))]
             ideal_dcg_denominator = [np.log2(k + 2) for k in range(len(ideal_dcg_terms))]
-            ideal_dcg = np.sum([ideal_dcg_numerator[k] / ideal_dcg_denominator[k] for k in range(len(ideal_dcg_numerator))])
+            ideal_dcg = np.sum([ideal_dcg_numerator[k] / ideal_dcg_denominator[k] for k in
+                                range(len(ideal_dcg_numerator))])
             ndcg = dcg_k / ideal_dcg
         return ndcg
 
@@ -100,10 +101,11 @@ class EvalPerformance:
             all_metrics.append(metric_func(self.dict_correct[k], self.dict_retrieved[k]))
         return np.mean(all_metrics)
 
-    def get_all_metrics(self, save: bool = True) -> Dict:
+    def get_all_metrics(self, save_filename: str = None) -> Dict:
         """
 
         :param save: Save flag indicating whether the dictionary below should be saved
+        :param save_filename: name of the metrics file to be saved if save is True
         :return: dictionary of all mean metrics
         """
 
@@ -113,7 +115,7 @@ class EvalPerformance:
             'Jaccard': self.mean_all_func(self.jaccard_similarity)
         }
 
-        if save:
-            with open('all_average_metrics.pkl', 'wb') as f:
+        if save_filename:
+            with open(save_filename, 'wb') as f:  # 'all_average_metrics.pkl'
                 pickle.dump(dict_average_metrics, f)
         return dict_average_metrics
