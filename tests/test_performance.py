@@ -1,8 +1,8 @@
-from imagededup.evaluation.performance import Metrics
+from imagededup.evaluate.performance import Metrics
 import os
 import pickle
 import pytest
-"""Run from project root with: python -m pytest -vs tests/test_evaluation_logic.py --cov=imagededup.evaluation"""
+"""Run from project root with: python -m pytest -vs tests/test_evaluation_logic.py --cov=imagededup.evaluate"""
 
 
 def load_pickle(filename):
@@ -175,15 +175,15 @@ def test_get_metrics_save():
     if os.path.exists('all_average_metrics.pkl'):
         os.remove('all_average_metrics.pkl')
     evalobj = run_before_main_metrics('ground_truth.pkl', 'incorrect_retrievals.pkl')
-    evalobj.get_all_metrics()
+    evalobj.get_all_metrics('all_average_metrics.pkl')
     assert os.path.exists('all_average_metrics.pkl')
 
 
-def test_get_metrics_does_not_save_when_save_false():
+def test_get_metrics_does_not_save_when_savename_none():
     if os.path.exists('all_average_metrics.pkl'):
         os.remove('all_average_metrics.pkl')
     evalobj = run_before_main_metrics('ground_truth.pkl', 'incorrect_retrievals.pkl')
-    evalobj.get_all_metrics(save=False)
+    evalobj.get_all_metrics(save_filename=None)
     assert not os.path.exists('all_average_metrics.pkl')
 
 

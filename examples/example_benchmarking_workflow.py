@@ -1,6 +1,6 @@
 from imagededup.hashing import Hashing, HashedDataset
 from imagededup.retrieve.retrieval import HashEval
-from imagededup.evaluation import EvalPerformance
+from imagededup.evaluate.performance import Metrics
 from pickle import load as pickle_loader
 from datetime import datetime
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     with open(GOLD_PATH, 'rb') as buf:
         correct_dict = pickle_loader(buf)
     start = datetime.utcnow()
-    evaluator = EvalPerformance(correct_dict, returned_dict)
+    evaluator = Metrics(correct_dict, returned_dict)
     end = datetime.utcnow()
 
     print(f'Stage 3: EVALUATION completed in {(end-start).total_seconds()} seconds\n\n')
