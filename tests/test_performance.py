@@ -2,7 +2,7 @@ from imagededup.evaluate.performance import Metrics
 import os
 import pickle
 import pytest
-"""Run from project root with: python -m pytest -vs tests/test_evaluation_logic.py --cov=imagededup.evaluate"""
+"""Run from project root with: python -m pytest -vs tests/test_performance.py --cov=imagededup.evaluate.performance"""
 
 
 def load_pickle(filename):
