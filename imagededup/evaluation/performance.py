@@ -6,7 +6,7 @@ from typing import List, Dict
 
 class Metrics:
     """
-    A class that provides possibilities to run evaluate for judging deduplication performance.
+    A class that provides possibilities to run evaluation for judging deduplication performance.
     """
     def __init__(self, dict_correct: Dict[str, List], dict_retrieved: Dict[str, List]) -> None:
         """
