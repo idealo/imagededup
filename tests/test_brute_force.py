@@ -1,4 +1,4 @@
-from imagededup.retrieve.brute_force import BruteForce
+from imagededup.retrieve import BruteForce
 from imagededup.hashing import Hashing
 from collections import OrderedDict
 

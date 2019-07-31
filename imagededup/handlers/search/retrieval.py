@@ -1,5 +1,5 @@
-from imagededup.retrieve.bktree import BKTree
-from imagededup.retrieve.brute_force import BruteForce
+from imagededup.handlers.search.bktree import BKTree
+from imagededup.handlers.search.brute_force import BruteForce
 from imagededup.utils.logger import return_logger
 from types import FunctionType
 from numpy.linalg import norm

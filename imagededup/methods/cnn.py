@@ -1,4 +1,4 @@
-from imagededup.retrieve.retrieval import CosEval
+from imagededup.handlers.search.retrieval import CosEval
 from imagededup.utils.image_utils import check_directory_files, convert_to_array
 from imagededup.utils.general_utils import get_files_to_remove
 from imagededup.utils.logger import return_logger
@@ -246,7 +246,6 @@ class CNN:
         else:
             return self._get_only_filenames(self.result_score)
 
-
     def get_encodings(self, image_dir: PosixPath):
         """
         Generates CNN features for all images in a given directory of images.
@@ -338,7 +337,7 @@ class CNN:
         if not isinstance(thresh, float) or (thresh < -1.0 or thresh > 1.0):
             raise TypeError('Threshold must be a float between -1.0 and 1.0')
 
-    def find_duplicates(self, path_or_dict, threshold: float = 0.8, scores: bool = False) -> Dict:
+    def find_duplicates_old(self, path_or_dict, threshold: float = 0.8, scores: bool = False) -> Dict:
         """
         Finds duplicates. Raises TypeError if supplied directory path isn't a Path variable or a valid dictionary isn't
         supplied.
@@ -378,7 +377,7 @@ class CNN:
                             'vectors!')
         return dict_ret
 
-    def find_duplicates_to_remove(self, path_or_dict, threshold: float = 0.8) -> List:
+    def find_duplicates_to_remove_old(self, path_or_dict, threshold: float = 0.8) -> List:
         """
         Gives out a list of image file names to remove based on the similarity threshold.
         :param path_or_dict: PosixPath to the directory containing all the images or dictionary with keys as file names
