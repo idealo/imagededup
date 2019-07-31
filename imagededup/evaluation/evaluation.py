@@ -1,9 +1,9 @@
-from imagededup.hashing import Hashing
-from imagededup.cnn import CNN
-from imagededup.retrieve.retrieval import HashEval
-from imagededup.retrieve.retrieval import CosEval
-from imagededup.evaluation.performance import Metrics
-from pathlib import Path, PosixPath
+from imagededup.methods.hashing import Hashing
+from imagededup.methods.cnn import CNN
+from imagededup.retrieve import HashEval
+from imagededup.retrieve import CosEval
+from imagededup.handlers.metrics.retrieval import Metrics
+from pathlib import PosixPath
 from typing import Dict, Optional
 
 # Todo: Check passed method_args explicitly?

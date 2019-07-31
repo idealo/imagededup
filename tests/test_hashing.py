@@ -1,4 +1,4 @@
-from imagededup.hashing import Hashing, HashedDataset, Dataset
+from imagededup.methods.hashing import Hashing, HashedDataset, Dataset
 import pytest
 import numpy as np
 from pathlib import Path

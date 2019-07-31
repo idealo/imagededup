@@ -1,4 +1,4 @@
-from imagededup.evaluation.performance import Metrics
+from imagededup.handlers.metrics.retrieval import Metrics
 import os
 import pickle
 import pytest
