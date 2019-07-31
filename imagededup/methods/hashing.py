@@ -21,6 +21,87 @@ Wavelet hash: Allow possibility of different wavelet functions
 
 
 class Hashing:
+    def __init__(self) -> None:
+        self.logger = return_logger(__name__, os.getcwd())
+
+    @staticmethod
+    def bool_to_hex(x: np.array) -> str:
+        str_bool = ''.join([str(int(i)) for i in x])
+        int_base2 = int(str_bool, 2)  # int base 2
+        return '{:0x}'.format(int_base2)
+
+    @staticmethod
+    def hamming_distance(hash1: str, hash2: str) -> float:
+        """
+        Calculates the hamming distance between two hashes. If length of hashes is not 64 bits, then pads the length
+        to be 64 for each hash and then calculates the hamming distance.
+        :param hash1: hash string
+        :param hash2: hash string
+        :return: Hamming distance between the two hashes.
+        """
+        hash1_bin = bin(int(hash1, 16))[2:].zfill(64)  # zfill ensures that len of hash is 64 and pads MSB if it is < A
+        hash2_bin = bin(int(hash2, 16))[2:].zfill(64)
+        return np.sum([i != j for i, j in zip(hash1_bin, hash2_bin)])
+
+    def _array_to_hash(self, hash_mat: np.array, n_blocks: int) -> str:
+        """
+        Convert a matrix of binary numerals to an n_blocks length hash.
+        :param hash_mat: A numpy array consisting of 0/1 values.
+        :param n_blocks: Hash length required.
+        :return: An n_blocks length hash string.
+        """
+        calculated_hash = []
+        for i in np.array_split(np.ndarray.flatten(hash_mat), n_blocks):
+            calculated_hash.append(self.bool_to_hex(i))
+        return ''.join(calculated_hash)
+
+    def hash_image(self, path_image: PosixPath) -> str:
+        """
+        Apply a hashing function on the input image.
+        :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
+        :return: A string representing the hash of the image.
+        """
+        return self.hash_func(path_image)
+
+    def hash_images(self, image_dir):
+        images = load_images(image_dir)
+
+        for image in images:
+
+    def hash_dir(self, path_dir: PosixPath) -> Dict:
+        """
+        Apply the hashing method to all images in a directory.
+        :param path_dir: PosixPath to the directory containing images for which hashes are to be obtained.
+        :return: Dictionary containing file names as keys and corresponding hash string as value.
+        """
+
+        filenames = check_directory_files(path_dir, return_file=True)
+        self.logger.info(f'Start: Calculating hashes using {self.method}!')
+        hash_dict = dict()
+        for i in filenames:
+            hash_dict[i.name] = self.hash_func(Path(i))
+        self.logger.info(f'End: Calculating hashes using {self.method}!')
+        return hash_dict  # dict_file_feature from _find_duplicates_dict input
+
+
+    def encode_image(self, image):
+        return hash_image(image)
+
+
+    def encode_images(self, images):
+        return hash_images(images)
+
+
+
+
+
+
+
+
+
+
+
+class Hashing2:
     """
     Finds duplicates using hashing methods and/or generates hashes given a single image or a directory of images.
     The module can be used for 2 purposes: Feature generation and duplicate detection.
@@ -100,11 +181,13 @@ class Hashing:
         self.method = method
         method_dict = {'phash': self._phash, 'dhash': self._dhash, 'ahash': self._ahash,
                        'whash': self._whash}
-        try:
-            self.hash_func = method_dict[self.method]
-        except KeyError:
-            raise Exception('Choose a correct hashing method. The available hashing methods are: \'phash\', \'dhash\','
-                            ' \'ahash\' and \'whash\'')
+
+        self.hash_func = method_dict.get(self.method)
+
+        if self.hash_func is None:
+            raise ValueError('Choose a correct hashing method. The available hashing methods are: \'phash\', \'dhash\','
+                             ' \'ahash\' and \'whash\'')
+
         self.result_score = None  # {query_filename: {retrieval_filename:hamming distance, ...}, ..}
         self.logger = return_logger(__name__, os.getcwd())
 
