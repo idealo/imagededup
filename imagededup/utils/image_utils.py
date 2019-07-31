@@ -2,7 +2,7 @@ import os
 import numpy as np
 from PIL import Image
 from pathlib import Path, PosixPath
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 
 """
 ? Allow acceptance of os.path in addition to already existing Path and numpy image array
@@ -13,47 +13,72 @@ Todo:
 """
 
 
-def _load_image(path_image: PosixPath) -> Image:
+IMG_FORMATS = ['JPEG', 'PNG', 'BMP']
+
+
+def load_image(path: Path, target_size=None, grayscale: bool = False) -> Image:
+    img = Image.open(path)
+    f = img.format  # store format after opening as it gets lost after conversion
+
+    if img.mode != 'RGB':
+        # convert to RGBA first to avoid warning
+        # we ignore alpha channel if available
+        img = img.convert('RGBA').convert('RGB')
+
+    if target_size:
+        img = img.resize(target_size)
+
+    if grayscale:
+        img = img.convert('L')
+
+    img.format = f  # reassign format for later validation checks
+
+    return img
+
+
+def validate_image(
+    file_name: Path, img_formats: List[str] = IMG_FORMATS
+) -> Tuple[bool, Optional[Exception]]:
     """
-    Load image given the PosixPath to the image.
-    :param path_image: A PosixPath to the image.
-    :return: A Pillow Image if image gets loaded successfully.
+    Checks whether File is valid image file:
+        - file exists
+        - file is readable
+        - file is an image
+    Args:
+        file_name: Absolute path of file.
+     Returns:
+        True if file is valid image file.
+        False else.
     """
+
+    valid_image = False
+    error = None
+
     try:
-        img = Image.open(path_image)
+        img = load_image(file_name)
 
-        if img.mode != 'RGB':
-            # convert to RGBA first to avoid warning
-            # we ignore alpha channel if available
-            img = img.convert('RGBA').convert('RGB')
-        return img
+        if img.format in img_formats:
+            img.load()  # Pillow uses lazy loading, so need to explicitly load
+
+            valid_image = True
+
+        else:
+            error = f'Image format {img.format} not in supported formats {img_formats}'
+
     except Exception as e:
-        raise Exception(f'{type(e)} Image can not be loaded!')
+        error = e
+
+    return valid_image, error
 
 
-def _validate_single_image(path_image: PosixPath) -> int:
-    """
-    Checks if a file is a valid image (check for existence and correct extension).
-    :param path_image: A PosixPath to the image.
-    :return: integer 1 for a successful check.
-    """
-    if not os.path.exists(path_image):
-        raise FileNotFoundError('Ensure that the file exists at the specified path!')
-    str_name = path_image.name
 
-    if not (str_name.endswith('.jpeg') or str_name.endswith('.jpg') or str_name.endswith('.bmp') or
-            str_name.endswith('.png')):
-        raise TypeError('Image formats supported: .jpg, .jpeg, .bmp, .png')
-    return 1  # returns 1 if validation successful
-
-
-def check_directory_files(path_dir: PosixPath, return_file: bool = False) -> List:
+def validate_images(image_dir: PosixPath) -> List:
     """Checks if all files in path_dir are valid images and return valid files if return_file set to True.
     :param path_dir: A PosixPath to the image directory.
     :param return_file: Boolean indicating if a list of valid files is to be returned.
     """
 
-    files = [Path(i.absolute()) for i in path_dir.glob('*') if not i.name.startswith('.')]  # ignore hidden files
+    files = [Path(i.absolute()) for i in image_dir.glob('*') if not i.name.startswith('.')]  # ignore hidden files
 
     invalid_image_files = []
     for i in files:
