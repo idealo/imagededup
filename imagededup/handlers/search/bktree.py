@@ -98,6 +98,7 @@ class BKTree:
             candidate_name = candidates_local.pop()
             cand_list, valid_flag, dist = self._get_next_candidates(query, self.dict_all[candidate_name], tolerance=tol)
             if valid_flag:
-                valid_retrievals.append((candidate_name, int(dist)))
+                valid_retrievals.append((candidate_name, int(dist))) # typecast dist to int to save later as np.int64
+                # can't be saved by json
             candidates_local.extend(cand_list)
         return valid_retrievals
