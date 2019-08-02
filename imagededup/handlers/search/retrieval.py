@@ -39,13 +39,10 @@ class HashEval:
         """
         sorted_result_list, result_map = {}, {}
         for each in self.queries:
-            res = search_method_object.search(query=self.queries[each], tol=self.max_d)
-            if each in res:  # to avoid self retrieval
-                res.pop(each)
+            res = search_method_object.search(query=self.queries[each], tol=self.max_d) # list of tuples
+            res = [i for i in res if i[0] != each] # to avoid self retrieval
             result_map[each] = res
-            sorted_result_list[each] = sorted(res, key=lambda x: res[x], reverse=False)
         self.query_results_map = result_map
-        self.query_results_list = sorted_result_list
 
     def fetch_nearest_neighbors_brute_force(self) -> None:
         """
@@ -65,36 +62,12 @@ class HashEval:
         self._get_query_results(built_tree)
         self.logger.info('End: Retrieving duplicates using BKTree algorithm')
 
-    def retrieve_results(self) -> Dict[str, Dict[str, int]]:
-        """
-        Accessor function returning all results.
+    def retrieve_results(self, scores: bool = False):
+        if scores:
+            return {k: [i[0] for i in v] for k, v in self.query_results_map.items()}
+        else:
+            return self.query_results_map
 
-        :return: A dictionary of dictionaries of form {'image1.jpg': {'image1_duplicate1.jpg':
-        <distance>, 'image1_duplicate2.jpg':<distance>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':
-        <distance>,..}}
-        """
-        return self.query_results_map
-
-    def retrieve_result_list(self) -> Dict[str, List]:
-        """
-        Accessor function returning all results.
-
-        :return: A dictionary of lists of the form {'image1.jpg': ['image1_duplicate1.jpg',
-        'image1_duplicate2.jpg'], 'image2.jpg':['image2_duplicate1.jpg',..], ..}
-        """
-        return self.query_results_list
-
-    def save_results(self) -> None:
-        """
-        Accessor function to write results to a default path
-
-        :return: A dictionary of dictionaries of form {'image1.jpg': {'image1_duplicate1.jpg':
-        <distance>, 'image1_duplicate2.jpg':<distance>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':
-        <distance>,..}}
-        """
-        with open('retrieved_results_map.pkl', 'wb') as f:
-            pickle.dump(self.query_results_map, f)
-        return self.query_results_map
 
 
 class CosEval:

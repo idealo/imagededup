@@ -1,8 +1,10 @@
+from imagededup.utils.logger import return_logger
 import os
 import numpy as np
 from PIL import Image
 from pathlib import Path, PosixPath
 from typing import Tuple, List, Optional
+
 
 """
 ? Allow acceptance of os.path in addition to already existing Path and numpy image array
@@ -14,83 +16,50 @@ Todo:
 
 
 IMG_FORMATS = ['JPEG', 'PNG', 'BMP']
+logger = return_logger(__name__, os.getcwd())
 
 
-def load_image(path: Path, target_size=None, grayscale: bool = False) -> Image:
-    img = Image.open(path)
-    f = img.format  # store format after opening as it gets lost after conversion
+def preprocess_image(image, target_size=None, grayscale: bool = False):
+    if isinstance(image, np.ndarray):
+        image = image.astype('uint8')
+        image_pil = Image.fromarray(image)
 
-    if img.mode != 'RGB':
-        # convert to RGBA first to avoid warning
-        # we ignore alpha channel if available
-        img = img.convert('RGBA').convert('RGB')
+    elif isinstance(image, Image.Image):
+        image_pil = image
 
     if target_size:
-        img = img.resize(target_size)
+        image_pil = image_pil.resize(target_size, Image.ANTIALIAS)
 
     if grayscale:
-        img = img.convert('L')
+        image_pil = image_pil.convert('L')
 
-    img.format = f  # reassign format for later validation checks
-
-    return img
+    return image_pil
 
 
-def validate_image(
-    file_name: Path, img_formats: List[str] = IMG_FORMATS
-) -> Tuple[bool, Optional[Exception]]:
-    """
-    Checks whether File is valid image file:
-        - file exists
-        - file is readable
-        - file is an image
-    Args:
-        file_name: Absolute path of file.
-     Returns:
-        True if file is valid image file.
-        False else.
-    """
-
-    valid_image = False
-    error = None
-
+def load_image(image_file: Path, target_size=None, grayscale: bool = False,
+               img_formats: List[str] = IMG_FORMATS) -> Image:
     try:
-        img = load_image(file_name)
+        img = Image.open(image_file)
+        f = img.format  # store format after opening as it gets lost after conversion
 
-        if img.format in img_formats:
-            img.load()  # Pillow uses lazy loading, so need to explicitly load
-
-            valid_image = True
+        # validate image format
+        if img.format not in img_formats:
+            logger.warning(f'Invalid image format {img.format}!')
+            return None
 
         else:
-            error = f'Image format {img.format} not in supported formats {img_formats}'
+            if img.mode != 'RGB':
+                # convert to RGBA first to avoid warning
+                # we ignore alpha channel if available
+                img = img.convert('RGBA').convert('RGB')
+
+            img = preprocess_image(img, target_size=target_size, grayscale=grayscale)
+
+            return np.array(img).astype('uint8')
 
     except Exception as e:
-        error = e
-
-    return valid_image, error
-
-
-
-def validate_images(image_dir: PosixPath) -> List:
-    """Checks if all files in path_dir are valid images and return valid files if return_file set to True.
-    :param path_dir: A PosixPath to the image directory.
-    :param return_file: Boolean indicating if a list of valid files is to be returned.
-    """
-
-    files = [Path(i.absolute()) for i in image_dir.glob('*') if not i.name.startswith('.')]  # ignore hidden files
-
-    invalid_image_files = []
-    for i in files:
-        try:
-            _validate_single_image(i)
-        except (FileNotFoundError, TypeError):
-            invalid_image_files.append(i)
-            
-    if len(invalid_image_files) != 0:
-        raise Exception(f'Please remove the following invalid files to run deduplication: {invalid_image_files}')
-    if return_file:
-        return files  # The logic reaches here only if there are no invalid files
+        logger.warning(f'Invalid image file {image_file}:\n{e}')
+        return None
 
 
 def _image_preprocess(pillow_image: Image, resize_dims: Tuple[int, int], for_hashing: bool = True) -> np.ndarray:
@@ -121,8 +90,8 @@ def convert_to_array(path_image, resize_dims: Tuple[int, int], for_hashing: bool
     """
 
     if isinstance(path_image, PosixPath):
-        _validate_single_image(path_image)
-        im = _load_image(path_image=path_image)
+        # _validate_single_image(path_image)
+        im = load_image(image_file=path_image)
     elif isinstance(path_image, np.ndarray):
         im = path_image.astype('uint8')  # fromarray can't take float32/64
         im = Image.fromarray(im)
