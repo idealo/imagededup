@@ -10,8 +10,8 @@ import pickle
 
 
 class HashEval:
-    def __init__(self, test: Dict, queries: Dict, hammer: FunctionType, cutoff: int = 5, search_method: str = 'bktree',
-                 save: bool = False) -> None:
+    def __init__(self, test: Dict, queries: Dict, hammer: FunctionType, cutoff: int = 5, search_method: str = 'bktree')\
+            -> None:
         """
         Initializes a HashEval object which offers an interface to control hashing and search methods for desired
         dataset. Computes a map of duplicate images in the document space given certain input control parameters.
@@ -28,8 +28,6 @@ class HashEval:
             self.fetch_nearest_neighbors_bktree()  # bktree is the default search method
         else:
             self.fetch_nearest_neighbors_brute_force()
-        if save:
-            self.save_results()
 
     def _get_query_results(self, search_method_object: Union[BruteForce, BKTree]) -> None:
         """
@@ -39,10 +37,10 @@ class HashEval:
         """
         sorted_result_list, result_map = {}, {}
         for each in self.queries:
-            res = search_method_object.search(query=self.queries[each], tol=self.max_d) # list of tuples
-            res = [i for i in res if i[0] != each] # to avoid self retrieval
+            res = search_method_object.search(query=self.queries[each], tol=self.max_d)  # list of tuples
+            res = [i for i in res if i[0] != each]  # to avoid self retrieval
             result_map[each] = res
-        self.query_results_map = result_map
+        self.query_results_map = result_map  # {'filename.jpg': [('dup1.jpg', 3)], 'filename2.jpg': [('dup2.jpg', 10)]}
 
     def fetch_nearest_neighbors_brute_force(self) -> None:
         """
@@ -64,11 +62,9 @@ class HashEval:
 
     def retrieve_results(self, scores: bool = False):
         if scores:
-            return {k: [i[0] for i in v] for k, v in self.query_results_map.items()}
-        else:
             return self.query_results_map
-
-
+        else:
+            return {k: [i[0] for i in v] for k, v in self.query_results_map.items()}
 
 class CosEval:
     """
