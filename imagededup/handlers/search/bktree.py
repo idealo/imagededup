@@ -89,7 +89,7 @@ class BKTree:
         Function to search the bktree given a hash of the query image.
         :param query: hash string for which BKTree needs to be searched.
         :param tol: distance upto which duplicate is valid.
-        :return: Dictionary of retrieved file names and corresponding distances {valid_retrieval_filename: distance, ...}
+        :return: Dictionary of retrieved file names and corresponding distances {valid_retrieval_filename: distance, ..}
         """
 
         valid_retrievals = []

@@ -6,7 +6,6 @@ from numpy.linalg import norm
 from typing import Tuple, Dict, List, Union
 import os
 import numpy as np
-import pickle
 
 
 class HashEval:
