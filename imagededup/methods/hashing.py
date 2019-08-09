@@ -19,15 +19,8 @@ Wavelet hash: Allow possibility of different wavelet functions
 
 class Hashing:
     def __init__(self) -> None:
-        self.n_blocks = 16  # number of hexadecimal charcters in the computed hash value
         self.target_size = (8, 8)  # resizing to dims
         self.logger = return_logger(__name__, os.getcwd())
-
-    @staticmethod
-    def bool_to_hex(x: np.array) -> str:
-        str_bool = ''.join([str(int(i)) for i in x])
-        int_base2 = int(str_bool, 2)  # int base 2
-        return '{:0x}'.format(int_base2)
 
     @staticmethod
     def hamming_distance(hash1: str, hash2: str) -> float:
@@ -42,17 +35,15 @@ class Hashing:
         hash2_bin = bin(int(hash2, 16))[2:].zfill(64)
         return np.sum([i != j for i, j in zip(hash1_bin, hash2_bin)])
 
-    def _array_to_hash(self, hash_mat: np.ndarray, n_blocks: int) -> str:
+    @staticmethod
+    def _array_to_hash(hash_mat: np.ndarray) -> str:  # , n_blocks: int
         """
         Convert a matrix of binary numerals to an n_blocks length hash.
         :param hash_mat: A numpy array consisting of 0/1 values.
-        :param n_blocks: Hash length required.
-        :return: An n_blocks length hash string.
+        :return: An hexadecimal hash string.
         """
-        calculated_hash = []
-        for i in np.array_split(np.ndarray.flatten(hash_mat), n_blocks):
-            calculated_hash.append(self.bool_to_hex(i))
-        return ''.join(calculated_hash)
+
+        return ''.join([hex(i).split('x')[-1] for i in np.packbits(hash_mat)])
 
     def encode_image(self, image_file: Optional[PosixPath]=None, image_array: Optional[np.ndarray]=None) -> str:
         """
@@ -91,7 +82,7 @@ class Hashing:
 
     def hash_func(self, image_array: np.ndarray):
         hash_mat = self.hash_algo(image_array)
-        return self._array_to_hash(hash_mat, self.n_blocks)
+        return self._array_to_hash(hash_mat)
 
     # search part
 
