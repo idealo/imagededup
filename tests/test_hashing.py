@@ -1,4 +1,4 @@
-from imagededup.methods.hashing import Hashing, HashedDataset, Dataset
+from imagededup.methods.hashing import Hashing, PHash, DHash, AHash, WHash  #, HashedDataset, Dataset
 import pytest
 import numpy as np
 from pathlib import Path
@@ -7,24 +7,91 @@ from PIL import Image
 """ Run from project root with: python -m pytest -vs tests/test_hashing.py"""
 
 
-def test_bool_to_hex():
-    bool_num = '11011100'
-    assert Hashing.bool_to_hex(bool_num) == 'dc'
+PATH_SINGLE_IMAGE = Path('tests/data/mixed_images/ukbench00120.jpg')
+PATH_SINGLE_IMAGE_RESIZED = Path('tests/data/mixed_images/ukbench00120_resize.jpg')
 
 
-def test_bool_to_hex_msb_0():
-    bool_num = '00011100'
-    assert Hashing.bool_to_hex(bool_num) == '1c'
+# Test parent class (static methods/class attributes initialization)
+
+
+@pytest.fixture(scope='module')
+def hasher():
+    hashobj = Hashing()
+    return hashobj
+
+
+def test_correct_init_hashing(hasher):
+    assert hasher.target_size == (8, 8)
 
 
 def test_hamming_distance():
-    """Put two numbers and check if hamming distance is correct"""
+    # Put two numbers and check if hamming distance is correct
     number_1 = "1a"
     number_2 = "1f"
     hamdist = Hashing.hamming_distance(number_1, number_2)
     assert hamdist == 2
 
 
+def test__array_to_hash(hasher):
+    hash_mat = np.array([1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0])
+    assert hasher._array_to_hash(hash_mat) == '9191fa'
+
+
+def test_hamming_distance(hasher):
+    assert hasher.hamming_distance('1c', '1c') == 0
+
+def test__check_hamming_distance_bounds_input_not_int(hasher):
+    with pytest.raises(TypeError):
+        hasher._check_hamming_distance_bounds(thresh=1.0)
+
+
+def test__check_hamming_distance_bounds_out_of_bound(hasher):
+    with pytest.raises(ValueError):
+        hasher._check_hamming_distance_bounds(thresh=68)
+
+# For all methods, test encode_image and encode_images
+phasher = PHash()
+dhasher = DHash()
+ahasher = AHash()
+whasher = WHash()
+
+common_test_paremters = [phasher.encode_image, dhasher.encode_image, ahasher.encode_image, whasher.encode_image]
+
+
+@pytest.mark.parametrize('hash_function', common_test_paremters)
+class TestCommon:
+    def test_len_hash(self, hash_function):
+        hash_im = hash_function(PATH_SINGLE_IMAGE)
+        print(type(hash_im))
+        assert len(hash_im) == 16
+
+    def test_hash_resize(self, hash_function):
+        # Resize one image to (300, 300) and check that hamming distance between hashes is not too large
+        hash_im_1 = hash_function(PATH_SINGLE_IMAGE)
+        hash_im_2 = hash_function(PATH_SINGLE_IMAGE_RESIZED)
+        hamdist = Hashing.hamming_distance(hash_im_1, hash_im_2)
+        assert hamdist < 3
+
+    def test_hash_small_rotation(self, hash_function):
+        # Rotate image slightly (1 degree) and check that hamming distance between hashes is not too large
+        if hash_function == whasher.encode_image:
+            pytest.skip()
+        orig_image = Image.open(PATH_SINGLE_IMAGE)
+        rotated_image = np.array(orig_image.rotate(1))
+        hash_im_1 = hash_function(image_array=np.array(orig_image))
+        hash_im_2 = hash_function(image_array=rotated_image)
+        hamdist = Hashing.hamming_distance(hash_im_1, hash_im_2)
+        assert hamdist < 3
+
+    def test_hash_distinct_images(self, hash_function):
+        # Put in distinct images and check that hamming distance between hashes is large
+        hash_im_1 = hash_function(PATH_SINGLE_IMAGE)
+        hash_im_2 = hash_function(Path('tests/data/mixed_images/ukbench09268.jpg'))
+        hamdist = Hashing.hamming_distance(hash_im_1, hash_im_2)
+        assert hamdist > 20
+
+
+"""
 def test_initial_hash_method_phash():
     assert Hashing(method='phash').method == 'phash'
 
@@ -50,14 +117,14 @@ class TestCommon:
         assert len(hash_im) == 16
 
     def test_hash_resize(self, hash_function):
-        """Resize one image to (300, 300) and check that hamming distance between hashes is not too large"""
+        # Resize one image to (300, 300) and check that hamming distance between hashes is not too large
         hash_im_1 = hash_function(Path('tests/data/mixed_images/ukbench00120.jpg'))
         hash_im_2 = hash_function(Path('tests/data/mixed_images/ukbench00120_resize.jpg'))
         hamdist = Hashing.hamming_distance(hash_im_1, hash_im_2)
         assert hamdist < 3
 
     def test_hash_small_rotation(self, hash_function):
-        """Rotate image slightly (1 degree) and check that hamming distance between hashes is not too large"""
+        # Rotate image slightly (1 degree) and check that hamming distance between hashes is not too large
         if hash_function == hash_obj._whash:
             pytest.skip()
         orig_image = Image.open(Path('tests/data/mixed_images/ukbench00120.jpg'))
@@ -68,7 +135,7 @@ class TestCommon:
         assert hamdist < 3
 
     def test_hash_distinct_images(self, hash_function):
-        """Put in distinct images and check that hamming distance between hashes is large"""
+        # Put in distinct images and check that hamming distance between hashes is large
         image_1 = Image.open(Path('tests/data/mixed_images/ukbench00120.jpg'))
         image_2 = Image.open(Path('tests/data/mixed_images/ukbench09268.jpg'))
         hash_im_1 = hash_function(np.array(image_1))
@@ -93,13 +160,15 @@ def test_hash_on_dir_return_non_none_hashes():
 
 
 def test_hash_on_dir_runs_for_all_files_in_dir():
-    """There are 10 images in the directory below"""
+    # There are 10 images in the directory below
     path_dir = Path('tests/data/base_images')
     hash_obj = Hashing(method='ahash')
     hash_dict = hash_obj.hash_dir(path_dir)
     assert len(hash_dict.keys()) == 10
+    
+"""
 
-
+"""
 def test_load_image_initializes_docs(path_dir=Path('tests/data/base_images')):
     dummy = Dataset(path_dir, path_dir)
     assert dummy.query_docs and dummy.test_docs
@@ -140,8 +209,9 @@ def test_dataset_hashmaps_veracity(path_dir=Path('tests/data/base_images'), test
     dummy_hasher = Hashing()._dhash
     dummy_set = HashedDataset(dummy_hasher, path_dir, test_path)
     assert set(dummy_set.doc2hash.keys()) == set(dummy_set.hash2doc.values())
+"""
 
-
+"""
 @pytest.fixture(scope='module')
 def initialized_hash_obj():
     hashobj = Hashing()
@@ -252,3 +322,4 @@ def test_dict_dir_same_results(initialized_hash_obj):
     dict_hash = initialized_hash_obj.hash_dir(path_dir)
     dup_dict = initialized_hash_obj._find_duplicates_dict(dict_hash)
     assert dup_dir == dup_dict
+"""

@@ -43,7 +43,7 @@ class Hashing:
         :return: An hexadecimal hash string.
         """
 
-        return ''.join([hex(i).split('x')[-1] for i in np.packbits(hash_mat)])
+        return ''.join('%0.2x' % x for x in np.packbits(hash_mat))
 
     def encode_image(self, image_file: Optional[PosixPath]=None, image_array: Optional[np.ndarray]=None) -> str:
         """
@@ -55,9 +55,9 @@ class Hashing:
         if image_file:
             image_pp = load_image(image_file=image_file, target_size=self.target_size, grayscale=True)
 
-        elif image_array:
+        elif isinstance(image_array, np.ndarray):
             image_pp = preprocess_image(image_array, target_size=self.target_size, grayscale=True)
-
+            # print('image_pp', image_pp)
         else:
             raise ValueError('Please provide either image file or image array!')
 
@@ -99,6 +99,8 @@ class Hashing:
             raise TypeError('Threshold must be an int between 0 and 64')
         elif thresh < 0 or thresh > 64:
             raise ValueError('Threshold must be an int between 0 and 64')
+        else:
+            return None
 
     def _find_duplicates_dict(self, encoding_map: Dict[str, str], threshold: int = 10,
                               scores: bool = False, outfile: Optional[str] = None) -> Dict:

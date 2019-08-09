@@ -33,7 +33,7 @@ def preprocess_image(image, target_size=None, grayscale: bool = False):
     if grayscale:
         image_pil = image_pil.convert('L')
 
-    return image_pil
+    return np.array(image_pil).astype('uint8')
 
 
 def load_image(image_file: Path, target_size=None, grayscale: bool = False,
@@ -55,7 +55,7 @@ def load_image(image_file: Path, target_size=None, grayscale: bool = False,
 
             img = preprocess_image(img, target_size=target_size, grayscale=grayscale)
 
-            return np.array(img).astype('uint8')
+            return img
 
     except Exception as e:
         logger.warning(f'Invalid image file {image_file}:\n{e}')
