@@ -36,13 +36,12 @@ class Hashing:
         return np.sum([i != j for i, j in zip(hash1_bin, hash2_bin)])
 
     @staticmethod
-    def _array_to_hash(hash_mat: np.ndarray) -> str:  # , n_blocks: int
+    def _array_to_hash(hash_mat: np.ndarray) -> str:
         """
         Convert a matrix of binary numerals to an n_blocks length hash.
         :param hash_mat: A numpy array consisting of 0/1 values.
         :return: An hexadecimal hash string.
         """
-
         return ''.join('%0.2x' % x for x in np.packbits(hash_mat))
 
     def encode_image(self, image_file: Optional[PosixPath]=None, image_array: Optional[np.ndarray]=None) -> str:
@@ -52,20 +51,26 @@ class Hashing:
         :return: A string representing the hash of the image.
         """
 
-        if image_file:
+        if isinstance(image_file, PosixPath):
             image_pp = load_image(image_file=image_file, target_size=self.target_size, grayscale=True)
 
         elif isinstance(image_array, np.ndarray):
-            image_pp = preprocess_image(image_array, target_size=self.target_size, grayscale=True)
-            # print('image_pp', image_pp)
+            image_pp = preprocess_image(image=image_array, target_size=self.target_size, grayscale=True)
         else:
             raise ValueError('Please provide either image file or image array!')
 
         return self.hash_func(image_pp) if isinstance(image_pp, np.ndarray) else None
 
     def encode_images(self, image_dir: PosixPath):
-        files = [i.absolute() for i in image_dir.glob('*') if not i.name.startswith('.')]  # ignore hidden files
+        
+        if not os.path.isdir(image_dir):
+            raise ValueError('Please provde a valid directory path!')
+        
+        if not isinstance(image_dir, PosixPath):
+            raise ValueError('Please provde a Posix Path to the image directory!')
 
+        files = [i.absolute() for i in image_dir.glob('*') if not i.name.startswith('.')]  # ignore hidden files
+        
         hash_dict = dict()
         self.logger.info(f'Start: Calculating hashes...')
         for _file in files:
@@ -218,7 +223,6 @@ class PHash(Hashing):
         :return: A string representing the perceptual hash of the image.
         Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
         """
-
         dct_coef = dct(dct(image_array, axis=0), axis=1)
 
         # retain top left 8 by 8 dct coefficients
