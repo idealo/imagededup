@@ -1,4 +1,5 @@
 from imagededup.methods.hashing import Hashing, PHash, DHash, AHash, WHash  #, HashedDataset, Dataset
+import os
 import pytest
 import numpy as np
 from pathlib import Path
@@ -6,7 +7,7 @@ from PIL import Image
 
 """ Run from project root with: python -m pytest -vs tests/test_hashing.py"""
 
-
+PATH_IMAGE_DIR = Path('tests/data/mixed_images')
 PATH_SINGLE_IMAGE = Path('tests/data/mixed_images/ukbench00120.jpg')
 PATH_SINGLE_IMAGE_RESIZED = Path('tests/data/mixed_images/ukbench00120_resize.jpg')
 
@@ -49,20 +50,90 @@ def test__check_hamming_distance_bounds_out_of_bound(hasher):
     with pytest.raises(ValueError):
         hasher._check_hamming_distance_bounds(thresh=68)
 
+# encode_image
+
+
+def test_encode_image_accepts_image_path(mocker, hasher):
+    ret_val = np.zeros((2, 2))
+    load_image_mocker = mocker.patch('imagededup.methods.hashing.load_image', return_value=ret_val,
+                                     autospec=True)
+    hash_func_mocker = mocker.patch('imagededup.methods.hashing.Hashing.hash_func', return_value=ret_val)
+    hasher.encode_image(image_file=PATH_SINGLE_IMAGE)
+    load_image_mocker.assert_called_with(image_file=PATH_SINGLE_IMAGE, grayscale=True,  target_size=(8, 8))
+    np.testing.assert_array_equal(ret_val, hash_func_mocker.call_args[0][0])
+
+
+def test_encode_image_accepts_numpy_array(mocker, hasher):
+    ret_val = np.zeros((2, 2))
+    preprocess_image_mocker = mocker.patch('imagededup.methods.hashing.preprocess_image', return_value=ret_val)
+    hash_func_mocker = mocker.patch('imagededup.methods.hashing.Hashing.hash_func', return_value=ret_val)
+    hasher.encode_image(image_array=ret_val)
+    preprocess_image_mocker.assert_called_with(image=ret_val, target_size=(8, 8), grayscale=True)
+    np.testing.assert_array_equal(ret_val, hash_func_mocker.call_args[0][0])
+
+
+def test_encode_image_valerror_wrong_input(hasher):
+    pil_im = Image.open(PATH_SINGLE_IMAGE)
+    with pytest.raises(ValueError):
+        hasher.encode_image(image_file=pil_im)
+
+
+def test_encode_image_valerror_wrong_input_array(hasher):
+    pil_im = Image.open(PATH_SINGLE_IMAGE)
+    with pytest.raises(ValueError):
+        hasher.encode_image(image_array=pil_im)
+
+
+def test_encode_image_returns_none_image_pp_not_array(hasher, mocker):
+    mocker.patch('imagededup.methods.hashing.load_image', return_value=None)
+    assert hasher.encode_image(PATH_SINGLE_IMAGE) is None
+
+
+def test_encode_image_returns_none_image_pp_not_array_array_input(hasher, mocker):
+    mocker.patch('imagededup.methods.hashing.preprocess_image', return_value=None)
+    assert hasher.encode_image(image_array=np.zeros((2, 2))) is None
+
+
+# encode_images
+
+def test_encode_images_accepts_valid_posixpath(hasher, mocker):
+    mocker.patch('imagededup.methods.hashing.Hashing.encode_image', return_value='123456789ABCDEFA')
+    assert len(hasher.encode_images(PATH_IMAGE_DIR)) == 5  # 5 files in the directory
+
+
+def test_encode_images_rejects_non_posixpath(hasher):
+    with pytest.raises(ValueError):
+        hasher.encode_images('tests/data/base_images')
+
+
+def test_encode_images_rejects_non_directory_paths(hasher):
+    with pytest.raises(ValueError):
+        hasher.encode_images(PATH_SINGLE_IMAGE)
+
+
+def test_encode_images_return_vals(hasher, mocker):
+    encoded_val = '123456789ABCDEFA'
+    mocker.patch('imagededup.methods.hashing.Hashing.encode_image', return_value=encoded_val)
+    hashes = hasher.encode_images(PATH_IMAGE_DIR)
+    assert isinstance(hashes, dict)
+    assert list(hashes.values())[0] == encoded_val
+    assert PATH_SINGLE_IMAGE.name in hashes.keys()
+
+
+# Integration tests
 # For all methods, test encode_image and encode_images
 phasher = PHash()
 dhasher = DHash()
 ahasher = AHash()
 whasher = WHash()
 
-common_test_paremters = [phasher.encode_image, dhasher.encode_image, ahasher.encode_image, whasher.encode_image]
+common_test_parameters = [phasher.encode_image, dhasher.encode_image, ahasher.encode_image, whasher.encode_image]
 
 
-@pytest.mark.parametrize('hash_function', common_test_paremters)
+@pytest.mark.parametrize('hash_function', common_test_parameters)
 class TestCommon:
     def test_len_hash(self, hash_function):
         hash_im = hash_function(PATH_SINGLE_IMAGE)
-        print(type(hash_im))
         assert len(hash_im) == 16
 
     def test_hash_resize(self, hash_function):
