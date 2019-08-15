@@ -59,15 +59,15 @@ class Hashing:
         else:
             raise ValueError('Please provide either image file or image array!')
 
-        return self.hash_func(image_pp) if isinstance(image_pp, np.ndarray) else None
+        return self._hash_func(image_pp) if isinstance(image_pp, np.ndarray) else None
 
     def encode_images(self, image_dir: PosixPath):
         
         if not os.path.isdir(image_dir):
-            raise ValueError('Please provde a valid directory path!')
+            raise ValueError('Please provide a valid directory path!')
         
         if not isinstance(image_dir, PosixPath):
-            raise ValueError('Please provde a Posix Path to the image directory!')
+            raise ValueError('Please provide a Path variable to the image directory!')
 
         files = [i.absolute() for i in image_dir.glob('*') if not i.name.startswith('.')]  # ignore hidden files
         
@@ -82,11 +82,11 @@ class Hashing:
         self.logger.info(f'End: Calculating hashes!')
         return hash_dict
 
-    def hash_algo(self, image_array: np.ndarray):
+    def _hash_algo(self, image_array: np.ndarray):
         pass
 
-    def hash_func(self, image_array: np.ndarray):
-        hash_mat = self.hash_algo(image_array)
+    def _hash_func(self, image_array: np.ndarray):
+        hash_mat = self._hash_algo(image_array)
         return self._array_to_hash(hash_mat)
 
     # search part
@@ -125,10 +125,8 @@ class Hashing:
 
         result_set = HashEval(test=encoding_map, queries=encoding_map, hammer=self.hamming_distance,
                               cutoff=threshold, search_method='bktree')
-
         self.logger.info('End: Evaluating hamming distances for getting duplicates')
         self.results = result_set.retrieve_results(scores=scores)
-
         if outfile:
             save_json(self.results, outfile)
         return self.results
@@ -216,7 +214,7 @@ class PHash(Hashing):
         self.__coefficent_extract = (8, 8)
         self.target_size = (32, 32)
 
-    def hash_algo(self, image_array):
+    def _hash_algo(self, image_array):
         """
         Get perceptual hash of the input image.
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
@@ -229,10 +227,11 @@ class PHash(Hashing):
         dct_reduced_coef = dct_coef[:self.__coefficent_extract[0], :self.__coefficent_extract[1]]
 
         # average of coefficients excluding the DC term (0th term)
-        mean_coef_val = np.mean(np.ndarray.flatten(dct_reduced_coef)[1:])
+        # mean_coef_val = np.mean(np.ndarray.flatten(dct_reduced_coef)[1:])
+        median_coef_val = np.median(np.ndarray.flatten(dct_reduced_coef)[1:])
 
         # return mask of all coefficients greater than mean of coefficients
-        hash_mat = dct_reduced_coef >= mean_coef_val
+        hash_mat = dct_reduced_coef >= median_coef_val
         return hash_mat
 
 
@@ -241,7 +240,7 @@ class AHash(Hashing):
         super().__init__()
         self.target_size = (8, 8)
 
-    def hash_algo(self, image_array: np.ndarray):
+    def _hash_algo(self, image_array: np.ndarray):
         """
         Get average hash of the input image.
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
@@ -257,7 +256,7 @@ class DHash(Hashing):
         super().__init__()
         self.target_size = (9, 8)
 
-    def hash_algo(self, image_array):
+    def _hash_algo(self, image_array):
         """
         Get difference hash of the input image.
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
@@ -275,20 +274,21 @@ class WHash(Hashing):
         self.target_size = (256, 256)
         self.__wavelet_func = 'haar'
 
-    def hash_algo(self, image_array):
+    def _hash_algo(self, image_array):
         """
         Get average hash of the input image.
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
         :return: A string representing the average hash of the image.
         """
         # decomposition level set to 5 to get 8 by 8 hash matrix
+        image_array = image_array/255
         coeffs = pywt.wavedec2(data=image_array, wavelet=self.__wavelet_func, level=5)
         LL_coeff = coeffs[0]
 
-        # average of LL coefficients
-        mean_coef_val = np.mean(np.ndarray.flatten(LL_coeff))
+        # median of LL coefficients
+        median_coef_val = np.median(np.ndarray.flatten(LL_coeff))
 
         # return mask of all coefficients greater than mean of coefficients
-        hash_mat = LL_coeff >= mean_coef_val
+        hash_mat = LL_coeff >= median_coef_val
         return hash_mat
 
