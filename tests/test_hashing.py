@@ -9,6 +9,7 @@ from PIL import Image
 
 PATH_IMAGE_DIR = Path('tests/data/mixed_images')
 PATH_SINGLE_IMAGE = Path('tests/data/mixed_images/ukbench00120.jpg')
+PATH_SINGLE_IMAGE_CORRUPT = Path('tests/data/mixed_images/ukbench09268_corrupt.jpg')
 PATH_SINGLE_IMAGE_RESIZED = Path('tests/data/mixed_images/ukbench00120_resize.jpg')
 
 
@@ -99,7 +100,7 @@ def test_encode_image_returns_none_image_pp_not_array_array_input(hasher, mocker
 
 def test_encode_images_accepts_valid_posixpath(hasher, mocker):
     mocker.patch('imagededup.methods.hashing.Hashing.encode_image', return_value='123456789ABCDEFA')
-    assert len(hasher.encode_images(PATH_IMAGE_DIR)) == 5  # 5 files in the directory
+    assert len(hasher.encode_images(PATH_IMAGE_DIR)) == 6  # 6 files in the directory
 
 
 def test_encode_images_rejects_non_posixpath(hasher):
@@ -262,7 +263,7 @@ def test_find_duplicates_to_remove_encoding_map(hasher, mocker):
     save_json_mocker.assert_not_called()
 
 
-# For all methods, test encode_image and encode_images
+# Integration tests
 
 phasher = PHash()
 dhasher = DHash()
@@ -315,47 +316,96 @@ def test_encode_images_return_non_none_hashes():
 # For each of the hash types, check correctness of hashes for known images
 # Check encode_image(s)
 
-# Integration tests
 @pytest.mark.parametrize("hash_object, expected_hash", [(phasher, '9fee256239984d71'), (dhasher, '2b69707551f1b87a'),
                                                         (ahasher, '81b8bc3c3c3c1e0a'), (whasher, '89b8bc3c3c3c5e0e')])
 def test_encode_image_hash(hash_object, expected_hash):
     assert hash_object.encode_image(PATH_SINGLE_IMAGE) == expected_hash
 
 
-
-"""
-# Integration
-
-def test__find_duplicates_dict_scores_false():
-    initialized_hash_obj = Hashing()
-    # check correctness, check that result_score has dictionary, check return dict
-
-    dummy_hashes = {
-        'ukbench09060.jpg': 'e064ece078d7c96a',
-        'ukbench09060_dup.jpg': 'd064ece078d7c96a',
-        'ukbench09061.jpg': 'e051ece099d7faea',
-        'ukbench09062.jpg': 'd465fd2078d8936c',
-    }
-
-    assert initialized_hash_obj.result_score is None
-    dict_ret = initialized_hash_obj._find_duplicates_dict(dummy_hashes, threshold=10, scores=False)
-    assert dict_ret['ukbench09060.jpg'] == ['ukbench09060_dup.jpg']
-    assert initialized_hash_obj.result_score is not None
+def test_encode_image_corrupt_file():
+    whasher = WHash()
+    assert whasher.encode_image(PATH_SINGLE_IMAGE_CORRUPT) is None
 
 
-# Sanity test
-
-def test__find_duplicates_dir(initialized_hash_obj):
-    path_dir = Path('tests/data/mixed_images')
-    dict_ret = initialized_hash_obj._find_duplicates_dir(path_dir=path_dir)
-    assert dict_ret is not None
-
+def test_encode_images_corrupt_and_good_images():
+    ahasher = AHash()
+    hashes = ahasher.encode_images(PATH_IMAGE_DIR)
+    assert len(hashes) == 5  # 5 non-corrupt files in the directory, 1 corrupt
+    assert isinstance(hashes, dict)
 
 
-def test_dict_dir_same_results(initialized_hash_obj):
-    path_dir = Path('tests/data/base_images')
-    dup_dir = initialized_hash_obj._find_duplicates_dir(path_dir=path_dir)
-    dict_hash = initialized_hash_obj.hash_dir(path_dir)
-    dup_dict = initialized_hash_obj._find_duplicates_dict(dict_hash)
-    assert dup_dir == dup_dict
-"""
+def test_find_duplicates_correctness():
+    phasher = PHash()
+    duplicate_dict = phasher.find_duplicates(image_dir=PATH_IMAGE_DIR, threshold=10)
+    assert isinstance(duplicate_dict, dict)
+    assert isinstance(list(duplicate_dict.values())[0], list)
+    assert len(duplicate_dict['ukbench09268.jpg']) == 0
+    assert duplicate_dict['ukbench00120.jpg'] == ['ukbench00120_resize.jpg']
+
+
+def test_find_duplicates_correctness_score():
+    phasher = PHash()
+    duplicate_dict = phasher.find_duplicates(image_dir=PATH_IMAGE_DIR, threshold=10, scores=True)
+    assert isinstance(duplicate_dict, dict)
+    duplicates = list(duplicate_dict.values())
+    assert isinstance(duplicates[0], list)
+    assert isinstance(duplicates[0][0], tuple)
+    assert duplicate_dict['ukbench09268.jpg'] == []
+    assert duplicate_dict['ukbench00120.jpg'] == [('ukbench00120_resize.jpg', 0)]
+
+
+def test_find_duplicates_outfile():
+    dhasher = DHash()
+    outfile_name = 'score_output.json'
+    if os.path.exists(outfile_name):
+        os.remove(outfile_name)
+    _ = dhasher.find_duplicates(image_dir=PATH_IMAGE_DIR, threshold=10, scores=True, outfile=outfile_name)
+    assert os.path.exists(outfile_name)
+    # clean up
+    if os.path.exists(outfile_name):
+        os.remove(outfile_name)
+
+
+def test_find_duplicates_encoding_map_input():
+    encoding = {'ukbench00120_resize.jpg': '9fee256239984d71',
+                'ukbench00120_rotation.jpg': '850d513c4fdcbb72',
+                'ukbench00120.jpg': '9fee256239984d71',
+                'ukbench00120_hflip.jpg': 'cabb7237e8cd3824',
+                'ukbench09268.jpg': 'c73c36c2da2f29c9'}
+    phasher = PHash()
+    duplicate_dict = phasher.find_duplicates(encoding_map=encoding, threshold=10)
+    assert isinstance(duplicate_dict, dict)
+    assert isinstance(list(duplicate_dict.values())[0], list)
+    assert len(duplicate_dict['ukbench09268.jpg']) == 0
+    assert duplicate_dict['ukbench00120.jpg'] == ['ukbench00120_resize.jpg']
+
+
+def test_find_duplicates_to_remove_dir():
+    phasher = PHash()
+    removal_list = phasher.find_duplicates_to_remove(image_dir=PATH_IMAGE_DIR, threshold=10)
+    assert isinstance(removal_list, list)
+    assert removal_list == ['ukbench00120.jpg']
+
+
+def test_find_duplicates_to_remove_encoding():
+    encoding = {'ukbench00120_resize.jpg': '9fee256239984d71',
+                'ukbench00120_rotation.jpg': '850d513c4fdcbb72',
+                'ukbench00120.jpg': '9fee256239984d71',
+                'ukbench00120_hflip.jpg': 'cabb7237e8cd3824',
+                'ukbench09268.jpg': 'c73c36c2da2f29c9'}
+    phasher = PHash()
+    removal_list = phasher.find_duplicates_to_remove(encoding_map=encoding, threshold=10)
+    assert isinstance(removal_list, list)
+    assert removal_list == ['ukbench00120.jpg']
+
+
+def test_find_duplicates_to_remove_outfile():
+    dhasher = DHash()
+    outfile_name = 'removal_list.json'
+    if os.path.exists(outfile_name):
+        os.remove(outfile_name)
+    _ = dhasher.find_duplicates(image_dir=PATH_IMAGE_DIR, threshold=10, outfile=outfile_name)
+    assert os.path.exists(outfile_name)
+    # clean up
+    if os.path.exists(outfile_name):
+        os.remove(outfile_name)
