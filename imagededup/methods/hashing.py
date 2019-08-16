@@ -50,7 +50,6 @@ class Hashing:
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
         :return: A string representing the hash of the image.
         """
-
         if isinstance(image_file, PosixPath):
             image_pp = load_image(image_file=image_file, target_size=self.target_size, grayscale=True)
 
