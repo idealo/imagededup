@@ -16,7 +16,7 @@ PATH_SINGLE_IMAGE_RESIZED = Path('tests/data/mixed_images/ukbench00120_resize.jp
 # Test parent class (static methods/class attributes initialization)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture
 def hasher():
     hashobj = Hashing()
     return hashobj
