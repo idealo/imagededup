@@ -23,9 +23,11 @@ def preprocess_image(image, target_size=None, grayscale: bool = False):
 
     elif isinstance(image, Image.Image):
         image_pil = image
+    else:
+        raise ValueError('Input is expected to be a numpy array or a pillow object!')
 
-    if target_size:
-        image_pil = image_pil.resize(target_size, Image.ANTIALIAS)
+    # if target_size: removing if condition since the function never gets called without target_size
+    image_pil = image_pil.resize(target_size, Image.ANTIALIAS)
 
     if grayscale:
         image_pil = image_pil.convert('L')
@@ -33,11 +35,10 @@ def preprocess_image(image, target_size=None, grayscale: bool = False):
     return np.array(image_pil).astype('uint8')
 
 
-def load_image(image_file: Path, target_size=None, grayscale: bool = False,
+def load_image(image_file: PosixPath, target_size=None, grayscale: bool = False,
                img_formats: List[str] = IMG_FORMATS) -> Image:
     try:
         img = Image.open(image_file)
-        f = img.format  # store format after opening as it gets lost after conversion
 
         # validate image format
         if img.format not in img_formats:

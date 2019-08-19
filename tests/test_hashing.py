@@ -325,6 +325,10 @@ class TestCommon:
         hamdist = Hashing.hamming_distance(hash_im_1, hash_im_2)
         assert hamdist > 20
 
+    def test_same_hashes_with_different_inputs(self, hash_function):
+        arr_inp = np.array(Image.open(PATH_SINGLE_IMAGE))
+        assert hash_function(image_array=arr_inp) == hash_function(PATH_SINGLE_IMAGE)
+
 
 def test_encode_images_returns_dict():
     hash_dict = phasher.encode_images(PATH_IMAGE_DIR)

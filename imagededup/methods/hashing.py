@@ -210,7 +210,7 @@ class Hashing:
 class PHash(Hashing):
     def __init__(self) -> None:
         super().__init__()
-        self.__coefficent_extract = (8, 8)
+        self.__coefficient_extract = (8, 8)
         self.target_size = (32, 32)
 
     def _hash_algo(self, image_array):
@@ -223,7 +223,7 @@ class PHash(Hashing):
         dct_coef = dct(dct(image_array, axis=0), axis=1)
 
         # retain top left 8 by 8 dct coefficients
-        dct_reduced_coef = dct_coef[:self.__coefficent_extract[0], :self.__coefficent_extract[1]]
+        dct_reduced_coef = dct_coef[:self.__coefficient_extract[0], :self.__coefficient_extract[1]]
 
         # average of coefficients excluding the DC term (0th term)
         # mean_coef_val = np.mean(np.ndarray.flatten(dct_reduced_coef)[1:])
