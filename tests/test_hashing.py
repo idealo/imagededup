@@ -1,4 +1,10 @@
-from imagededup.methods.hashing import Hashing, PHash, DHash, AHash, WHash  #, HashedDataset, Dataset
+from imagededup.methods.hashing import (
+    Hashing,
+    PHash,
+    DHash,
+    AHash,
+    WHash,
+)  # , HashedDataset, Dataset
 import os
 import pytest
 import numpy as np
@@ -52,35 +58,43 @@ def test__check_hamming_distance_bounds_out_of_bound(hasher):
 def test__check_hamming_distance_bounds_correct(hasher):
     assert hasher._check_hamming_distance_bounds(thresh=20) is None
 
+
 # encode_image
 
 
 @pytest.fixture
 def mocker_preprocess_image(mocker):
     ret_val = np.zeros((2, 2))
-    preprocess_image_mocker = mocker.patch('imagededup.methods.hashing.preprocess_image', return_value=ret_val)
+    preprocess_image_mocker = mocker.patch(
+        'imagededup.methods.hashing.preprocess_image', return_value=ret_val
+    )
     return preprocess_image_mocker
 
 
 @pytest.fixture
 def mocker_hash_func(mocker):
     ret_val = np.zeros((2, 2))
-    hash_func_mocker = mocker.patch('imagededup.methods.hashing.Hashing._hash_func', return_value=ret_val)
+    hash_func_mocker = mocker.patch(
+        'imagededup.methods.hashing.Hashing._hash_func', return_value=ret_val
+    )
     return hash_func_mocker
 
 
 @pytest.fixture
 def mocker_load_image(mocker):
     ret_val = np.zeros((2, 2))
-    load_image_mocker = mocker.patch('imagededup.methods.hashing.load_image', return_value=ret_val,
-                                     autospec=True)
+    load_image_mocker = mocker.patch(
+        'imagededup.methods.hashing.load_image', return_value=ret_val, autospec=True
+    )
     return load_image_mocker
 
 
 def test_encode_image_accepts_image_path(hasher, mocker_load_image, mocker_hash_func):
     ret_val = np.zeros((2, 2))
     hasher.encode_image(image_file=PATH_SINGLE_IMAGE)
-    mocker_load_image.assert_called_with(image_file=PATH_SINGLE_IMAGE, grayscale=True, target_size=(8, 8))
+    mocker_load_image.assert_called_with(
+        image_file=PATH_SINGLE_IMAGE, grayscale=True, target_size=(8, 8)
+    )
     np.testing.assert_array_equal(ret_val, mocker_hash_func.call_args[0][0])
 
 
@@ -115,6 +129,7 @@ def test_encode_image_returns_none_image_pp_not_array_array_input(hasher, mocker
 
 # encode_images
 
+
 @pytest.fixture
 def mocker_encode_image(mocker):
     mocker.patch('imagededup.methods.hashing.Hashing.encode_image', return_value='123456789ABCDEFA')
@@ -145,11 +160,14 @@ def test_encode_images_return_vals(hasher, mocker_encode_image):
 def test_hash_func(hasher, mocker):
     inp_array = np.array((3, 3))
     ret_arr = np.array((2, 2))
-    hash_algo_mocker = mocker.patch('imagededup.methods.hashing.Hashing._hash_algo', return_value=ret_arr)
+    hash_algo_mocker = mocker.patch(
+        'imagededup.methods.hashing.Hashing._hash_algo', return_value=ret_arr
+    )
     array_mocker = mocker.patch('imagededup.methods.hashing.Hashing._array_to_hash')
     hasher._hash_func(inp_array)
     np.testing.assert_array_equal(inp_array, hash_algo_mocker.call_args[0][0])
     array_mocker.assert_called_with(ret_arr)
+
 
 # _find_duplicates_dict
 
@@ -161,9 +179,16 @@ def test__find_duplicates_dict_outfile_none(hasher, mocker):
     outfile = None
     hasheval_mocker = mocker.patch('imagededup.methods.hashing.HashEval')
     save_json_mocker = mocker.patch('imagededup.methods.hashing.save_json')
-    hasher._find_duplicates_dict(encoding_map=encoding_map, threshold=threshold, scores=scores, outfile=outfile)
-    hasheval_mocker.assert_called_with(test=encoding_map, queries=encoding_map, hammer=Hashing.hamming_distance,
-                                 cutoff=threshold, search_method='bktree')
+    hasher._find_duplicates_dict(
+        encoding_map=encoding_map, threshold=threshold, scores=scores, outfile=outfile
+    )
+    hasheval_mocker.assert_called_with(
+        test=encoding_map,
+        queries=encoding_map,
+        hammer=Hashing.hamming_distance,
+        cutoff=threshold,
+        search_method='bktree',
+    )
     hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
     save_json_mocker.assert_not_called()
 
@@ -174,34 +199,54 @@ def test__find_duplicates_dict_outfile_true(hasher, mocker):
     scores = True
     outfile = True
     hasheval_mocker = mocker.patch('imagededup.methods.hashing.HashEval')
-    hasheval_mocker.return_value.retrieve_results.return_value = {'filename.jpg': [('dup1.jpg', 3)], 'filename2.jpg':
-                                                                                  [('dup2.jpg', 10)]}
+    hasheval_mocker.return_value.retrieve_results.return_value = {
+        'filename.jpg': [('dup1.jpg', 3)],
+        'filename2.jpg': [('dup2.jpg', 10)],
+    }
     save_json_mocker = mocker.patch('imagededup.methods.hashing.save_json')
-    hasher._find_duplicates_dict(encoding_map=encoding_map, threshold=threshold, scores=scores, outfile=outfile)
-    hasheval_mocker.assert_called_with(test=encoding_map, queries=encoding_map, hammer=Hashing.hamming_distance,
-                                 cutoff=threshold, search_method='bktree')
+    hasher._find_duplicates_dict(
+        encoding_map=encoding_map, threshold=threshold, scores=scores, outfile=outfile
+    )
+    hasheval_mocker.assert_called_with(
+        test=encoding_map,
+        queries=encoding_map,
+        hammer=Hashing.hamming_distance,
+        cutoff=threshold,
+        search_method='bktree',
+    )
     hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
-    save_json_mocker.assert_called_once_with(hasheval_mocker.return_value.retrieve_results.return_value, outfile)
+    save_json_mocker.assert_called_once_with(
+        hasheval_mocker.return_value.retrieve_results.return_value, outfile
+    )
 
 
 # _find_duplicates_dir
+
 
 def test__find_duplicates_dir(hasher, mocker):
     encoding_map = {'1.jpg': '123456'}
     threshold = 10
     scores = True
     outfile = True
-    ret_val_find_dup_dict = {'filename.jpg': [('dup1.jpg', 3)], 'filename2.jpg':[('dup2.jpg', 10)]}
-    encode_images_mocker = mocker.patch('imagededup.methods.hashing.Hashing.encode_images', return_value=encoding_map)
-    find_dup_dict_mocker = mocker.patch('imagededup.methods.hashing.Hashing._find_duplicates_dict',
-                                        return_value=ret_val_find_dup_dict)
-    hasher._find_duplicates_dir(image_dir=PATH_IMAGE_DIR, threshold= threshold, scores=scores, outfile=outfile)
+    ret_val_find_dup_dict = {'filename.jpg': [('dup1.jpg', 3)], 'filename2.jpg': [('dup2.jpg', 10)]}
+    encode_images_mocker = mocker.patch(
+        'imagededup.methods.hashing.Hashing.encode_images', return_value=encoding_map
+    )
+    find_dup_dict_mocker = mocker.patch(
+        'imagededup.methods.hashing.Hashing._find_duplicates_dict',
+        return_value=ret_val_find_dup_dict,
+    )
+    hasher._find_duplicates_dir(
+        image_dir=PATH_IMAGE_DIR, threshold=threshold, scores=scores, outfile=outfile
+    )
     encode_images_mocker.assert_called_once_with(PATH_IMAGE_DIR)
-    find_dup_dict_mocker.assert_called_once_with(encoding_map=encoding_map, threshold=threshold, scores=scores,
-                                                 outfile=outfile)
+    find_dup_dict_mocker.assert_called_once_with(
+        encoding_map=encoding_map, threshold=threshold, scores=scores, outfile=outfile
+    )
 
 
 # find_duplicates
+
 
 @pytest.fixture
 def mocker_hamming_distance(mocker):
@@ -213,10 +258,13 @@ def test_find_duplicates_dir(hasher, mocker, mocker_hamming_distance):
     scores = True
     outfile = True
     find_dup_dir_mocker = mocker.patch('imagededup.methods.hashing.Hashing._find_duplicates_dir')
-    hasher.find_duplicates(image_dir=PATH_IMAGE_DIR, threshold=threshold, outfile=outfile, scores=scores)
+    hasher.find_duplicates(
+        image_dir=PATH_IMAGE_DIR, threshold=threshold, outfile=outfile, scores=scores
+    )
     mocker_hamming_distance.assert_called_once_with(thresh=threshold)
-    find_dup_dir_mocker.assert_called_once_with(image_dir=PATH_IMAGE_DIR, threshold=threshold, scores=scores,
-                                                outfile=outfile)
+    find_dup_dir_mocker.assert_called_once_with(
+        image_dir=PATH_IMAGE_DIR, threshold=threshold, scores=scores, outfile=outfile
+    )
 
 
 def test_find_duplicates_dict(hasher, mocker, mocker_hamming_distance):
@@ -225,15 +273,19 @@ def test_find_duplicates_dict(hasher, mocker, mocker_hamming_distance):
     scores = True
     outfile = True
     find_dup_dict_mocker = mocker.patch('imagededup.methods.hashing.Hashing._find_duplicates_dict')
-    hasher.find_duplicates(encoding_map=encoding_map, threshold=threshold, outfile=outfile, scores=scores)
+    hasher.find_duplicates(
+        encoding_map=encoding_map, threshold=threshold, outfile=outfile, scores=scores
+    )
     mocker_hamming_distance.assert_called_once_with(thresh=threshold)
-    find_dup_dict_mocker.assert_called_once_with(encoding_map=encoding_map, threshold=threshold, scores=scores,
-                                                outfile=outfile)
+    find_dup_dict_mocker.assert_called_once_with(
+        encoding_map=encoding_map, threshold=threshold, scores=scores, outfile=outfile
+    )
 
 
 def test_find_duplicates_wrong_input(hasher):
     with pytest.raises(ValueError):
         hasher.find_duplicates(threshold=10)
+
 
 # find_duplicates_to_remove
 
@@ -242,13 +294,15 @@ def test_find_duplicates_to_remove_outfile_false(hasher, mocker):
     threshold = 10
     outfile = False
     ret_val_find_dup_dict = {'filename.jpg': [('dup1.jpg', 3)], 'filename2.jpg': [('dup2.jpg', 10)]}
-    find_duplicates_mocker = mocker.patch('imagededup.methods.hashing.Hashing.find_duplicates',
-                                          return_value=ret_val_find_dup_dict)
+    find_duplicates_mocker = mocker.patch(
+        'imagededup.methods.hashing.Hashing.find_duplicates', return_value=ret_val_find_dup_dict
+    )
     get_files_to_remove_mocker = mocker.patch('imagededup.methods.hashing.get_files_to_remove')
     save_json_mocker = mocker.patch('imagededup.methods.hashing.save_json')
     hasher.find_duplicates_to_remove(image_dir=PATH_IMAGE_DIR, threshold=threshold, outfile=outfile)
-    find_duplicates_mocker.assert_called_once_with(image_dir=PATH_IMAGE_DIR, encoding_map=None, threshold=threshold,
-                                                   scores=False)
+    find_duplicates_mocker.assert_called_once_with(
+        image_dir=PATH_IMAGE_DIR, encoding_map=None, threshold=threshold, scores=False
+    )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     save_json_mocker.assert_not_called()
 
@@ -257,15 +311,18 @@ def test_find_duplicates_to_remove_outfile_true(hasher, mocker):
     threshold = 10
     outfile = True
     ret_val_find_dup_dict = {'filename.jpg': [('dup1.jpg', 3)], 'filename2.jpg': [('dup2.jpg', 10)]}
-    ret_val_get_files_to_remove = ['1.jpg','2.jpg']
-    find_duplicates_mocker = mocker.patch('imagededup.methods.hashing.Hashing.find_duplicates',
-                                          return_value=ret_val_find_dup_dict)
-    get_files_to_remove_mocker = mocker.patch('imagededup.methods.hashing.get_files_to_remove',
-                                              return_value=ret_val_get_files_to_remove)
+    ret_val_get_files_to_remove = ['1.jpg', '2.jpg']
+    find_duplicates_mocker = mocker.patch(
+        'imagededup.methods.hashing.Hashing.find_duplicates', return_value=ret_val_find_dup_dict
+    )
+    get_files_to_remove_mocker = mocker.patch(
+        'imagededup.methods.hashing.get_files_to_remove', return_value=ret_val_get_files_to_remove
+    )
     save_json_mocker = mocker.patch('imagededup.methods.hashing.save_json')
     hasher.find_duplicates_to_remove(image_dir=PATH_IMAGE_DIR, threshold=threshold, outfile=outfile)
-    find_duplicates_mocker.assert_called_once_with(image_dir=PATH_IMAGE_DIR, encoding_map=None, threshold=threshold,
-                                                   scores=False)
+    find_duplicates_mocker.assert_called_once_with(
+        image_dir=PATH_IMAGE_DIR, encoding_map=None, threshold=threshold, scores=False
+    )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     save_json_mocker.assert_called_once_with(ret_val_get_files_to_remove, outfile)
 
@@ -275,13 +332,17 @@ def test_find_duplicates_to_remove_encoding_map(hasher, mocker):
     threshold = 10
     outfile = False
     ret_val_find_dup_dict = {'filename.jpg': [('dup1.jpg', 3)], 'filename2.jpg': [('dup2.jpg', 10)]}
-    find_duplicates_mocker = mocker.patch('imagededup.methods.hashing.Hashing.find_duplicates',
-                                          return_value=ret_val_find_dup_dict)
+    find_duplicates_mocker = mocker.patch(
+        'imagededup.methods.hashing.Hashing.find_duplicates', return_value=ret_val_find_dup_dict
+    )
     get_files_to_remove_mocker = mocker.patch('imagededup.methods.hashing.get_files_to_remove')
     save_json_mocker = mocker.patch('imagededup.methods.hashing.save_json')
-    hasher.find_duplicates_to_remove(encoding_map=encoding_map, threshold=threshold, outfile=outfile)
-    find_duplicates_mocker.assert_called_once_with(encoding_map=encoding_map, image_dir=None, threshold=threshold,
-                                                   scores=False)
+    hasher.find_duplicates_to_remove(
+        encoding_map=encoding_map, threshold=threshold, outfile=outfile
+    )
+    find_duplicates_mocker.assert_called_once_with(
+        encoding_map=encoding_map, image_dir=None, threshold=threshold, scores=False
+    )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     save_json_mocker.assert_not_called()
 
@@ -293,7 +354,12 @@ dhasher = DHash()
 ahasher = AHash()
 whasher = WHash()
 
-common_test_parameters = [phasher.encode_image, dhasher.encode_image, ahasher.encode_image, whasher.encode_image]
+common_test_parameters = [
+    phasher.encode_image,
+    dhasher.encode_image,
+    ahasher.encode_image,
+    whasher.encode_image,
+]
 
 
 @pytest.mark.parametrize('hash_function', common_test_parameters)
@@ -340,11 +406,20 @@ def test_encode_images_return_non_none_hashes():
     for v in hash_dict.values():
         assert v is not None
 
+
 # For each of the hash types, check correctness of hashes for known images
 # Check encode_image(s)
 
-@pytest.mark.parametrize("hash_object, expected_hash", [(phasher, '9fee256239984d71'), (dhasher, '2b69707551f1b87a'),
-                                                        (ahasher, '81b8bc3c3c3c1e0a'), (whasher, '89b8bc3c3c3c5e0e')])
+
+@pytest.mark.parametrize(
+    "hash_object, expected_hash",
+    [
+        (phasher, '9fee256239984d71'),
+        (dhasher, '2b69707551f1b87a'),
+        (ahasher, '81b8bc3c3c3c1e0a'),
+        (whasher, '89b8bc3c3c3c5e0e'),
+    ],
+)
 def test_encode_image_hash(hash_object, expected_hash):
     assert hash_object.encode_image(PATH_SINGLE_IMAGE) == expected_hash
 
@@ -386,7 +461,9 @@ def test_find_duplicates_outfile():
     outfile_name = 'score_output.json'
     if os.path.exists(outfile_name):
         os.remove(outfile_name)
-    _ = dhasher.find_duplicates(image_dir=PATH_IMAGE_DIR, threshold=10, scores=True, outfile=outfile_name)
+    _ = dhasher.find_duplicates(
+        image_dir=PATH_IMAGE_DIR, threshold=10, scores=True, outfile=outfile_name
+    )
     assert os.path.exists(outfile_name)
     # clean up
     if os.path.exists(outfile_name):
@@ -394,11 +471,13 @@ def test_find_duplicates_outfile():
 
 
 def test_find_duplicates_encoding_map_input():
-    encoding = {'ukbench00120_resize.jpg': '9fee256239984d71',
-                'ukbench00120_rotation.jpg': '850d513c4fdcbb72',
-                'ukbench00120.jpg': '9fee256239984d71',
-                'ukbench00120_hflip.jpg': 'cabb7237e8cd3824',
-                'ukbench09268.jpg': 'c73c36c2da2f29c9'}
+    encoding = {
+        'ukbench00120_resize.jpg': '9fee256239984d71',
+        'ukbench00120_rotation.jpg': '850d513c4fdcbb72',
+        'ukbench00120.jpg': '9fee256239984d71',
+        'ukbench00120_hflip.jpg': 'cabb7237e8cd3824',
+        'ukbench09268.jpg': 'c73c36c2da2f29c9',
+    }
     phasher = PHash()
     duplicate_dict = phasher.find_duplicates(encoding_map=encoding, threshold=10)
     assert isinstance(duplicate_dict, dict)
@@ -415,11 +494,13 @@ def test_find_duplicates_to_remove_dir():
 
 
 def test_find_duplicates_to_remove_encoding():
-    encoding = {'ukbench00120_resize.jpg': '9fee256239984d71',
-                'ukbench00120_rotation.jpg': '850d513c4fdcbb72',
-                'ukbench00120.jpg': '9fee256239984d71',
-                'ukbench00120_hflip.jpg': 'cabb7237e8cd3824',
-                'ukbench09268.jpg': 'c73c36c2da2f29c9'}
+    encoding = {
+        'ukbench00120_resize.jpg': '9fee256239984d71',
+        'ukbench00120_rotation.jpg': '850d513c4fdcbb72',
+        'ukbench00120.jpg': '9fee256239984d71',
+        'ukbench00120_hflip.jpg': 'cabb7237e8cd3824',
+        'ukbench09268.jpg': 'c73c36c2da2f29c9',
+    }
     phasher = PHash()
     removal_list = phasher.find_duplicates_to_remove(encoding_map=encoding, threshold=10)
     assert isinstance(removal_list, list)
