@@ -6,7 +6,7 @@ import os
 import pywt
 import numpy as np
 from scipy.fftpack import dct
-from pathlib import PosixPath
+from pathlib import PosixPath, Path
 from typing import Dict, List, Optional
 
 """
@@ -47,13 +47,16 @@ class Hashing:
         return ''.join('%0.2x' % x for x in np.packbits(hash_mat))
 
     def encode_image(
-        self, image_file: Optional[PosixPath] = None, image_array: Optional[np.ndarray] = None
+        self, image_file = None, image_array: Optional[np.ndarray] = None
     ) -> str:
         """
         Apply a hashing function on the input image.
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
         :return: A string representing the hash of the image.
         """
+        if image_file and os.path.exists(image_file):
+            image_file = Path(image_file)
+
         if isinstance(image_file, PosixPath):
             image_pp = load_image(
                 image_file=image_file, target_size=self.target_size, grayscale=True
@@ -68,13 +71,12 @@ class Hashing:
 
         return self._hash_func(image_pp) if isinstance(image_pp, np.ndarray) else None
 
-    def encode_images(self, image_dir: PosixPath):
+    def encode_images(self, image_dir=None):
 
         if not os.path.isdir(image_dir):
             raise ValueError('Please provide a valid directory path!')
 
-        if not isinstance(image_dir, PosixPath):
-            raise ValueError('Please provide a Path variable to the image directory!')
+        image_dir = Path(image_dir)
 
         files = [
             i.absolute() for i in image_dir.glob('*') if not i.name.startswith('.')
