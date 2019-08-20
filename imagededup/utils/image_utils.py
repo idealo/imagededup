@@ -2,8 +2,8 @@ from imagededup.utils.logger import return_logger
 import os
 import numpy as np
 from PIL import Image
-from pathlib import Path, PosixPath
-from typing import Tuple, List, Optional
+from pathlib import PosixPath
+from typing import List
 
 
 """
@@ -35,8 +35,12 @@ def preprocess_image(image, target_size=None, grayscale: bool = False):
     return np.array(image_pil).astype('uint8')
 
 
-def load_image(image_file: PosixPath, target_size=None, grayscale: bool = False,
-               img_formats: List[str] = IMG_FORMATS) -> Image:
+def load_image(
+    image_file: PosixPath,
+    target_size=None,
+    grayscale: bool = False,
+    img_formats: List[str] = IMG_FORMATS,
+) -> Image:
     try:
         img = Image.open(image_file)
 
@@ -58,6 +62,7 @@ def load_image(image_file: PosixPath, target_size=None, grayscale: bool = False,
     except Exception as e:
         logger.warning(f'Invalid image file {image_file}:\n{e}')
         return None
+
 
 # def _image_preprocess(pillow_image: Image, resize_dims: Tuple[int, int], for_hashing: bool = True) -> np.ndarray:
 #     """
