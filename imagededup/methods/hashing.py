@@ -31,7 +31,9 @@ class Hashing:
         :param hash2: hash string
         :return: Hamming distance between the two hashes.
         """
-        hash1_bin = bin(int(hash1, 16))[2:].zfill(64)  # zfill ensures that len of hash is 64 and pads MSB if it is < A
+        hash1_bin = bin(int(hash1, 16))[2:].zfill(
+            64
+        )  # zfill ensures that len of hash is 64 and pads MSB if it is < A
         hash2_bin = bin(int(hash2, 16))[2:].zfill(64)
         return np.sum([i != j for i, j in zip(hash1_bin, hash2_bin)])
 
@@ -44,32 +46,40 @@ class Hashing:
         """
         return ''.join('%0.2x' % x for x in np.packbits(hash_mat))
 
-    def encode_image(self, image_file: Optional[PosixPath]=None, image_array: Optional[np.ndarray]=None) -> str:
+    def encode_image(
+        self, image_file: Optional[PosixPath] = None, image_array: Optional[np.ndarray] = None
+    ) -> str:
         """
         Apply a hashing function on the input image.
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
         :return: A string representing the hash of the image.
         """
         if isinstance(image_file, PosixPath):
-            image_pp = load_image(image_file=image_file, target_size=self.target_size, grayscale=True)
+            image_pp = load_image(
+                image_file=image_file, target_size=self.target_size, grayscale=True
+            )
 
         elif isinstance(image_array, np.ndarray):
-            image_pp = preprocess_image(image=image_array, target_size=self.target_size, grayscale=True)
+            image_pp = preprocess_image(
+                image=image_array, target_size=self.target_size, grayscale=True
+            )
         else:
             raise ValueError('Please provide either image file or image array!')
 
         return self._hash_func(image_pp) if isinstance(image_pp, np.ndarray) else None
 
     def encode_images(self, image_dir: PosixPath):
-        
+
         if not os.path.isdir(image_dir):
             raise ValueError('Please provide a valid directory path!')
-        
+
         if not isinstance(image_dir, PosixPath):
             raise ValueError('Please provide a Path variable to the image directory!')
 
-        files = [i.absolute() for i in image_dir.glob('*') if not i.name.startswith('.')]  # ignore hidden files
-        
+        files = [
+            i.absolute() for i in image_dir.glob('*') if not i.name.startswith('.')
+        ]  # ignore hidden files
+
         hash_dict = dict()
         self.logger.info(f'Start: Calculating hashes...')
         for _file in files:
@@ -106,8 +116,13 @@ class Hashing:
         else:
             return None
 
-    def _find_duplicates_dict(self, encoding_map: Dict[str, str], threshold: int = 10,
-                              scores: bool = False, outfile: Optional[str] = None) -> Dict:
+    def _find_duplicates_dict(
+        self,
+        encoding_map: Dict[str, str],
+        threshold: int = 10,
+        scores: bool = False,
+        outfile: Optional[str] = None,
+    ) -> Dict:
         """Takes in dictionary {filename: hash string}, detects duplicates above the given hamming distance threshold
             and returns dictionary containing key as filename and value as a list of duplicate filenames. Optionally,
             the hamming distances could be returned instead of just duplicate file name for each query file.
@@ -122,16 +137,26 @@ class Hashing:
 
         self.logger.info('Start: Evaluating hamming distances for getting duplicates')
 
-        result_set = HashEval(test=encoding_map, queries=encoding_map, hammer=self.hamming_distance,
-                              cutoff=threshold, search_method='bktree')
+        result_set = HashEval(
+            test=encoding_map,
+            queries=encoding_map,
+            hammer=self.hamming_distance,
+            cutoff=threshold,
+            search_method='bktree',
+        )
         self.logger.info('End: Evaluating hamming distances for getting duplicates')
         self.results = result_set.retrieve_results(scores=scores)
         if outfile:
             save_json(self.results, outfile)
         return self.results
 
-    def _find_duplicates_dir(self, image_dir: PosixPath, threshold: int = 10, scores: bool = False,
-                             outfile: Optional[str] = None) -> Dict:
+    def _find_duplicates_dir(
+        self,
+        image_dir: PosixPath,
+        threshold: int = 10,
+        scores: bool = False,
+        outfile: Optional[str] = None,
+    ) -> Dict:
         """Takes in path of the directory on which duplicates are to be detected above the given threshold.
         Returns dictionary containing key as filename and value as a list of duplicate file names.
         :param path_dir: PosixPath to the directory containing all the images.
@@ -143,12 +168,19 @@ class Hashing:
         'image1_duplicate2.jpg'], 'image2.jpg':['image2_duplicate1.jpg',..], ..}"""
 
         encoding_map = self.encode_images(image_dir)
-        results = self._find_duplicates_dict(encoding_map=encoding_map, threshold=threshold, scores=scores,
-                                             outfile=outfile)
+        results = self._find_duplicates_dict(
+            encoding_map=encoding_map, threshold=threshold, scores=scores, outfile=outfile
+        )
         return results
 
-    def find_duplicates(self, image_dir: PosixPath = None, encoding_map: Dict[str, str] = None, threshold: int = 10,
-                        scores: bool = False, outfile: Optional[str] = None) -> Dict:
+    def find_duplicates(
+        self,
+        image_dir: PosixPath = None,
+        encoding_map: Dict[str, str] = None,
+        threshold: int = 10,
+        scores: bool = False,
+        outfile: Optional[str] = None,
+    ) -> Dict:
         """
         Finds duplicates. Raises TypeError if the supplied directory path isn't a Path variable or a valid dictionary
         isn't supplied.
@@ -174,17 +206,24 @@ class Hashing:
 
         self._check_hamming_distance_bounds(thresh=threshold)
         if image_dir:
-            result = self._find_duplicates_dir(image_dir=image_dir, threshold=threshold, scores=scores,
-                                               outfile=outfile)
+            result = self._find_duplicates_dir(
+                image_dir=image_dir, threshold=threshold, scores=scores, outfile=outfile
+            )
         elif encoding_map:
-            result = self._find_duplicates_dict(encoding_map=encoding_map, threshold=threshold, scores=scores,
-                                                outfile=outfile)
+            result = self._find_duplicates_dict(
+                encoding_map=encoding_map, threshold=threshold, scores=scores, outfile=outfile
+            )
         else:
             raise ValueError('Provide either an image directory or encodings!')
         return result
 
-    def find_duplicates_to_remove(self, image_dir: PosixPath = None, encoding_map: Dict[str, str] = None,
-                        threshold: int = 10, outfile: Optional[str] = None) -> List:
+    def find_duplicates_to_remove(
+        self,
+        image_dir: PosixPath = None,
+        encoding_map: Dict[str, str] = None,
+        threshold: int = 10,
+        outfile: Optional[str] = None,
+    ) -> List:
         """
         Gives out a list of image file names to remove based on the similarity threshold.
         :param path_or_dict: PosixPath to the directory containing all the images or dictionary with keys as file names
@@ -200,7 +239,9 @@ class Hashing:
         ```
         """
 
-        result = self.find_duplicates(image_dir=image_dir, encoding_map=encoding_map, threshold=threshold, scores=False)
+        result = self.find_duplicates(
+            image_dir=image_dir, encoding_map=encoding_map, threshold=threshold, scores=False
+        )
         files_to_remove = get_files_to_remove(result)
         if outfile:
             save_json(files_to_remove, outfile)
@@ -223,7 +264,9 @@ class PHash(Hashing):
         dct_coef = dct(dct(image_array, axis=0), axis=1)
 
         # retain top left 8 by 8 dct coefficients
-        dct_reduced_coef = dct_coef[:self.__coefficient_extract[0], :self.__coefficient_extract[1]]
+        dct_reduced_coef = dct_coef[
+            : self.__coefficient_extract[0], : self.__coefficient_extract[1]
+        ]
 
         # average of coefficients excluding the DC term (0th term)
         # mean_coef_val = np.mean(np.ndarray.flatten(dct_reduced_coef)[1:])
@@ -280,7 +323,7 @@ class WHash(Hashing):
         :return: A string representing the average hash of the image.
         """
         # decomposition level set to 5 to get 8 by 8 hash matrix
-        image_array = image_array/255
+        image_array = image_array / 255
         coeffs = pywt.wavedec2(data=image_array, wavelet=self.__wavelet_func, level=5)
         LL_coeff = coeffs[0]
 
@@ -290,4 +333,3 @@ class WHash(Hashing):
         # return mask of all coefficients greater than mean of coefficients
         hash_mat = LL_coeff >= median_coef_val
         return hash_mat
-
