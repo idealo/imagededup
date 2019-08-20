@@ -65,6 +65,7 @@ class HashEval:
         else:
             return {k: [i[0] for i in v] for k, v in self.query_results_map.items()}
 
+
 class CosEval:
     """
     Calculates cosine similarity given matrices of query and retrieval features and returns valid retrieval files
