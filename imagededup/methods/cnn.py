@@ -1,4 +1,4 @@
-from imagededup.retrieve.retrieval import CosEval
+from imagededup.handlers.search.retrieval import CosEval
 from imagededup.utils.image_utils import check_directory_files, convert_to_array
 from imagededup.utils.general_utils import get_files_to_remove
 from imagededup.utils.logger import return_logger
@@ -11,6 +11,7 @@ from pathlib import PosixPath
 from typing import Tuple, Dict, List
 import os
 import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
 
 # TODO: Add options for making CNN forward pass quicker. (in _generator)
 
@@ -245,6 +246,67 @@ class CNN:
         else:
             return self._get_only_filenames(self.result_score)
 
+    def get_encodings(self, image_dir: PosixPath):
+        """
+        Generates CNN features for all images in a given directory of images.
+
+        :param path_dir: PosixPath to the directory containing all the images.
+        :return: A dictionary that contains a mapping of filenames and corresponding numpy array of CNN features.
+        For example:
+        mapping = CNN().cnn_dir(Path('path/to/directory'))
+        'mapping' contains: {'Image1.jpg': np.array([1.0, -0.2, ...]), 'Image2.jpg': np.array([0.3, 0.06, ...]), ...}
+
+        Example usage:
+        ```
+        from imagededup import cnn
+        mycnn = cnn.CNN()
+        dict_file_feat = mycnn.cnn_dir(Path('path/to/directory'))
+        ```
+        """
+        check_directory_files(image_dir, return_file=False)
+        self.logger.info('Start: Image feature generation')
+
+        image_generator = self._generator(image_dir)
+        encodings = self.model.predict_generator(image_generator, len(image_generator), verbose=1)
+        self.logger.info('Completed: Image feature generation')
+        filenames = [i.split('/')[-1] for i in image_generator.filenames]
+
+        return encodings, filenames
+
+    def get_cosine_distances(self):
+        self.cosine_distances = cosine_similarity(self.encodings)
+
+    def find_duplicates(self, threshold, image_dir=None, encodings=None, scores: bool = False):
+        self._check_threshold_bounds(threshold)
+
+        if image_dir:
+            self.encodings, self.filenames = self.get_encodings(image_dir)
+
+        elif encodings:
+            self.filenames = list(self.encodings.keys())
+            self.encodings = np.array(self.encodings.values())
+
+        else:
+            raise ValueError('Provide either image_dir or encoding dictionary!')
+
+        self.get_cosine_distances()
+
+        self.duplicates = {}
+        for i, row in enumerate(self.cosine_distances):
+            duplicates_idx = list(np.nonzero(row >= threshold)[0])
+
+            duplicates_files = [self.filenames[j] for j in duplicates_idx]
+
+            if scores and duplicates_files:
+                duplicates_scores = [row[j] for j in duplicates_idx]
+                self.duplicates[self.filenames[i]] = list(zip(duplicates_files, duplicates_scores))
+            else:
+                self.duplicates[self.filenames[i]] = duplicates_files
+
+    def find_duplicates_to_remove(self, threshold, image_dir=None, encodings=None, scores: bool = False):
+        dict_ret = self.find_duplicates(path_or_dict=path_or_dict, threshold=threshold, scores=False)
+        return get_files_to_remove(dict_ret)
+
     def _find_duplicates_dir(self, path_dir: PosixPath, threshold: float = 0.8, scores: bool = False) -> Dict:
         """Takes in path of the directory on which duplicates are to be detected above the given threshold.
         Returns dictionary containing key as filename and value as a list of duplicate file names.
@@ -275,7 +337,7 @@ class CNN:
         if not isinstance(thresh, float) or (thresh < -1.0 or thresh > 1.0):
             raise TypeError('Threshold must be a float between -1.0 and 1.0')
 
-    def find_duplicates(self, path_or_dict, threshold: float = 0.8, scores: bool = False) -> Dict:
+    def find_duplicates_old(self, path_or_dict, threshold: float = 0.8, scores: bool = False) -> Dict:
         """
         Finds duplicates. Raises TypeError if supplied directory path isn't a Path variable or a valid dictionary isn't
         supplied.
@@ -315,7 +377,7 @@ class CNN:
                             'vectors!')
         return dict_ret
 
-    def find_duplicates_to_remove(self, path_or_dict, threshold: float = 0.8) -> List:
+    def find_duplicates_to_remove_old(self, path_or_dict, threshold: float = 0.8) -> List:
         """
         Gives out a list of image file names to remove based on the similarity threshold.
         :param path_or_dict: PosixPath to the directory containing all the images or dictionary with keys as file names

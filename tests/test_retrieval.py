@@ -1,6 +1,6 @@
-from imagededup.retrieve.retrieval import HashEval
-from imagededup.hashing import Hashing
-from imagededup.retrieve.retrieval import CosEval
+from imagededup.retrieve import HashEval
+from imagededup.methods.hashing import Hashing
+from imagededup.retrieve import CosEval
 from mock import patch
 import os
 import numpy as np

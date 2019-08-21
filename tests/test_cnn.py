@@ -1,4 +1,4 @@
-from imagededup import cnn
+from imagededup.methods import cnn
 from pathlib import Path
 from PIL import Image
 from pathlib import PosixPath

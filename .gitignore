@@ -226,6 +226,7 @@ venv.bak/
 # End of https://www.gitignore.io/api/linux,macos,python,pycharm
 
 # Customized
+archive
 Untitled
 imagededup/Untitled.ipynb
 notebooks/Untitled.ipynb

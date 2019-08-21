@@ -89,14 +89,16 @@ class BKTree:
         Function to search the bktree given a hash of the query image.
         :param query: hash string for which BKTree needs to be searched.
         :param tol: distance upto which duplicate is valid.
-        :return: Dictionary of retrieved file names and corresponding distances {valid_retrieval_filename: distance, ...}
+        :return: Dictionary of retrieved file names and corresponding distances {valid_retrieval_filename: distance, ..}
         """
-        valid_retrievals = {}
+
+        valid_retrievals = []
         candidates_local = copy.deepcopy(self.candidates)
         while len(candidates_local) != 0:
             candidate_name = candidates_local.pop()
             cand_list, valid_flag, dist = self._get_next_candidates(query, self.dict_all[candidate_name], tolerance=tol)
             if valid_flag:
-                valid_retrievals[candidate_name] = dist
+                valid_retrievals.append((candidate_name, int(dist)))  # typecast dist to int to save later as np.int64
+                # can't be saved by json
             candidates_local.extend(cand_list)
         return valid_retrievals
