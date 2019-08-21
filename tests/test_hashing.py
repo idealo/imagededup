@@ -13,12 +13,15 @@ from PIL import Image
 
 """ Run from project root with: python -m pytest -vs tests/test_hashing.py"""
 
-PATH_IMAGE_DIR = Path('tests/data/mixed_images')
-PATH_IMAGE_DIR_STRING = 'tests/data/mixed_images'
-PATH_SINGLE_IMAGE = Path('tests/data/mixed_images/ukbench00120.jpg')
-PATH_SINGLE_IMAGE_STRING = 'tests/data/mixed_images/ukbench00120.jpg'
-PATH_SINGLE_IMAGE_CORRUPT = Path('tests/data/mixed_images/ukbench09268_corrupt.jpg')
-PATH_SINGLE_IMAGE_RESIZED = Path('tests/data/mixed_images/ukbench00120_resize.jpg')
+
+p = Path(__file__)
+
+PATH_IMAGE_DIR = os.path.join(p.parent, 'data/mixed_images')
+PATH_IMAGE_DIR_STRING = 'data/mixed_images'
+PATH_SINGLE_IMAGE = Path(os.path.join(p.parent, 'data/mixed_images/ukbench00120.jpg'))
+PATH_SINGLE_IMAGE_STRING = os.path.join(p.parent, 'data/mixed_images/ukbench00120.jpg')
+PATH_SINGLE_IMAGE_CORRUPT = Path(os.path.join(p.parent, 'data/mixed_images/ukbench09268_corrupt.jpg'))
+PATH_SINGLE_IMAGE_RESIZED = Path(os.path.join(p.parent, 'data/mixed_images/ukbench00120_resize.jpg'))
 
 
 # Test parent class (static methods/class attributes initialization)
@@ -397,7 +400,7 @@ class TestCommon:
     def test_hash_distinct_images(self, hash_function):
         # Put in distinct images and check that hamming distance between hashes is large
         hash_im_1 = hash_function(PATH_SINGLE_IMAGE)
-        hash_im_2 = hash_function(Path('tests/data/mixed_images/ukbench09268.jpg'))
+        hash_im_2 = hash_function(os.path.join(p.parent, 'data/mixed_images/ukbench09268.jpg'))
         hamdist = Hashing.hamming_distance(hash_im_1, hash_im_2)
         assert hamdist > 20
 

@@ -3,8 +3,10 @@ from pathlib import Path
 from PIL import Image
 import numpy as np
 import pytest
+import os
 
-PATH_SINGLE_IMAGE = Path('tests/data/mixed_images/ukbench00120.jpg')
+p = Path(__file__)
+PATH_SINGLE_IMAGE = os.path.join(p.parent, 'data/mixed_images/ukbench00120.jpg')
 
 
 def test_preprocess_image_accepts_array_input():
@@ -64,7 +66,7 @@ def preprocess_mocker(mocker):
 
 
 def test_load_image_alpha_channel_image_converts(preprocess_mocker):
-    PATH_ALPHA_IMAGE = Path('tests/data/alpha_channel_image.png')
+    PATH_ALPHA_IMAGE = os.path.join(p.parent, 'data/alpha_channel_image.png')
     alpha_converted = Image.open(PATH_ALPHA_IMAGE).convert('RGBA').convert('RGB')
     load_image(PATH_ALPHA_IMAGE)
     preprocess_mocker.assert_called_once_with(alpha_converted, target_size=None, grayscale=False)
