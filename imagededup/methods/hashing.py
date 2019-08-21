@@ -54,20 +54,21 @@ class Hashing:
         :param path_image: A PosixPath to image or a numpy array that corresponds to the image.
         :return: A string representing the hash of the image.
         """
-        if image_file and os.path.exists(image_file):
-            image_file = Path(image_file)
+        try:
+            if image_file and os.path.exists(image_file):
+                image_file = Path(image_file)
+                image_pp = load_image(
+                    image_file=image_file, target_size=self.target_size, grayscale=True
+                )
 
-        if isinstance(image_file, PosixPath):
-            image_pp = load_image(
-                image_file=image_file, target_size=self.target_size, grayscale=True
-            )
-
-        elif isinstance(image_array, np.ndarray):
-            image_pp = preprocess_image(
-                image=image_array, target_size=self.target_size, grayscale=True
-            )
-        else:
-            raise ValueError('Please provide either image file or image array!')
+            elif isinstance(image_array, np.ndarray):
+                image_pp = preprocess_image(
+                    image=image_array, target_size=self.target_size, grayscale=True
+                )
+            else:
+                raise ValueError
+        except (ValueError, TypeError):
+            raise ValueError('Please provide either image file path or image array!')
 
         return self._hash_func(image_pp) if isinstance(image_pp, np.ndarray) else None
 

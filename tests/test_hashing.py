@@ -4,7 +4,7 @@ from imagededup.methods.hashing import (
     DHash,
     AHash,
     WHash,
-)  # , HashedDataset, Dataset
+)
 import os
 import pytest
 import numpy as np
@@ -14,7 +14,9 @@ from PIL import Image
 """ Run from project root with: python -m pytest -vs tests/test_hashing.py"""
 
 PATH_IMAGE_DIR = Path('tests/data/mixed_images')
+PATH_IMAGE_DIR_STRING = 'tests/data/mixed_images'
 PATH_SINGLE_IMAGE = Path('tests/data/mixed_images/ukbench00120.jpg')
+PATH_SINGLE_IMAGE_STRING = 'tests/data/mixed_images/ukbench00120.jpg'
 PATH_SINGLE_IMAGE_CORRUPT = Path('tests/data/mixed_images/ukbench09268_corrupt.jpg')
 PATH_SINGLE_IMAGE_RESIZED = Path('tests/data/mixed_images/ukbench00120_resize.jpg')
 
@@ -89,7 +91,7 @@ def mocker_load_image(mocker):
     return load_image_mocker
 
 
-def test_encode_image_accepts_image_path(hasher, mocker_load_image, mocker_hash_func):
+def test_encode_image_accepts_image_posixpath(hasher, mocker_load_image, mocker_hash_func):
     ret_val = np.zeros((2, 2))
     hasher.encode_image(image_file=PATH_SINGLE_IMAGE)
     mocker_load_image.assert_called_with(
@@ -127,6 +129,15 @@ def test_encode_image_returns_none_image_pp_not_array_array_input(hasher, mocker
     assert hasher.encode_image(image_array=np.zeros((2, 2))) is None
 
 
+def test_encode_image_accepts_non_posixpath(hasher, mocker_load_image, mocker_hash_func):
+    ret_val = np.zeros((2, 2))
+    hasher.encode_image(image_file=PATH_SINGLE_IMAGE_STRING)
+    mocker_load_image.assert_called_with(
+        image_file=PATH_SINGLE_IMAGE, grayscale=True, target_size=(8, 8)
+    )
+    np.testing.assert_array_equal(ret_val, mocker_hash_func.call_args[0][0])
+
+
 # encode_images
 
 
@@ -139,9 +150,8 @@ def test_encode_images_accepts_valid_posixpath(hasher, mocker_encode_image):
     assert len(hasher.encode_images(PATH_IMAGE_DIR)) == 6  # 6 files in the directory
 
 
-def test_encode_images_rejects_non_posixpath(hasher):
-    with pytest.raises(ValueError):
-        hasher.encode_images('tests/data/base_images')
+def test_encode_images_accepts_non_posixpath(hasher, mocker_encode_image):
+    assert len(hasher.encode_images(PATH_IMAGE_DIR_STRING)) == 6
 
 
 def test_encode_images_rejects_non_directory_paths(hasher):
