@@ -8,7 +8,7 @@ def return_logger(name: str, log_dir: str) -> logging.Logger:
     logger = logging.getLogger(name)
 
     if not len(logger.handlers):
-        log_formatter = logging.Formatter('%(asctime)-s %(name)-s: %(levelname)-s %(message)s')
+        log_formatter = logging.Formatter('%(asctime)-s: %(levelname)-s %(message)s')
         # set logging level
         logger.setLevel(logging.DEBUG)
 
