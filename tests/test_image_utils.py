@@ -6,7 +6,7 @@ import pytest
 import os
 
 p = Path(__file__)
-PATH_SINGLE_IMAGE = os.path.join(p.parent, 'data/mixed_images/ukbench00120.jpg')
+PATH_SINGLE_IMAGE = p.parent / 'data/mixed_images/ukbench00120.jpg'
 
 
 def test_preprocess_image_accepts_array_input():
@@ -57,7 +57,7 @@ def test_load_image_returns_none_wrong_input():
 
 
 def test_load_image_wrong_image_format():
-    assert load_image(Path('tests/data/formats_images/Iggy.1024.ppm')) is None
+    assert load_image(p.parent / 'data/formats_images/Iggy.1024.ppm') is None
 
 
 @pytest.fixture
@@ -66,7 +66,7 @@ def preprocess_mocker(mocker):
 
 
 def test_load_image_alpha_channel_image_converts(preprocess_mocker):
-    PATH_ALPHA_IMAGE = os.path.join(p.parent, 'data/alpha_channel_image.png')
+    PATH_ALPHA_IMAGE = p.parent / 'data/alpha_channel_image.png'
     alpha_converted = Image.open(PATH_ALPHA_IMAGE).convert('RGBA').convert('RGB')
     load_image(PATH_ALPHA_IMAGE)
     preprocess_mocker.assert_called_once_with(alpha_converted, target_size=None, grayscale=False)
