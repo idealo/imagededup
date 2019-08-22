@@ -6,7 +6,9 @@ from pathlib import Path
 p = Path(__file__)
 
 PATH_GROUND_TRUTH = p.parent / "data/evaluation_files/ground_truth.pkl"
-PATH_ALL_CORRECT_RETRIEVALS = p.parent / "data/evaluation_files/all_correct_retrievals.pkl"
+PATH_ALL_CORRECT_RETRIEVALS = (
+    p.parent / "data/evaluation_files/all_correct_retrievals.pkl"
+)
 PATH_INCORRECT_RETRIEVALS = p.parent / "data/evaluation_files/incorrect_retrievals.pkl"
 
 

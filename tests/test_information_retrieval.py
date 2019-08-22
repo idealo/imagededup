@@ -1,4 +1,5 @@
 from imagededup.handlers.metrics.information_retrieval import *
+from pathlib import Path
 import os
 import pickle
 import pytest
@@ -6,10 +7,27 @@ import pytest
 --cov=imagededup.handlers.metrics.information_retrieval"""
 
 
+p = Path(__file__)
+
+PATH_GROUND_TRUTH = p.parent / "data/evaluation_files/ground_truth.pkl"
+PATH_ALL_CORRECT_RETRIEVALS = (
+    p.parent / "data/evaluation_files/all_correct_retrievals.pkl"
+)
+PATH_INCORRECT_RETRIEVALS = p.parent / "data/evaluation_files/incorrect_retrievals.pkl"
+
+
+def return_ground_all_correct_retrievals():
+    return load_pickle(PATH_GROUND_TRUTH), load_pickle(PATH_ALL_CORRECT_RETRIEVALS)
+
+
+def return_ground_incorrect_retrievals():
+    return load_pickle(PATH_GROUND_TRUTH), load_pickle(PATH_INCORRECT_RETRIEVALS)
+
+
 def load_pickle(filename):
     """The path of the file below is set since the test suite is run using python -m pytest command from the image-dedup
     directory"""
-    with open(os.path.join('tests', 'data', filename), 'rb') as f:
+    with open(filename, 'rb') as f:
         dict_loaded = pickle.load(f)
     return dict_loaded
 
@@ -74,23 +92,20 @@ def test_zero_retrieval(metric_func):
 def test_metric_is_not_1_for_incorrect(metric, expected_value):
     """Tests if correct MAP values are computed
     Load ground truth and dict for incorrect map prediction to have a Map less than 1.0"""
-    ground_truth = load_pickle('ground_truth.pkl')
-    retrieved = load_pickle('incorrect_retrievals.pkl')
+    ground_truth, retrieved = return_ground_incorrect_retrievals()
     metric_val = mean_metric(ground_truth, retrieved, metric=metric)
     assert metric_val == expected_value
 
 
 def test_all_metrics_1_for_all_correct_retrievals():
-    ground_truth = load_pickle('ground_truth.pkl')
-    retrieved = load_pickle('all_correct_retrievals.pkl')
+    ground_truth, retrieved = return_ground_all_correct_retrievals()
     metrics = get_all_metrics(ground_truth, retrieved)
     for i in metrics.values():
         assert i == 1.0
 
 
 def test_get_metrics_returns_dict():
-    ground_truth = load_pickle('ground_truth.pkl')
-    retrieved = load_pickle('incorrect_retrievals.pkl')
+    ground_truth, retrieved = return_ground_incorrect_retrievals()
     assert isinstance(get_all_metrics(ground_truth, retrieved), dict)
     assert len(get_all_metrics(ground_truth, retrieved).values()) == 3  # 3 metrics
 
