@@ -4,8 +4,8 @@ from keras.models import Model
 from keras.applications.mobilenet import MobileNet, preprocess_input
 from keras.layers import Flatten, MaxPooling2D, AveragePooling2D, concatenate
 from keras.utils import Sequence
-from pathlib import PosixPath
-from typing import Tuple, Dict, List, Optional, Callable
+from pathlib import Path, PosixPath
+from typing import Tuple, Dict, List, Optional, Callable, Union
 import os
 import numpy as np
 
@@ -164,7 +164,7 @@ class CNN:
     def _build_model(self):
         model = MobileNet(input_shape=(224, 224, 3), include_top=False)
 
-        # add AdaptiveConcatPooling as described
+        # add AdaptiveConcatPooling
         # source: https://towardsdatascience.com/how-to-build-an-image-duplicate-finder-f8714ddca9d2
         # we use a pooling window of 3 instead of 2 as we have more channels in last conv layer than resnet
         x_max = MaxPooling2D((3, 3), padding='same')(model.output)
@@ -233,8 +233,13 @@ class CNN:
         return {filenames[i]: feat_vec[i] for i in range(len(filenames))}
 
     def encode_image(
-        self, image_file: Optional[PosixPath] = None, image_array: Optional[np.ndarray] = None
-    ) -> str:
+        self,
+        image_file: Optional[Union[PosixPath, str]] = None,
+        image_array: Optional[np.ndarray] = None,
+    ) -> np.ndarray:
+        if isinstance(image_file, str):
+            image_file = Path(image_file)
+
         if isinstance(image_file, PosixPath):
             image_pp = load_image(
                 image_file=image_file, target_size=self.target_size, grayscale=False
@@ -245,15 +250,178 @@ class CNN:
                 image=image_array, target_size=self.target_size, grayscale=False
             )
         else:
-            raise ValueError('Please provide either image file or image array!')
+            raise ValueError('Please provide either image file path or image array!')
 
         return self._get_cnn_features_single(image_pp) if isinstance(image_pp, np.ndarray) else None
 
-    def encode_images(self, image_dir: PosixPath):
-        if not os.path.isdir(image_dir):
+    def encode_images(self, image_dir: Union[PosixPath, str]) -> Dict:
+        if isinstance(image_dir, str):
+            image_dir = Path(image_dir)
+
+        if not image_dir.is_dir(image_dir):
             raise ValueError('Please provide a valid directory path!')
 
-        if not isinstance(image_dir, PosixPath):
-            raise ValueError('Please provide a Path variable to the image directory!')
-
         return self._get_cnn_features_batch(image_dir)
+
+    @staticmethod
+    def _get_file_mapping_feat_vec(
+        dict_file_feature: Dict[str, np.ndarray]
+    ) -> Tuple[np.ndarray, Dict[int, str]]:
+        """
+        Splits mapping dictionary into feature vector matrix and a dictionray that maintains mapping between the row of
+        the feature matrix and the image filename.
+        :param dict_file_feature: {'Image1.jpg': np.array([1.0, -0.2, ...]),
+        'Image2.jpg': np.array([0.3, 0.06, ...]), ...}
+        :return: feat_vec_in: A numpy ndarray of size (number of queries, number of features).
+        filemapping_generated: A dictionary mapping the row number of 'feat_vec_in' to the image filename.
+        """
+
+        # order the dictionary to ensure consistent mapping between filenames and order of rows vector in similarity
+        # matrix
+        keys_in_order = [i for i in dict_file_feature]
+        feat_vec_in = np.array([dict_file_feature[i] for i in keys_in_order])
+        filenames_generated = keys_in_order
+        filemapping_generated = dict(zip(range(len(filenames_generated)), filenames_generated))
+        return feat_vec_in, filemapping_generated
+
+    @staticmethod
+    def _get_only_filenames(dict_of_dict_dups: Dict[str, Dict[str, float]]) -> Dict[str, List[str]]:
+        """
+        Derives list of file names of duplicates for each query image.
+        :param dict_of_dict_dups: dictionary of dictionaries {'image1.jpg': {'image1_duplicate1.jpg':<similarity-score>,
+        'image1_duplicate2.jpg':<similarity-score>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<similarity-score>,..}}
+        :return: dict_ret: A dictionary consisting query file names as key and a list of duplicate file names as value.
+        {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg']
+        'image2.jpg':['image1_duplicate1.jpg',..], ..}
+        """
+
+        dict_ret = {}
+        for k, v in dict_of_dict_dups.items():
+            dict_ret[k] = list(v.keys())
+        return dict_ret
+
+    def _find_duplicates_dict(
+        self, dict_file_feature: Dict[str, np.ndarray], threshold: float = 0.8, scores: bool = False
+    ) -> Dict:
+        """Takes in dictionary {filename: vector}, detects duplicates above the given threshold and
+                returns dictionary containing key as filename and value as a list of duplicate filenames. Optionally,
+                the similarity scores could be returned instead of duplicate file name for each query file.
+        :param dict_file_feature: Dictionary with keys as file names and values as numpy arrays which represent the CNN
+        feature for the key image file.
+        :param threshold: Cosine similarity above which retrieved duplicates are valid.
+        :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
+        :return: if scores is True, then a dictionary of the form {'image1.jpg':
+        {'image1_duplicate1.jpg':<similarity-score>, 'image1_duplicate2.jpg':<similarity-score>, ..}, 'image2.jpg':
+        {'image1_duplicate1.jpg':<similarity-score>,..}}
+        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
+        'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
+                """
+
+        feat_vec_in, filemapping_generated = self._get_file_mapping_feat_vec(dict_file_feature)
+        self.logger.info('Start: Evaluating similarity for getting duplicates')
+        self.result_score = CosEval(feat_vec_in, feat_vec_in).get_retrievals_at_thresh(
+            file_mapping_query=filemapping_generated,
+            file_mapping_ret=filemapping_generated,
+            thresh=threshold,
+        )
+        self.logger.info('End: Evaluating similarity for getting duplicates')
+
+        if scores:
+            return self.result_score
+        else:
+            return self._get_only_filenames(self.result_score)
+
+    def get_encodings(self, image_dir: PosixPath):
+        """
+        Generates CNN features for all images in a given directory of images.
+        :param path_dir: PosixPath to the directory containing all the images.
+        :return: A dictionary that contains a mapping of filenames and corresponding numpy array of CNN features.
+        For example:
+        mapping = CNN().cnn_dir(Path('path/to/directory'))
+        'mapping' contains: {'Image1.jpg': np.array([1.0, -0.2, ...]), 'Image2.jpg': np.array([0.3, 0.06, ...]), ...}
+        Example usage:
+        ```
+        from imagededup import cnn
+        mycnn = cnn.CNN()
+        dict_file_feat = mycnn.cnn_dir(Path('path/to/directory'))
+        ```
+        """
+        check_directory_files(image_dir, return_file=False)
+        self.logger.info('Start: Image feature generation')
+
+        image_generator = self._generator(image_dir)
+        encodings = self.model.predict_generator(image_generator, len(image_generator), verbose=1)
+        self.logger.info('Completed: Image feature generation')
+        filenames = [i.split('/')[-1] for i in image_generator.filenames]
+
+        return encodings, filenames
+
+    def get_cosine_distances(self):
+        self.cosine_distances = cosine_similarity(self.encodings)
+
+    def find_duplicates(self, threshold, image_dir=None, encodings=None, scores: bool = False):
+        self._check_threshold_bounds(threshold)
+
+        if image_dir:
+            self.encodings, self.filenames = self.get_encodings(image_dir)
+
+        elif encodings:
+            self.filenames = list(self.encodings.keys())
+            self.encodings = np.array(self.encodings.values())
+
+        else:
+            raise ValueError('Provide either image_dir or encoding dictionary!')
+
+        self.get_cosine_distances()
+
+        self.duplicates = {}
+        for i, row in enumerate(self.cosine_distances):
+            duplicates_idx = list(np.nonzero(row >= threshold)[0])
+
+            duplicates_files = [self.filenames[j] for j in duplicates_idx]
+
+            if scores and duplicates_files:
+                duplicates_scores = [row[j] for j in duplicates_idx]
+                self.duplicates[self.filenames[i]] = list(zip(duplicates_files, duplicates_scores))
+            else:
+                self.duplicates[self.filenames[i]] = duplicates_files
+
+    def find_duplicates_to_remove(
+        self, threshold, image_dir=None, encodings=None, scores: bool = False
+    ):
+        dict_ret = self.find_duplicates(
+            path_or_dict=path_or_dict, threshold=threshold, scores=False
+        )
+        return get_files_to_remove(dict_ret)
+
+    def _find_duplicates_dir(
+        self, path_dir: PosixPath, threshold: float = 0.8, scores: bool = False
+    ) -> Dict:
+        """Takes in path of the directory on which duplicates are to be detected above the given threshold.
+        Returns dictionary containing key as filename and value as a list of duplicate file names.
+        :param path_dir: PosixPath to the directory containing all the images.
+        :param threshold: Cosine similarity above which retrieved duplicates are valid.
+        :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
+        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':
+        <similarity-score>, 'image1_duplicate2.jpg':<similarity-score>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':
+        <similarity-score>,..}}
+        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
+        'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
+        """
+
+        dict_file_feature = self.cnn_dir(path_dir)
+        dict_ret = self._find_duplicates_dict(
+            dict_file_feature=dict_file_feature, threshold=threshold, scores=scores
+        )
+        return dict_ret
+
+    @staticmethod
+    def _check_threshold_bounds(thresh: float) -> None:
+        """
+        Checks if provided threshold is valid. Raises TypeError is wrong threshold variable type is passed or a value out
+        of range is supplied.
+        :param thresh: Threshold value (must be float between -1.0 and 1.0)
+        """
+
+        if not isinstance(thresh, float) or (thresh < -1.0 or thresh > 1.0):
+            raise TypeError('Threshold must be a float between -1.0 and 1.0')
