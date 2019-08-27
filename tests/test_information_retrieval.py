@@ -1,8 +1,8 @@
 from imagededup.handlers.metrics.information_retrieval import *
 from pathlib import Path
-import os
 import pickle
 import pytest
+
 """Run from project root with: python -m pytest -vs tests/test_information_retrieval.py 
 --cov=imagededup.handlers.metrics.information_retrieval"""
 

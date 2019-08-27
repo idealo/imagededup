@@ -198,8 +198,8 @@ def test__find_duplicates_dict_outfile_none(hasher, mocker):
     hasheval_mocker.assert_called_with(
         test=encoding_map,
         queries=encoding_map,
-        hammer=Hashing.hamming_distance,
-        cutoff=threshold,
+        distance_function=Hashing.hamming_distance,
+        threshold=threshold,
         search_method='bktree',
     )
     hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
@@ -223,8 +223,8 @@ def test__find_duplicates_dict_outfile_true(hasher, mocker):
     hasheval_mocker.assert_called_with(
         test=encoding_map,
         queries=encoding_map,
-        hammer=Hashing.hamming_distance,
-        cutoff=threshold,
+        distance_function=Hashing.hamming_distance,
+        threshold=threshold,
         search_method='bktree',
     )
     hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
