@@ -70,9 +70,7 @@ class HashEval:
         Wrapper function to retrieve results for all queries in dataset using a BKTree search.
         """
         self.logger.info("Start: Retrieving duplicates using BKTree algorithm")
-        built_tree = BKTree(
-            self.test, self.distance_invoker
-        )  # construct bktree
+        built_tree = BKTree(self.test, self.distance_invoker)  # construct bktree
         self._get_query_results(built_tree)
         self.logger.info("End: Retrieving duplicates using BKTree algorithm")
 

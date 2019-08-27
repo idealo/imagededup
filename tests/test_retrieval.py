@@ -138,14 +138,12 @@ def test_max_hamming_threshold_not_violated():
 
 
 def test_results_sorted_in_descending_distance_order():
-    query = {
-        "ukbench00120.jpg": "2b69707551f1b87a"
-    }
+    query = {"ukbench00120.jpg": "2b69707551f1b87a"}
     db = {
         "ukbench00120_hflip.jpg": "2b69707551f1b87f",
         "ukbench00120_resize.jpg": "2b69707551f1b87b",
         "ukbench09268_2.jpg": "2b69707551f1b870",
-        "ukbench09268_3.jpg": "2c89709251f1b870"
+        "ukbench09268_3.jpg": "2c89709251f1b870",
     }
     result = HashEval(
         db, query, HAMMING_DISTANCE_FUNCTION, threshold=30, search_method="brute_force"
