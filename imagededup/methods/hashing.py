@@ -143,8 +143,8 @@ class Hashing:
         result_set = HashEval(
             test=encoding_map,
             queries=encoding_map,
-            hammer=self.hamming_distance,
-            cutoff=threshold,
+            distance_function=self.hamming_distance,
+            threshold=threshold,
             search_method='bktree',
         )
         self.logger.info('End: Evaluating hamming distances for getting duplicates')
