@@ -2,6 +2,7 @@ from imagededup.handlers.metrics.information_retrieval import (
     mean_metric,
     get_all_metrics,
 )
+from imagededup.handlers.metrics.classification import classification_metrics
 from typing import Dict
 
 
@@ -24,7 +25,12 @@ def evaluate(
 
     if metric in ["map", "ndcg", "jaccard"]:
         return {metric: mean_metric(ground_truth_map, duplicate_map, metric=metric)}
+    elif metric == "classification":
+        return classification_metrics(ground_truth_map, duplicate_map)
     elif metric == "all":
-        return get_all_metrics(ground_truth_map, duplicate_map)
+        return (
+            get_all_metrics(ground_truth_map, duplicate_map),
+            classification_metrics(ground_truth_map, duplicate_map),
+        )
     else:
-        raise ValueError("Acceptable metrics are: 'map', 'ndcg', 'jaccard', 'all'")
+        raise ValueError("Acceptable metrics are: 'map', 'ndcg', 'jaccard', 'classification', 'all'")
