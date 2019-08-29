@@ -10,8 +10,8 @@ from typing import List, Dict, Tuple
 
 
 def _get_unique_ordered_tuples(unique_tuples: List[Tuple]) -> List[Tuple]:
-    """Sorts each tuple given a list of tuples.
-    Eg: [(2, 1), (3, 4)]  becomes [(1, 2), (3, 4)]"""
+    """Sorts each tuple given a list of tuples and retains only unique pairs regardless of order within the tuple.
+    Eg: [(2, 1), (1, 2), (3, 4)]  becomes [(1, 2), (3, 4)] or [(2, 1), (3, 4)]"""
     ordered_tuples = []
 
     for i in unique_tuples:
@@ -19,12 +19,6 @@ def _get_unique_ordered_tuples(unique_tuples: List[Tuple]) -> List[Tuple]:
 
     unique_ordered_tuples = [tuple(j) for j in set(ordered_tuples)]
     return unique_ordered_tuples
-
-
-# def _get_unique_tuples(tuple_list: List[Tuple]) -> List[Tuple]:
-#     """Gets unique tuples disregarding the order of elements in the tuple given a list of tuples.
-#         Eg: [(2, 1), (1, 2), (3, 4)]  becomes [(1, 2), (3, 4)] or [(2, 1), (3, 4)]"""
-#     return [tuple(x) for x in set(map(frozenset, tuple_list))]
 
 
 def _make_all_unique_possible_pairs(ground_truth_dict: Dict) -> List[Tuple]:
@@ -42,12 +36,6 @@ def _make_all_unique_possible_pairs(ground_truth_dict: Dict) -> List[Tuple]:
             all_tuples.append(i)
 
     return _get_unique_ordered_tuples(all_tuples)
-
-    # get unique pairs by disregrading order
-    # all_unique_tuples = _get_unique_tuples(all_tuples)
-
-    # sort alphabetically the elements in pairs
-    # return _order_tuples(all_unique_tuples)
 
 
 def _make_positive_duplicate_pairs(ground_truth: Dict, retrieved: Dict) -> List[Tuple]:
@@ -86,8 +74,9 @@ def classification_metrics(ground_truth: Dict, retrieved: Dict) -> np.ndarray:
     Given ground truth dictionary and retrieved dictionary, returns per class precision, recall and f1 score.
     """
     all_pairs = _make_all_unique_possible_pairs(ground_truth)
-    ground_truth_duplicate_pairs, retrieved_duplicate_pairs = _make_positive_duplicate_pairs(ground_truth, retrieved)
-    # retrieved_duplicate_pairs = _make_positive_duplicate_pairs(retrieved)
+    ground_truth_duplicate_pairs, retrieved_duplicate_pairs = _make_positive_duplicate_pairs(
+        ground_truth, retrieved
+    )
     y_true, y_pred = _prepare_labels(
         all_pairs, ground_truth_duplicate_pairs, retrieved_duplicate_pairs
     )
