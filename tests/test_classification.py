@@ -140,7 +140,8 @@ def test_classification_metrics_integrated():
         np.array([0.5, 1.0]),
         np.array([1.0, 0.5]),
         np.array([0.66666667, 0.66666667]),
-        np.array([2, 4]))
+        np.array([2, 4]),
+    )
 
     metrics = classification_metrics(ground_truth, retrieved)
     assert isinstance(metrics, tuple)
@@ -148,4 +149,3 @@ def test_classification_metrics_integrated():
         assert isinstance(i, np.ndarray)
     for i in range(len(metrics)):
         np.testing.assert_almost_equal(metrics[i], expected_return[i])
-
