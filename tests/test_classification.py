@@ -1,3 +1,4 @@
+import numpy as np
 from imagededup.handlers.metrics.classification import (
     _get_unique_ordered_tuples,
     _make_all_unique_possible_pairs,
@@ -5,9 +6,6 @@ from imagededup.handlers.metrics.classification import (
     _prepare_labels,
     classification_metrics,
 )
-
-
-# _get_unique_ordered_tuples test correctness, output type
 
 
 def test__get_unique_ordered_tuples():
@@ -24,11 +22,8 @@ def test__get_unique_ordered_tuples():
     assert len(set_list) == 3
 
 
-# _make_all_unique_possible_pairs test completeness of results, output type
 def test__make_all_unique_possible_pairs(mocker):
     ground_truth = {"1": ["2", "3", "4"], "2": ["1", "3"], "3": ["1", "2"], "4": ["1"]}
-    # expected_all_pairs = [('1', '3'), ('2', '3'), ('1', '4'), ('2', '4'), ('1', '2'), ('3', '4')]
-    # obtained_all_pairs = _make_all_unique_possible_pairs(ground_truth)
     all_pairs = [
         ("1", "2"),
         ("1", "3"),
@@ -50,7 +45,6 @@ def test__make_all_unique_possible_pairs(mocker):
     get_unique_ordered_tuples_mocker.assert_called_once_with(all_pairs)
 
 
-# _make_positive_duplicate_pairs test completeness of results, output type
 def test__make_positive_duplicate_pairs(mocker):
     ground_truth = {"1": ["2", "3", "4"], "2": ["1", "3"], "3": ["1", "2"], "4": ["1"]}
     valid_pairs = [
@@ -70,7 +64,6 @@ def test__make_positive_duplicate_pairs(mocker):
     get_unique_ordered_tuples_mocker.assert_called_with(valid_pairs)
 
 
-# _prepare_labels: correctness, completeness
 def test__prepare_labels():
     all_possible_pairs = [
         ("1", "3"),
@@ -89,7 +82,6 @@ def test__prepare_labels():
     assert y_pred_obtained == [1, 0, 0, 0, 1, 0]
 
 
-# classification_metrics
 def test_classification_metrics(mocker):
     ground_truth = {"1": ["2", "3", "4"], "2": ["1", "3"], "3": ["1", "2"], "4": ["1"]}
     retrieved = {"1": ["2", "3"], "2": ["1"], "3": ["1"], "4": []}
@@ -133,7 +125,27 @@ def test_classification_metrics(mocker):
     prepare_labels_mocker.assert_called_once_with(
         all_possible_pairs_ret, ground_truth_pairs_ret, retrieved_pairs_ret
     )
-    precision_recall_fscore_support_mocker.assert_called_once_with(y_true_ret, y_pred_ret)
+    precision_recall_fscore_support_mocker.assert_called_once_with(
+        y_true_ret, y_pred_ret
+    )
 
-# Integration tests
+
+# Integration test
+
+
+def test_classification_metrics_integrated():
+    ground_truth = {"1": ["2", "3", "4"], "2": ["1", "3"], "3": ["1", "2"], "4": ["1"]}
+    retrieved = {"1": ["2", "3"], "2": ["1"], "3": ["1"], "4": []}
+    expected_return = (
+        np.array([0.5, 1.0]),
+        np.array([1.0, 0.5]),
+        np.array([0.66666667, 0.66666667]),
+        np.array([2, 4]))
+
+    metrics = classification_metrics(ground_truth, retrieved)
+    assert isinstance(metrics, tuple)
+    for i in metrics:
+        assert isinstance(i, np.ndarray)
+    for i in range(len(metrics)):
+        np.testing.assert_almost_equal(metrics[i], expected_return[i])
 
