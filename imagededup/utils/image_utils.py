@@ -26,8 +26,8 @@ def preprocess_image(image, target_size=None, grayscale: bool = False):
     else:
         raise ValueError('Input is expected to be a numpy array or a pillow object!')
 
-    # if target_size: removing if condition since the function never gets called without target_size
-    image_pil = image_pil.resize(target_size, Image.ANTIALIAS)
+    if target_size:
+        image_pil = image_pil.resize(target_size, Image.ANTIALIAS)
 
     if grayscale:
         image_pil = image_pil.convert('L')

@@ -36,13 +36,13 @@ def test__len():
 def test__get_item(mocker):
     mocker.patch.object(DataGenerator, '_data_generator')
 
-    generator.__getitem__(1)
+    generator.__getitem__(0)
 
     generator._data_generator.assert_called_with(
         [
-            IMAGE_DIR / 'ukbench09348.jpg',
-            IMAGE_DIR / 'ukbench09012.jpg',
-            IMAGE_DIR / 'ukbench09380.jpg',
+            IMAGE_DIR / 'ukbench00120.jpg',
+            IMAGE_DIR / 'ukbench01380.jpg',
+            IMAGE_DIR / 'ukbench08976.jpg',
         ]
     )
 
@@ -62,14 +62,14 @@ def test__data_generator():
 def test_on_epoch_end_1():
     generator.on_epoch_end()
 
-    assert generator.valid_image_files == [x for x in IMAGE_DIR.glob('*') if x.is_file()]
+    assert generator.valid_image_files == sorted([x for x in IMAGE_DIR.glob('*') if x.is_file()])
 
 
 def test_on_epoch_end_2():
     expected = [
         FORMATS_IMAGE_DIR / 'ukbench09380.bmp',
-        FORMATS_IMAGE_DIR / 'ukbench09380.png',
         FORMATS_IMAGE_DIR / 'ukbench09380.jpeg',
+        FORMATS_IMAGE_DIR / 'ukbench09380.png',
         FORMATS_IMAGE_DIR / 'ukbench09380.svg',
     ]
 
