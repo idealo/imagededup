@@ -35,9 +35,9 @@ class DataGenerator(Sequence):
 
     def _get_image_files(self):
         self.invalid_image_idx = []
-        self.image_files = [
-            i.absolute() for i in self.image_dir.glob('*') if not i.name.startswith('.')
-        ]  # ignore hidden files
+        self.image_files = sorted(
+            [i.absolute() for i in self.image_dir.glob('*') if not i.name.startswith('.')]
+        )  # ignore hidden files
 
     def on_epoch_end(self):
         """Method called at the end of every epoch.

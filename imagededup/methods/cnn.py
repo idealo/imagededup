@@ -111,7 +111,7 @@ class CNN:
 
         filenames = [i.name for i in self.data_generator.valid_image_files]
 
-        return {filenames[i]: feat_vec[i] for i in range(len(filenames))}
+        return {j: feat_vec[i] for i, j in enumerate(filenames)}
 
     def encode_image(
         self,
@@ -155,7 +155,7 @@ class CNN:
         if isinstance(image_dir, str):
             image_dir = Path(image_dir)
 
-        if not image_dir.is_dir(image_dir):
+        if not image_dir.is_dir():
             raise ValueError('Please provide a valid directory path!')
 
         return self._get_cnn_features_batch(image_dir)
