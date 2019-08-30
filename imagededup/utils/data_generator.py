@@ -28,6 +28,7 @@ class DataGenerator(Sequence):
         self.batch_size = batch_size
         self.basenet_preprocess = basenet_preprocess
         self.target_size = target_size
+        self.counter = 0
 
         self._get_image_files()
         self.on_epoch_end()
@@ -73,10 +74,12 @@ class DataGenerator(Sequence):
 
             else:
                 invalid_image_idx.append(i)
+                self.invalid_image_idx.append(self.counter)
+
+            self.counter += 1
 
         if invalid_image_idx:
             X = np.delete(X, invalid_image_idx, axis=0)
-            self.invalid_image_idx += invalid_image_idx
 
         # apply basenet specific preprocessing
         # input is 4D numpy array of RGB values within [0, 255]

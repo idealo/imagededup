@@ -67,10 +67,10 @@ def test_on_epoch_end_1():
 
 def test_on_epoch_end_2():
     expected = [
-        FORMATS_IMAGE_DIR / 'ukbench09380.svg',
         FORMATS_IMAGE_DIR / 'ukbench09380.bmp',
         FORMATS_IMAGE_DIR / 'ukbench09380.png',
-        FORMATS_IMAGE_DIR / 'ukbench09380.jpg',
+        FORMATS_IMAGE_DIR / 'ukbench09380.jpeg',
+        FORMATS_IMAGE_DIR / 'ukbench09380.svg',
     ]
 
     generator = DataGenerator(
@@ -85,6 +85,5 @@ def test_on_epoch_end_2():
     generator.__getitem__(2)
 
     generator.on_epoch_end()
-    print(generator.valid_image_files)
 
     assert generator.valid_image_files == expected
