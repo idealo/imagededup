@@ -11,9 +11,11 @@ from imagededup.handlers.metrics.classification import (
 def test__get_unique_ordered_tuples():
     non_unique_pairs = [("1", "3"), ("1", "4"), ("3", "1"), ("1", "3"), ("3", "4")]
     obtained_unique_ordered_pairs = _get_unique_ordered_tuples(non_unique_pairs)
+
     # test order
     for i in obtained_unique_ordered_pairs:
         assert i[0] <= i[1]
+        
     # test membership
     set_list = []
     for j in obtained_unique_ordered_pairs:
