@@ -9,16 +9,19 @@ logger = return_logger(__name__, os.getcwd())
 def get_files_to_remove(dict_ret: Dict[str, List]) -> List:
     """
     Get a list of files to remove
-    :param dict_ret: A dcitionary with fie name as key and a list of duplicate file names as value.
+    :param dict_ret: A dictionary with file name as key and a list of duplicate file names as value.
     :return: A list of files that should be removed.
     """
     # iterate over dict_ret keys, get value for the key and delete the dict keys that are in the value list
-    list_of_files_to_remove = []
+    files_to_remove = set()
 
     for k, v in dict_ret.items():
-        if k not in list_of_files_to_remove:
-            list_of_files_to_remove.extend(v)
-    return list(set(list_of_files_to_remove))  # set to remove duplicates
+        tmp = [i[0] if isinstance(i, tuple) else i for i in v]  # handle tuples (image_id, score)
+
+        if k not in files_to_remove:
+            files_to_remove.update(tmp)
+
+    return list(files_to_remove)
 
 
 def save_json(results: Dict, filename: str) -> None:
