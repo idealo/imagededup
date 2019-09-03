@@ -169,7 +169,7 @@ class CNN:
         """
 
         if not isinstance(thresh, float) or (thresh < -1.0 or thresh > 1.0):
-            raise TypeError('Threshold must be a float between -1.0 and 1.0')
+            raise TypeError("Threshold must be a float between -1.0 and 1.0")
 
     def _find_duplicates_dict(
         self,
@@ -199,7 +199,9 @@ class CNN:
         self.logger.info("Start: Calculating cosine similarities...")
 
         self.cosine_scores = cosine_similarity(features)
-        np.fill_diagonal(self.cosine_scores, 2)  # allows to filter diagonal in results
+        np.fill_diagonal(
+            self.cosine_scores, 2
+        )  # allows to filter diagonal in results, 2 is a filler value
 
         self.logger.info("End: Calculating cosine similarities.")
 
@@ -280,16 +282,9 @@ class CNN:
         self._check_threshold_bounds(threshold)
 
         if image_dir:
-            if isinstance(image_dir, str):
-                image_dir = Path(image_dir)
-
-            if not image_dir.is_dir():
-                raise ValueError("Please provide a valid directory path!")
-
             result = self._find_duplicates_dir(
                 image_dir=image_dir, threshold=threshold, scores=scores, outfile=outfile
             )
-
         elif encoding_map:
             result = self._find_duplicates_dict(
                 encoding_map=encoding_map,
