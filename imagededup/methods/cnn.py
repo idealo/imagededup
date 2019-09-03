@@ -45,16 +45,20 @@ class CNN:
         self.target_size = (224, 224)
         self.batch_size = 64
         self.logger = return_logger(__name__, os.getcwd())
-        self.result_score = None  # {query_filename: {retrieval_filename:score, ...}, ..}
+        self.result_score = (
+            None
+        )  # {query_filename: {retrieval_filename:score, ...}, ..}
 
         self._build_model()
 
     def _build_model(self):
-        self.model = MobileNet(input_shape=(224, 224, 3), include_top=False, pooling='avg')
+        self.model = MobileNet(
+            input_shape=(224, 224, 3), include_top=False, pooling="avg"
+        )
 
         self.logger.info(
-            'Initialized: MobileNet pretrained on ImageNet dataset sliced at last conv layer and added '
-            'GlobalAveragePooling'
+            "Initialized: MobileNet pretrained on ImageNet dataset sliced at last conv layer and added "
+            "GlobalAveragePooling"
         )
 
     def _get_cnn_features_single(self, image_array: np.ndarray) -> np.ndarray:
@@ -85,7 +89,7 @@ class CNN:
         dict_file_feat = mycnn.cnn_dir(Path('path/to/directory'))
         ```
         """
-        self.logger.info('Start: Image feature generation')
+        self.logger.info("Start: Image feature generation")
 
         self.data_generator = DataGenerator(
             image_dir=image_dir,
@@ -97,7 +101,7 @@ class CNN:
         feat_vec = self.model.predict_generator(
             self.data_generator, len(self.data_generator), verbose=1
         )
-        self.logger.info('Completed: Image feature generation')
+        self.logger.info("Completed: Image feature generation")
 
         filenames = [i.name for i in self.data_generator.valid_image_files]
 
@@ -110,14 +114,14 @@ class CNN:
         image_file: Optional[Union[PosixPath, str]] = None,
         image_array: Optional[np.ndarray] = None,
     ) -> np.ndarray:
-        '''
+        """
         Example usage:
         ```
         from imagededup import cnn
         mycnn = cnn.CNN()
         feature_vector = mycnn.encode_image('path/to/image.jpg')
         ```
-        '''
+        """
         if isinstance(image_file, str):
             image_file = Path(image_file)
 
@@ -131,26 +135,41 @@ class CNN:
                 image=image_array, target_size=self.target_size, grayscale=False
             )
         else:
-            raise ValueError('Please provide either image file path or image array!')
+            raise ValueError("Please provide either image file path or image array!")
 
-        return self._get_cnn_features_single(image_pp) if isinstance(image_pp, np.ndarray) else None
+        return (
+            self._get_cnn_features_single(image_pp)
+            if isinstance(image_pp, np.ndarray)
+            else None
+        )
 
     def encode_images(self, image_dir: Union[PosixPath, str]) -> Dict:
-        '''
+        """
         Example usage:
         ```
         from imagededup import cnn
         mycnn = cnn.CNN()
         feature_vectors = mycnn.encode_images('path/to/directory')
         ```
-        '''
+        """
         if isinstance(image_dir, str):
             image_dir = Path(image_dir)
 
         if not image_dir.is_dir():
-            raise ValueError('Please provide a valid directory path!')
+            raise ValueError("Please provide a valid directory path!")
 
         return self._get_cnn_features_batch(image_dir)
+
+    @staticmethod
+    def _check_threshold_bounds(thresh: float) -> None:
+        """
+        Checks if provided threshold is valid. Raises TypeError is wrong threshold variable type is passed or a value out
+        of range is supplied.
+        :param thresh: Threshold value (must be float between -1.0 and 1.0)
+        """
+
+        if not isinstance(thresh, float) or (thresh < -1.0 or thresh > 1.0):
+            raise TypeError('Threshold must be a float between -1.0 and 1.0')
 
     def _find_duplicates_dict(
         self,
@@ -171,18 +190,18 @@ class CNN:
         'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}"""
 
         # get all image ids
-        # we rely on dictionaries preserving order in Python >=3.6
+        # we rely on dictionaries preserving insertion order in Python >=3.6
         image_ids = np.array([*encoding_map.keys()])
 
         # put image encodings into feature matrix
         features = np.array([*encoding_map.values()])
 
-        self.logger.info('Start: Calculating cosine similarities...')
+        self.logger.info("Start: Calculating cosine similarities...")
 
         self.cosine_scores = cosine_similarity(features)
         np.fill_diagonal(self.cosine_scores, 2)  # allows to filter diagonal in results
 
-        self.logger.info('End: Calculating cosine similarities.')
+        self.logger.info("End: Calculating cosine similarities.")
 
         self.results = {}
         for i, j in enumerate(self.cosine_scores):
@@ -222,7 +241,10 @@ class CNN:
         self.encode_images(image_dir=image_dir)
 
         return self._find_duplicates_dict(
-            encoding_map=self.encoding_map, threshold=threshold, scores=scores, outfile=outfile
+            encoding_map=self.encoding_map,
+            threshold=threshold,
+            scores=scores,
+            outfile=outfile,
         )
 
     def find_duplicates(
@@ -255,13 +277,14 @@ class CNN:
         dict_ret_path = myhasher.find_duplicates(Path('path/to/directory'), threshold=15, scores=True)
         ```
         """
+        self._check_threshold_bounds(threshold)
 
         if image_dir:
             if isinstance(image_dir, str):
                 image_dir = Path(image_dir)
 
             if not image_dir.is_dir():
-                raise ValueError('Please provide a valid directory path!')
+                raise ValueError("Please provide a valid directory path!")
 
             result = self._find_duplicates_dir(
                 image_dir=image_dir, threshold=threshold, scores=scores, outfile=outfile
@@ -269,11 +292,14 @@ class CNN:
 
         elif encoding_map:
             result = self._find_duplicates_dict(
-                encoding_map=encoding_map, threshold=threshold, scores=scores, outfile=outfile
+                encoding_map=encoding_map,
+                threshold=threshold,
+                scores=scores,
+                outfile=outfile,
             )
 
         else:
-            raise ValueError('Provide either an image directory or encodings!')
+            raise ValueError("Provide either an image directory or encodings!")
 
         return result
 
@@ -302,7 +328,10 @@ class CNN:
 
         if image_dir or encoding_map:
             duplicates = self.find_duplicates(
-                image_dir=image_dir, encoding_map=encoding_map, threshold=threshold, scores=False
+                image_dir=image_dir,
+                encoding_map=encoding_map,
+                threshold=threshold,
+                scores=False,
             )
 
         files_to_remove = get_files_to_remove(duplicates)
