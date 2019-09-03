@@ -167,9 +167,10 @@ class CNN:
         of range is supplied.
         :param thresh: Threshold value (must be float between -1.0 and 1.0)
         """
-
-        if not isinstance(thresh, float) or (thresh < -1.0 or thresh > 1.0):
+        if not isinstance(thresh, float):
             raise TypeError("Threshold must be a float between -1.0 and 1.0")
+        if thresh < -1.0 or thresh > 1.0:
+            raise ValueError("Threshold must be a float between -1.0 and 1.0")
 
     def _find_duplicates_dict(
         self,
@@ -199,9 +200,10 @@ class CNN:
         self.logger.info("Start: Calculating cosine similarities...")
 
         self.cosine_scores = cosine_similarity(features)
+
         np.fill_diagonal(
-            self.cosine_scores, 2
-        )  # allows to filter diagonal in results, 2 is a filler value
+            self.cosine_scores, 2.0
+        )  # allows to filter diagonal in results, 2 is a placeholder value
 
         self.logger.info("End: Calculating cosine similarities.")
 
@@ -210,7 +212,7 @@ class CNN:
             duplicates_bool = (j >= threshold) & (j < 2)
 
             if scores:
-                tmp = np.array([*zip(image_ids, j)])
+                tmp = np.array([*zip(image_ids, j)], dtype=object)
                 duplicates = list(map(tuple, tmp[duplicates_bool]))
 
             else:
@@ -300,7 +302,6 @@ class CNN:
 
     def find_duplicates_to_remove(
         self,
-        duplicates: Dict[str, List],
         image_dir: PosixPath = None,
         encoding_map: Dict[str, np.ndarray] = None,
         threshold: int = 0.9,
