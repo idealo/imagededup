@@ -16,9 +16,22 @@ TEST_BATCH_SIZE = 64
 TEST_TARGET_SIZE = (224, 224)
 
 
+def data_encoding_map():
+    return {
+        "ukbench00002.jpg": np.array([1, 0, 0, 1]),
+        "ukbench00003.jpg": np.array([1, 1, 0, 1]),
+        "ukbench00002_dup.jpg": np.array([1, 0, 0, 1]),
+    }
+
+
 @pytest.fixture(scope="module")
 def cnn():
     return CNN()
+
+
+@pytest.fixture
+def mocker_save_json(mocker):
+    return mocker.patch("imagededup.methods.cnn.save_json")
 
 
 def test__init(cnn):
@@ -159,26 +172,7 @@ def test__check_threshold_bounds_input_out_of_range(cnn):
 
 def test__find_duplicates_dict_scores_false(cnn):
     # check correctness
-    expected_featvec = [
-        np.array([1, 0, 0, 1]),
-        np.array([1, 1, 0, 1]),
-        np.array([1, 0, 0, 1]),
-    ]
-    expected_filename = {
-        0: "ukbench00002.jpg",
-        1: "ukbench00003.jpg",
-        2: "ukbench00002_dup.jpg",
-    }
-    encoding_map = {
-        expected_filename[i]: expected_featvec[i] for i in range(len(expected_filename))
-    }
-
-    encoding_map = {
-        "ukbench00002.jpg": np.array([1, 0, 0, 1]),
-        "ukbench00003.jpg": np.array([1, 1, 0, 1]),
-        "ukbench00002_dup.jpg": np.array([1, 0, 0, 1])
-    }
-
+    encoding_map = data_encoding_map()
     dict_ret = cnn._find_duplicates_dict(encoding_map, threshold=0.9, scores=False)
     assert isinstance(dict_ret["ukbench00002.jpg"], list)
     assert len(dict_ret["ukbench00002.jpg"]) == 1
@@ -186,23 +180,9 @@ def test__find_duplicates_dict_scores_false(cnn):
     assert dict_ret["ukbench00002.jpg"][0] == "ukbench00002_dup.jpg"
 
 
-def test__find_duplicates_dict_scores_true(cnn, mocker):
+def test__find_duplicates_dict_scores_true(cnn, mocker_save_json):
     # check correctness, also check that saving file is not triggered as outfile default value is False
-    expected_featvec = [
-        np.array([1, 0, 0, 1]),
-        np.array([1, 1, 0, 1]),
-        np.array([1, 0, 0, 1]),
-    ]
-    expected_filename = {
-        0: "ukbench00002.jpg",
-        1: "ukbench00003.jpg",
-        2: "ukbench00002_dup.jpg",
-    }
-    encoding_map = {
-        expected_filename[i]: expected_featvec[i] for i in range(len(expected_filename))
-    }
-
-    save_json_mocker = mocker.patch("imagededup.methods.cnn.save_json")
+    encoding_map = data_encoding_map()
     dict_ret = cnn._find_duplicates_dict(encoding_map, threshold=0.9, scores=True)
 
     assert isinstance(dict_ret["ukbench00002.jpg"], list)
@@ -211,52 +191,25 @@ def test__find_duplicates_dict_scores_true(cnn, mocker):
     assert dict_ret["ukbench00002.jpg"][0][0] == "ukbench00002_dup.jpg"
     assert isinstance(dict_ret["ukbench00002.jpg"][0][1], float)
     np.testing.assert_almost_equal(dict_ret["ukbench00002.jpg"][0][1], 1.0)
-    save_json_mocker.assert_not_called()
+    mocker_save_json.assert_not_called()
 
 
-def test__find_duplicates_dict_outfile_true(cnn, mocker):
-    expected_featvec = [
-        np.array([1, 0, 0, 1]),
-        np.array([1, 1, 0, 1]),
-        np.array([1, 0, 0, 1]),
-    ]
-    expected_filename = {
-        0: "ukbench00002.jpg",
-        1: "ukbench00003.jpg",
-        2: "ukbench00002_dup.jpg",
-    }
-    encoding_map = {
-        expected_filename[i]: expected_featvec[i] for i in range(len(expected_filename))
-    }
+def test__find_duplicates_dict_outfile_true(cnn, mocker_save_json):
+    encoding_map = data_encoding_map()
     threshold = 0.8
     scores = True
     outfile = True
-
-    save_json_mocker = mocker.patch("imagededup.methods.cnn.save_json")
     cnn._find_duplicates_dict(
         encoding_map=encoding_map, threshold=threshold, scores=scores, outfile=outfile
     )
-    save_json_mocker.assert_called_once_with(cnn.results, outfile)
+    mocker_save_json.assert_called_once_with(cnn.results, outfile)
 
 
 # _find_duplicates_dir
 
 
 def test__find_duplicates_dir(cnn, mocker):
-    expected_featvec = [
-        np.array([1, 0, 0, 1]),
-        np.array([1, 1, 0, 1]),
-        np.array([1, 0, 0, 1]),
-    ]
-    expected_filename = {
-        0: "ukbench00002.jpg",
-        1: "ukbench00003.jpg",
-        2: "ukbench00002_dup.jpg",
-    }
-    encoding_map = {
-        expected_filename[i]: expected_featvec[i] for i in range(len(expected_filename))
-    }
-
+    encoding_map = data_encoding_map()
     threshold = 0.8
     scores = True
     outfile = True
@@ -301,20 +254,7 @@ def test_find_duplicates_dir(cnn, mocker):
 
 
 def test_find_duplicates_dict(cnn, mocker):
-    expected_featvec = [
-        np.array([1, 0, 0, 1]),
-        np.array([1, 1, 0, 1]),
-        np.array([1, 0, 0, 1]),
-    ]
-    expected_filename = {
-        0: "ukbench00002.jpg",
-        1: "ukbench00003.jpg",
-        2: "ukbench00002_dup.jpg",
-    }
-    encoding_map = {
-        expected_filename[i]: expected_featvec[i] for i in range(len(expected_filename))
-    }
-
+    encoding_map = data_encoding_map()
     threshold = 0.9
     scores = True
     outfile = True
@@ -342,7 +282,7 @@ def test_find_duplicates_wrong_input(cnn):
 # find_duplicates_to_remove
 
 
-def test_find_duplicates_to_remove_outfile_false(cnn, mocker):
+def test_find_duplicates_to_remove_outfile_false(cnn, mocker, mocker_save_json):
     threshold = 0.9
     outfile = False
     ret_val_find_dup_dict = {
@@ -355,7 +295,6 @@ def test_find_duplicates_to_remove_outfile_false(cnn, mocker):
     get_files_to_remove_mocker = mocker.patch(
         "imagededup.methods.cnn.get_files_to_remove"
     )
-    save_json_mocker = mocker.patch("imagededup.methods.cnn.save_json")
     cnn.find_duplicates_to_remove(
         image_dir=TEST_IMAGE_DIR, threshold=threshold, outfile=outfile
     )
@@ -363,10 +302,10 @@ def test_find_duplicates_to_remove_outfile_false(cnn, mocker):
         image_dir=TEST_IMAGE_DIR, encoding_map=None, threshold=threshold, scores=False
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
-    save_json_mocker.assert_not_called()
+    mocker_save_json.assert_not_called()
 
 
-def test_find_duplicates_to_remove_outfile_true(cnn, mocker):
+def test_find_duplicates_to_remove_outfile_true(cnn, mocker, mocker_save_json):
     threshold = 0.9
     outfile = True
     ret_val_find_dup_dict = {
@@ -382,7 +321,6 @@ def test_find_duplicates_to_remove_outfile_true(cnn, mocker):
         "imagededup.methods.cnn.get_files_to_remove",
         return_value=ret_val_get_files_to_remove,
     )
-    save_json_mocker = mocker.patch("imagededup.methods.cnn.save_json")
     cnn.find_duplicates_to_remove(
         image_dir=TEST_IMAGE_DIR, threshold=threshold, outfile=outfile
     )
@@ -390,10 +328,10 @@ def test_find_duplicates_to_remove_outfile_true(cnn, mocker):
         image_dir=TEST_IMAGE_DIR, encoding_map=None, threshold=threshold, scores=False
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
-    save_json_mocker.assert_called_once_with(ret_val_get_files_to_remove, outfile)
+    mocker_save_json.assert_called_once_with(ret_val_get_files_to_remove, outfile)
 
 
-def test_find_duplicates_to_remove_encoding_map(cnn, mocker):
+def test_find_duplicates_to_remove_encoding_map(cnn, mocker, mocker_save_json):
     threshold = 0.9
     outfile = True
     ret_val_find_dup_dict = {
@@ -401,21 +339,7 @@ def test_find_duplicates_to_remove_encoding_map(cnn, mocker):
         "filename2.jpg": ["dup2.jpg"],
     }
     ret_val_get_files_to_remove = ["1.jpg", "2.jpg"]
-
-    expected_featvec = [
-        np.array([1, 0, 0, 1]),
-        np.array([1, 1, 0, 1]),
-        np.array([1, 0, 0, 1]),
-    ]
-    expected_filename = {
-        0: "ukbench00002.jpg",
-        1: "ukbench00003.jpg",
-        2: "ukbench00002_dup.jpg",
-    }
-    encoding_map = {
-        expected_filename[i]: expected_featvec[i] for i in range(len(expected_filename))
-    }
-
+    encoding_map = data_encoding_map()
     find_duplicates_mocker = mocker.patch(
         "imagededup.methods.cnn.CNN.find_duplicates", return_value=ret_val_find_dup_dict
     )
@@ -423,7 +347,6 @@ def test_find_duplicates_to_remove_encoding_map(cnn, mocker):
         "imagededup.methods.cnn.get_files_to_remove",
         return_value=ret_val_get_files_to_remove,
     )
-    save_json_mocker = mocker.patch("imagededup.methods.cnn.save_json")
     cnn.find_duplicates_to_remove(
         encoding_map=encoding_map, threshold=threshold, outfile=outfile
     )
@@ -431,7 +354,7 @@ def test_find_duplicates_to_remove_encoding_map(cnn, mocker):
         encoding_map=encoding_map, image_dir=None, threshold=threshold, scores=False
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
-    save_json_mocker.assert_called_once_with(ret_val_get_files_to_remove, outfile)
+    mocker_save_json.assert_called_once_with(ret_val_get_files_to_remove, outfile)
 
 
 # Integration tests
@@ -516,7 +439,9 @@ def test_find_duplicates_to_remove_dir_integration(cnn):
     duplicates_list = cnn.find_duplicates_to_remove(
         image_dir=TEST_IMAGE_DIR_MIXED, threshold=0.9, outfile=False
     )
-    assert set(duplicates_list) == set(['ukbench00120_resize.jpg', 'ukbench00120_hflip.jpg'])
+    assert set(duplicates_list) == set(
+        ["ukbench00120_resize.jpg", "ukbench00120_hflip.jpg"]
+    )
 
 
 # test find_duplicates_to_remove with encoding map
@@ -525,4 +450,6 @@ def test_find_duplicates_to_remove_encoding_integration(cnn):
     duplicates_list = cnn.find_duplicates_to_remove(
         encoding_map=encodings, threshold=0.9, outfile=False
     )
-    assert set(duplicates_list) == set(['ukbench00120_resize.jpg', 'ukbench00120_hflip.jpg'])
+    assert set(duplicates_list) == set(
+        ["ukbench00120_resize.jpg", "ukbench00120_hflip.jpg"]
+    )
