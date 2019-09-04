@@ -10,6 +10,7 @@ p = Path(__file__)
 TEST_IMAGE = p.parent / "data" / "base_images" / "ukbench00120.jpg"
 TEST_IMAGE_DIR = p.parent / "data" / "base_images"
 TEST_IMAGE_FORMATS_DIR = p.parent / "data" / "formats_images"
+TEST_IMAGE_DIR_MIXED = p.parent / "data" / "mixed_images"
 
 TEST_BATCH_SIZE = 64
 TEST_TARGET_SIZE = (224, 224)
@@ -171,6 +172,13 @@ def test__find_duplicates_dict_scores_false(cnn):
     encoding_map = {
         expected_filename[i]: expected_featvec[i] for i in range(len(expected_filename))
     }
+
+    encoding_map = {
+        "ukbench00002.jpg": np.array([1, 0, 0, 1]),
+        "ukbench00003.jpg": np.array([1, 1, 0, 1]),
+        "ukbench00002_dup.jpg": np.array([1, 0, 0, 1])
+    }
+
     dict_ret = cnn._find_duplicates_dict(encoding_map, threshold=0.9, scores=False)
     assert isinstance(dict_ret["ukbench00002.jpg"], list)
     assert len(dict_ret["ukbench00002.jpg"]) == 1
@@ -321,9 +329,14 @@ def test_find_duplicates_dict(cnn, mocker):
     )
 
 
-def test_find_duplicates_wrong_input(cnn):
+def test_find_duplicates_wrong_threhsold_input(cnn):
     with pytest.raises(ValueError):
         cnn.find_duplicates(threshold=1.3)
+
+
+def test_find_duplicates_wrong_input(cnn):
+    with pytest.raises(ValueError):
+        cnn.find_duplicates()
 
 
 # find_duplicates_to_remove
@@ -419,3 +432,97 @@ def test_find_duplicates_to_remove_encoding_map(cnn, mocker):
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     save_json_mocker.assert_called_once_with(ret_val_get_files_to_remove, outfile)
+
+
+# Integration tests
+
+
+# test find_duplicates with directory path
+def test_find_duplicates_dir_integration(cnn):
+    expected_duplicates = {
+        "ukbench00120.jpg": [
+            ("ukbench00120_hflip.jpg", 0.9672552),
+            ("ukbench00120_resize.jpg", 0.98120844),
+        ],
+        "ukbench00120_hflip.jpg": [
+            ("ukbench00120.jpg", 0.9672552),
+            ("ukbench00120_resize.jpg", 0.95676106),
+        ],
+        "ukbench00120_resize.jpg": [
+            ("ukbench00120.jpg", 0.98120844),
+            ("ukbench00120_hflip.jpg", 0.95676106),
+        ],
+        "ukbench00120_rotation.jpg": [],
+        "ukbench09268.jpg": [],
+    }
+    duplicates = cnn.find_duplicates(
+        image_dir=TEST_IMAGE_DIR_MIXED, threshold=0.9, scores=True, outfile=False
+    )
+    # verify variable type
+    assert isinstance(duplicates["ukbench00120.jpg"][0][1], np.float32)
+
+    # verify that all files have been considered for deduplication
+    assert len(duplicates) == len(expected_duplicates)
+
+    # verify for each file that expected files have been received as duplicates
+    for k in duplicates.keys():
+        dup_val = duplicates[k]
+        expected_val = expected_duplicates[k]
+        dup_ret = set(map(lambda x: x[0], dup_val))
+        expected_ret = set(map(lambda x: x[0], expected_val))
+        assert dup_ret == expected_ret
+
+
+# test find_duplicates with encoding map
+def test_find_duplicates_encoding_integration(cnn):
+    expected_duplicates = {
+        "ukbench00120.jpg": [
+            ("ukbench00120_hflip.jpg", 0.9672552),
+            ("ukbench00120_resize.jpg", 0.98120844),
+        ],
+        "ukbench00120_hflip.jpg": [
+            ("ukbench00120.jpg", 0.9672552),
+            ("ukbench00120_resize.jpg", 0.95676106),
+        ],
+        "ukbench00120_resize.jpg": [
+            ("ukbench00120.jpg", 0.98120844),
+            ("ukbench00120_hflip.jpg", 0.95676106),
+        ],
+        "ukbench00120_rotation.jpg": [],
+        "ukbench09268.jpg": [],
+    }
+
+    encodings = cnn.encode_images(TEST_IMAGE_DIR_MIXED)
+    duplicates = cnn.find_duplicates(
+        encoding_map=encodings, threshold=0.9, scores=True, outfile=False
+    )
+    # verify variable type
+    assert isinstance(duplicates["ukbench00120.jpg"][0][1], np.float32)
+
+    # verify that all files have been considered for deduplication
+    assert len(duplicates) == len(expected_duplicates)
+
+    # verify for each file that expected files have been received as duplicates
+    for k in duplicates.keys():
+        dup_val = duplicates[k]
+        expected_val = expected_duplicates[k]
+        dup_ret = set(map(lambda x: x[0], dup_val))
+        expected_ret = set(map(lambda x: x[0], expected_val))
+        assert dup_ret == expected_ret
+
+
+# test find_duplicates_to_remove with directory path
+def test_find_duplicates_to_remove_dir_integration(cnn):
+    duplicates_list = cnn.find_duplicates_to_remove(
+        image_dir=TEST_IMAGE_DIR_MIXED, threshold=0.9, outfile=False
+    )
+    assert set(duplicates_list) == set(['ukbench00120_resize.jpg', 'ukbench00120_hflip.jpg'])
+
+
+# test find_duplicates_to_remove with encoding map
+def test_find_duplicates_to_remove_encoding_integration(cnn):
+    encodings = cnn.encode_images(TEST_IMAGE_DIR_MIXED)
+    duplicates_list = cnn.find_duplicates_to_remove(
+        encoding_map=encodings, threshold=0.9, outfile=False
+    )
+    assert set(duplicates_list) == set(['ukbench00120_resize.jpg', 'ukbench00120_hflip.jpg'])
