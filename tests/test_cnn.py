@@ -107,6 +107,7 @@ def test_encode_image(cnn):
     assert result.shape == (1, 1024)  # 1024 = 3*3*1024*2
 
 
+
 def test_encode_images(cnn):
     result = cnn.encode_images(TEST_IMAGE_DIR)
 
