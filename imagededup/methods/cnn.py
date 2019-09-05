@@ -45,7 +45,6 @@ class CNN:
         self.target_size = (224, 224)
         self.batch_size = 64
         self.logger = return_logger(__name__, os.getcwd())
-        self.result_score = None  # {query_filename: {retrieval_filename:score, ...}, ..}
 
         self._build_model()
 
@@ -107,7 +106,7 @@ class CNN:
         feat_vec = self.model.predict_generator(
             self.data_generator, len(self.data_generator), verbose=1
         )
-        self.logger.info('Completed: Image feature generation')
+        self.logger.info('End: Image feature generation')
 
         filenames = [i.name for i in self.data_generator.valid_image_files]
 
@@ -130,6 +129,9 @@ class CNN:
             image_file = Path(image_file)
 
         if isinstance(image_file, PosixPath):
+            if not image_file.is_file():
+                raise ValueError('Please provide either image file path or image array!')
+
             image_pp = load_image(
                 image_file=image_file, target_size=self.target_size, grayscale=False
             )

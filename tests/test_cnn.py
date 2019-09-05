@@ -21,7 +21,6 @@ def cnn():
 
 
 def test__init(cnn):
-    assert cnn.result_score is None
     assert cnn.batch_size == TEST_BATCH_SIZE
     assert cnn.target_size == TEST_TARGET_SIZE
     assert isinstance(cnn.model, Model)
@@ -86,8 +85,12 @@ def test_encode_image(cnn):
     assert isinstance(result, np.ndarray)
     assert result.shape == (1, 18432)  # 18432 = 3*3*1024*2
 
-    result = cnn.encode_image('')
-    assert result is None
+    with pytest.raises(ValueError):
+        cnn.encode_image('')
+
+    image_array = load_image(TEST_IMAGE)
+    result = cnn.encode_image(image_array=image_array)
+    assert result.shape == (1, 18432)  # 18432 = 3*3*1024*2
 
 
 def test_encode_images(cnn):
