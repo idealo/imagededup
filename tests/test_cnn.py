@@ -104,10 +104,7 @@ def test_encode_image(cnn):
 
     image_array = load_image(TEST_IMAGE)
     result = cnn.encode_image(image_array=image_array)
-    assert result.shape == (1, 18432)  # 18432 = 3*3*1024*2
-
-    result = cnn.encode_image("")
-    assert result is None
+    assert result.shape == (1, 1024)  # 1024 = 3*3*1024*2
 
 
 def test_encode_images(cnn):
