@@ -6,16 +6,20 @@ import os
 logger = return_logger(__name__, os.getcwd())
 
 
-def get_files_to_remove(dict_ret: Dict[str, List]) -> List:
+def get_files_to_remove(duplicates: Dict[str, List]) -> List:
     """
-    Get a list of files to remove
-    :param dict_ret: A dictionary with file name as key and a list of duplicate file names as value.
-    :return: A list of files that should be removed.
+    Get a list of files to remove.
+    
+    Args:
+        duplicates: A dictionary with file name as key and a list of duplicate file names as value.
+
+    Returns:
+        A list of files that should be removed.
     """
     # iterate over dict_ret keys, get value for the key and delete the dict keys that are in the value list
     files_to_remove = set()
 
-    for k, v in dict_ret.items():
+    for k, v in duplicates.items():
         tmp = [i[0] if isinstance(i, tuple) else i for i in v]  # handle tuples (image_id, score)
 
         if k not in files_to_remove:
@@ -26,9 +30,11 @@ def get_files_to_remove(dict_ret: Dict[str, List]) -> List:
 
 def save_json(results: Dict, filename: str) -> None:
     """
-    Save results.
-    :param results: Dictionary of results to be saved.
-    :param filename: Name of the file to be saved.
+    Save results with a filename.
+
+    Args:
+        results: Dictionary of results to be saved.
+        filename: Name of the file to be saved.
     """
     logger.info('Start: Saving duplicates as json!')
     with open(filename, 'w') as f:

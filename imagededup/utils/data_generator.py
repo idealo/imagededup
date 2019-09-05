@@ -33,13 +33,13 @@ class DataGenerator(Sequence):
         self._get_image_files()
         self.on_epoch_end()
 
-    def _get_image_files(self):
+    def _get_image_files(self) -> None:
         self.invalid_image_idx = []
         self.image_files = sorted(
             [i.absolute() for i in self.image_dir.glob('*') if not i.name.startswith('.')]
         )  # ignore hidden files
 
-    def on_epoch_end(self):
+    def on_epoch_end(self) -> None:
         """Method called at the end of every epoch.
         """
         self.indexes = np.arange(len(self.image_files))
@@ -47,7 +47,7 @@ class DataGenerator(Sequence):
             j for i, j in enumerate(self.image_files) if i not in self.invalid_image_idx
         ]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Number of batches in the Sequence."""
         return int(np.ceil(len(self.image_files) / self.batch_size))
 
