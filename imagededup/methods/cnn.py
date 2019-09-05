@@ -21,17 +21,17 @@ class CNN:
     1. At a single image level: Using the method 'encode_image', the CNN feature for a single image can be obtained.
     Example usage:
     ```
-    from imagededup import cnn
-    mycnn = cnn.CNN()
-    feature_vector = mycnn.encode_image('path/to/image.jpg')
+    from imagededup.methods import CNN
+    myencoder = CNN()
+    feature_vector = myencoder.encode_image('path/to/image.jpg')
     ```
     2. At a directory level: In case features for several images need to be generated, the images can be placed in a
     directory and features for all of the images can be obtained using the 'encode_images' method.
     Example usage:
     ```
-    from imagededup import cnn
-    mycnn = cnn.CNN()
-    feature_vectors = mycnn.encode_imges('path/to/directory')
+    from imagededup.methods import CNN
+    myencoder = CNN()
+    feature_vectors = myencoder.encode_imges('path/to/directory')
     ```
     """
 
@@ -39,7 +39,7 @@ class CNN:
         """
         Initializes a keras MobileNet model that is sliced at the last convolutional layer.
         Sets the batch size for keras generators to be 64 samples. Sets the input image size to (224, 224) for providing
-        as input to MobileNet model. Initiates a result_score variable to None.
+        as input to MobileNet model.
         """
 
         self.target_size = (224, 224)
@@ -61,8 +61,11 @@ class CNN:
         """
         Generates CNN features for a single image.
 
-        :param path_image: PosixPath to the image file or Image typecast to numpy array.
-        :return: Features for the image in the form of numpy array.
+        Args:
+            image_array: Image typecast to numpy array.
+
+        Returns:
+            Features for the image in the form of numpy array.
         """
         image_pp = preprocess_input(image_array)
         image_pp = np.array(image_pp)[np.newaxis, :]
@@ -71,19 +74,11 @@ class CNN:
     def _get_cnn_features_batch(self, image_dir: PosixPath) -> Dict[str, np.ndarray]:
         """
         Generates CNN features for all images in a given directory of images.
+        Args:
+            image_dir: Path to the image directory.
 
-        :param path_dir: PosixPath to the directory containing all the images.
-        :return: A dictionary that contains a mapping of filenames and corresponding numpy array of CNN features.
-        For example:
-        mapping = CNN().cnn_dir(Path('path/to/directory'))
-        'mapping' contains: {'Image1.jpg': np.array([1.0, -0.2, ...]), 'Image2.jpg': np.array([0.3, 0.06, ...]), ...}
-
-        Example usage:
-        ```
-        from imagededup import cnn
-        mycnn = cnn.CNN()
-        dict_file_feat = mycnn.cnn_dir(Path('path/to/directory'))
-        ```
+        Returns:
+            A dictionary that contains a mapping of filenames and corresponding numpy array of CNN features.
         """
         self.logger.info("Start: Image feature generation")
 
@@ -97,12 +92,11 @@ class CNN:
         feat_vec = self.model.predict_generator(
             self.data_generator, len(self.data_generator), verbose=1
         )
-        self.logger.info('End: Image feature generation')
+        self.logger.info("End: Image feature generation")
 
         filenames = [i.name for i in self.data_generator.valid_image_files]
 
         self.encoding_map = {j: feat_vec[i] for i, j in enumerate(filenames)}
-
         return self.encoding_map
 
     def encode_image(
@@ -111,11 +105,22 @@ class CNN:
         image_array: Optional[np.ndarray] = None,
     ) -> np.ndarray:
         """
+        Generates CNN features for a single image.
+
+        Args:
+            image_file: Path to the image file.
+            image_array: Image typecast to numpy array.
+
+        Returns:
+            Features for the image in the form of numpy array.
+
         Example usage:
         ```
-        from imagededup import cnn
-        mycnn = cnn.CNN()
-        feature_vector = mycnn.encode_image('path/to/image.jpg')
+        from imagededup.methods import CNN
+        myencoder = CNN()
+        feature_vector = myencoder.encode_image(image_file='path/to/image.jpg')
+        OR
+        feature_vector = myencoder.encode_image(image_array=<numpy array of image>)
         ```
         """
         if isinstance(image_file, str):
@@ -123,7 +128,9 @@ class CNN:
 
         if isinstance(image_file, PosixPath):
             if not image_file.is_file():
-                raise ValueError('Please provide either image file path or image array!')
+                raise ValueError(
+                    "Please provide either image file path or image array!"
+                )
 
             image_pp = load_image(
                 image_file=image_file, target_size=self.target_size, grayscale=False
@@ -144,11 +151,21 @@ class CNN:
 
     def encode_images(self, image_dir: Union[PosixPath, str]) -> Dict:
         """
+        Generates CNN features for all images in a given directory of images.
+
+        Args:
+            image_dir: Path to the image directory.
+
+        Returns:
+            A dictionary that contains a mapping of filenames and corresponding numpy array of CNN features.
+
         Example usage:
         ```
-        from imagededup import cnn
-        mycnn = cnn.CNN()
-        feature_vectors = mycnn.encode_images('path/to/directory')
+        from imagededup.methods import CNN
+        myencoder = CNN()
+        mapping = myencoder.encode_images('path/to/directory')
+
+        'mapping' contains: {'Image1.jpg': np.array([1.0, -0.2, ...]), 'Image2.jpg': np.array([0.3, 0.06, ...]), ...}
         ```
         """
         if isinstance(image_dir, str):
@@ -162,9 +179,15 @@ class CNN:
     @staticmethod
     def _check_threshold_bounds(thresh: float) -> None:
         """
-        Checks if provided threshold is valid. Raises TypeError is wrong threshold variable type is passed or a value out
-        of range is supplied.
-        :param thresh: Threshold value (must be float between -1.0 and 1.0)
+        Checks if provided threshold is valid. Raises TypeError if wrong threshold variable type is passed or a
+        ValueError if an out of range value is supplied.
+
+        Args:
+            thresh: Threshold value (must be float between -1.0 and 1.0)
+
+        Raises:
+            TypeError: If wrong variable type is provided.
+            ValueError: If wrong value is provided.
         """
         if not isinstance(thresh, float):
             raise TypeError("Threshold must be a float between -1.0 and 1.0")
@@ -178,16 +201,22 @@ class CNN:
         scores: bool,
         outfile: Optional[str] = None,
     ) -> Dict:
-        """Takes in dictionary {filename: encoded image}, detects duplicates above the given cosine similarity threshold
-            and returns a dictionary containing key as filename and value as a list of duplicate filenames. Optionally,
-            the cosine distances could be returned instead of just duplicate filenames for each query file.
-        :param encoding_map: Dictionary with keys as file names and values as encoded images.
-        :param threshold: Cosine similarity above which retrieved duplicates are valid.
-        :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
-        :return: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
-        score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}
-        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
-        'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}"""
+        """
+        Takes in dictionary {filename: encoded image}, detects duplicates above the given cosine similarity threshold
+        and returns a dictionary containing key as filename and value as a list of duplicate filenames. Optionally,
+        the cosine distances could be returned instead of just duplicate filenames for each query file.
+
+        Args:
+            encoding_map: Dictionary with keys as file names and values as encoded images.
+            threshold: Cosine similarity above which retrieved duplicates are valid.
+            scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
+
+        Returns:
+            if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
+            score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}
+            if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
+            'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
+        """
 
         # get all image ids
         # we rely on dictionaries preserving insertion order in Python >=3.6
@@ -231,16 +260,23 @@ class CNN:
         scores: bool,
         outfile: Optional[str] = None,
     ) -> Dict:
-        """Takes in path of the directory on which duplicates are to be detected above the given threshold.
-            Returns dictionary containing key as filename and value as a list of duplicate file names.
-            :param path_dir: PosixPath to the directory containing all the images.
-            :param threshold: Hamming distance above which retrieved duplicates are valid.
-            :param scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
-            :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<distance>,
-            'image1_duplicate2.jpg':<distance>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<distance>,..}}
-            if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
-            'image1_duplicate2.jpg'], 'image2.jpg':['image2_duplicate1.jpg',..], ..}"""
+        """
+        Takes in path of the directory in which duplicates are to be detected above the given threshold.
+        Returns dictionary containing key as filename and value as a list of duplicate file names.  Optionally,
+        the cosine distances could be returned instead of just duplicate filenames for each query file.
 
+        Args:
+            image_dir: Path to the directory containing all the images.
+            threshold: Hamming distance above which retrieved duplicates are valid.
+            scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
+            outfile: Name of the file the results should be written to.
+
+        Returns:
+            if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
+            score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}
+            if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
+            'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
+        """
         self.encode_images(image_dir=image_dir)
 
         return self._find_duplicates_dict(
@@ -259,25 +295,39 @@ class CNN:
         outfile: Optional[str] = None,
     ) -> Dict:
         """
-        Finds duplicates. Raises TypeError if the supplied directory path isn't a Path variable or a valid dictionary
+        Finds duplicates for each file. Takes in path of the directory or encoding dictionary in which duplicates are to
+        be detected above the given threshold. Returns dictionary containing key as filename and value as a list of
+        duplicate file names. Optionally, the cosine distances could be returned instead of just duplicate filenames for
+        each query file. Raises TypeError if the supplied directory path isn't a Path variable or a valid dictionary
         isn't supplied.
-        :param path_or_dict: PosixPath to the directory containing all the images or dictionary with keys as file names
-        and values as numpy arrays which represent the CNN feature for the key image file.
-        :param threshold: Threshold value (must be float between -1.0 and 1.0)
-        :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
-        :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<distance>,
-        'image1_duplicate2.jpg':<distance>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<distance>,..}}
-        if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
-        'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
+
+        Args:
+            image_dir: Path to the directory containing all the images or dictionary with keys as file names
+            and values as numpy arrays which represent the CNN feature for the key image file.
+            encoding_map: A dictionary containing mapping of filenames and corresponding CNN features.
+            threshold: Threshold value (must be float between -1.0 and 1.0)
+            scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
+            outfile: Name of the file to save the results.
+
+        Returns:
+            if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
+            score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}
+            if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
+            'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
+
             Example usage:
         ```
-        from imagededup import hashing
-        myhasher = hashing.Hashing(method='phash')
-        dict_ret_with_dict_inp = myhasher.find_duplicates(dict_file_feat, threshold=15, scores=True)
+        from imagededup.methods import CNN
+        myencoder = CNN()
+        duplicates = myencoder.find_duplicates(image_dir='path/to/directory', threshold=15, scores=True,
+        outfile='results.json')
+
         OR
-        from imagededup import hashing
-        myhasher = hashing.Hashing(method='phash')
-        dict_ret_path = myhasher.find_duplicates(Path('path/to/directory'), threshold=15, scores=True)
+
+        from imagededup.methods import CNN
+        myencoder = CNN()
+        duplicates = myencoder.find_duplicates(encoding_map=<mapping filename to cnn features>, threshold=15,
+        scores=True, outfile='results.json')
         ```
         """
         self._check_threshold_bounds(threshold)
@@ -307,17 +357,32 @@ class CNN:
         outfile: Optional[str] = None,
     ) -> List:
         """
-        Gives out a list of image file names to remove based on the similarity threshold.
-        :param path_or_dict: PosixPath to the directory containing all the images or dictionary with keys as file names
-        and values as numpy arrays which represent the CNN feature for the key image file.
-        :param threshold: Threshold value (must be float between -1.0 and 1.0)
-        :return: List of image file names that should be removed.
+        Gives out a list of image file names to remove based on the similarity threshold. Does not remove the mentioned
+        files.
+
+        Args:
+            image_dir: Path to the directory containing all the images or dictionary with keys as file names
+            and values as numpy arrays which represent the CNN feature for the key image file.
+            encoding_map: A dictionary containing mapping of filenames and corresponding CNN features.
+            threshold: Threshold value (must be float between -1.0 and 1.0)
+            outfile: Name of the file to save the results.
+
+        Returns:
+            List of image file names that should be removed.
+
         Example usage:
         ```
-        from imagededup import hashing
-        myhasher = hashing.Hashing(method='phash')
-        list_of_files_to_remove = myhasher.find_duplicates_to_remove(Path('path/to/images/directory'),
+        from imagededup.methods import CNN
+        myencoder = CNN()
+        list_of_files_to_remove = myencoder.find_duplicates_to_remove(image_dir='path/to/images/directory'),
         threshold=15)
+
+        OR
+
+        from imagededup.methods import CNN
+        myencoder = CNN()
+        duplicates = myencoder.find_duplicates(encoding_map=<mapping filename to cnn features>, threshold=15,
+        outfile='results.json')
         ```
         """
 
