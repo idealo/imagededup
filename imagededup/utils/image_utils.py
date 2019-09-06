@@ -1,9 +1,11 @@
-from imagededup.utils.logger import return_logger
 import os
-import numpy as np
-from PIL import Image
 from pathlib import PosixPath
 from typing import List, Union, Tuple
+
+import numpy as np
+from PIL import Image
+
+from imagededup.utils.logger import return_logger
 
 """
 Todo: Parallelize files validation/ hash generation
@@ -14,9 +16,11 @@ IMG_FORMATS = ["JPEG", "PNG", "BMP"]
 logger = return_logger(__name__, os.getcwd())
 
 
-def preprocess_image(image, target_size: Tuple[int, int] = None, grayscale: bool = False) -> np.ndarray:
+def preprocess_image(
+    image, target_size: Tuple[int, int] = None, grayscale: bool = False
+) -> np.ndarray:
     """
-    Takes as input an image as numpy array or Pillow format. Returns an array version of optionally resized and grayed
+    Take as input an image as numpy array or Pillow format. Returns an array version of optionally resized and grayed
     image.
 
     Args:
@@ -52,7 +56,7 @@ def load_image(
     img_formats: List[str] = IMG_FORMATS,
 ) -> np.ndarray:
     """
-    Loads an image given its path. Returns an array version of optionally resized and grayed image. Only allows images
+    Load an image given its path. Returns an array version of optionally resized and grayed image. Only allows images
     of types described by img_formats argument.
 
     Args:
