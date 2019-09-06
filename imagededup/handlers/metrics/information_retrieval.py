@@ -31,42 +31,30 @@ def ndcg(correct_duplicates: List, retrieved_duplicates: List) -> float:
     """
     if not len(retrieved_duplicates):
         return 0.0
+
+    def dcg(rel):
+        relevance_numerator = [2 ** (k) - 1 for k in rel]
+        relevance_denominator = [
+            np.log2(k + 2) for k in range(len(rel))
+        ]  # first value of denominator term should be 2
+
+        dcg_terms = [
+            relevance_numerator[k] / relevance_denominator[k] for k in range(len(rel))
+        ]
+        dcg_at_k = np.sum(dcg_terms)
+
+        return dcg_at_k
+
     relevance = np.array(
         [1 if i in correct_duplicates else 0 for i in retrieved_duplicates]
     )
-    relevance_numerator = [2 ** (k) - 1 for k in relevance]
-    relevance_denominator = [
-        np.log2(k + 2) for k in range(len(relevance))
-    ]  # first value of denominator term should be 2
+    dcg_k = dcg(relevance)
 
-    dcg_terms = [
-        relevance_numerator[k] / relevance_denominator[k] for k in range(len(relevance))
-    ]
-    dcg_k = np.sum(dcg_terms)
+    if dcg_k == 0:
+        return 0.0
 
-    # get #retrievals
-    # if #retrievals <= #ground truth retrievals, set score=1 for calculating idcg
-    # else score=1 for first #ground truth retrievals entries, score=0 for remaining positions
-
-    if len(dcg_terms) <= len(correct_duplicates):
-        ideal_dcg = np.sum([1 / np.log2(k + 2) for k in range(len(dcg_terms))])
-        ndcg = dcg_k / ideal_dcg
-    else:
-        ideal_dcg_terms = [1] * len(correct_duplicates) + [0] * (
-            len(dcg_terms) - len(correct_duplicates)
-        )
-        ideal_dcg_numerator = [
-            (2 ** ideal_dcg_terms[k]) - 1 for k in range(len(ideal_dcg_terms))
-        ]
-        ideal_dcg_denominator = [np.log2(k + 2) for k in range(len(ideal_dcg_terms))]
-        ideal_dcg = np.sum(
-            [
-                ideal_dcg_numerator[k] / ideal_dcg_denominator[k]
-                for k in range(len(ideal_dcg_numerator))
-            ]
-        )
-        ndcg = dcg_k / ideal_dcg
-    return ndcg
+    idcg_k = dcg(sorted(relevance, reverse=True))
+    return dcg_k / idcg_k
 
 
 def jaccard_similarity(correct_duplicates: List, retrieved_duplicates: List) -> float:
