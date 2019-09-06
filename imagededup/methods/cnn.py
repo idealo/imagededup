@@ -1,16 +1,18 @@
 import os
-import numpy as np
 from pathlib import Path, PosixPath
 from typing import Dict, Optional, Union, List
+
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+
+from imagededup.utils.general_utils import save_json, get_files_to_remove
 from imagededup.utils.image_utils import load_image, preprocess_image
 from imagededup.utils.logger import return_logger
-from imagededup.utils.general_utils import save_json, get_files_to_remove
-from sklearn.metrics.pairwise import cosine_similarity
 
 
 class CNN:
     """
-    Finds duplicates using CNN and/or generates CNN features given a single image or a directory of images.
+    Find duplicates using CNN and/or generates CNN features given a single image or a directory of images.
     The module can be used for 2 purposes: Feature generation and duplicate detection.
 
     Feature generation:
@@ -29,18 +31,48 @@ class CNN:
     ```
     from imagededup.methods import CNN
     myencoder = CNN()
-    feature_vectors = myencoder.encode_imges('path/to/directory')
+    feature_vectors = myencoder.encode_images('path/to/directory')
     ```
+
+    Duplicate detection:
+    Find duplicates either using the feature mapping generated previously using 'encode_images' or using a Path to the
+    directory that contains the images that need to be deduplicated. There are 2 inputs that can be provided to the
+    find_duplicates function:
+    1. Dictionary generated using 'encode_images' function above.
+    Example usage:
+    ```
+    from imagededup.methods import CNN
+    myencoder = CNN()
+    duplicates = myencoder.find_duplicates(encoding_map, min_similarity_threshold=0.9, scores=True)
+    ```
+    2. Using the Path of the directory where all images are present.
+    Example usage:
+    ```
+    from imagededup.methods import CNN
+    myencoder = CNN()
+    duplicates = myencoder.find_duplicates(image_dir='path/to/directory', min_similarity_threshold=0.9, scores=True)
+    ```
+    If a list of file names to remove are desired, then the function find_duplicates_to_remove can be used with either
+    the path to the image directory as input or the dictionary with features. A threshold for similarity should be
+    considered.
+    Example usage:
+        ```
+        from imagededup.methods import CNN
+        myencoder = CNN()
+        files_to_remove = myencoder.find_duplicates_to_remove(image_dir='path/to/images/directory',
+        min_similarity_threshold=0.9)
+        ```
     """
 
     def __init__(self) -> None:
         """
-        Initializes a keras MobileNet model that is sliced at the last convolutional layer.
+        Initialize a keras MobileNet model that is sliced at the last convolutional layer.
         Sets the batch size for keras generators to be 64 samples. Sets the input image size to (224, 224) for providing
         as input to MobileNet model.
         """
         from keras.applications.mobilenet import MobileNet, preprocess_input
         from imagededup.utils.data_generator import DataGenerator
+
         self.MobileNet = MobileNet
         self.preprocess_input = preprocess_input
         self.DataGenerator = DataGenerator
@@ -51,7 +83,9 @@ class CNN:
         self._build_model()
 
     def _build_model(self):
-
+        """
+        Build MobileNet model sliced at the last convolutional layer with global average pooling added.
+        """
         self.model = self.MobileNet(
             input_shape=(224, 224, 3), include_top=False, pooling="avg"
         )
@@ -63,7 +97,7 @@ class CNN:
 
     def _get_cnn_features_single(self, image_array: np.ndarray) -> np.ndarray:
         """
-        Generates CNN features for a single image.
+        Generate CNN features for a single image.
 
         Args:
             image_array: Image typecast to numpy array.
@@ -77,7 +111,7 @@ class CNN:
 
     def _get_cnn_features_batch(self, image_dir: PosixPath) -> Dict[str, np.ndarray]:
         """
-        Generates CNN features for all images in a given directory of images.
+        Generate CNN features for all images in a given directory of images.
         Args:
             image_dir: Path to the image directory.
 
@@ -108,7 +142,7 @@ class CNN:
         image_array: Optional[np.ndarray] = None,
     ) -> np.ndarray:
         """
-        Generates CNN features for a single image.
+        Generate CNN features for a single image.
 
         Args:
             image_file: Path to the image file.
@@ -154,7 +188,7 @@ class CNN:
 
     def encode_images(self, image_dir: Union[PosixPath, str]) -> Dict:
         """
-        Generates CNN features for all images in a given directory of images.
+        Generate CNN features for all images in a given directory of images.
 
         Args:
             image_dir: Path to the image directory.
@@ -182,7 +216,7 @@ class CNN:
     @staticmethod
     def _check_threshold_bounds(thresh: float) -> None:
         """
-        Checks if provided threshold is valid. Raises TypeError if wrong threshold variable type is passed or a
+        Check if provided threshold is valid. Raises TypeError if wrong threshold variable type is passed or a
         ValueError if an out of range value is supplied.
 
         Args:
@@ -205,7 +239,7 @@ class CNN:
         outfile: Optional[str] = None,
     ) -> Dict:
         """
-        Takes in dictionary {filename: encoded image}, detects duplicates above the given cosine similarity threshold
+        Take in dictionary {filename: encoded image}, detects duplicates above the given cosine similarity threshold
         and returns a dictionary containing key as filename and value as a list of duplicate filenames. Optionally,
         the cosine distances could be returned instead of just duplicate filenames for each query file.
 
@@ -264,7 +298,7 @@ class CNN:
         outfile: Optional[str] = None,
     ) -> Dict:
         """
-        Takes in path of the directory in which duplicates are to be detected above the given threshold.
+        Take in path of the directory in which duplicates are to be detected above the given threshold.
         Returns dictionary containing key as filename and value as a list of duplicate file names.  Optionally,
         the cosine distances could be returned instead of just duplicate filenames for each query file.
 
@@ -298,11 +332,10 @@ class CNN:
         outfile: Optional[str] = None,
     ) -> Dict:
         """
-        Finds duplicates for each file. Takes in path of the directory or encoding dictionary in which duplicates are to
+        Find duplicates for each file. Takes in path of the directory or encoding dictionary in which duplicates are to
         be detected above the given threshold. Returns dictionary containing key as filename and value as a list of
         duplicate file names. Optionally, the cosine distances could be returned instead of just duplicate filenames for
-        each query file. Raises TypeError if the supplied directory path isn't a Path variable or a valid dictionary
-        isn't supplied.
+        each query file.
 
         Args:
             image_dir: Path to the directory containing all the images or dictionary with keys as file names
@@ -322,22 +355,25 @@ class CNN:
         ```
         from imagededup.methods import CNN
         myencoder = CNN()
-        duplicates = myencoder.find_duplicates(image_dir='path/to/directory', threshold=15, scores=True,
+        duplicates = myencoder.find_duplicates(image_dir='path/to/directory', min_similarity_threshold=15, scores=True,
         outfile='results.json')
 
         OR
 
         from imagededup.methods import CNN
         myencoder = CNN()
-        duplicates = myencoder.find_duplicates(encoding_map=<mapping filename to cnn features>, threshold=15,
-        scores=True, outfile='results.json')
+        duplicates = myencoder.find_duplicates(encoding_map=<mapping filename to cnn features>,
+        min_similarity_threshold=15, scores=True, outfile='results.json')
         ```
         """
         self._check_threshold_bounds(min_similarity_threshold)
 
         if image_dir:
             result = self._find_duplicates_dir(
-                image_dir=image_dir, min_similarity_threshold=min_similarity_threshold, scores=scores, outfile=outfile
+                image_dir=image_dir,
+                min_similarity_threshold=min_similarity_threshold,
+                scores=scores,
+                outfile=outfile,
             )
         elif encoding_map:
             result = self._find_duplicates_dict(
@@ -360,7 +396,7 @@ class CNN:
         outfile: Optional[str] = None,
     ) -> List:
         """
-        Gives out a list of image file names to remove based on the similarity threshold. Does not remove the mentioned
+        Give out a list of image file names to remove based on the similarity threshold. Does not remove the mentioned
         files.
 
         Args:
@@ -378,17 +414,16 @@ class CNN:
         from imagededup.methods import CNN
         myencoder = CNN()
         list_of_files_to_remove = myencoder.find_duplicates_to_remove(image_dir='path/to/images/directory'),
-        threshold=15)
+        min_similarity_threshold=15)
 
         OR
 
         from imagededup.methods import CNN
         myencoder = CNN()
-        duplicates = myencoder.find_duplicates(encoding_map=<mapping filename to cnn features>, threshold=15,
-        outfile='results.json')
+        duplicates = myencoder.find_duplicates(encoding_map=<mapping filename to cnn features>,
+        min_similarity_threshold=15, outfile='results.json')
         ```
         """
-
         if image_dir or encoding_map:
             duplicates = self.find_duplicates(
                 image_dir=image_dir,
