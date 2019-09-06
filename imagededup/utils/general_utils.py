@@ -1,7 +1,8 @@
-from imagededup.utils.logger import return_logger
-from typing import Dict, List
-import json
 import os
+import json
+from typing import Dict, List
+
+from imagededup.utils.logger import return_logger
 
 logger = return_logger(__name__, os.getcwd())
 
@@ -20,7 +21,9 @@ def get_files_to_remove(duplicates: Dict[str, List]) -> List:
     files_to_remove = set()
 
     for k, v in duplicates.items():
-        tmp = [i[0] if isinstance(i, tuple) else i for i in v]  # handle tuples (image_id, score)
+        tmp = [
+            i[0] if isinstance(i, tuple) else i for i in v
+        ]  # handle tuples (image_id, score)
 
         if k not in files_to_remove:
             files_to_remove.update(tmp)
@@ -36,7 +39,7 @@ def save_json(results: Dict, filename: str) -> None:
         results: Dictionary of results to be saved.
         filename: Name of the file to be saved.
     """
-    logger.info('Start: Saving duplicates as json!')
-    with open(filename, 'w') as f:
+    logger.info("Start: Saving duplicates as json!")
+    with open(filename, "w") as f:
         json.dump(results, f, indent=2, sort_keys=True)
-    logger.info('End: Saving duplicates as json!')
+    logger.info("End: Saving duplicates as json!")
