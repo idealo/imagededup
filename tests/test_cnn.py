@@ -177,7 +177,7 @@ def test__check_threshold_bounds_input_out_of_range(cnn):
 def test__find_duplicates_dict_scores_false(cnn):
     # check correctness
     encoding_map = data_encoding_map()
-    dict_ret = cnn._find_duplicates_dict(encoding_map, threshold=0.9, scores=False)
+    dict_ret = cnn._find_duplicates_dict(encoding_map, min_similarity_threshold=0.9, scores=False)
     assert isinstance(dict_ret["ukbench00002.jpg"], list)
     assert len(dict_ret["ukbench00002.jpg"]) == 1
     assert not isinstance(dict_ret["ukbench00002.jpg"][0], tuple)
@@ -187,7 +187,7 @@ def test__find_duplicates_dict_scores_false(cnn):
 def test__find_duplicates_dict_scores_true(cnn, mocker_save_json):
     # check correctness, also check that saving file is not triggered as outfile default value is False
     encoding_map = data_encoding_map()
-    dict_ret = cnn._find_duplicates_dict(encoding_map, threshold=0.9, scores=True)
+    dict_ret = cnn._find_duplicates_dict(encoding_map, min_similarity_threshold=0.9, scores=True)
 
     assert isinstance(dict_ret["ukbench00002.jpg"], list)
     assert len(dict_ret["ukbench00002.jpg"]) == 1
@@ -204,7 +204,7 @@ def test__find_duplicates_dict_outfile_true(cnn, mocker_save_json):
     scores = True
     outfile = True
     cnn._find_duplicates_dict(
-        encoding_map=encoding_map, threshold=threshold, scores=scores, outfile=outfile
+        encoding_map=encoding_map, min_similarity_threshold=threshold, scores=scores, outfile=outfile
     )
     mocker_save_json.assert_called_once_with(cnn.results, outfile)
 
@@ -228,12 +228,12 @@ def test__find_duplicates_dir(cnn, mocker):
         return_value=ret_val_find_dup_dict,
     )
     cnn._find_duplicates_dir(
-        image_dir=TEST_IMAGE_DIR, threshold=threshold, scores=scores, outfile=outfile
+        image_dir=TEST_IMAGE_DIR, min_similarity_threshold=threshold, scores=scores, outfile=outfile
     )
     encode_images_mocker.assert_called_once_with(image_dir=TEST_IMAGE_DIR)
     find_dup_dict_mocker.assert_called_once_with(
         encoding_map=cnn.encoding_map,
-        threshold=threshold,
+        min_similarity_threshold=threshold,
         scores=scores,
         outfile=outfile,
     )
@@ -250,10 +250,10 @@ def test_find_duplicates_dir(cnn, mocker):
         "imagededup.methods.cnn.CNN._find_duplicates_dir"
     )
     cnn.find_duplicates(
-        image_dir=TEST_IMAGE_DIR, threshold=threshold, outfile=outfile, scores=scores
+        image_dir=TEST_IMAGE_DIR, min_similarity_threshold=threshold, outfile=outfile, scores=scores
     )
     find_dup_dir_mocker.assert_called_once_with(
-        image_dir=TEST_IMAGE_DIR, threshold=threshold, scores=scores, outfile=outfile
+        image_dir=TEST_IMAGE_DIR, min_similarity_threshold=threshold, scores=scores, outfile=outfile
     )
 
 
@@ -266,16 +266,16 @@ def test_find_duplicates_dict(cnn, mocker):
         "imagededup.methods.cnn.CNN._find_duplicates_dict"
     )
     cnn.find_duplicates(
-        encoding_map=encoding_map, threshold=threshold, outfile=outfile, scores=scores
+        encoding_map=encoding_map, min_similarity_threshold=threshold, outfile=outfile, scores=scores
     )
     find_dup_dict_mocker.assert_called_once_with(
-        encoding_map=encoding_map, threshold=threshold, scores=scores, outfile=outfile
+        encoding_map=encoding_map, min_similarity_threshold=threshold, scores=scores, outfile=outfile
     )
 
 
 def test_find_duplicates_wrong_threhsold_input(cnn):
     with pytest.raises(ValueError):
-        cnn.find_duplicates(threshold=1.3)
+        cnn.find_duplicates(min_similarity_threshold=1.3)
 
 
 def test_find_duplicates_wrong_input(cnn):
@@ -300,10 +300,10 @@ def test_find_duplicates_to_remove_outfile_false(cnn, mocker, mocker_save_json):
         "imagededup.methods.cnn.get_files_to_remove"
     )
     cnn.find_duplicates_to_remove(
-        image_dir=TEST_IMAGE_DIR, threshold=threshold, outfile=outfile
+        image_dir=TEST_IMAGE_DIR, min_similarity_threshold=threshold, outfile=outfile
     )
     find_duplicates_mocker.assert_called_once_with(
-        image_dir=TEST_IMAGE_DIR, encoding_map=None, threshold=threshold, scores=False
+        image_dir=TEST_IMAGE_DIR, encoding_map=None, min_similarity_threshold=threshold, scores=False
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     mocker_save_json.assert_not_called()
@@ -326,10 +326,10 @@ def test_find_duplicates_to_remove_outfile_true(cnn, mocker, mocker_save_json):
         return_value=ret_val_get_files_to_remove,
     )
     cnn.find_duplicates_to_remove(
-        image_dir=TEST_IMAGE_DIR, threshold=threshold, outfile=outfile
+        image_dir=TEST_IMAGE_DIR, min_similarity_threshold=threshold, outfile=outfile
     )
     find_duplicates_mocker.assert_called_once_with(
-        image_dir=TEST_IMAGE_DIR, encoding_map=None, threshold=threshold, scores=False
+        image_dir=TEST_IMAGE_DIR, encoding_map=None, min_similarity_threshold=threshold, scores=False
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     mocker_save_json.assert_called_once_with(ret_val_get_files_to_remove, outfile)
@@ -352,10 +352,10 @@ def test_find_duplicates_to_remove_encoding_map(cnn, mocker, mocker_save_json):
         return_value=ret_val_get_files_to_remove,
     )
     cnn.find_duplicates_to_remove(
-        encoding_map=encoding_map, threshold=threshold, outfile=outfile
+        encoding_map=encoding_map, min_similarity_threshold=threshold, outfile=outfile
     )
     find_duplicates_mocker.assert_called_once_with(
-        encoding_map=encoding_map, image_dir=None, threshold=threshold, scores=False
+        encoding_map=encoding_map, image_dir=None, min_similarity_threshold=threshold, scores=False
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     mocker_save_json.assert_called_once_with(ret_val_get_files_to_remove, outfile)
@@ -383,7 +383,7 @@ def test_find_duplicates_dir_integration(cnn):
         "ukbench09268.jpg": [],
     }
     duplicates = cnn.find_duplicates(
-        image_dir=TEST_IMAGE_DIR_MIXED, threshold=0.9, scores=True, outfile=False
+        image_dir=TEST_IMAGE_DIR_MIXED, min_similarity_threshold=0.9, scores=True, outfile=False
     )
     # verify variable type
     assert isinstance(duplicates["ukbench00120.jpg"][0][1], np.float32)
@@ -421,7 +421,7 @@ def test_find_duplicates_encoding_integration(cnn):
 
     encodings = cnn.encode_images(TEST_IMAGE_DIR_MIXED)
     duplicates = cnn.find_duplicates(
-        encoding_map=encodings, threshold=0.9, scores=True, outfile=False
+        encoding_map=encodings, min_similarity_threshold=0.9, scores=True, outfile=False
     )
     # verify variable type
     assert isinstance(duplicates["ukbench00120.jpg"][0][1], np.float32)
@@ -441,7 +441,7 @@ def test_find_duplicates_encoding_integration(cnn):
 # test find_duplicates_to_remove with directory path
 def test_find_duplicates_to_remove_dir_integration(cnn):
     duplicates_list = cnn.find_duplicates_to_remove(
-        image_dir=TEST_IMAGE_DIR_MIXED, threshold=0.9, outfile=False
+        image_dir=TEST_IMAGE_DIR_MIXED, min_similarity_threshold=0.9, outfile=False
     )
     assert set(duplicates_list) == set(
         ["ukbench00120_resize.jpg", "ukbench00120_hflip.jpg"]
@@ -452,7 +452,7 @@ def test_find_duplicates_to_remove_dir_integration(cnn):
 def test_find_duplicates_to_remove_encoding_integration(cnn):
     encodings = cnn.encode_images(TEST_IMAGE_DIR_MIXED)
     duplicates_list = cnn.find_duplicates_to_remove(
-        encoding_map=encodings, threshold=0.9, outfile=False
+        encoding_map=encodings, min_similarity_threshold=0.9, outfile=False
     )
     assert set(duplicates_list) == set(
         ["ukbench00120_resize.jpg", "ukbench00120_hflip.jpg"]

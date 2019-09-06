@@ -197,7 +197,7 @@ class CNN:
     def _find_duplicates_dict(
         self,
         encoding_map: Dict[str, list],
-        threshold: int,
+        min_similarity_threshold: int,
         scores: bool,
         outfile: Optional[str] = None,
     ) -> Dict:
@@ -208,7 +208,7 @@ class CNN:
 
         Args:
             encoding_map: Dictionary with keys as file names and values as encoded images.
-            threshold: Cosine similarity above which retrieved duplicates are valid.
+            min_similarity_threshold: Cosine similarity above which retrieved duplicates are valid.
             scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
 
         Returns:
@@ -237,7 +237,7 @@ class CNN:
 
         self.results = {}
         for i, j in enumerate(self.cosine_scores):
-            duplicates_bool = (j >= threshold) & (j < 2)
+            duplicates_bool = (j >= min_similarity_threshold) & (j < 2)
 
             if scores:
                 tmp = np.array([*zip(image_ids, j)], dtype=object)
@@ -256,7 +256,7 @@ class CNN:
     def _find_duplicates_dir(
         self,
         image_dir: Union[PosixPath, str],
-        threshold: int,
+        min_similarity_threshold: int,
         scores: bool,
         outfile: Optional[str] = None,
     ) -> Dict:
@@ -267,7 +267,7 @@ class CNN:
 
         Args:
             image_dir: Path to the directory containing all the images.
-            threshold: Hamming distance above which retrieved duplicates are valid.
+            min_similarity_threshold: Hamming distance above which retrieved duplicates are valid.
             scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
             outfile: Name of the file the results should be written to.
 
@@ -281,7 +281,7 @@ class CNN:
 
         return self._find_duplicates_dict(
             encoding_map=self.encoding_map,
-            threshold=threshold,
+            min_similarity_threshold=min_similarity_threshold,
             scores=scores,
             outfile=outfile,
         )
@@ -290,7 +290,7 @@ class CNN:
         self,
         image_dir: Union[PosixPath, str] = None,
         encoding_map: Dict[str, list] = None,
-        threshold: int = 0.9,
+        min_similarity_threshold: int = 0.9,
         scores: bool = False,
         outfile: Optional[str] = None,
     ) -> Dict:
@@ -305,7 +305,7 @@ class CNN:
             image_dir: Path to the directory containing all the images or dictionary with keys as file names
             and values as numpy arrays which represent the CNN feature for the key image file.
             encoding_map: A dictionary containing mapping of filenames and corresponding CNN features.
-            threshold: Threshold value (must be float between -1.0 and 1.0)
+            min_similarity_threshold: Threshold value (must be float between -1.0 and 1.0)
             scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
             outfile: Name of the file to save the results.
 
@@ -330,16 +330,16 @@ class CNN:
         scores=True, outfile='results.json')
         ```
         """
-        self._check_threshold_bounds(threshold)
+        self._check_threshold_bounds(min_similarity_threshold)
 
         if image_dir:
             result = self._find_duplicates_dir(
-                image_dir=image_dir, threshold=threshold, scores=scores, outfile=outfile
+                image_dir=image_dir, min_similarity_threshold=min_similarity_threshold, scores=scores, outfile=outfile
             )
         elif encoding_map:
             result = self._find_duplicates_dict(
                 encoding_map=encoding_map,
-                threshold=threshold,
+                min_similarity_threshold=min_similarity_threshold,
                 scores=scores,
                 outfile=outfile,
             )
@@ -353,7 +353,7 @@ class CNN:
         self,
         image_dir: PosixPath = None,
         encoding_map: Dict[str, np.ndarray] = None,
-        threshold: int = 0.9,
+        min_similarity_threshold: int = 0.9,
         outfile: Optional[str] = None,
     ) -> List:
         """
@@ -364,7 +364,7 @@ class CNN:
             image_dir: Path to the directory containing all the images or dictionary with keys as file names
             and values as numpy arrays which represent the CNN feature for the key image file.
             encoding_map: A dictionary containing mapping of filenames and corresponding CNN features.
-            threshold: Threshold value (must be float between -1.0 and 1.0)
+            min_similarity_threshold: Threshold value (must be float between -1.0 and 1.0)
             outfile: Name of the file to save the results.
 
         Returns:
@@ -390,7 +390,7 @@ class CNN:
             duplicates = self.find_duplicates(
                 image_dir=image_dir,
                 encoding_map=encoding_map,
-                threshold=threshold,
+                min_similarity_threshold=min_similarity_threshold,
                 scores=False,
             )
 

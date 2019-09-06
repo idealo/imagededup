@@ -122,7 +122,7 @@ class Hashing:
     def _find_duplicates_dict(
         self,
         encoding_map: Dict[str, str],
-        threshold: int = 10,
+        max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
     ) -> Dict:
@@ -130,7 +130,7 @@ class Hashing:
             and returns dictionary containing key as filename and value as a list of duplicate filenames. Optionally,
             the hamming distances could be returned instead of just duplicate file name for each query file.
         :param encoding_map: Dictionary with keys as file names and values as hash strings for the key image file.
-        :param threshold: Cosine similarity above which retrieved duplicates are valid.
+        :param max_distance_threshold: Cosine similarity above which retrieved duplicates are valid.
         :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
         :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':
         <distance>, 'image1_duplicate2.jpg':<distance>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':
@@ -144,7 +144,7 @@ class Hashing:
             test=encoding_map,
             queries=encoding_map,
             hammer=self.hamming_distance,
-            cutoff=threshold,
+            cutoff=max_distance_threshold,
             search_method='bktree',
         )
         self.logger.info('End: Evaluating hamming distances for getting duplicates')
@@ -156,14 +156,14 @@ class Hashing:
     def _find_duplicates_dir(
         self,
         image_dir: PosixPath,
-        threshold: int = 10,
+        max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
     ) -> Dict:
         """Takes in path of the directory on which duplicates are to be detected above the given threshold.
         Returns dictionary containing key as filename and value as a list of duplicate file names.
         :param path_dir: PosixPath to the directory containing all the images.
-        :param threshold: Hamming distance above which retrieved duplicates are valid.
+        :param max_distance_threshold: Hamming distance above which retrieved duplicates are valid.
         :param scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
         :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<distance>,
         'image1_duplicate2.jpg':<distance>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<distance>,..}}
@@ -172,7 +172,7 @@ class Hashing:
 
         encoding_map = self.encode_images(image_dir)
         results = self._find_duplicates_dict(
-            encoding_map=encoding_map, threshold=threshold, scores=scores, outfile=outfile
+            encoding_map=encoding_map, max_distance_threshold=max_distance_threshold, scores=scores, outfile=outfile
         )
         return results
 
@@ -180,7 +180,7 @@ class Hashing:
         self,
         image_dir: PosixPath = None,
         encoding_map: Dict[str, str] = None,
-        threshold: int = 10,
+        max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
     ) -> Dict:
@@ -189,7 +189,7 @@ class Hashing:
         isn't supplied.
         :param path_or_dict: PosixPath to the directory containing all the images or dictionary with keys as file names
         and values as numpy arrays which represent the CNN feature for the key image file.
-        :param threshold: Threshold value (must be float between -1.0 and 1.0)
+        :param max_distance_threshold: Threshold value (must be float between -1.0 and 1.0)
         :param scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
         :return: if scores is True, then a dictionary of the form {'image1.jpg': {'image1_duplicate1.jpg':<distance>,
         'image1_duplicate2.jpg':<distance>, ..}, 'image2.jpg':{'image1_duplicate1.jpg':<distance>,..}}
@@ -207,14 +207,14 @@ class Hashing:
         ```
         """
 
-        self._check_hamming_distance_bounds(thresh=threshold)
+        self._check_hamming_distance_bounds(thresh=max_distance_threshold)
         if image_dir:
             result = self._find_duplicates_dir(
-                image_dir=image_dir, threshold=threshold, scores=scores, outfile=outfile
+                image_dir=image_dir, max_distance_threshold=max_distance_threshold, scores=scores, outfile=outfile
             )
         elif encoding_map:
             result = self._find_duplicates_dict(
-                encoding_map=encoding_map, threshold=threshold, scores=scores, outfile=outfile
+                encoding_map=encoding_map, max_distance_threshold=max_distance_threshold, scores=scores, outfile=outfile
             )
         else:
             raise ValueError('Provide either an image directory or encodings!')
@@ -224,14 +224,14 @@ class Hashing:
         self,
         image_dir: PosixPath = None,
         encoding_map: Dict[str, str] = None,
-        threshold: int = 10,
+        max_distance_threshold: int = 10,
         outfile: Optional[str] = None,
     ) -> List:
         """
         Gives out a list of image file names to remove based on the similarity threshold.
         :param path_or_dict: PosixPath to the directory containing all the images or dictionary with keys as file names
         and values as numpy arrays which represent the CNN feature for the key image file.
-        :param threshold: Threshold value (must be float between -1.0 and 1.0)
+        :param max_distance_threshold: Threshold value (must be float between -1.0 and 1.0)
         :return: List of image file names that should be removed.
         Example usage:
         ```
@@ -243,7 +243,7 @@ class Hashing:
         """
 
         result = self.find_duplicates(
-            image_dir=image_dir, encoding_map=encoding_map, threshold=threshold, scores=False
+            image_dir=image_dir, encoding_map=encoding_map, max_distance_threshold=max_distance_threshold, scores=False
         )
         files_to_remove = get_files_to_remove(result)
         if outfile:
