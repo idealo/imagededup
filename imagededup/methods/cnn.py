@@ -2,8 +2,6 @@ import os
 import numpy as np
 from pathlib import Path, PosixPath
 from typing import Dict, Optional, Union, List
-from keras.applications.mobilenet import MobileNet, preprocess_input
-from imagededup.utils.data_generator import DataGenerator
 from imagededup.utils.image_utils import load_image, preprocess_image
 from imagededup.utils.logger import return_logger
 from imagededup.utils.general_utils import save_json, get_files_to_remove
@@ -41,6 +39,11 @@ class CNN:
         Sets the batch size for keras generators to be 64 samples. Sets the input image size to (224, 224) for providing
         as input to MobileNet model.
         """
+        from keras.applications.mobilenet import MobileNet, preprocess_input
+        from imagededup.utils.data_generator import DataGenerator
+        self.MobileNet = MobileNet
+        self.preprocess_input = preprocess_input
+        self.DataGenerator = DataGenerator
 
         self.target_size = (224, 224)
         self.batch_size = 64
@@ -48,7 +51,8 @@ class CNN:
         self._build_model()
 
     def _build_model(self):
-        self.model = MobileNet(
+
+        self.model = self.MobileNet(
             input_shape=(224, 224, 3), include_top=False, pooling="avg"
         )
 
@@ -67,7 +71,7 @@ class CNN:
         Returns:
             Features for the image in the form of numpy array.
         """
-        image_pp = preprocess_input(image_array)
+        image_pp = self.preprocess_input(image_array)
         image_pp = np.array(image_pp)[np.newaxis, :]
         return self.model.predict(image_pp)
 
@@ -81,12 +85,11 @@ class CNN:
             A dictionary that contains a mapping of filenames and corresponding numpy array of CNN features.
         """
         self.logger.info("Start: Image feature generation")
-
-        self.data_generator = DataGenerator(
+        self.data_generator = self.DataGenerator(
             image_dir=image_dir,
             batch_size=self.batch_size,
             target_size=self.target_size,
-            basenet_preprocess=preprocess_input,
+            basenet_preprocess=self.preprocess_input,
         )
 
         feat_vec = self.model.predict_generator(
