@@ -1,4 +1,5 @@
 import numpy as np
+
 from imagededup.handlers.metrics.classification import (
     _get_unique_ordered_tuples,
     _make_all_unique_possible_pairs,
@@ -15,7 +16,7 @@ def test__get_unique_ordered_tuples():
     # test order
     for i in obtained_unique_ordered_pairs:
         assert i[0] <= i[1]
-        
+
     # test membership
     set_list = []
     for j in obtained_unique_ordered_pairs:
@@ -138,16 +139,15 @@ def test_classification_metrics(mocker):
 def test_classification_metrics_integrated():
     ground_truth = {"1": ["2", "3", "4"], "2": ["1", "3"], "3": ["1", "2"], "4": ["1"]}
     retrieved = {"1": ["2", "3"], "2": ["1"], "3": ["1"], "4": []}
-    expected_return = (
-        np.array([0.5, 1.0]),
-        np.array([1.0, 0.5]),
-        np.array([0.66666667, 0.66666667]),
-        np.array([2, 4]),
-    )
-
+    expected_return = {
+        "precision": np.array([0.5, 1.0]),
+        "recall": np.array([1.0, 0.5]),
+        "f1_score": np.array([0.66666667, 0.66666667]),
+    }
     metrics = classification_metrics(ground_truth, retrieved)
-    assert isinstance(metrics, tuple)
-    for i in metrics:
-        assert isinstance(i, np.ndarray)
-    for i in range(len(metrics)):
-        np.testing.assert_almost_equal(metrics[i], expected_return[i])
+    assert isinstance(metrics, dict)
+
+    for k, v in metrics.items():
+        assert isinstance(v, np.ndarray)
+        np.testing.assert_almost_equal(metrics[k], expected_return[k])
+

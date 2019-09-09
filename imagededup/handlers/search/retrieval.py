@@ -1,11 +1,10 @@
+import os
+from typing import Dict, Union
+from types import FunctionType
+
+from imagededup.utils.logger import return_logger
 from imagededup.handlers.search.bktree import BKTree
 from imagededup.handlers.search.brute_force import BruteForce
-from imagededup.utils.logger import return_logger
-from types import FunctionType
-from numpy.linalg import norm
-from typing import Tuple, Dict, List, Union
-import os
-import numpy as np
 
 
 class HashEval:

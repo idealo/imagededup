@@ -1,17 +1,19 @@
 import itertools
+from typing import List, Dict, Tuple
+
 import numpy as np
+
 from sklearn.metrics import (
     classification_report,
     precision_score,
     recall_score,
     precision_recall_fscore_support,
 )
-from typing import List, Dict, Tuple
 
 
 def _get_unique_ordered_tuples(unique_tuples: List[Tuple]) -> List[Tuple]:
     """Sorts each tuple given a list of tuples and retains only unique pairs regardless of order within the tuple.
-    Eg: [(2, 1), (1, 2), (3, 4)]  becomes [(1, 2), (3, 4)] or [(2, 1), (3, 4)]"""
+    Eg: [(2, 1), (1, 2), (3, 4)]  becomes [(1, 2), (3, 4)]"""
     ordered_tuples = []
 
     for i in unique_tuples:
@@ -81,4 +83,5 @@ def classification_metrics(ground_truth: Dict, retrieved: Dict) -> np.ndarray:
         all_pairs, ground_truth_duplicate_pairs, retrieved_duplicate_pairs
     )
     print(classification_report(y_true, y_pred))
-    return precision_recall_fscore_support(y_true, y_pred)
+    prec_rec_fscore = dict(zip(('precision', 'recall', 'f1_score'), precision_recall_fscore_support(y_true, y_pred)))
+    return prec_rec_fscore
