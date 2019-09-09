@@ -9,11 +9,11 @@ import pytest
 
 p = Path(__file__)
 
-PATH_GROUND_TRUTH = p.parent / "data/evaluation_files/ground_truth.pkl"
+PATH_GROUND_TRUTH = p.parent / 'data/evaluation_files/ground_truth.pkl'
 PATH_ALL_CORRECT_RETRIEVALS = (
-    p.parent / "data/evaluation_files/all_correct_retrievals.pkl"
+    p.parent / 'data/evaluation_files/all_correct_retrievals.pkl'
 )
-PATH_INCORRECT_RETRIEVALS = p.parent / "data/evaluation_files/incorrect_retrievals.pkl"
+PATH_INCORRECT_RETRIEVALS = p.parent / 'data/evaluation_files/incorrect_retrievals.pkl'
 
 
 def return_ground_all_correct_retrievals():
@@ -53,7 +53,7 @@ def initialize_fake_data_retrieved_more():
     return corr_dup, ret_dups
 
 
-@pytest.mark.parametrize("metric_function, expected_value", [(avg_prec, 0.6041666666666666), (ndcg, 0.9060254355346823),
+@pytest.mark.parametrize('metric_function, expected_value', [(avg_prec, 0.6041666666666666), (ndcg, 0.9060254355346823),
                                                         (jaccard_similarity, 0.6)])
 def test_metrics_same_number_of_retrievals(metric_function, expected_value):
     """Number of retrievals = Number of ground truth retrievals"""
@@ -62,7 +62,7 @@ def test_metrics_same_number_of_retrievals(metric_function, expected_value):
     assert avg_val == expected_value
 
 
-@pytest.mark.parametrize("metric_function, expected_value", [(avg_prec, 0.25), (ndcg, 1.0),
+@pytest.mark.parametrize('metric_function, expected_value', [(avg_prec, 0.25), (ndcg, 1.0),
                                                         (jaccard_similarity, 0.2)])
 def test_metrics_less_number_of_retrievals(metric_function, expected_value):
     """Number of retrievals < Number of ground truth retrievals"""
@@ -70,7 +70,7 @@ def test_metrics_less_number_of_retrievals(metric_function, expected_value):
     avg_val = metric_function(corr_dup, ret_dups)
     assert avg_val == expected_value
 
-@pytest.mark.parametrize("metric_function, expected_value", [(avg_prec, 0.8041666666666667), (ndcg, 0.9047172294870751),
+@pytest.mark.parametrize('metric_function, expected_value', [(avg_prec, 0.8041666666666667), (ndcg, 0.9047172294870751),
                                                         (jaccard_similarity, 0.8)])
 def test_metrics_more_number_of_retrievals(metric_function, expected_value):
     """Number of retrievals > Number of ground truth retrievals"""
@@ -87,7 +87,7 @@ def test_zero_retrieval(metric_func):
     assert av_val == 0.0
 
 
-@pytest.mark.parametrize("metric, expected_value", [('map', 0.5555555555555556), ('ndcg', 0.75),
+@pytest.mark.parametrize('metric, expected_value', [('map', 0.5555555555555556), ('ndcg', 0.75),
                                                         ('jaccard', 0.6)])
 def test_metric_is_not_1_for_incorrect(metric, expected_value):
     """Tests if correct MAP values are computed

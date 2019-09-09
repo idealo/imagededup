@@ -78,12 +78,12 @@ def jaccard_similarity(correct_duplicates: List, retrieved_duplicates: List) -> 
 
 def mean_metric(ground_truth: Dict, retrieved: Dict, metric: str = None) -> float:
     """
-
+    Get mean of specified metric.
     :param metric_func: metric function on which mean is to be calculated across all queries
     :return: float representing mean of the metric across all queries
     """
     metric = metric.lower()
-    metric_lookup = {"map": avg_prec, "ndcg": ndcg, "jaccard": jaccard_similarity}
+    metric_lookup = {'map': avg_prec, 'ndcg': ndcg, 'jaccard': jaccard_similarity}
 
     metric_func = metric_lookup[metric]
     metric_vals = []
@@ -101,8 +101,8 @@ def get_all_metrics(ground_truth: Dict, retrieved: Dict) -> Dict:
     """
 
     all_average_metrics = {
-        "map": mean_metric(ground_truth, retrieved, metric="map"),
-        "ndcg": mean_metric(ground_truth, retrieved, metric="ndcg"),
-        "jaccard": mean_metric(ground_truth, retrieved, metric="jaccard"),
+        'map': mean_metric(ground_truth, retrieved, metric='map'),
+        'ndcg': mean_metric(ground_truth, retrieved, metric='ndcg'),
+        'jaccard': mean_metric(ground_truth, retrieved, metric='jaccard'),
     }
     return all_average_metrics
