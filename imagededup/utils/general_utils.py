@@ -39,7 +39,7 @@ def save_json(results: Dict, filename: str) -> None:
         results: Dictionary of results to be saved.
         filename: Name of the file to be saved.
     """
-    logger.info("Start: Saving duplicates as json!")
-    with open(filename, "w") as f:
+    logger.info('Start: Saving duplicates as json!')
+    with open(filename, 'w') as f:
         json.dump(results, f, indent=2, sort_keys=True)
-    logger.info("End: Saving duplicates as json!")
+    logger.info('End: Saving duplicates as json!')
