@@ -67,7 +67,7 @@ class CNN:
     def __init__(self) -> None:
         """
         Initialize a keras MobileNet model that is sliced at the last convolutional layer.
-        Sets the batch size for keras generators to be 64 samples. Sets the input image size to (224, 224) for providing
+        Set the batch size for keras generators to be 64 samples. Set the input image size to (224, 224) for providing
         as input to MobileNet model.
         """
         from keras.applications.mobilenet import MobileNet, preprocess_input
@@ -87,12 +87,12 @@ class CNN:
         Build MobileNet model sliced at the last convolutional layer with global average pooling added.
         """
         self.model = self.MobileNet(
-            input_shape=(224, 224, 3), include_top=False, pooling="avg"
+            input_shape=(224, 224, 3), include_top=False, pooling='avg'
         )
 
         self.logger.info(
-            "Initialized: MobileNet pretrained on ImageNet dataset sliced at last conv layer and added "
-            "GlobalAveragePooling"
+            'Initialized: MobileNet pretrained on ImageNet dataset sliced at last conv layer and added '
+            'GlobalAveragePooling'
         )
 
     def _get_cnn_features_single(self, image_array: np.ndarray) -> np.ndarray:
@@ -118,7 +118,7 @@ class CNN:
         Returns:
             A dictionary that contains a mapping of filenames and corresponding numpy array of CNN features.
         """
-        self.logger.info("Start: Image feature generation")
+        self.logger.info('Start: Image feature generation')
         self.data_generator = self.DataGenerator(
             image_dir=image_dir,
             batch_size=self.batch_size,
@@ -129,7 +129,7 @@ class CNN:
         feat_vec = self.model.predict_generator(
             self.data_generator, len(self.data_generator), verbose=1
         )
-        self.logger.info("End: Image feature generation")
+        self.logger.info('End: Image feature generation')
 
         filenames = [i.name for i in self.data_generator.valid_image_files]
 
@@ -166,7 +166,7 @@ class CNN:
         if isinstance(image_file, PosixPath):
             if not image_file.is_file():
                 raise ValueError(
-                    "Please provide either image file path or image array!"
+                    'Please provide either image file path or image array!'
                 )
 
             image_pp = load_image(
@@ -178,7 +178,7 @@ class CNN:
                 image=image_array, target_size=self.target_size, grayscale=False
             )
         else:
-            raise ValueError("Please provide either image file path or image array!")
+            raise ValueError('Please provide either image file path or image array!')
 
         return (
             self._get_cnn_features_single(image_pp)
@@ -209,7 +209,7 @@ class CNN:
             image_dir = Path(image_dir)
 
         if not image_dir.is_dir():
-            raise ValueError("Please provide a valid directory path!")
+            raise ValueError('Please provide a valid directory path!')
 
         return self._get_cnn_features_batch(image_dir)
 
@@ -227,9 +227,9 @@ class CNN:
             ValueError: If wrong value is provided.
         """
         if not isinstance(thresh, float):
-            raise TypeError("Threshold must be a float between -1.0 and 1.0")
+            raise TypeError('Threshold must be a float between -1.0 and 1.0')
         if thresh < -1.0 or thresh > 1.0:
-            raise ValueError("Threshold must be a float between -1.0 and 1.0")
+            raise ValueError('Threshold must be a float between -1.0 and 1.0')
 
     def _find_duplicates_dict(
         self,
@@ -262,7 +262,7 @@ class CNN:
         # put image encodings into feature matrix
         features = np.array([*encoding_map.values()])
 
-        self.logger.info("Start: Calculating cosine similarities...")
+        self.logger.info('Start: Calculating cosine similarities...')
 
         self.cosine_scores = cosine_similarity(features)
 
@@ -270,7 +270,7 @@ class CNN:
             self.cosine_scores, 2.0
         )  # allows to filter diagonal in results, 2 is a placeholder value
 
-        self.logger.info("End: Calculating cosine similarities.")
+        self.logger.info('End: Calculating cosine similarities.')
 
         self.results = {}
         for i, j in enumerate(self.cosine_scores):
@@ -332,8 +332,8 @@ class CNN:
         outfile: Optional[str] = None,
     ) -> Dict:
         """
-        Find duplicates for each file. Takes in path of the directory or encoding dictionary in which duplicates are to
-        be detected above the given threshold. Returns dictionary containing key as filename and value as a list of
+        Find duplicates for each file. Take in path of the directory or encoding dictionary in which duplicates are to
+        be detected above the given threshold. Return dictionary containing key as filename and value as a list of
         duplicate file names. Optionally, the cosine distances could be returned instead of just duplicate filenames for
         each query file.
 
@@ -384,7 +384,7 @@ class CNN:
             )
 
         else:
-            raise ValueError("Provide either an image directory or encodings!")
+            raise ValueError('Provide either an image directory or encodings!')
 
         return result
 

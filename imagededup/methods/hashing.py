@@ -55,7 +55,7 @@ class Hashing:
         Returns:
             An hexadecimal hash string.
         """
-        return "".join("%0.2x" % x for x in np.packbits(hash_mat))
+        return ''.join('%0.2x' % x for x in np.packbits(hash_mat))
 
     def encode_image(
         self, image_file=None, image_array: Optional[np.ndarray] = None
@@ -93,7 +93,7 @@ class Hashing:
             else:
                 raise ValueError
         except (ValueError, TypeError):
-            raise ValueError("Please provide either image file path or image array!")
+            raise ValueError('Please provide either image file path or image array!')
 
         return self._hash_func(image_pp) if isinstance(image_pp, np.ndarray) else None
 
@@ -117,7 +117,7 @@ class Hashing:
         ```
         """
         if not os.path.isdir(image_dir):
-            raise ValueError("Please provide a valid directory path!")
+            raise ValueError('Please provide a valid directory path!')
 
         image_dir = Path(image_dir)
 
@@ -126,14 +126,14 @@ class Hashing:
         ]  # ignore hidden files
 
         hash_dict = dict()
-        self.logger.info(f"Start: Calculating hashes...")
+        self.logger.info(f'Start: Calculating hashes...')
         for _file in files:
             encoding = self.encode_image(_file)
 
             if encoding:
                 hash_dict[_file.name] = encoding
 
-        self.logger.info(f"End: Calculating hashes!")
+        self.logger.info(f'End: Calculating hashes!')
         return hash_dict
 
     def _hash_algo(self, image_array: np.ndarray):
@@ -156,12 +156,12 @@ class Hashing:
 
         Raises:
             TypeError: If wrong variable type is provided.
-            ValueError: If wrong value is provided.
+            ValueError: If invalid value is provided.
         """
         if not isinstance(thresh, int):
-            raise TypeError("Threshold must be an int between 0 and 64")
+            raise TypeError('Threshold must be an int between 0 and 64')
         elif thresh < 0 or thresh > 64:
-            raise ValueError("Threshold must be an int between 0 and 64")
+            raise ValueError('Threshold must be an int between 0 and 64')
         else:
             return None
 
@@ -189,16 +189,16 @@ class Hashing:
             if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
             'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
         """
-        self.logger.info("Start: Evaluating hamming distances for getting duplicates")
+        self.logger.info('Start: Evaluating hamming distances for getting duplicates')
 
         result_set = HashEval(
             test=encoding_map,
             queries=encoding_map,
             hammer=self.hamming_distance,
             cutoff=max_distance_threshold,
-            search_method="bktree",
+            search_method='bktree',
         )
-        self.logger.info("End: Evaluating hamming distances for getting duplicates")
+        self.logger.info('End: Evaluating hamming distances for getting duplicates')
         self.results = result_set.retrieve_results(scores=scores)
         if outfile:
             save_json(self.results, outfile)
@@ -351,7 +351,7 @@ class Hashing:
 
 class PHash(Hashing):
     """
-    Find duplicates using perceptual hashing algorithm and/or generates perceptual hashes given a single image or a
+    Find duplicates using perceptual hashing algorithm and/or generate perceptual hashes given a single image or a
     directory of images. The module can be used for 2 purposes: Feature generation and duplicate detection.
 
     Feature generation:
@@ -653,7 +653,7 @@ class WHash(Hashing):
     def __init__(self) -> None:
         super().__init__()
         self.target_size = (256, 256)
-        self.__wavelet_func = "haar"
+        self.__wavelet_func = 'haar'
 
     def _hash_algo(self, image_array):
         """

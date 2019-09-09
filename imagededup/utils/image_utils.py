@@ -12,7 +12,7 @@ Todo: Parallelize files validation/ hash generation
 """
 
 
-IMG_FORMATS = ["JPEG", "PNG", "BMP"]
+IMG_FORMATS = ['JPEG', 'PNG', 'BMP']
 logger = return_logger(__name__, os.getcwd())
 
 
@@ -38,15 +38,15 @@ def preprocess_image(
     elif isinstance(image, Image.Image):
         image_pil = image
     else:
-        raise ValueError("Input is expected to be a numpy array or a pillow object!")
+        raise ValueError('Input is expected to be a numpy array or a pillow object!')
 
     if target_size:
         image_pil = image_pil.resize(target_size, Image.ANTIALIAS)
 
     if grayscale:
-        image_pil = image_pil.convert("L")
+        image_pil = image_pil.convert('L')
 
-    return np.array(image_pil).astype("uint8")
+    return np.array(image_pil).astype('uint8')
 
 
 def load_image(
@@ -70,19 +70,19 @@ def load_image(
 
         # validate image format
         if img.format not in img_formats:
-            logger.warning(f"Invalid image format {img.format}!")
+            logger.warning(f'Invalid image format {img.format}!')
             return None
 
         else:
-            if img.mode != "RGB":
+            if img.mode != 'RGB':
                 # convert to RGBA first to avoid warning
                 # we ignore alpha channel if available
-                img = img.convert("RGBA").convert("RGB")
+                img = img.convert('RGBA').convert('RGB')
 
             img = preprocess_image(img, target_size=target_size, grayscale=grayscale)
 
             return img
 
     except Exception as e:
-        logger.warning(f"Invalid image file {image_file}:\n{e}")
+        logger.warning(f'Invalid image file {image_file}:\n{e}')
         return None
