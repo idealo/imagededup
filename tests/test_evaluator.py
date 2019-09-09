@@ -1,33 +1,94 @@
-from imagededup.evaluation.evaluation import Evaluate
-from pathlib import Path
+from imagededup.evaluation.evaluation import evaluate, _check_map_completeness
 import pickle
+import pytest
+from pathlib import Path
 
-QUERY_PATH = Path('/Users/tanuj.jain/Documents/dedup-data/Transformed_dataset/Query')
-TEST_PATH = Path('/Users/tanuj.jain/Documents/dedup-data/Transformed_dataset/Retrieval')
-GOLD_PATH = Path('/Users/tanuj.jain/Documents/dedup-data/Transformed_dataset/ground_truth_transformed.pkl')
-with open(GOLD_PATH, 'rb') as f:
-    ground_truth = pickle.load(f)
+p = Path(__file__)
 
-def initializer():
-
-    pass
-
-def test_correct_initialization():
-    myEval = Evaluate(query_dir_dict=QUERY_PATH, test_dir_dict=TEST_PATH, ground_truth_dict=ground_truth,
-                      method='hashing', method_args=hash_method_args, save_filename=None)
-    pass
+PATH_GROUND_TRUTH = p.parent / 'data/evaluation_files/ground_truth.pkl'
+PATH_ALL_CORRECT_RETRIEVALS = (
+    p.parent / 'data/evaluation_files/all_correct_retrievals.pkl'
+)
+PATH_INCORRECT_RETRIEVALS = p.parent / 'data/evaluation_files/incorrect_retrievals.pkl'
 
 
-def test_incorrect_initialization_method_throws_valueerror():
-    pass
+def load_pickle(filename):
+    with open(filename, 'rb') as f:
+        dict_loaded = pickle.load(f)
+    return dict_loaded
 
 
-def test__get_features_throws_valueerror():
-    pass
+def return_ground_all_correct_retrievals():
+    return load_pickle(PATH_GROUND_TRUTH), load_pickle(PATH_ALL_CORRECT_RETRIEVALS)
 
 
-def test__show_metrics_args():
-    pass
+def return_ground_incorrect_retrievals():
+    return load_pickle(PATH_GROUND_TRUTH), load_pickle(PATH_INCORRECT_RETRIEVALS)
 
-def test_
 
+def test__align_maps_different_keys():
+    ground_truth_map = load_pickle(PATH_GROUND_TRUTH)
+    red_retrieve_map = {'ukbench09060.jpg': ground_truth_map['ukbench09060.jpg']}
+    with pytest.raises(Exception):
+        _check_map_completeness(ground_truth_map, red_retrieve_map)
+
+
+def test_default_returns_all_metrics(mocker):
+    ground_truth_map, retrieve_map = return_ground_all_correct_retrievals()
+    get_all_metrics_mocker = mocker.patch(
+        'imagededup.evaluation.evaluation.get_all_metrics'
+    )
+    evaluate(ground_truth_map, retrieve_map)
+    get_all_metrics_mocker.assert_called_once_with(ground_truth_map, retrieve_map)
+
+
+def test_wrong_metric_raises_valueerror():
+    ground_truth_map, retrieve_map = return_ground_all_correct_retrievals()
+    with pytest.raises(ValueError):
+        evaluate(ground_truth_map, retrieve_map, metric='bla')
+
+
+@pytest.mark.parametrize('metric_name', ['map', 'ndcg', 'jaccard'])
+def test_correct_call_to_mean_metric(mocker, metric_name):
+    ground_truth_map, retrieve_map = return_ground_all_correct_retrievals()
+    mean_metric_mocker = mocker.patch('imagededup.evaluation.evaluation.mean_metric')
+    evaluate(ground_truth_map, retrieve_map, metric=metric_name)
+    mean_metric_mocker.assert_called_once_with(
+        ground_truth_map, retrieve_map, metric=metric_name
+    )
+
+
+@pytest.mark.parametrize('metric_name', ['MAP', 'Ndcg', 'JacCard'])
+def test_correct_call_to_mean_metric_mixed_cases(mocker, metric_name):
+    ground_truth_map, retrieve_map = return_ground_all_correct_retrievals()
+    mean_metric_mocker = mocker.patch('imagededup.evaluation.evaluation.mean_metric')
+    evaluate(ground_truth_map, retrieve_map, metric=metric_name)
+    mean_metric_mocker.assert_called_once_with(
+        ground_truth_map, retrieve_map, metric=metric_name.lower()
+    )
+
+
+# Integration tests
+
+
+@pytest.mark.parametrize(
+    'metric, expected_value',
+    [('map', 0.5555555555555556), ('ndcg', 0.75), ('jaccard', 0.6)],
+)
+def test_correct_values(metric, expected_value):
+    """Tests if correct MAP values are computed
+    Load ground truth and dict for incorrect map prediction to have a Map less than 1.0"""
+    ground_truth, retrieved = return_ground_incorrect_retrievals()
+    score = evaluate(ground_truth, retrieved, metric=metric)
+    assert isinstance(score, dict)
+    assert list(score.keys())[0] == metric
+    assert score[metric] == expected_value
+
+
+def test_correct_values_all():
+    ground_truth, retrieved = return_ground_incorrect_retrievals()
+    score = evaluate(ground_truth, retrieved)
+    assert isinstance(score, dict)
+    assert set(score.keys()) == set({'map', 'ndcg', 'jaccard'})
+    for v in score.values():
+        assert v is not None
