@@ -9,10 +9,10 @@ from imagededup.utils.image_utils import load_image
 
 
 p = Path(__file__)
-TEST_IMAGE = p.parent / "data" / "base_images" / "ukbench00120.jpg"
-TEST_IMAGE_DIR = p.parent / "data" / "base_images"
-TEST_IMAGE_FORMATS_DIR = p.parent / "data" / "formats_images"
-TEST_IMAGE_DIR_MIXED = p.parent / "data" / "mixed_images"
+TEST_IMAGE = p.parent / 'data' / 'base_images' / 'ukbench00120.jpg'
+TEST_IMAGE_DIR = p.parent / 'data' / 'base_images'
+TEST_IMAGE_FORMATS_DIR = p.parent / 'data' / 'formats_images'
+TEST_IMAGE_DIR_MIXED = p.parent / 'data' / 'mixed_images'
 
 TEST_BATCH_SIZE = 64
 TEST_TARGET_SIZE = (224, 224)
@@ -20,13 +20,13 @@ TEST_TARGET_SIZE = (224, 224)
 
 def data_encoding_map():
     return {
-        "ukbench00002.jpg": np.array([1, 0, 0, 1]),
-        "ukbench00003.jpg": np.array([1, 1, 0, 1]),
-        "ukbench00002_dup.jpg": np.array([1, 0, 0, 1]),
+        'ukbench00002.jpg': np.array([1, 0, 0, 1]),
+        'ukbench00003.jpg': np.array([1, 1, 0, 1]),
+        'ukbench00002_dup.jpg': np.array([1, 0, 0, 1]),
     }
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope='module')
 def cnn():
     return CNN()
 
@@ -56,16 +56,16 @@ def test__get_cnn_features_batch(cnn):
     result = cnn._get_cnn_features_batch(TEST_IMAGE_DIR)
 
     expected_predicted_files = [
-        "ukbench00120.jpg",
-        "ukbench01380.jpg",
-        "ukbench08976.jpg",
-        "ukbench08996.jpg",
-        "ukbench09012.jpg",
-        "ukbench09040.jpg",
-        "ukbench09060.jpg",
-        "ukbench09268.jpg",
-        "ukbench09348.jpg",
-        "ukbench09380.jpg",
+        'ukbench00120.jpg',
+        'ukbench01380.jpg',
+        'ukbench08976.jpg',
+        'ukbench08996.jpg',
+        'ukbench09012.jpg',
+        'ukbench09040.jpg',
+        'ukbench09060.jpg',
+        'ukbench09268.jpg',
+        'ukbench09348.jpg',
+        'ukbench09380.jpg',
     ]
 
     assert list(result.keys()) == expected_predicted_files
@@ -77,10 +77,10 @@ def test__get_cnn_features_batch(cnn):
     result = cnn._get_cnn_features_batch(TEST_IMAGE_FORMATS_DIR)
 
     expected_predicted_files = [
-        "ukbench09380.bmp",
-        "ukbench09380.jpeg",
-        "ukbench09380.png",
-        "ukbench09380.svg",
+        'ukbench09380.bmp',
+        'ukbench09380.jpeg',
+        'ukbench09380.png',
+        'ukbench09380.svg',
     ]
 
     assert list(result.keys()) == expected_predicted_files
@@ -113,16 +113,16 @@ def test_encode_images(cnn):
     result = cnn.encode_images(TEST_IMAGE_DIR)
 
     expected_predicted_files = [
-        "ukbench00120.jpg",
-        "ukbench01380.jpg",
-        "ukbench08976.jpg",
-        "ukbench08996.jpg",
-        "ukbench09012.jpg",
-        "ukbench09040.jpg",
-        "ukbench09060.jpg",
-        "ukbench09268.jpg",
-        "ukbench09348.jpg",
-        "ukbench09380.jpg",
+        'ukbench00120.jpg',
+        'ukbench01380.jpg',
+        'ukbench08976.jpg',
+        'ukbench08996.jpg',
+        'ukbench09012.jpg',
+        'ukbench09040.jpg',
+        'ukbench09060.jpg',
+        'ukbench09268.jpg',
+        'ukbench09348.jpg',
+        'ukbench09380.jpg',
     ]
 
     assert list(result.keys()) == expected_predicted_files
@@ -134,10 +134,10 @@ def test_encode_images(cnn):
     result = cnn.encode_images(TEST_IMAGE_FORMATS_DIR)
 
     expected_predicted_files = [
-        "ukbench09380.bmp",
-        "ukbench09380.jpeg",
-        "ukbench09380.png",
-        "ukbench09380.svg",
+        'ukbench09380.bmp',
+        'ukbench09380.jpeg',
+        'ukbench09380.png',
+        'ukbench09380.svg',
     ]
 
     assert list(result.keys()) == expected_predicted_files
@@ -149,10 +149,10 @@ def test_encode_images(cnn):
     result = cnn.encode_images(str(TEST_IMAGE_FORMATS_DIR))
 
     expected_predicted_files = [
-        "ukbench09380.bmp",
-        "ukbench09380.jpeg",
-        "ukbench09380.png",
-        "ukbench09380.svg",
+        'ukbench09380.bmp',
+        'ukbench09380.jpeg',
+        'ukbench09380.png',
+        'ukbench09380.svg',
     ]
 
     assert list(result.keys()) == expected_predicted_files
@@ -181,10 +181,10 @@ def test__find_duplicates_dict_scores_false(cnn):
     dict_ret = cnn._find_duplicates_dict(
         encoding_map, min_similarity_threshold=0.9, scores=False
     )
-    assert isinstance(dict_ret["ukbench00002.jpg"], list)
-    assert len(dict_ret["ukbench00002.jpg"]) == 1
-    assert not isinstance(dict_ret["ukbench00002.jpg"][0], tuple)
-    assert dict_ret["ukbench00002.jpg"][0] == "ukbench00002_dup.jpg"
+    assert isinstance(dict_ret['ukbench00002.jpg'], list)
+    assert len(dict_ret['ukbench00002.jpg']) == 1
+    assert not isinstance(dict_ret['ukbench00002.jpg'][0], tuple)
+    assert dict_ret['ukbench00002.jpg'][0] == 'ukbench00002_dup.jpg'
 
 
 def test__find_duplicates_dict_scores_true(cnn, mocker_save_json):
@@ -194,12 +194,12 @@ def test__find_duplicates_dict_scores_true(cnn, mocker_save_json):
         encoding_map, min_similarity_threshold=0.9, scores=True
     )
 
-    assert isinstance(dict_ret["ukbench00002.jpg"], list)
-    assert len(dict_ret["ukbench00002.jpg"]) == 1
-    assert isinstance(dict_ret["ukbench00002.jpg"][0], tuple)
-    assert dict_ret["ukbench00002.jpg"][0][0] == "ukbench00002_dup.jpg"
-    assert isinstance(dict_ret["ukbench00002.jpg"][0][1], float)
-    np.testing.assert_almost_equal(dict_ret["ukbench00002.jpg"][0][1], 1.0)
+    assert isinstance(dict_ret['ukbench00002.jpg'], list)
+    assert len(dict_ret['ukbench00002.jpg']) == 1
+    assert isinstance(dict_ret['ukbench00002.jpg'][0], tuple)
+    assert dict_ret['ukbench00002.jpg'][0][0] == 'ukbench00002_dup.jpg'
+    assert isinstance(dict_ret['ukbench00002.jpg'][0][1], float)
+    np.testing.assert_almost_equal(dict_ret['ukbench00002.jpg'][0][1], 1.0)
     mocker_save_json.assert_not_called()
 
 
@@ -226,8 +226,8 @@ def test__find_duplicates_dir(cnn, mocker):
     scores = True
     outfile = True
     ret_val_find_dup_dict = {
-        "filename1.jpg": [("dup1.jpg", 0.82)],
-        "filename2.jpg": [("dup2.jpg", 0.90)],
+        'filename1.jpg': [('dup1.jpg', 0.82)],
+        'filename2.jpg': [('dup2.jpg', 0.90)],
     }
     encode_images_mocker = mocker.patch("imagededup.methods.cnn.CNN.encode_images")
     cnn.encoding_map = encoding_map
@@ -313,8 +313,8 @@ def test_find_duplicates_to_remove_outfile_false(cnn, mocker, mocker_save_json):
     threshold = 0.9
     outfile = False
     ret_val_find_dup_dict = {
-        "filename.jpg": [("dup1.jpg", 3)],
-        "filename2.jpg": [("dup2.jpg", 10)],
+        'filename.jpg': [('dup1.jpg', 3)],
+        'filename2.jpg': [('dup2.jpg', 10)],
     }
     find_duplicates_mocker = mocker.patch(
         "imagededup.methods.cnn.CNN.find_duplicates", return_value=ret_val_find_dup_dict
@@ -339,10 +339,10 @@ def test_find_duplicates_to_remove_outfile_true(cnn, mocker, mocker_save_json):
     threshold = 0.9
     outfile = True
     ret_val_find_dup_dict = {
-        "filename.jpg": ["dup1.jpg"],
-        "filename2.jpg": ["dup2.jpg"],
+        'filename.jpg': ['dup1.jpg'],
+        'filename2.jpg': ['dup2.jpg'],
     }
-    ret_val_get_files_to_remove = ["1.jpg", "2.jpg"]
+    ret_val_get_files_to_remove = ['1.jpg', '2.jpg']
 
     find_duplicates_mocker = mocker.patch(
         "imagededup.methods.cnn.CNN.find_duplicates", return_value=ret_val_find_dup_dict
@@ -368,10 +368,10 @@ def test_find_duplicates_to_remove_encoding_map(cnn, mocker, mocker_save_json):
     threshold = 0.9
     outfile = True
     ret_val_find_dup_dict = {
-        "filename.jpg": ["dup1.jpg"],
-        "filename2.jpg": ["dup2.jpg"],
+        'filename.jpg': ['dup1.jpg'],
+        'filename2.jpg': ['dup2.jpg'],
     }
-    ret_val_get_files_to_remove = ["1.jpg", "2.jpg"]
+    ret_val_get_files_to_remove = ['1.jpg', '2.jpg']
     encoding_map = data_encoding_map()
     find_duplicates_mocker = mocker.patch(
         "imagededup.methods.cnn.CNN.find_duplicates", return_value=ret_val_find_dup_dict
@@ -399,20 +399,20 @@ def test_find_duplicates_to_remove_encoding_map(cnn, mocker, mocker_save_json):
 # test find_duplicates with directory path
 def test_find_duplicates_dir_integration(cnn):
     expected_duplicates = {
-        "ukbench00120.jpg": [
-            ("ukbench00120_hflip.jpg", 0.9672552),
-            ("ukbench00120_resize.jpg", 0.98120844),
+        'ukbench00120.jpg': [
+            ('ukbench00120_hflip.jpg', 0.9672552),
+            ('ukbench00120_resize.jpg', 0.98120844),
         ],
-        "ukbench00120_hflip.jpg": [
-            ("ukbench00120.jpg", 0.9672552),
-            ("ukbench00120_resize.jpg", 0.95676106),
+        'ukbench00120_hflip.jpg': [
+            ('ukbench00120.jpg', 0.9672552),
+            ('ukbench00120_resize.jpg', 0.95676106),
         ],
         "ukbench00120_resize.jpg": [
-            ("ukbench00120.jpg", 0.98120844),
-            ("ukbench00120_hflip.jpg", 0.95676106),
+            ('ukbench00120.jpg', 0.98120844),
+            ('ukbench00120_hflip.jpg', 0.95676106),
         ],
-        "ukbench00120_rotation.jpg": [],
-        "ukbench09268.jpg": [],
+        'ukbench00120_rotation.jpg': [],
+        'ukbench09268.jpg': [],
     }
     duplicates = cnn.find_duplicates(
         image_dir=TEST_IMAGE_DIR_MIXED,
@@ -421,7 +421,7 @@ def test_find_duplicates_dir_integration(cnn):
         outfile=False,
     )
     # verify variable type
-    assert isinstance(duplicates["ukbench00120.jpg"][0][1], np.float32)
+    assert isinstance(duplicates['ukbench00120.jpg'][0][1], np.float32)
 
     # verify that all files have been considered for deduplication
     assert len(duplicates) == len(expected_duplicates)
@@ -438,20 +438,20 @@ def test_find_duplicates_dir_integration(cnn):
 # test find_duplicates with encoding map
 def test_find_duplicates_encoding_integration(cnn):
     expected_duplicates = {
-        "ukbench00120.jpg": [
-            ("ukbench00120_hflip.jpg", 0.9672552),
-            ("ukbench00120_resize.jpg", 0.98120844),
+        'ukbench00120.jpg': [
+            ('ukbench00120_hflip.jpg', 0.9672552),
+            ('ukbench00120_resize.jpg', 0.98120844),
         ],
-        "ukbench00120_hflip.jpg": [
-            ("ukbench00120.jpg", 0.9672552),
-            ("ukbench00120_resize.jpg", 0.95676106),
+        'ukbench00120_hflip.jpg': [
+            ('ukbench00120.jpg', 0.9672552),
+            ('ukbench00120_resize.jpg', 0.95676106),
         ],
-        "ukbench00120_resize.jpg": [
-            ("ukbench00120.jpg", 0.98120844),
-            ("ukbench00120_hflip.jpg", 0.95676106),
+        'ukbench00120_resize.jpg': [
+            ('ukbench00120.jpg', 0.98120844),
+            ('ukbench00120_hflip.jpg', 0.95676106),
         ],
-        "ukbench00120_rotation.jpg": [],
-        "ukbench09268.jpg": [],
+        'ukbench00120_rotation.jpg': [],
+        'ukbench09268.jpg': [],
     }
 
     encodings = cnn.encode_images(TEST_IMAGE_DIR_MIXED)
@@ -479,7 +479,7 @@ def test_find_duplicates_to_remove_dir_integration(cnn):
         image_dir=TEST_IMAGE_DIR_MIXED, min_similarity_threshold=0.9, outfile=False
     )
     assert set(duplicates_list) == set(
-        ["ukbench00120_resize.jpg", "ukbench00120_hflip.jpg"]
+        ['ukbench00120_resize.jpg', 'ukbench00120_hflip.jpg']
     )
 
 
@@ -490,5 +490,5 @@ def test_find_duplicates_to_remove_encoding_integration(cnn):
         encoding_map=encodings, min_similarity_threshold=0.9, outfile=False
     )
     assert set(duplicates_list) == set(
-        ["ukbench00120_resize.jpg", "ukbench00120_hflip.jpg"]
+        ['ukbench00120_resize.jpg', 'ukbench00120_hflip.jpg']
     )
