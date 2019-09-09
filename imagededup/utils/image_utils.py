@@ -3,101 +3,82 @@ import os
 import numpy as np
 from PIL import Image
 from pathlib import PosixPath
-from typing import List
-
+from typing import List, Union, Tuple
 
 """
-? Allow acceptance of os.path in addition to already existing Path and numpy image array
 Todo: Parallelize files validation/ hash generation
 """
 
 
-IMG_FORMATS = ['JPEG', 'PNG', 'BMP']
+IMG_FORMATS = ["JPEG", "PNG", "BMP"]
 logger = return_logger(__name__, os.getcwd())
 
 
-def preprocess_image(image, target_size=None, grayscale: bool = False):
+def preprocess_image(image, target_size: Tuple[int, int] = None, grayscale: bool = False) -> np.ndarray:
+    """
+    Takes as input an image as numpy array or Pillow format. Returns an array version of optionally resized and grayed
+    image.
+
+    Args:
+        image: numpy array or a pillow image.
+        target_size: Size to resize the input image to.
+        grayscale: A boolean indicating whether to grayscale the image.
+
+    Returns:
+        A numpy array of the processed image.
+    """
     if isinstance(image, np.ndarray):
-        image = image.astype('uint8')
+        image = image.astype("uint8")
         image_pil = Image.fromarray(image)
 
     elif isinstance(image, Image.Image):
         image_pil = image
     else:
-        raise ValueError('Input is expected to be a numpy array or a pillow object!')
+        raise ValueError("Input is expected to be a numpy array or a pillow object!")
 
-    # if target_size: removing if condition since the function never gets called without target_size
-    image_pil = image_pil.resize(target_size, Image.ANTIALIAS)
+    if target_size:
+        image_pil = image_pil.resize(target_size, Image.ANTIALIAS)
 
     if grayscale:
-        image_pil = image_pil.convert('L')
+        image_pil = image_pil.convert("L")
 
-    return np.array(image_pil).astype('uint8')
+    return np.array(image_pil).astype("uint8")
 
 
 def load_image(
-    image_file: PosixPath,
-    target_size=None,
+    image_file: Union[PosixPath, str],
+    target_size: Tuple[int, int] = None,
     grayscale: bool = False,
     img_formats: List[str] = IMG_FORMATS,
-) -> Image:
+) -> np.ndarray:
+    """
+    Loads an image given its path. Returns an array version of optionally resized and grayed image. Only allows images
+    of types described by img_formats argument.
+
+    Args:
+        image_file: Path to the image file.
+        target_size: Size to resize the input image to.
+        grayscale: A boolean indicating whether to grayscale the image.
+        img_formats: List of allowed image formats that can be loaded.
+    """
     try:
         img = Image.open(image_file)
 
         # validate image format
         if img.format not in img_formats:
-            logger.warning(f'Invalid image format {img.format}!')
+            logger.warning(f"Invalid image format {img.format}!")
             return None
 
         else:
-            if img.mode != 'RGB':
+            if img.mode != "RGB":
                 # convert to RGBA first to avoid warning
                 # we ignore alpha channel if available
-                img = img.convert('RGBA').convert('RGB')
+                img = img.convert("RGBA").convert("RGB")
 
             img = preprocess_image(img, target_size=target_size, grayscale=grayscale)
 
             return img
 
     except Exception as e:
-        logger.warning(f'Invalid image file {image_file}:\n{e}')
+        logger.warning(f"Invalid image file {image_file}:\n{e}")
         return None
-
-
-# def _image_preprocess(pillow_image: Image, resize_dims: Tuple[int, int], for_hashing: bool = True) -> np.ndarray:
-#     """
-#     Resizes and typecasts a pillow image to numpy array.
-#
-#     :param pillow_image: A Pillow type image to be processed.
-#     :return: A numpy array of processed image.
-#     """
-#     if for_hashing:
-#         im_res = pillow_image.resize(resize_dims, Image.ANTIALIAS)
-#         im_res = im_res.convert('L')  # convert to grayscale (i.e., single channel)
-#     else:
-#         im_res = pillow_image.resize(resize_dims)
-#
-#     im_arr = np.array(im_res)
-#     return im_arr
-#
-#
-# def convert_to_array(path_image, resize_dims: Tuple[int, int], for_hashing: bool = True) -> np.ndarray:
-#     """
-#     Accepts either path of an image or a numpy array and processes it to feed it to CNN or hashing methods.
-#
-#     :param path_image: PosixPath to the image file or Image typecast to numpy array.
-#     :param resize_dims: Dimensions for resizing the image
-#     :param for_hashing: Boolean flag to determine whether the function is being run for hashing or CNN based approach
-#     :return: A processed image as numpy array
-#     """
-#
-#     if isinstance(path_image, PosixPath):
-#         # _validate_single_image(path_image)
-#         im = load_image(image_file=path_image)
-#     elif isinstance(path_image, np.ndarray):
-#         im = path_image.astype('uint8')  # fromarray can't take float32/64
-#         im = Image.fromarray(im)
-#     else:
-#         raise TypeError('Check Input Format! Input should be either a Path Variable or a numpy array!')
-#     im_arr = _image_preprocess(im, resize_dims, for_hashing)
-#     return im_arr
