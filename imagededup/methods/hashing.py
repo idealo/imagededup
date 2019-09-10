@@ -122,7 +122,7 @@ class Hashing:
         image_dir = Path(image_dir)
 
         files = [
-            i.absolute() for i in image_dir.glob("*") if not i.name.startswith(".")
+            i.absolute() for i in image_dir.glob('*') if not i.name.startswith('.')
         ]  # ignore hidden files
 
         hash_dict = dict()
@@ -195,7 +195,7 @@ class Hashing:
             test=encoding_map,
             queries=encoding_map,
             distance_function=self.hamming_distance,
-            threshold=threshold,
+            threshold=max_distance_threshold,
             search_method='bktree')
         self.logger.info('End: Evaluating hamming distances for getting duplicates')
         self.results = result_set.retrieve_results(scores=scores)
@@ -296,7 +296,7 @@ class Hashing:
                 outfile=outfile,
             )
         else:
-            raise ValueError("Provide either an image directory or encodings!")
+            raise ValueError('Provide either an image directory or encodings!')
         return result
 
     def find_duplicates_to_remove(
