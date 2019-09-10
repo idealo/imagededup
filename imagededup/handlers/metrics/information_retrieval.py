@@ -1,13 +1,18 @@
-import numpy as np
 from typing import List, Dict
+
+import numpy as np
 
 
 def avg_prec(correct_duplicates: List, retrieved_duplicates: List) -> float:
     """
     Get average precision(AP) for a single query given correct and retrieved file names.
-    :param correct_duplicates: List of correct duplicates i.e., ground truth)
-    :param retrieved_duplicates: List of retrieved duplicates for one single query
-    :return: Average precision for this query.
+
+    Args:
+        correct_duplicates: List of correct duplicates i.e., ground truth)
+        retrieved_duplicates: List of retrieved duplicates for one single query
+
+    Returns:
+        Average precision for this query.
     """
     if not len(retrieved_duplicates):
         return 0.0
@@ -25,9 +30,13 @@ def avg_prec(correct_duplicates: List, retrieved_duplicates: List) -> float:
 def ndcg(correct_duplicates: List, retrieved_duplicates: List) -> float:
     """
     Get Normalized discounted cumulative gain(NDCG) for a single query given correct and retrieved file names.
-    :param correct_duplicates: List of correct duplicates i.e., ground truth)
-    :param retrieved_duplicates: List of retrieved duplicates for one single query
-    :return: NDCG for this query.
+
+    Args:
+        correct_duplicates: List of correct duplicates i.e., ground truth)
+        retrieved_duplicates: List of retrieved duplicates for one single query
+
+    Returns:
+        NDCG for this query.
     """
     if not len(retrieved_duplicates):
         return 0.0
@@ -60,9 +69,13 @@ def ndcg(correct_duplicates: List, retrieved_duplicates: List) -> float:
 def jaccard_similarity(correct_duplicates: List, retrieved_duplicates: List) -> float:
     """
     Get jaccard similarity for a single query given correct and retrieved file names.
-    :param correct_duplicates: List of correct duplicates i.e., ground truth)
-    :param retrieved_duplicates: List of retrieved duplicates for one single query
-    :return: Jaccard similarity for this query.
+
+    Args:
+        correct_duplicates: List of correct duplicates i.e., ground truth)
+        retrieved_duplicates: List of retrieved duplicates for one single query
+
+    Returns:
+        Jaccard similarity for this query.
     """
     if not len(retrieved_duplicates):
         return 0.0
@@ -79,8 +92,12 @@ def jaccard_similarity(correct_duplicates: List, retrieved_duplicates: List) -> 
 def mean_metric(ground_truth: Dict, retrieved: Dict, metric: str = None) -> float:
     """
     Get mean of specified metric.
-    :param metric_func: metric function on which mean is to be calculated across all queries
-    :return: float representing mean of the metric across all queries
+
+    Args:
+        metric_func: metric function on which mean is to be calculated across all queries
+
+    Returns:
+        float representing mean of the metric across all queries
     """
     metric = metric.lower()
     metric_lookup = {'map': avg_prec, 'ndcg': ndcg, 'jaccard': jaccard_similarity}
@@ -95,9 +112,16 @@ def mean_metric(ground_truth: Dict, retrieved: Dict, metric: str = None) -> floa
 
 def get_all_metrics(ground_truth: Dict, retrieved: Dict) -> Dict:
     """
+    Get mean of all information retrieval metrics across all queries.
 
-    :param outfile: name of the metrics file to be saved if save is True
-    :return: dictionary of all mean metrics
+    Args:
+        ground_truth: A dictionary representing ground truth with filenames as key and a list of duplicate filenames
+        as value.
+        retrieved: A dictionary representing retrieved duplicates with filenames as key and a list of retrieved
+        duplicate filenames as value.
+
+    Returns:
+        Dictionary of all mean metrics.
     """
 
     all_average_metrics = {
