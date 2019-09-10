@@ -1,6 +1,7 @@
-from imagededup.retrieve import BruteForce
-from imagededup.hashing import Hashing
 from collections import OrderedDict
+
+from imagededup.handlers.search.brute_force import BruteForce
+from imagededup.methods.hashing import Hashing
 
 
 def initialize():
@@ -14,7 +15,7 @@ def test_search_correctness():
     bf = BruteForce(hash_dict, dist_func)
     query = '5'
     valid_retrievals = bf.search(query, tol=2)
-    assert set(valid_retrievals.keys()) == set(['a', 'f', 'g', 'd', 'b'])
+    assert set([i[0] for i in valid_retrievals]) == set(['a', 'f', 'g', 'd', 'b'])
 
 
 def test_tolerance_value_effect():
@@ -23,4 +24,4 @@ def test_tolerance_value_effect():
     query = '5'
     valid_retrievals_2 = bf.search(query, tol=2)
     valid_retrievals_3 = bf.search(query, tol=3)
-    assert set(valid_retrievals_2.keys()) != set(valid_retrievals_3.keys())
+    assert set([i[0] for i in valid_retrievals_2]) != set([i[0] for i in valid_retrievals_3])

@@ -8,10 +8,12 @@ class BruteForce:
     """
     def __init__(self, hash_dict: Dict, distance_function: FunctionType) -> None:
         """
-        Initialises a dictionary for mapping file names and corresponding hashes anda  distance function to be used for
+        Initialize a dictionary for mapping file names and corresponding hashes anda  distance function to be used for
         getting distance between two hash strings.
-        :param hash_dict: Dictionary mapping file names to corresponding hash strings {filename: hash}
-        :param distance_function:  A function for calculating distance between the hashes.
+
+        Args:
+            hash_dict: Dictionary mapping file names to corresponding hash strings {filename: hash}
+            distance_function:  A function for calculating distance between the hashes.
         """
         self.distance_function = distance_function
         self.hash_dict = hash_dict  # database
@@ -19,9 +21,13 @@ class BruteForce:
     def search(self, query: str, tol: int = 10) -> Dict[str, int]:
         """
         Function for searching using brute force.
-        :param query: hash string for which brute force needs to work.
-        :param tol: distance upto which duplicate is valid.
-        :return: Dictionary of retrieved file names and corresponding distances {valid_retrieval_filename: distance, ..}
+
+        Args:
+            query: hash string for which brute force needs to work.
+            tol: distance upto which duplicate is valid.
+
+        Returns:
+            List of tuples of the form [(valid_retrieval_filename1: distance), (valid_retrieval_filename2: distance)]
         """
         return [(item, self.distance_function(query, self.hash_dict[item])) for item in self.hash_dict if
                 self.distance_function(query, self.hash_dict[item]) <= tol]

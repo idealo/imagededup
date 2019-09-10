@@ -7,10 +7,6 @@ from PIL import Image
 
 from imagededup.utils.logger import return_logger
 
-"""
-Todo: Parallelize files validation/ hash generation
-"""
-
 
 IMG_FORMATS = ['JPEG', 'PNG', 'BMP']
 logger = return_logger(__name__, os.getcwd())
@@ -32,7 +28,7 @@ def preprocess_image(
         A numpy array of the processed image.
     """
     if isinstance(image, np.ndarray):
-        image = image.astype("uint8")
+        image = image.astype('uint8')
         image_pil = Image.fromarray(image)
 
     elif isinstance(image, Image.Image):

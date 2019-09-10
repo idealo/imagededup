@@ -33,7 +33,7 @@ def cnn():
 
 @pytest.fixture
 def mocker_save_json(mocker):
-    return mocker.patch("imagededup.methods.cnn.save_json")
+    return mocker.patch('imagededup.methods.cnn.save_json')
 
 
 def test__init(cnn):
@@ -102,7 +102,7 @@ def test_encode_image(cnn):
     assert result.shape == (1, 1024)  # 1024 = 3*3*1024*2
 
     with pytest.raises(ValueError):
-        cnn.encode_image("")
+        cnn.encode_image('')
 
     image_array = load_image(TEST_IMAGE)
     result = cnn.encode_image(image_array=image_array)
@@ -162,7 +162,7 @@ def test_encode_images(cnn):
         assert i.shape == (1024,)
 
     with pytest.raises(ValueError):
-        cnn.encode_images("abc")
+        cnn.encode_images('abc')
 
 
 def test__check_threshold_bounds_input_not_float(cnn):
@@ -229,10 +229,10 @@ def test__find_duplicates_dir(cnn, mocker):
         'filename1.jpg': [('dup1.jpg', 0.82)],
         'filename2.jpg': [('dup2.jpg', 0.90)],
     }
-    encode_images_mocker = mocker.patch("imagededup.methods.cnn.CNN.encode_images")
+    encode_images_mocker = mocker.patch('imagededup.methods.cnn.CNN.encode_images')
     cnn.encoding_map = encoding_map
     find_dup_dict_mocker = mocker.patch(
-        "imagededup.methods.cnn.CNN._find_duplicates_dict",
+        'imagededup.methods.cnn.CNN._find_duplicates_dict',
         return_value=ret_val_find_dup_dict,
     )
     cnn._find_duplicates_dir(
@@ -258,7 +258,7 @@ def test_find_duplicates_dir(cnn, mocker):
     scores = True
     outfile = True
     find_dup_dir_mocker = mocker.patch(
-        "imagededup.methods.cnn.CNN._find_duplicates_dir"
+        'imagededup.methods.cnn.CNN._find_duplicates_dir'
     )
     cnn.find_duplicates(
         image_dir=TEST_IMAGE_DIR,
@@ -280,7 +280,7 @@ def test_find_duplicates_dict(cnn, mocker):
     scores = True
     outfile = True
     find_dup_dict_mocker = mocker.patch(
-        "imagededup.methods.cnn.CNN._find_duplicates_dict"
+        'imagededup.methods.cnn.CNN._find_duplicates_dict'
     )
     cnn.find_duplicates(
         encoding_map=encoding_map,
@@ -317,10 +317,10 @@ def test_find_duplicates_to_remove_outfile_false(cnn, mocker, mocker_save_json):
         'filename2.jpg': [('dup2.jpg', 10)],
     }
     find_duplicates_mocker = mocker.patch(
-        "imagededup.methods.cnn.CNN.find_duplicates", return_value=ret_val_find_dup_dict
+        'imagededup.methods.cnn.CNN.find_duplicates', return_value=ret_val_find_dup_dict
     )
     get_files_to_remove_mocker = mocker.patch(
-        "imagededup.methods.cnn.get_files_to_remove"
+        'imagededup.methods.cnn.get_files_to_remove'
     )
     cnn.find_duplicates_to_remove(
         image_dir=TEST_IMAGE_DIR, min_similarity_threshold=threshold, outfile=outfile
@@ -345,10 +345,10 @@ def test_find_duplicates_to_remove_outfile_true(cnn, mocker, mocker_save_json):
     ret_val_get_files_to_remove = ['1.jpg', '2.jpg']
 
     find_duplicates_mocker = mocker.patch(
-        "imagededup.methods.cnn.CNN.find_duplicates", return_value=ret_val_find_dup_dict
+        'imagededup.methods.cnn.CNN.find_duplicates', return_value=ret_val_find_dup_dict
     )
     get_files_to_remove_mocker = mocker.patch(
-        "imagededup.methods.cnn.get_files_to_remove",
+        'imagededup.methods.cnn.get_files_to_remove',
         return_value=ret_val_get_files_to_remove,
     )
     cnn.find_duplicates_to_remove(
@@ -374,10 +374,10 @@ def test_find_duplicates_to_remove_encoding_map(cnn, mocker, mocker_save_json):
     ret_val_get_files_to_remove = ['1.jpg', '2.jpg']
     encoding_map = data_encoding_map()
     find_duplicates_mocker = mocker.patch(
-        "imagededup.methods.cnn.CNN.find_duplicates", return_value=ret_val_find_dup_dict
+        'imagededup.methods.cnn.CNN.find_duplicates', return_value=ret_val_find_dup_dict
     )
     get_files_to_remove_mocker = mocker.patch(
-        "imagededup.methods.cnn.get_files_to_remove",
+        'imagededup.methods.cnn.get_files_to_remove',
         return_value=ret_val_get_files_to_remove,
     )
     cnn.find_duplicates_to_remove(
@@ -407,7 +407,7 @@ def test_find_duplicates_dir_integration(cnn):
             ('ukbench00120.jpg', 0.9672552),
             ('ukbench00120_resize.jpg', 0.95676106),
         ],
-        "ukbench00120_resize.jpg": [
+        'ukbench00120_resize.jpg': [
             ('ukbench00120.jpg', 0.98120844),
             ('ukbench00120_hflip.jpg', 0.95676106),
         ],
@@ -459,7 +459,7 @@ def test_find_duplicates_encoding_integration(cnn):
         encoding_map=encodings, min_similarity_threshold=0.9, scores=True, outfile=False
     )
     # verify variable type
-    assert isinstance(duplicates["ukbench00120.jpg"][0][1], np.float32)
+    assert isinstance(duplicates['ukbench00120.jpg'][0][1], np.float32)
 
     # verify that all files have been considered for deduplication
     assert len(duplicates) == len(expected_duplicates)

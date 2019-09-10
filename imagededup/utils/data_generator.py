@@ -40,8 +40,8 @@ class DataGenerator(Sequence):
         self.image_files = sorted(
             [
                 i.absolute()
-                for i in self.image_dir.glob("*")
-                if not i.name.startswith(".")
+                for i in self.image_dir.glob('*')
+                if not i.name.startswith('.')
             ]
         )  # ignore hidden files
 
