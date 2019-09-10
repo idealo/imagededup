@@ -12,7 +12,7 @@ from sklearn.metrics import (
 
 
 def _get_unique_ordered_tuples(unique_tuples: List[Tuple]) -> List[Tuple]:
-    """Sorts each tuple given a list of tuples and retains only unique pairs regardless of order within the tuple.
+    """Sort each tuple given a list of tuples and retains only unique pairs regardless of order within the tuple.
     Eg: [(2, 1), (1, 2), (3, 4)]  becomes [(1, 2), (3, 4)]"""
     ordered_tuples = []
 
@@ -42,7 +42,7 @@ def _make_all_unique_possible_pairs(ground_truth_dict: Dict) -> List[Tuple]:
 
 def _make_positive_duplicate_pairs(ground_truth: Dict, retrieved: Dict) -> List[Tuple]:
     """
-    Given a dictionary, generates all unique positive pairs.
+    Given a dictionary, generate all unique positive pairs.
     """
     pairs = []
 
@@ -63,7 +63,7 @@ def _prepare_labels(
     retrieved_pairs: List[Tuple],
 ) -> Tuple[List, List]:
     """
-    Given all possible unique pairs, ground truth positive pairs and retrieved positive pairs, generates true and
+    Given all possible unique pairs, ground truth positive pairs and retrieved positive pairs, generate true and
     predicted labels to feed into classification metrics functions.
     """
     y_true = [1 if i in ground_truth_pairs else 0 for i in complete_pairs]
@@ -73,7 +73,17 @@ def _prepare_labels(
 
 def classification_metrics(ground_truth: Dict, retrieved: Dict) -> np.ndarray:
     """
-    Given ground truth dictionary and retrieved dictionary, returns per class precision, recall and f1 score.
+    Given ground truth dictionary and retrieved dictionary, returns per class precision, recall and f1 score. Class 1 is
+    assigned to duplicate file pairs while class 0 is for non-duplicate file pairs.
+
+    Args:
+        ground_truth: A dictionary representing ground truth with filenames as key and a list of duplicate filenames
+        as value.
+        retrieved: A dictionary representing retrieved duplicates with filenames as key and a list of retrieved
+        duplicate filenames as value.
+
+    Returns:
+        Dictionary of precision, recall and f1 score for both classes.
     """
     all_pairs = _make_all_unique_possible_pairs(ground_truth)
     ground_truth_duplicate_pairs, retrieved_duplicate_pairs = _make_positive_duplicate_pairs(
