@@ -12,7 +12,7 @@ from sklearn.metrics import (
 
 
 def _get_unique_ordered_tuples(unique_tuples: List[Tuple]) -> List[Tuple]:
-    """Sort each tuple given a list of tuples and retains only unique pairs regardless of order within the tuple.
+    """Sort each tuple given a list of tuples and retain only unique pairs regardless of order within the tuple.
     Eg: [(2, 1), (1, 2), (3, 4)]  becomes [(1, 2), (3, 4)]"""
     ordered_tuples = []
 
@@ -25,7 +25,7 @@ def _get_unique_ordered_tuples(unique_tuples: List[Tuple]) -> List[Tuple]:
 
 def _make_all_unique_possible_pairs(ground_truth_dict: Dict) -> List[Tuple]:
     """
-    Given a ground truth dictionary, generates all possible unique image pairs (both negative and positive pairs).
+    Given a ground truth dictionary, generate all possible unique image pairs (both negative and positive pairs).
     """
     # get all elements of the dictionary
     all_files = list(ground_truth_dict.keys())
@@ -42,7 +42,7 @@ def _make_all_unique_possible_pairs(ground_truth_dict: Dict) -> List[Tuple]:
 
 def _make_positive_duplicate_pairs(ground_truth: Dict, retrieved: Dict) -> List[Tuple]:
     """
-    Given a dictionary, generate all unique positive pairs.
+    Given ground_truth and retrieved dictionary, generate all unique positive pairs.
     """
     pairs = []
 
@@ -73,7 +73,7 @@ def _prepare_labels(
 
 def classification_metrics(ground_truth: Dict, retrieved: Dict) -> np.ndarray:
     """
-    Given ground truth dictionary and retrieved dictionary, returns per class precision, recall and f1 score. Class 1 is
+    Given ground truth dictionary and retrieved dictionary, return per class precision, recall and f1 score. Class 1 is
     assigned to duplicate file pairs while class 0 is for non-duplicate file pairs.
 
     Args:
