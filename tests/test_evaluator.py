@@ -1,7 +1,8 @@
-from imagededup.evaluation.evaluation import evaluate, _check_map_completeness
 import pickle
 import pytest
 from pathlib import Path
+
+from imagededup.evaluation.evaluation import evaluate, _check_map_completeness
 
 p = Path(__file__)
 

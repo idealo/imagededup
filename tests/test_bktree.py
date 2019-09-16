@@ -1,8 +1,7 @@
-from imagededup.methods.hashing import Hashing
-from imagededup.handlers.search.bktree import BKTree, BkTreeNode
 from collections import OrderedDict
 
-""" Run from project root with: python -m pytest -vs tests/test_bktree.py"""
+from imagededup.methods.hashing import Hashing
+from imagededup.handlers.search.bktree import BKTree, BkTreeNode
 
 # Test BkTreeNode
 
@@ -27,7 +26,7 @@ def test_bktreenode_correct_initialization():
 def test_insert_tree():
     # initialize root node and add 1 new node, check it goes as root's child and has it's parent as root
     _, dist_func = initialize_for_bktree()
-    hash_dict = {'a': "9", 'b': "D"}
+    hash_dict = {'a': '9', 'b': 'D'}
     bk = BKTree(hash_dict, dist_func)
     assert bk.ROOT == 'a'
     assert 'b' in list(bk.dict_all['a'].children.keys())
@@ -98,7 +97,7 @@ def test_search_correctness():
     bk = BKTree(hash_dict, dist_func)
     query = '5'
     valid_retrievals = bk.search(query, tol=2)
-    assert set(valid_retrievals.keys()) == set(['a', 'f', 'g', 'd', 'b'])
+    assert set([i[0] for i in valid_retrievals]) == set(['a', 'f', 'g', 'd', 'b'])
 
 
 def test_search_zero_tolerance():
@@ -116,7 +115,7 @@ def test_search_dist():
     bk = BKTree(hash_dict, dist_func)
     query = '5'
     valid_retrievals = bk.search(query, tol=2)
-    assert valid_retrievals['a'] == 2
+    assert [i for i in valid_retrievals if i[0] == 'a'][0][1] == 2
 
 
 def test_get_next_candidates_valid():
