@@ -40,14 +40,8 @@ class DataGenerator(Sequence):
         self.image_files = sorted(
             [
                 i.absolute()
-<<<<<<< HEAD
                 for i in self.image_dir.glob('*')
-                if not i.name.startswith('.')
-=======
-                for i in self.image_dir.glob("*")
-                if not i.name.startswith(".")
->>>>>>> 33761c3c907d543fb1d425ef620ac4b7fcae9a29
-            ]
+                if not i.name.startswith('.')]
         )  # ignore hidden files
 
     def on_epoch_end(self) -> None:

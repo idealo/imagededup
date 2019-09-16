@@ -6,14 +6,11 @@ import numpy as np
 from PIL import Image
 
 from imagededup.utils.logger import return_logger
-<<<<<<< HEAD
-=======
+
 
 """
 Todo: Parallelize files validation/ hash generation
 """
->>>>>>> 33761c3c907d543fb1d425ef620ac4b7fcae9a29
-
 
 IMG_FORMATS = ['JPEG', 'PNG', 'BMP']
 logger = return_logger(__name__, os.getcwd())
