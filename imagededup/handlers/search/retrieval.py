@@ -1,11 +1,10 @@
+import os
+from typing import Dict, Union
+from types import FunctionType
+
+from imagededup.utils.logger import return_logger
 from imagededup.handlers.search.bktree import BKTree
 from imagededup.handlers.search.brute_force import BruteForce
-from imagededup.utils.logger import return_logger
-from types import FunctionType
-from numpy.linalg import norm
-from typing import Tuple, Dict, List, Union
-import os
-import numpy as np
 
 
 class HashEval:
@@ -15,11 +14,11 @@ class HashEval:
         queries: Dict,
         distance_function: FunctionType,
         threshold: int = 5,
-        search_method: str = "bktree",
+        search_method: str = 'bktree',
     ) -> None:
         """
-        Initializes a HashEval object which offers an interface to control hashing and search methods for desired
-        dataset. Computes a map of duplicate images in the document space given certain input control parameters.
+        Initialize a HashEval object which offers an interface to control hashing and search methods for desired
+        dataset. Compute a map of duplicate images in the document space given certain input control parameters.
         """
         self.test = test  # database
         self.queries = queries
@@ -29,7 +28,7 @@ class HashEval:
         self.query_results_map = None
         self.query_results_list = None
 
-        if search_method == "bktree":
+        if search_method == 'bktree':
             self._fetch_nearest_neighbors_bktree()  # bktree is the default search method
         else:
             self._fetch_nearest_neighbors_brute_force()
@@ -38,9 +37,10 @@ class HashEval:
         self, search_method_object: Union[BruteForce, BKTree]
     ) -> None:
         """
-        Gets result for the query using specified search object. Populates the global query_results_map and
-        query_results_list attributes.
-        :param search_method_object: BruteForce or BKTree object to get results for the query.
+        Get result for the query using specified search object. Populate the global query_results_map.
+
+        Args:
+            search_method_object: BruteForce or BKTree object to get results for the query.
         """
         result_map = {}
 
@@ -60,21 +60,33 @@ class HashEval:
         """
         Wrapper function to retrieve results for all queries in dataset using brute-force search.
         """
-        self.logger.info("Start: Retrieving duplicates using Brute force algorithm")
+        self.logger.info('Start: Retrieving duplicates using Brute force algorithm')
         bruteforce = BruteForce(self.test, self.distance_invoker)
         self._get_query_results(bruteforce)
-        self.logger.info("End: Retrieving duplicates using Brute force algorithm")
+        self.logger.info('End: Retrieving duplicates using Brute force algorithm')
 
     def _fetch_nearest_neighbors_bktree(self) -> None:
         """
         Wrapper function to retrieve results for all queries in dataset using a BKTree search.
         """
-        self.logger.info("Start: Retrieving duplicates using BKTree algorithm")
+        self.logger.info('Start: Retrieving duplicates using BKTree algorithm')
         built_tree = BKTree(self.test, self.distance_invoker)  # construct bktree
         self._get_query_results(built_tree)
-        self.logger.info("End: Retrieving duplicates using BKTree algorithm")
+        self.logger.info('End: Retrieving duplicates using BKTree algorithm')
 
     def retrieve_results(self, scores: bool = False) -> Dict:
+        """
+        Return results with or without scores.
+
+        Args:
+            scores: Boolean indicating whether results are to eb returned with or without scores.
+
+        Returns:
+            if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
+            score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}
+            if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
+            'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
+        """
         if scores:
             return self.query_results_map
         else:

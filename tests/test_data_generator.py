@@ -1,7 +1,9 @@
 import pytest
 from pathlib import Path
-from imagededup.utils.data_generator import DataGenerator
+
 from keras.applications.mobilenet import preprocess_input
+
+from imagededup.utils.data_generator import DataGenerator
 
 p = Path(__file__)
 IMAGE_DIR = p.parent / 'data/base_images'

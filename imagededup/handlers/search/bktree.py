@@ -22,10 +22,12 @@ class BKTree:
     """
     def __init__(self, hash_dict: Dict, distance_function: FunctionType) -> None:
         """
-        Initializes a root for the BKTree and triggers the tree construction using the dictionary for mapping file names
+        Initialize a root for the BKTree and triggers the tree construction using the dictionary for mapping file names
         and corresponding hashes.
-        :param hash_dict: Dictionary mapping file names to corresponding hash strings {filename: hash}
-        :param distance_function: A function for calculating distance between the hashes.
+
+        Args:
+            hash_dict: Dictionary mapping file names to corresponding hash strings {filename: hash}
+            distance_function: A function for calculating distance between the hashes.
         """
         self.hash_dict = hash_dict  # database
         self.distance_function = distance_function
@@ -39,9 +41,13 @@ class BKTree:
     def _insert_in_tree(self, k: str, current_node: str) -> int:
         """
         Function to insert a new node into the BKTree.
-        :param k: filename for inserting into the BKTree.
-        :param current_node: Node of the tree to which the new node should be added.
-        :return: 0 for successful execution.
+
+        Args:
+            k: filename for inserting into the BKTree.
+            current_node: Node of the tree to which the new node should be added.
+
+        Return:
+            0 for successful execution.
         """
         dist_current_node = self.distance_function(self.hash_dict[k], self.dict_all[current_node].node_value)
         condition_insert_current_node_child = (not self.dict_all[current_node].children) or (dist_current_node not in
@@ -68,11 +74,15 @@ class BKTree:
         """
         Get candidates for checking if the query falls within the distance tolerance. Sets a validity flag if the input
         candidate BKTree node is valid (distance to this candidate is within the distance tolerance from the query.)
-        :param query: The hash for which retrievals are needed.
-        :param candidate_obj: A BKTree object which is a candidate for being checked as valid.
-        :param tolerance: Distance within which the cadidate is considered valid.
-        :return: new candidates to examine, validity flag indicating whether current candidate is within the distance
-         tolerance, distance of the current candidate from the query hash.
+
+        Args:
+            query: The hash for which retrievals are needed.
+            candidate_obj: A BKTree object which is a candidate for being checked as valid.
+            tolerance: Distance within which the cadidate is considered valid.
+
+        Returns:
+            new candidates to examine, validity flag indicating whether current candidate is within the distance
+            tolerance, distance of the current candidate from the query hash.
         """
         dist = self.distance_function(candidate_obj.node_value, query)
         if dist <= tolerance:
@@ -87,9 +97,13 @@ class BKTree:
     def search(self, query: str, tol: int = 5) -> Dict:
         """
         Function to search the bktree given a hash of the query image.
-        :param query: hash string for which BKTree needs to be searched.
-        :param tol: distance upto which duplicate is valid.
-        :return: Dictionary of retrieved file names and corresponding distances {valid_retrieval_filename: distance, ..}
+
+        Args:
+            query: hash string for which BKTree needs to be searched.
+            tol: distance upto which duplicate is valid.
+
+        Returns:
+            List of tuples of the form [(valid_retrieval_filename1: distance), (valid_retrieval_filename2: distance)]
         """
 
         valid_retrievals = []

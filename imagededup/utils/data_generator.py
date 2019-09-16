@@ -1,7 +1,9 @@
-import numpy as np
 from pathlib import PosixPath
 from typing import Tuple, List, Callable
+
+import numpy as np
 from keras.utils import Sequence
+
 from imagededup.utils.image_utils import load_image
 
 
@@ -22,7 +24,7 @@ class DataGenerator(Sequence):
         basenet_preprocess: Callable,
         target_size: Tuple[int, int],
     ) -> None:
-        """Inits DataGenerator object.
+        """Init DataGenerator object.
         """
         self.image_dir = image_dir
         self.batch_size = batch_size
@@ -36,7 +38,10 @@ class DataGenerator(Sequence):
     def _get_image_files(self) -> None:
         self.invalid_image_idx = []
         self.image_files = sorted(
-            [i.absolute() for i in self.image_dir.glob('*') if not i.name.startswith('.')]
+            [
+                i.absolute()
+                for i in self.image_dir.glob('*')
+                if not i.name.startswith('.')]
         )  # ignore hidden files
 
     def on_epoch_end(self) -> None:
@@ -52,22 +57,28 @@ class DataGenerator(Sequence):
         return int(np.ceil(len(self.image_files) / self.batch_size))
 
     def __getitem__(self, index: int) -> Tuple[np.array, np.array]:
-        """Gets batch at position `index`.
+        """Get batch at position `index`.
         """
-        batch_indexes = self.indexes[index * self.batch_size : (index + 1) * self.batch_size]
+        batch_indexes = self.indexes[
+            index * self.batch_size : (index + 1) * self.batch_size
+        ]
         batch_samples = [self.image_files[i] for i in batch_indexes]
         X = self._data_generator(batch_samples)
         return X
 
-    def _data_generator(self, image_files: List[PosixPath]) -> Tuple[np.array, np.array]:
-        """Generates data from samples in specified batch."""
+    def _data_generator(
+        self, image_files: List[PosixPath]
+    ) -> Tuple[np.array, np.array]:
+        """Generate data from samples in specified batch."""
         #  initialize images and labels tensors for faster processing
         X = np.empty((len(image_files), *self.target_size, 3))
 
         invalid_image_idx = []
         for i, image_file in enumerate(image_files):
             # load and randomly augment image
-            img = load_image(image_file=image_file, target_size=self.target_size, grayscale=False)
+            img = load_image(
+                image_file=image_file, target_size=self.target_size, grayscale=False
+            )
 
             if img is not None:
                 X[i, :] = img
