@@ -122,7 +122,7 @@ class Hashing:
         image_dir = Path(image_dir)
 
         files = [
-            i.absolute() for i in image_dir.glob('*') if not i.name.startswith('.')
+            i.absolute() for i in image_dir.glob("*") if not i.name.startswith(".")
         ]  # ignore hidden files
 
         hash_dict = dict()
@@ -296,7 +296,7 @@ class Hashing:
                 outfile=outfile,
             )
         else:
-            raise ValueError('Provide either an image directory or encodings!')
+            raise ValueError("Provide either an image directory or encodings!")
         return result
 
     def find_duplicates_to_remove(

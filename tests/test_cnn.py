@@ -102,7 +102,7 @@ def test_encode_image(cnn):
     assert result.shape == (1, 1024)  # 1024 = 3*3*1024*2
 
     with pytest.raises(ValueError):
-        cnn.encode_image('')
+        cnn.encode_image("")
 
     image_array = load_image(TEST_IMAGE)
     result = cnn.encode_image(image_array=image_array)
