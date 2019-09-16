@@ -93,5 +93,6 @@ def classification_metrics(ground_truth: Dict, retrieved: Dict) -> np.ndarray:
         all_pairs, ground_truth_duplicate_pairs, retrieved_duplicate_pairs
     )
     print(classification_report(y_true, y_pred))
-    prec_rec_fscore = dict(zip(('precision', 'recall', 'f1_score'), precision_recall_fscore_support(y_true, y_pred)))
-    return prec_rec_fscore
+    prec_rec_fscore_support = dict(zip(('precision', 'recall', 'f1_score', 'support'),
+                               precision_recall_fscore_support(y_true, y_pred)))
+    return prec_rec_fscore_support
