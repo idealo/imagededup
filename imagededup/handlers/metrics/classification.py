@@ -96,3 +96,4 @@ def classification_metrics(ground_truth: Dict, retrieved: Dict) -> np.ndarray:
     prec_rec_fscore_support = dict(zip(('precision', 'recall', 'f1_score', 'support'),
                                precision_recall_fscore_support(y_true, y_pred)))
     return prec_rec_fscore_support
+

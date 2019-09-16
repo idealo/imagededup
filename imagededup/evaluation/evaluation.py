@@ -11,7 +11,6 @@ from imagededup.utils.logger import return_logger
 
 logger = return_logger(__name__, os.getcwd())
 
-
 def _transpose_checker(mapping):
     """
     Check for the given dictionary that transpose relationship holds.
@@ -110,5 +109,4 @@ def evaluate(
         return ir_metrics
     else:
         raise ValueError(
-            'Acceptable metrics are: \'map\', \'ndcg\', \'jaccard\', \'classification\', \'all\''
-        )
+            'Acceptable metrics are: \'map\', \'ndcg\', \'jaccard\', \'classification\', \'all\'')

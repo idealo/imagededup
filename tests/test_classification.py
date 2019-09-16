@@ -107,8 +107,7 @@ def test_classification_metrics(mocker):
     make_all_unique_possible_pairs_mocker.return_value = all_possible_pairs_ret
 
     make_positive_duplicate_pairs_mocker = mocker.patch(
-        'imagededup.handlers.metrics.classification._make_positive_duplicate_pairs'
-    )
+        'imagededup.handlers.metrics.classification._make_positive_duplicate_pairs')
     make_positive_duplicate_pairs_mocker.return_value = (
         ground_truth_pairs_ret,
         retrieved_pairs_ret,
