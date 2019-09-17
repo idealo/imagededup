@@ -64,7 +64,9 @@ def test__data_generator():
 def test_on_epoch_end_1():
     generator.on_epoch_end()
 
-    assert generator.valid_image_files == sorted([x for x in IMAGE_DIR.glob('*') if x.is_file()])
+    assert generator.valid_image_files == sorted(
+        [x for x in IMAGE_DIR.glob('*') if x.is_file()]
+    )
 
 
 def test_on_epoch_end_2():

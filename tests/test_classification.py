@@ -107,7 +107,8 @@ def test_classification_metrics(mocker):
     make_all_unique_possible_pairs_mocker.return_value = all_possible_pairs_ret
 
     make_positive_duplicate_pairs_mocker = mocker.patch(
-        'imagededup.handlers.metrics.classification._make_positive_duplicate_pairs')
+        'imagededup.handlers.metrics.classification._make_positive_duplicate_pairs'
+    )
     make_positive_duplicate_pairs_mocker.return_value = (
         ground_truth_pairs_ret,
         retrieved_pairs_ret,
@@ -142,7 +143,7 @@ def test_classification_metrics_integrated():
         'precision': np.array([0.5, 1.0]),
         'recall': np.array([1.0, 0.5]),
         'f1_score': np.array([0.66666667, 0.66666667]),
-        'support': np.array([2, 4])
+        'support': np.array([2, 4]),
     }
     metrics = classification_metrics(ground_truth, retrieved)
     assert isinstance(metrics, dict)
@@ -150,4 +151,3 @@ def test_classification_metrics_integrated():
     for k, v in metrics.items():
         assert isinstance(v, np.ndarray)
         np.testing.assert_almost_equal(metrics[k], expected_return[k])
-

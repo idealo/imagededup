@@ -25,7 +25,7 @@ def test__transpose_checker():
         '1': ['2', '3', '4'],
         '2': ['1', '3'],
         '3': ['1', '2'],
-        '4': []
+        '4': [],
     }
     with pytest.raises(AssertionError):
         _transpose_checker(mapping_non_transpose)
@@ -55,10 +55,10 @@ def test__check_map_correctness_different_keys():
 def test_default_returns_all_metrics(mocker):
     ground_truth_map, retrieve_map = return_ground_all_correct_retrievals()
     get_all_metrics_mocker = mocker.patch(
-        "imagededup.evaluation.evaluation.get_all_metrics"
+        'imagededup.evaluation.evaluation.get_all_metrics'
     )
     classification_metrics_mocker = mocker.patch(
-        "imagededup.evaluation.evaluation.classification_metrics"
+        'imagededup.evaluation.evaluation.classification_metrics'
     )
     classification_metrics_mocker = mocker.patch(
         'imagededup.evaluation.evaluation.classification_metrics'
@@ -73,13 +73,13 @@ def test_default_returns_all_metrics(mocker):
 def test_wrong_metric_raises_valueerror():
     ground_truth_map, retrieve_map = return_ground_all_correct_retrievals()
     with pytest.raises(ValueError):
-        evaluate(ground_truth_map, retrieve_map, metric="bla")
+        evaluate(ground_truth_map, retrieve_map, metric='bla')
 
 
-@pytest.mark.parametrize("metric_name", ["map", "ndcg", "jaccard"])
+@pytest.mark.parametrize('metric_name', ['map', 'ndcg', 'jaccard'])
 def test_correct_call_to_mean_metric(mocker, metric_name):
     ground_truth_map, retrieve_map = return_ground_all_correct_retrievals()
-    mean_metric_mocker = mocker.patch("imagededup.evaluation.evaluation.mean_metric")
+    mean_metric_mocker = mocker.patch('imagededup.evaluation.evaluation.mean_metric')
     evaluate(ground_truth_map, retrieve_map, metric=metric_name)
     mean_metric_mocker.assert_called_once_with(
         ground_truth_map, retrieve_map, metric=metric_name
@@ -100,7 +100,7 @@ def test_correct_call_to_classification_metric(mocker):
 @pytest.mark.parametrize('metric_name', ['MAP', 'Ndcg', 'JacCard'])
 def test_correct_call_to_mean_metric_mixed_cases(mocker, metric_name):
     ground_truth_map, retrieve_map = return_ground_all_correct_retrievals()
-    mean_metric_mocker = mocker.patch("imagededup.evaluation.evaluation.mean_metric")
+    mean_metric_mocker = mocker.patch('imagededup.evaluation.evaluation.mean_metric')
     evaluate(ground_truth_map, retrieve_map, metric=metric_name)
     mean_metric_mocker.assert_called_once_with(
         ground_truth_map, retrieve_map, metric=metric_name.lower()
@@ -141,7 +141,7 @@ def test_correct_values_classification():
         'precision': np.array([0.5, 1.0]),
         'recall': np.array([1.0, 0.5]),
         'f1_score': np.array([0.66666667, 0.66666667]),
-        'support': np.array([2, 4])
+        'support': np.array([2, 4]),
     }
     score = evaluate(ground_truth, retrieved, metric='classification')
     assert isinstance(score, dict)

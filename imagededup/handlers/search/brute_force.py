@@ -6,6 +6,7 @@ class BruteForce:
     """
     Class to perform search using a Brute force.
     """
+
     def __init__(self, hash_dict: Dict, distance_function: FunctionType) -> None:
         """
         Initialize a dictionary for mapping file names and corresponding hashes anda  distance function to be used for
@@ -29,6 +30,8 @@ class BruteForce:
         Returns:
             List of tuples of the form [(valid_retrieval_filename1: distance), (valid_retrieval_filename2: distance)]
         """
-        return [(item, self.distance_function(query, self.hash_dict[item])) for item in self.hash_dict if
-                self.distance_function(query, self.hash_dict[item]) <= tol]
-
+        return [
+            (item, self.distance_function(query, self.hash_dict[item]))
+            for item in self.hash_dict
+            if self.distance_function(query, self.hash_dict[item]) <= tol
+        ]
