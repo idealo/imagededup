@@ -145,15 +145,30 @@ def test_encode_image_accepts_non_posixpath(
     np.testing.assert_array_equal(ret_val, mocker_hash_func.call_args[0][0])
 
 
-# encode_images
-
+# _encoder
 
 @pytest.fixture
 def mocker_encode_image(mocker):
+<<<<<<< HEAD
     mocker.patch(
         'imagededup.methods.hashing.Hashing.encode_image',
         return_value='123456789ABCDEFA'
     )
+=======
+    return mocker.patch('imagededup.methods.hashing.Hashing.encode_image', return_value='123456789ABCDEFA')
+
+
+def test__encoder(hasher, mocker_encode_image):
+    hash_dict = {}
+    filenames = [
+        i.absolute() for i in PATH_IMAGE_DIR.glob('*') if not i.name.startswith('.')
+    ]
+    hasher._encoder(hash_dict, filenames)
+    mocker_encode_image.assert_called_with(image_file=filenames[-1])
+
+
+# encode_images
+>>>>>>> Add multiprocessing for hash generation. Works and provides speedup.
 
 
 def test_encode_images_accepts_valid_posixpath(hasher, mocker_encode_image):
