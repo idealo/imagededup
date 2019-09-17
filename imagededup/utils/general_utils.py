@@ -1,4 +1,7 @@
 import os
+import numpy as np
+from types import FunctionType
+from typing import Tuple
 
 
 import json
@@ -50,3 +53,17 @@ def save_json(results: Dict, filename: str) -> None:
         json.dump(results, f, indent=2, sort_keys=True)
     logger.info('End: Saving duplicates as json!')
 
+
+def parallelize(target_function: FunctionType, all_tasks: List, args_target_function: Tuple = ()):
+    from multiprocessing import Manager, Process, cpu_count
+    manager = Manager()  # used to share the hash dictionary across different processes
+    result = manager.dict()  # Only works for dictionary returns
+    chunks = [i for i in np.array_split(all_tasks, cpu_count())]  # Each process gets a
+    # sublist of keys
+
+    args_in = (result, *args_target_function)
+    job = [Process(target=target_function, args=(*args_in, sublist)) for sublist in
+           chunks]
+    _ = [p.start() for p in job]
+    _ = [p.join() for p in job]
+    return result
