@@ -1,17 +1,9 @@
-import os
-import numpy as np
-from types import FunctionType
-from typing import Tuple
-from multiprocessing import Manager, Process, cpu_count, Pool
-import tqdm
-
-
 import json
+import tqdm
 from typing import Dict, List
 
-from imagededup.utils.logger import return_logger
-
-# logger = return_logger(__name__, os.getcwd())
+from multiprocessing import cpu_count, Pool
+from typing import Callable
 
 
 def get_files_to_remove(duplicates: Dict[str, List]) -> List:
@@ -52,7 +44,7 @@ def save_json(results: Dict, filename: str) -> None:
     print('End: Saving duplicates as json!')
 
 
-def parallelise(function, data):
+def parallelise(function: Callable, data: List) -> List:
     pool = Pool(processes=cpu_count())
     results = list(tqdm.tqdm(pool.imap(function, data), total=len(data)))
     pool.close()
