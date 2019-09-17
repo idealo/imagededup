@@ -128,7 +128,7 @@ class Hashing:
 
         hashes = parallelise(self.encode_image, files)
         hash_initial_dict = dict(zip([f.name for f in files], hashes))
-        hash_dict = {k: v for k, v in hash_initial_dict.items() if v}
+        hash_dict = {k: v for k, v in hash_initial_dict.items() if v}  # To ignore None (returned if some probelm with image file)
 
         print(f'End: Calculating hashes!')
         return hash_dict

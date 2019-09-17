@@ -1,5 +1,4 @@
-from types import FunctionType
-from typing import Dict, Union
+from typing import Dict, Union, Callable
 
 from imagededup.handlers.search.bktree import BKTree
 from imagededup.handlers.search.brute_force import BruteForce
@@ -11,7 +10,7 @@ class HashEval:
         self,
         test: Dict,
         queries: Dict,
-        distance_function: FunctionType,
+        distance_function: Callable,
         threshold: int = 5,
         search_method: str = 'bktree',
     ) -> None:

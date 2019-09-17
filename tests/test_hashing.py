@@ -2,8 +2,8 @@ import os
 from pathlib import Path
 from PIL import Image
 
-import numpy as np
 import pytest
+import numpy as np
 
 from imagededup.methods.hashing import Hashing, PHash, DHash, AHash, WHash
 
@@ -149,35 +149,13 @@ def test_encode_image_accepts_non_posixpath(
 
 @pytest.fixture
 def mocker_encode_image(mocker):
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Fix tests for hashing with multiprocessing.
     mocker.patch(
         'imagededup.methods.hashing.parallelise',
         return_value='123456789ABCDEFA'
     )
-<<<<<<< HEAD
-=======
-    return mocker.patch('imagededup.methods.hashing.Hashing.encode_image', return_value='123456789ABCDEFA')
-
-
-def test__encoder(hasher, mocker_encode_image):
-    hash_dict = {}
-    filenames = [
-        i.absolute() for i in PATH_IMAGE_DIR.glob('*') if not i.name.startswith('.')
-    ]
-    hasher._encoder(hash_dict, filenames)
-    mocker_encode_image.assert_called_with(image_file=filenames[-1])
 
 
 # encode_images
->>>>>>> Add multiprocessing for hash generation. Works and provides speedup.
-
-=======
-
-# encode_images
->>>>>>> Fix tests for hashing with multiprocessing.
 
 def test_encode_images_accepts_valid_posixpath(hasher, mocker_encode_image):
     assert len(hasher.encode_images(PATH_IMAGE_DIR)) == 6  # 6 files in the directory
