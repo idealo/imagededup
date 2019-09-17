@@ -98,9 +98,14 @@ class Hashing:
         return self._hash_func(image_pp) if isinstance(image_pp, np.ndarray) else None
 
     def _encoder(self, hash_dict: Dict, filenames: List) -> None:
-        # print(filenames)
+        """
+        Perform image encoding on a sublist passed in by encode_images multiprocessing part.
+
+        Args:
+            hash_dict: Global dictionary that gets shared by all processes
+            filenames: Sublist of file names on which hashes are to be generated.
+        """
         for _file in filenames:
-            print(_file)
             encoding = self.encode_image(image_file=_file)
 
             if encoding:
@@ -136,16 +141,7 @@ class Hashing:
 
         self.logger.info(f'Start: Calculating hashes...')
 
-        # Multiprocessed image encoding
-        from multiprocessing import Manager, Process, cpu_count
-        manager = Manager()  # used to share the hash dictionary across different processes
-        hash_dict = manager.dict()
-        filename_chunks = [i for i in np.array_split(files, cpu_count())]  # Each process gets a
-        # sublist(filename_chunks)
-
-        job = [Process(target=self._encoder, args=(hash_dict, file_sublist)) for file_sublist in filename_chunks]
-        _ = [p.start() for p in job]
-        _ = [p.join() for p in job]
+        hash_dict = parallelize(target_function=self._encoder, all_tasks=files)
 
         self.logger.info(f'End: Calculating hashes!')
         return hash_dict._getvalue()  # convert DictProxy object shared across processed to a dict
