@@ -16,7 +16,7 @@ def _transpose_checker(mapping):
     Check for the given dictionary that transpose relationship holds.
 
     Args:
-        mapping: Dictionary respresenting a mapping of filenames to the list of respectove duplicate filenames.
+        mapping: Dictionary respresenting a mapping of filenames to the list of respective duplicate filenames.
     """
     for key, val in mapping.items():
         # check for each value in the list if the key is present as its value
@@ -30,7 +30,7 @@ def _transpose_checker(mapping):
 def _check_map_correctness(ground_truth_map: Dict, retrieved_map: Dict):
     """
     Perform following validation checks for both ground truth and retrieved maps:
-    - Each duplicates filename should be one of the keys (no files that are not keys of the map)
+    - Each duplicate filename should be one of the keys (no files that are not keys of the map)
     - Transpose relationships are present. Eg: if 'file1.jpg' is a duplicate for 'file2.jpg', then both relationships
     should be present in the respective map i.e., {'file1.jpg': ['file2.jpg'], 'file2.jpg': ['file1.jpg']}
     - Ground truth as well as retrieved map have exactly the same keys.
