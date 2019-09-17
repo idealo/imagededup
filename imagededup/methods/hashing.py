@@ -7,7 +7,7 @@ import numpy as np
 from scipy.fftpack import dct
 
 from imagededup.handlers.search.retrieval import HashEval
-from imagededup.utils.general_utils import get_files_to_remove, save_json
+from imagededup.utils.general_utils import get_files_to_remove, save_json, parallelise
 from imagededup.utils.image_utils import load_image, preprocess_image
 from imagededup.utils.logger import return_logger
 
@@ -125,13 +125,11 @@ class Hashing:
             i.absolute() for i in image_dir.glob("*") if not i.name.startswith(".")
         ]  # ignore hidden files
 
-        hash_dict = dict()
         self.logger.info(f'Start: Calculating hashes...')
-        for _file in files:
-            encoding = self.encode_image(_file)
 
-            if encoding:
-                hash_dict[_file.name] = encoding
+        hashes = parallelise(self.encode_image, files)
+        hash_initial_dict = dict(zip([f.name for f in files], hashes))
+        hash_dict = {k: v for k, v in hash_initial_dict.items() if not v}
 
         self.logger.info(f'End: Calculating hashes!')
         return hash_dict
