@@ -1,8 +1,13 @@
 import os
+
 import json
 from typing import Dict, List
 
 from imagededup.utils.logger import return_logger
+
+import multiprocessing
+import tqdm
+
 
 logger = return_logger(__name__, os.getcwd())
 
@@ -43,3 +48,13 @@ def save_json(results: Dict, filename: str) -> None:
     with open(filename, 'w') as f:
         json.dump(results, f, indent=2, sort_keys=True)
     logger.info('End: Saving duplicates as json!')
+
+
+def parallelise(function, data):
+    num_process = multiprocessing.cpu_count()
+    chunk_len = len(data) // num_process
+    pool = multiprocessing.Pool(processes=num_process)
+    results = list(tqdm.tqdm(pool.imap(function, data), total=len(data)))
+    pool.close()
+    pool.join()
+    return results
