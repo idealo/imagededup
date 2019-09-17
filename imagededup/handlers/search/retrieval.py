@@ -12,6 +12,7 @@ from numpy.linalg import norm
 from typing import Tuple, Dict, List, Union
 import os
 import numpy as np
+from imagededup.utils.general_utils import parallelise
 
 
 from imagededup.utils.general_utils import parallelise
@@ -43,10 +44,9 @@ class HashEval:
         else:
             self._fetch_nearest_neighbors_brute_force()
 
-    def _searcher(self, result_map: Dict, search_method_object, query_list: List) -> None:
+    def _searcher(self, query_list: List) -> None:
         """
         Perform image encoding on a sublist passed in by encode_images multiprocessing part.
-
         Args:
             hash_dict: Global dictionary that gets shared by all processes
             filenames: Sublist of file names on which hashes are to be generated.
@@ -75,9 +75,20 @@ class HashEval:
         Args:
             search_method_object: BruteForce or BKTree object to get results for the query.
         """
-        result_map = parallelize(target_function=self._searcher, all_tasks=list(self.queries.keys()),
-                                 args_target_function=(search_method_object,))
+        result_map = {}
 
+        # hashes = parallelise(self._searcher, files)
+        # hash_initial_dict = dict(zip([f.name for f in files], hashes))
+        # hash_dict = {k: v for k, v in hash_initial_dict.items() if v}
+
+        for each in self.queries:
+            res = search_method_object.search(
+                query=self.queries[each], tol=self.threshold
+            )  # list of tuples
+            res = [i for i in res if i[0] != each]  # to avoid self retrieval
+            result_map[each] = res
+
+        # result_map = parallelise()
         self.query_results_map = {
             k: [i for i in sorted(v, key=lambda tup: tup[1], reverse=False)]
             for k, v in result_map.items()
