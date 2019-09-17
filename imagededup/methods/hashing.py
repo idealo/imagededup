@@ -1,3 +1,7 @@
+from imagededup.handlers.search.retrieval import HashEval
+from imagededup.utils.image_utils import load_image, preprocess_image
+from imagededup.utils.general_utils import get_files_to_remove, save_json
+
 import os
 from pathlib import PosixPath, Path
 from typing import Dict, List, Optional
@@ -6,10 +10,16 @@ import pywt
 import numpy as np
 from scipy.fftpack import dct
 
+
 from imagededup.handlers.search.retrieval import HashEval
 from imagededup.utils.general_utils import get_files_to_remove, save_json, parallelise
 from imagededup.utils.image_utils import load_image, preprocess_image
 from imagededup.utils.logger import return_logger
+
+
+from pathlib import PosixPath, Path
+from typing import Dict, List, Optional
+from imagededup.utils.general_utils import parallelise
 
 
 """
@@ -23,7 +33,6 @@ Wavelet hash: Allow possibility of different wavelet functions
 class Hashing:
     def __init__(self) -> None:
         self.target_size = (8, 8)  # resizing to dims
-        self.logger = return_logger(__name__, os.getcwd())
 
     @staticmethod
     def hamming_distance(hash1: str, hash2: str) -> float:
@@ -97,20 +106,6 @@ class Hashing:
 
         return self._hash_func(image_pp) if isinstance(image_pp, np.ndarray) else None
 
-    def _encoder(self, hash_dict: Dict, filenames: List) -> None:
-        """
-        Perform image encoding on a sublist passed in by encode_images multiprocessing part.
-
-        Args:
-            hash_dict: Global dictionary that gets shared by all processes
-            filenames: Sublist of file names on which hashes are to be generated.
-        """
-        for _file in filenames:
-            encoding = self.encode_image(image_file=_file)
-
-            if encoding:
-                hash_dict[_file.name] = encoding
-
     def encode_images(self, image_dir=None):
         """
         Generate hashes for all images in a given directory of images.
@@ -139,12 +134,14 @@ class Hashing:
             i.absolute() for i in image_dir.glob("*") if not i.name.startswith(".")
         ]  # ignore hidden files
 
-        self.logger.info(f'Start: Calculating hashes...')
+        print(f'Start: Calculating hashes...')
 
-        hash_dict = parallelize(target_function=self._encoder, all_tasks=files)
+        hashes = parallelise(self.encode_image, files)
+        hash_initial_dict = dict(zip([f.name for f in files], hashes))
+        hash_dict = {k: v for k, v in hash_initial_dict.items() if v}
 
-        self.logger.info(f'End: Calculating hashes!')
-        return hash_dict._getvalue()  # convert DictProxy object shared across processed to a dict
+        print(f'End: Calculating hashes!')
+        return hash_dict
 
     def _hash_algo(self, image_array: np.ndarray):
         pass
@@ -199,7 +196,7 @@ class Hashing:
             if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
             'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
         """
-        self.logger.info('Start: Evaluating hamming distances for getting duplicates')
+        print('Start: Evaluating hamming distances for getting duplicates')
 
         result_set = HashEval(
             test=encoding_map,
@@ -207,7 +204,9 @@ class Hashing:
             distance_function=self.hamming_distance,
             threshold=max_distance_threshold,
             search_method='bktree')
-        self.logger.info('End: Evaluating hamming distances for getting duplicates')
+
+        print('End: Evaluating hamming distances for getting duplicates')
+
         self.results = result_set.retrieve_results(scores=scores)
         if outfile:
             save_json(self.results, outfile)
