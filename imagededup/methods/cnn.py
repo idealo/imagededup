@@ -9,10 +9,6 @@ from imagededup.utils.general_utils import save_json, get_files_to_remove
 from imagededup.utils.image_utils import load_image, preprocess_image
 from imagededup.utils.logger import return_logger
 
-from imagededup.utils.general_utils import save_json, get_files_to_remove
-from sklearn.metrics.pairwise import cosine_similarity
-from imagededup.utils.general_utils import parallelize
-
 
 class CNN:
     """
@@ -234,29 +230,6 @@ class CNN:
             raise TypeError('Threshold must be a float between -1.0 and 1.0')
         if thresh < -1.0 or thresh > 1.0:
             raise ValueError('Threshold must be a float between -1.0 and 1.0')
-
-    def _searcher(self, results: Dict, image_ids, scores, threshold, cos_scores: List) -> None:
-        """
-        Perform image encoding on a sublist passed in by encode_images multiprocessing part.
-
-        Args:
-            hash_dict: Global dictionary that gets shared by all processes
-            filenames: Sublist of file names on which hashes are to be generated.
-        """
-        # print(cos_scores)
-        for i, j in enumerate(cos_scores):
-            duplicates_bool = (j >= threshold) & (j < 2)
-            # print(duplicates_bool)
-
-            if scores:
-                tmp = np.array([*zip(image_ids, j)], dtype=object)
-                duplicates = list(map(tuple, tmp[duplicates_bool]))
-
-            else:
-                duplicates = list(image_ids[duplicates_bool])
-                # print(duplicates)
-            results[image_ids[i]] = duplicates
-            print(results)
 
     def _find_duplicates_dict(
         self,
