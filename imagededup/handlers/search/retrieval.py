@@ -40,9 +40,7 @@ class HashEval:
            List of retrieved duplicate files and corresponding hamming distance for the query file.
         """
         query_key, query_val, search_method_object, thresh = data_tuple
-        res = search_method_object.search(
-            query=query_val, tol=thresh
-        )
+        res = search_method_object.search(query=query_val, tol=thresh)
         res = [i for i in res if i[0] != query_key]  # to avoid self retrieval
         return res
 
@@ -55,9 +53,14 @@ class HashEval:
         Args:
             search_method_object: BruteForce or BKTree object to get results for the query.
         """
-        args = list(zip(list(self.queries.keys()), list(self.queries.values()),
-                                                           [search_method_object]*len(self.queries),
-                                                           [self.threshold]*len(self.queries)))
+        args = list(
+            zip(
+                list(self.queries.keys()),
+                list(self.queries.values()),
+                [search_method_object] * len(self.queries),
+                [self.threshold] * len(self.queries),
+            )
+        )
         result_map_list = parallelise(self._searcher, args)
         result_map = dict(zip(list(self.queries.keys()), result_map_list))
 

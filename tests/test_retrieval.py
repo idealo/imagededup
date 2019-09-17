@@ -150,5 +150,3 @@ def test_results_sorted_in_ascending_distance_order():
     distances = [i[1] for v in result.values() for i in v]
 
     assert sorted(distances, reverse=False) == distances
-
-
