@@ -96,6 +96,15 @@ class Hashing:
 
         return self._hash_func(image_pp) if isinstance(image_pp, np.ndarray) else None
 
+    def _encoder(self, hash_dict: Dict, filenames: List) -> None:
+        # print(filenames)
+        for _file in filenames:
+            print(_file)
+            encoding = self.encode_image(image_file=_file)
+
+            if encoding:
+                hash_dict[_file.name] = encoding
+
     def encode_images(self, image_dir=None):
         """
         Generate hashes for all images in a given directory of images.
