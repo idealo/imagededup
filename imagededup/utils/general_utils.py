@@ -57,12 +57,3 @@ def save_json(results: Dict, filename: str) -> None:
         json.dump(results, f, indent=2, sort_keys=True)
     logger.info('End: Saving duplicates as json!')
 
-
-def parallelise(function, data):
-    num_process = multiprocessing.cpu_count()
-    chunk_len = len(data) // num_process
-    pool = multiprocessing.Pool(processes=num_process)
-    results = list(tqdm.tqdm(pool.imap(function, data), total=len(data)))
-    pool.close()
-    pool.join()
-    return results
