@@ -1,5 +1,5 @@
-from typing import Dict, Union
 from types import FunctionType
+from typing import Dict, Union
 
 from imagededup.handlers.search.bktree import BKTree
 from imagededup.handlers.search.brute_force import BruteForce
@@ -24,7 +24,6 @@ class HashEval:
         self.distance_invoker = distance_function
         self.threshold = threshold
         self.query_results_map = None
-        self.query_results_list = None
 
         if search_method == 'bktree':
             self._fetch_nearest_neighbors_bktree()  # bktree is the default search method
@@ -33,10 +32,13 @@ class HashEval:
 
     def _searcher(self, data_tuple) -> None:
         """
-        Perform image encoding on a sublist passed in by encode_images multiprocessing part.
+        Perform search on a query passed in by _get_query_results multiprocessing part.
+
         Args:
-            hash_dict: Global dictionary that gets shared by all processes
-            filenames: Sublist of file names on which hashes are to be generated.
+            data_tuple: Tuple of (query_key, query_val, search_method_object, thresh)
+
+        Returns:
+           List of retrieved duplicate files and corresponding hamming distance for the query file.
         """
         query_key, query_val, search_method_object, thresh = data_tuple
         res = search_method_object.search(
@@ -44,13 +46,6 @@ class HashEval:
         )
         res = [i for i in res if i[0] != query_key]  # to avoid self retrieval
         return res
-        # for each in query_list:
-        #     res = search_method_object.search(
-        #         query=self.queries[each], tol=self.threshold
-        #     )  # list of tuples
-        #     res = [i for i in res if i[0] != each]  # to avoid self retrieval
-        #     res_map[each] = res
-        # result_map = parallelise()
 
     def _get_query_results(
         self, search_method_object: Union[BruteForce, BKTree]
@@ -61,19 +56,11 @@ class HashEval:
         Args:
             search_method_object: BruteForce or BKTree object to get results for the query.
         """
-
-        result_map = parallelise(self._searcher, (list(self.queries.keys()), list(self.queries.values()), search_method_object, self.threshold))
-        # hashes = parallelise(self._searcher, files)
-        # hash_initial_dict = dict(zip([f.name for f in files], hashes))
-        # hash_dict = {k: v for k, v in hash_initial_dict.items() if v}
-
-        # result_map = {}
-        # for each in self.queries:
-        #     res = search_method_object.search(
-        #         query=self.queries[each], tol=self.threshold
-        #     )  # list of tuples
-        #     res = [i for i in res if i[0] != each]  # to avoid self retrieval
-        #     result_map[each] = res
+        args = list(zip(list(self.queries.keys()), list(self.queries.values()),
+                                                           [search_method_object]*len(self.queries),
+                                                           [self.threshold]*len(self.queries)))
+        result_map_list = parallelise(self._searcher, args)
+        result_map = dict(zip(list(self.queries.keys()), result_map_list))
 
         self.query_results_map = {
             k: [i for i in sorted(v, key=lambda tup: tup[1], reverse=False)]

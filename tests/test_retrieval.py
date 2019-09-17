@@ -74,6 +74,7 @@ def test_result_consistency_across_search_methods():
     brute_force_result = HashEval(
         db, query, HAMMING_DISTANCE_FUNCTION, search_method='brute_force'
     ).retrieve_results()
+
     bktree_result = HashEval(db, query, HAMMING_DISTANCE_FUNCTION).retrieve_results()
     assert brute_force_result == bktree_result
 
@@ -112,6 +113,7 @@ def test_no_self_retrieval():
     brute_res = HashEval(
         db, query, HAMMING_DISTANCE_FUNCTION, search_method='brute_force'
     ).retrieve_results()
+
     bktree_res = HashEval(db, query, HAMMING_DISTANCE_FUNCTION).retrieve_results()
     assert len(brute_res['ukbench09268.jpg']) == 0
     assert len(bktree_res['ukbench09268.jpg']) == 0
@@ -128,13 +130,13 @@ def test_max_hamming_threshold_not_violated():
         'ukbench09268_2.jpg': 'ac9c72f8e1c2c448',
     }
     result = HashEval(
-        db, query, HAMMING_DISTANCE_FUNCTION, search_method='brute_force'
+        db, query, HAMMING_DISTANCE_FUNCTION, search_method='bktree'
     ).retrieve_results(scores=True)
     distances = [i[1] for v in result.values() for i in v]
     assert max(distances) < 5  # 5 is the default threshold value
 
 
-def test_results_sorted_in_descending_distance_order():
+def test_results_sorted_in_ascending_distance_order():
     query = {'ukbench00120.jpg': '2b69707551f1b87a'}
     db = {
         'ukbench00120_hflip.jpg': '2b69707551f1b87f',
@@ -143,9 +145,10 @@ def test_results_sorted_in_descending_distance_order():
         'ukbench09268_3.jpg': '2c89709251f1b870',
     }
     result = HashEval(
-        db, query, HAMMING_DISTANCE_FUNCTION, threshold=30, search_method='brute_force'
+        db, query, HAMMING_DISTANCE_FUNCTION, threshold=30, search_method='bktree'
     ).retrieve_results(scores=True)
     distances = [i[1] for v in result.values() for i in v]
 
     assert sorted(distances, reverse=False) == distances
+
 
