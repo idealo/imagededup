@@ -15,9 +15,6 @@ import numpy as np
 from imagededup.utils.general_utils import parallelise
 
 
-from imagededup.utils.general_utils import parallelise
-
-
 class HashEval:
     def __init__(
         self,
