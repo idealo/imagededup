@@ -1,17 +1,8 @@
-import os
 from typing import Dict, Union
 from types import FunctionType
 
-from imagededup.utils.logger import return_logger
 from imagededup.handlers.search.bktree import BKTree
 from imagededup.handlers.search.brute_force import BruteForce
-
-from imagededup.utils.logger import return_logger
-from types import FunctionType
-from numpy.linalg import norm
-from typing import Tuple, Dict, List, Union
-import os
-import numpy as np
 from imagededup.utils.general_utils import parallelise
 
 
@@ -32,7 +23,6 @@ class HashEval:
         self.queries = queries
         self.distance_invoker = distance_function
         self.threshold = threshold
-        self.logger = return_logger(__name__, os.getcwd())
         self.query_results_map = None
         self.query_results_list = None
 
@@ -41,26 +31,25 @@ class HashEval:
         else:
             self._fetch_nearest_neighbors_brute_force()
 
-    def _searcher(self, query_list: List) -> None:
+    def _searcher(self, data_tuple) -> None:
         """
         Perform image encoding on a sublist passed in by encode_images multiprocessing part.
         Args:
             hash_dict: Global dictionary that gets shared by all processes
             filenames: Sublist of file names on which hashes are to be generated.
         """
-        result_map = {}
-
-        # hashes = parallelise(self._searcher, files)
-        # hash_initial_dict = dict(zip([f.name for f in files], hashes))
-        # hash_dict = {k: v for k, v in hash_initial_dict.items() if v}
-
-        for each in self.queries:
-            res = search_method_object.search(
-                query=self.queries[each], tol=self.threshold
-            )  # list of tuples
-            res = [i for i in res if i[0] != each]  # to avoid self retrieval
-            result_map[each] = res
-
+        query_key, query_val, search_method_object, thresh = data_tuple
+        res = search_method_object.search(
+            query=query_val, tol=thresh
+        )
+        res = [i for i in res if i[0] != query_key]  # to avoid self retrieval
+        return res
+        # for each in query_list:
+        #     res = search_method_object.search(
+        #         query=self.queries[each], tol=self.threshold
+        #     )  # list of tuples
+        #     res = [i for i in res if i[0] != each]  # to avoid self retrieval
+        #     res_map[each] = res
         # result_map = parallelise()
 
     def _get_query_results(
@@ -72,20 +61,20 @@ class HashEval:
         Args:
             search_method_object: BruteForce or BKTree object to get results for the query.
         """
-        result_map = {}
 
+        result_map = parallelise(self._searcher, (list(self.queries.keys()), list(self.queries.values()), search_method_object, self.threshold))
         # hashes = parallelise(self._searcher, files)
         # hash_initial_dict = dict(zip([f.name for f in files], hashes))
         # hash_dict = {k: v for k, v in hash_initial_dict.items() if v}
 
-        for each in self.queries:
-            res = search_method_object.search(
-                query=self.queries[each], tol=self.threshold
-            )  # list of tuples
-            res = [i for i in res if i[0] != each]  # to avoid self retrieval
-            result_map[each] = res
+        # result_map = {}
+        # for each in self.queries:
+        #     res = search_method_object.search(
+        #         query=self.queries[each], tol=self.threshold
+        #     )  # list of tuples
+        #     res = [i for i in res if i[0] != each]  # to avoid self retrieval
+        #     result_map[each] = res
 
-        # result_map = parallelise()
         self.query_results_map = {
             k: [i for i in sorted(v, key=lambda tup: tup[1], reverse=False)]
             for k, v in result_map.items()
@@ -95,19 +84,19 @@ class HashEval:
         """
         Wrapper function to retrieve results for all queries in dataset using brute-force search.
         """
-        self.logger.info('Start: Retrieving duplicates using Brute force algorithm')
+        print('Start: Retrieving duplicates using Brute force algorithm')
         bruteforce = BruteForce(self.test, self.distance_invoker)
         self._get_query_results(bruteforce)
-        self.logger.info('End: Retrieving duplicates using Brute force algorithm')
+        print('End: Retrieving duplicates using Brute force algorithm')
 
     def _fetch_nearest_neighbors_bktree(self) -> None:
         """
         Wrapper function to retrieve results for all queries in dataset using a BKTree search.
         """
-        self.logger.info('Start: Retrieving duplicates using BKTree algorithm')
+        print('Start: Retrieving duplicates using BKTree algorithm')
         built_tree = BKTree(self.test, self.distance_invoker)  # construct bktree
         self._get_query_results(built_tree)
-        self.logger.info('End: Retrieving duplicates using BKTree algorithm')
+        print('End: Retrieving duplicates using BKTree algorithm')
 
     def retrieve_results(self, scores: bool = False) -> Dict:
         """

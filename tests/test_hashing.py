@@ -150,10 +150,14 @@ def test_encode_image_accepts_non_posixpath(
 @pytest.fixture
 def mocker_encode_image(mocker):
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Fix tests for hashing with multiprocessing.
     mocker.patch(
-        'imagededup.methods.hashing.Hashing.encode_image',
+        'imagededup.methods.hashing.parallelise',
         return_value='123456789ABCDEFA'
     )
+<<<<<<< HEAD
 =======
     return mocker.patch('imagededup.methods.hashing.Hashing.encode_image', return_value='123456789ABCDEFA')
 
@@ -170,13 +174,16 @@ def test__encoder(hasher, mocker_encode_image):
 # encode_images
 >>>>>>> Add multiprocessing for hash generation. Works and provides speedup.
 
+=======
+
+# encode_images
+>>>>>>> Fix tests for hashing with multiprocessing.
 
 def test_encode_images_accepts_valid_posixpath(hasher, mocker_encode_image):
     assert len(hasher.encode_images(PATH_IMAGE_DIR)) == 6  # 6 files in the directory
 
 
 def test_encode_images_accepts_non_posixpath(hasher, mocker_encode_image):
-    print(PATH_IMAGE_DIR_STRING)
     assert len(hasher.encode_images(PATH_IMAGE_DIR_STRING)) == 6
 
 
@@ -189,7 +196,7 @@ def test_encode_images_return_vals(hasher, mocker_encode_image):
     encoded_val = '123456789ABCDEFA'
     hashes = hasher.encode_images(PATH_IMAGE_DIR)
     assert isinstance(hashes, dict)
-    assert list(hashes.values())[0] == encoded_val
+    assert list(hashes.values())[0] == encoded_val[0]
     assert PATH_SINGLE_IMAGE.name in hashes.keys()
 
 
