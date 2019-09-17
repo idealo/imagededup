@@ -8,8 +8,12 @@ from scipy.fftpack import dct
 
 
 from imagededup.handlers.search.retrieval import HashEval
-from imagededup.utils.general_utils import get_files_to_remove, save_json, parallelise
+from imagededup.utils.general_utils import get_files_to_remove, save_json
 from imagededup.utils.image_utils import load_image, preprocess_image
+
+from pathlib import PosixPath, Path
+from typing import Dict, List, Optional
+from imagededup.utils.general_utils import parallelize
 
 
 """
@@ -97,9 +101,14 @@ class Hashing:
         return self._hash_func(image_pp) if isinstance(image_pp, np.ndarray) else None
 
     def _encoder(self, hash_dict: Dict, filenames: List) -> None:
-        # print(filenames)
+        """
+        Perform image encoding on a sublist passed in by encode_images multiprocessing part.
+
+        Args:
+            hash_dict: Global dictionary that gets shared by all processes
+            filenames: Sublist of file names on which hashes are to be generated.
+        """
         for _file in filenames:
-            print(_file)
             encoding = self.encode_image(image_file=_file)
 
             if encoding:
