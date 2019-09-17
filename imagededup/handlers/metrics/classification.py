@@ -19,8 +19,7 @@ def _get_unique_ordered_tuples(unique_tuples: List[Tuple]) -> List[Tuple]:
     for i in unique_tuples:
         ordered_tuples.append(tuple(sorted(i)))
 
-    unique_ordered_tuples = [tuple(j) for j in set(ordered_tuples)]
-    return unique_ordered_tuples
+    return list(set(ordered_tuples))
 
 
 def _make_all_unique_possible_pairs(ground_truth_dict: Dict) -> List[Tuple]:
