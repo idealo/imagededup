@@ -87,18 +87,16 @@ def plot_duplicates(image_dir: Union[PosixPath, str], duplicate_map: Dict, filen
     image_dir = Path(image_dir)
     assert image_dir.is_dir(), 'Provided image directory does not exist!'
 
+    assert len(duplicate_map[filename]) != 0, 'Provided filename has no duplicates!'
+
     # detect whether scores are present
     for v in duplicate_map.values():
         if len(v) != 0:
-            return_type = v[0]
+            return_val = v[0]
             break
-        print('Provided duplicate_map has no duplicates!')
-        sys.exit()
-
-    assert len(duplicate_map[filename]) != 0, 'Provided filename as no duplicates!'
 
     # plot
-    if isinstance(return_type, tuple):
+    if isinstance(return_val, tuple):
         _plot_images(image_dir=image_dir, orig=filename, image_list=duplicate_map[filename], scores=True, outfile=outfile)
     else:
         _plot_images(image_dir=image_dir, orig=filename, image_list=duplicate_map[filename], scores=False, outfile=outfile)
