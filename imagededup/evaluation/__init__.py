@@ -1,1 +1,2 @@
-from . import evaluation
+from .evaluation import evaluate
+from .plotter import plot_duplicates
