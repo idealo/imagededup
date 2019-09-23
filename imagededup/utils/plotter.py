@@ -1,32 +1,39 @@
-import sys
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 from matplotlib import figure
 from pathlib import Path, PosixPath
-from typing import Dict, Optional, Union, List
+from typing import Dict, Union, List
 
 import numpy as np
 from PIL import Image
 
 
 def _formatter(val: Union[int, np.float32]):
-    """ For printing floats only upto 3rd precision
-    Ints are unchanged.
+    """
+    For printing floats only upto 3rd precision. Ints are unchanged.
     """
     if isinstance(val, np.float32):
-        return f'{val: .3f}'
+        return f'{val:.3f}'
     else:
         return val
 
 
-def _plot_images(image_dir: PosixPath, orig: str, image_list: List, scores: bool = False, outfile: str = False) -> None:
+def _plot_images(
+    image_dir: PosixPath,
+    orig: str,
+    image_list: List,
+    scores: bool = False,
+    outfile: str = None,
+) -> None:
     """
     Plotting function for plot_duplicates() defined below.
-    image_dir: image directory where all files in duplicate_map are present.
-    orig: filename for which duplicates are to be plotted
-    image_list: List of duplicate filenames, could also be with scores (filename, score)
-    scores: Whether only filenames are present in the image_list or scores as well
-    outfile:  Name of the file to save the plot.
+
+    Args:
+        image_dir: image directory where all files in duplicate_map are present.
+        orig: filename for which duplicates are to be plotted
+        image_list: List of duplicate filenames, could also be with scores (filename, score)
+        scores: Whether only filenames are present in the image_list or scores as well
+        outfile:  Name of the file to save the plot.
     """
     n_ims = len(image_list)
     ncols = 4  # fixed for a consistent layout
@@ -34,7 +41,9 @@ def _plot_images(image_dir: PosixPath, orig: str, image_list: List, scores: bool
     fig = figure.Figure(figsize=(10, 14))
 
     gs = gridspec.GridSpec(nrows=nrows, ncols=ncols)
-    ax = plt.subplot(gs[0, 1:3])  # Always plot the original image in the middle of top row
+    ax = plt.subplot(
+        gs[0, 1:3]
+    )  # Always plot the original image in the middle of top row
     ax.imshow(Image.open(image_dir / orig))
     ax.set_title('Original Image: {}'.format(orig))
     ax.axis('off')
@@ -58,21 +67,34 @@ def _plot_images(image_dir: PosixPath, orig: str, image_list: List, scores: bool
 
     if outfile:
         plt.savefig(outfile)
-        
+
     plt.show()
 
 
-def _validate_args(image_dir: Union[PosixPath, str], duplicate_map: Dict, filename: str) -> None:
+def _validate_args(
+    image_dir: Union[PosixPath, str], duplicate_map: Dict, filename: str
+) -> None:
     """Argument validator for plot_duplicates() defined below."""
-    if not image_dir:
-        raise ValueError('Please provide the image directory where all files are present!')
-    if not duplicate_map or not isinstance(duplicate_map, dict):
+
+    image_dir = Path(image_dir)
+    assert (
+        image_dir.is_dir()
+    ), 'Provided image directory does not exist! Please provide the image directory where all files are present!'
+
+    if not isinstance(duplicate_map, dict):
         raise ValueError('Please provide a valid Duplicate map!')
-    if not filename or (filename not in duplicate_map.keys()):
-        raise ValueError('Please provide a valid filename present in the duplicate_map key!')
+    if filename not in duplicate_map.keys():
+        raise ValueError(
+            'Please provide a valid filename present as a key in the duplicate_map!'
+        )
 
 
-def plot_duplicates(image_dir: Union[PosixPath, str], duplicate_map: Dict, filename: str, outfile: str = False) -> None:
+def plot_duplicates(
+    image_dir: Union[PosixPath, str],
+    duplicate_map: Dict,
+    filename: str,
+    outfile: str = None,
+) -> None:
     """
     Given filename for an image, plot duplicates along with the original image using the duplicate map obtained using find_duplicates method.
     Args:
@@ -82,21 +104,25 @@ def plot_duplicates(image_dir: Union[PosixPath, str], duplicate_map: Dict, filen
         outfile: Name of the file to save the plot.
     """
     # validate args
-    _validate_args(image_dir, duplicate_map, filename)
+    _validate_args(image_dir=image_dir, duplicate_map=duplicate_map, filename=filename)
 
-    image_dir = Path(image_dir)
-    assert image_dir.is_dir(), 'Provided image directory does not exist!'
-
-    assert len(duplicate_map[filename]) != 0, 'Provided filename has no duplicates!'
-
-    # detect whether scores are present
-    for v in duplicate_map.values():
-        if len(v) != 0:
-            return_val = v[0]
-            break
+    retrieved = duplicate_map[filename]
+    assert len(retrieved) != 0, 'Provided filename has no duplicates!'
 
     # plot
-    if isinstance(return_val, tuple):
-        _plot_images(image_dir=image_dir, orig=filename, image_list=duplicate_map[filename], scores=True, outfile=outfile)
+    if isinstance(retrieved[0], tuple):
+        _plot_images(
+            image_dir=image_dir,
+            orig=filename,
+            image_list=retrieved,
+            scores=True,
+            outfile=outfile,
+        )
     else:
-        _plot_images(image_dir=image_dir, orig=filename, image_list=duplicate_map[filename], scores=False, outfile=outfile)
+        _plot_images(
+            image_dir=image_dir,
+            orig=filename,
+            image_list=retrieved,
+            scores=False,
+            outfile=outfile,
+        )
