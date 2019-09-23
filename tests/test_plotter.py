@@ -109,6 +109,14 @@ def test_plot_duplicates_scores(mocker_validate_args, mocker_plot_images):
     )
 
 
+def test_plot_duplicates_no_duplicates():
+    with pytest.raises(AssertionError) as e:
+        plot_duplicates(
+            image_dir=PATH_DIR_POSIX, duplicate_map={'1': [], '2': []}, filename='2'
+        )
+    assert str(e.value) == 'Provided filename has no duplicates!'
+
+
 # def test_plot_duplicates_integrated():
 #     plot_duplicates(image_dir=PATH_DIR_POSIX, duplicate_map={'ukbench00120.jpg': ['ukbench00120_hflip.jpg']}, filename='ukbench00120.jpg')
 #     plt.gcf().canvas.draw()

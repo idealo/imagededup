@@ -30,9 +30,9 @@ def _plot_images(
 
     Args:
         image_dir: image directory where all files in duplicate_map are present.
-        orig: filename for which duplicates are to be plotted
-        image_list: List of duplicate filenames, could also be with scores (filename, score)
-        scores: Whether only filenames are present in the image_list or scores as well
+        orig: filename for which duplicates are to be plotted.
+        image_list: List of duplicate filenames, could also be with scores (filename, score).
+        scores: Whether only filenames are present in the image_list or scores as well.
         outfile:  Name of the file to save the plot.
     """
     n_ims = len(image_list)
@@ -96,11 +96,13 @@ def plot_duplicates(
     outfile: str = None,
 ) -> None:
     """
-    Given filename for an image, plot duplicates along with the original image using the duplicate map obtained using find_duplicates method.
+    Given filename for an image, plot duplicates along with the original image using the duplicate map obtained using
+    find_duplicates method.
     Args:
         image_dir: image directory where all files in duplicate_map are present.
-        duplicate_map: mapping of filename to found duplicates (could be with ot without scores).
-        filename: Name of the file for which duplicates are to be plotted, must be a key in the duplicate_map dictionary
+        duplicate_map: mapping of filename to found duplicates (could be with or without scores).
+        filename: Name of the file for which duplicates are to be plotted, must be a key in the duplicate_map
+        dictionary.
         outfile: Name of the file to save the plot.
     """
     # validate args
