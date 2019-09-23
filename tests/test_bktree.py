@@ -7,7 +7,9 @@ from imagededup.handlers.search.bktree import BKTree, BkTreeNode
 
 
 def initialize_for_bktree():
-    hash_dict = OrderedDict({'a': '9', 'b': 'D', 'c': 'A', 'd': 'F', 'e': '2', 'f': '6', 'g': '7', 'h': 'E'})
+    hash_dict = OrderedDict(
+        {'a': '9', 'b': 'D', 'c': 'A', 'd': 'F', 'e': '2', 'f': '6', 'g': '7', 'h': 'E'}
+    )
     dist_func = Hashing.hamming_distance
     return hash_dict, dist_func
 
@@ -19,6 +21,7 @@ def test_bktreenode_correct_initialization():
     assert node.node_value == '1aef'
     assert node.parent_name is None
     assert len(node.children) == 0
+
 
 # test BKTree class
 
@@ -37,7 +40,9 @@ def test_insert_tree_collision():
     # initialize root node, add 1 new node and enter another node with same distance from root, check it goes not as
     # root's child but the other node's child
     _, dist_func = initialize_for_bktree()
-    hash_dict = OrderedDict({'a': '9', 'b': 'D', 'c': '8'}) # to guarantee that 'a' is the root of the tree
+    hash_dict = OrderedDict(
+        {'a': '9', 'b': 'D', 'c': '8'}
+    )  # to guarantee that 'a' is the root of the tree
     bk = BKTree(hash_dict, dist_func)
     assert bk.ROOT == 'a'
     assert len(bk.dict_all[bk.ROOT].children) == 1
@@ -48,7 +53,9 @@ def test_insert_tree_different_nodes():
     # initialize root node, add 1 new node and enter another node with different distance from root, check it goes as
     # root's child and not as the other node's child
     _, dist_func = initialize_for_bktree()
-    hash_dict = OrderedDict({'a': '9', 'b': 'D', 'c': 'F'})  # to guarantee that 'a' is the root of the tree
+    hash_dict = OrderedDict(
+        {'a': '9', 'b': 'D', 'c': 'F'}
+    )  # to guarantee that 'a' is the root of the tree
     bk = BKTree(hash_dict, dist_func)
     assert bk.ROOT == 'a'
     assert len(bk.dict_all[bk.ROOT].children) == 2
@@ -59,7 +66,9 @@ def test_insert_tree_check_distance():
     # initialize root node, add 1 new node and enter another node with different distance from root, check that the
     # distance recorded in the root's children dictionary is as expected
     _, dist_func = initialize_for_bktree()
-    hash_dict = OrderedDict({'a': '9', 'b': 'D', 'c': 'F'})  # to guarantee that 'a' is the root of the tree
+    hash_dict = OrderedDict(
+        {'a': '9', 'b': 'D', 'c': 'F'}
+    )  # to guarantee that 'a' is the root of the tree
     bk = BKTree(hash_dict, dist_func)
     assert bk.ROOT == 'a'
     assert bk.dict_all[bk.ROOT].children['b'] == 1
@@ -73,7 +82,9 @@ def test_construct_tree():
     # check root
     assert bk.ROOT == 'a'
     # check that expected leaf nodes have no children (they're actually leaf nodes)
-    leaf_nodes = set([k for k in bk.dict_all.keys() if len(bk.dict_all[k].children)==0])
+    leaf_nodes = set(
+        [k for k in bk.dict_all.keys() if len(bk.dict_all[k].children) == 0]
+    )
     expected_leaf_nodes = set(['b', 'd', 'f', 'h'])
     assert leaf_nodes == expected_leaf_nodes
     # check that root node ('a') has 4 children
@@ -124,7 +135,9 @@ def test_get_next_candidates_valid():
     bk = BKTree(hash_dict, dist_func)
     assert bk.ROOT == 'a'
     query = '5'
-    candidates, validity, dist = bk._get_next_candidates(query, bk.dict_all[bk.ROOT], tolerance=2)
+    candidates, validity, dist = bk._get_next_candidates(
+        query, bk.dict_all[bk.ROOT], tolerance=2
+    )
     candidates = set(candidates)
     assert candidates <= set(['b', 'c', 'e', 'f'])
     assert validity
@@ -152,5 +165,3 @@ def test_tolerance_affects_retrievals():
     candidates, _, _ = bk._get_next_candidates(query, bk.dict_all[bk.ROOT], tolerance=2)
     high_tolerance_candidate_len = len(candidates)
     assert high_tolerance_candidate_len > low_tolerance_candidate_len
-
-

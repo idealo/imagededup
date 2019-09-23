@@ -2,8 +2,8 @@ import os
 from pathlib import Path
 from PIL import Image
 
-import numpy as np
 import pytest
+import numpy as np
 
 from imagededup.methods.hashing import Hashing, PHash, DHash, AHash, WHash
 
@@ -43,7 +43,6 @@ def test__array_to_hash(hasher):
         [1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0]
     )
     assert hasher._array_to_hash(hash_mat) == '9191fa'
-
 
 
 def test__check_hamming_distance_bounds_input_not_int(hasher):
@@ -145,15 +144,17 @@ def test_encode_image_accepts_non_posixpath(
     np.testing.assert_array_equal(ret_val, mocker_hash_func.call_args[0][0])
 
 
-# encode_images
+# _encoder
 
 
 @pytest.fixture
 def mocker_encode_image(mocker):
     mocker.patch(
-        'imagededup.methods.hashing.Hashing.encode_image',
-        return_value='123456789ABCDEFA'
+        'imagededup.methods.hashing.parallelise', return_value='123456789ABCDEFA'
     )
+
+
+# encode_images
 
 
 def test_encode_images_accepts_valid_posixpath(hasher, mocker_encode_image):
@@ -161,7 +162,6 @@ def test_encode_images_accepts_valid_posixpath(hasher, mocker_encode_image):
 
 
 def test_encode_images_accepts_non_posixpath(hasher, mocker_encode_image):
-    print(PATH_IMAGE_DIR_STRING)
     assert len(hasher.encode_images(PATH_IMAGE_DIR_STRING)) == 6
 
 
@@ -174,7 +174,7 @@ def test_encode_images_return_vals(hasher, mocker_encode_image):
     encoded_val = '123456789ABCDEFA'
     hashes = hasher.encode_images(PATH_IMAGE_DIR)
     assert isinstance(hashes, dict)
-    assert list(hashes.values())[0] == encoded_val
+    assert list(hashes.values())[0] == encoded_val[0]
     assert PATH_SINGLE_IMAGE.name in hashes.keys()
 
 
@@ -211,7 +211,8 @@ def test__find_duplicates_dict_outfile_none(hasher, mocker):
         queries=encoding_map,
         distance_function=Hashing.hamming_distance,
         threshold=threshold,
-        search_method='bktree')
+        search_method='bktree',
+    )
     hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
     save_json_mocker.assert_not_called()
 
@@ -238,7 +239,8 @@ def test__find_duplicates_dict_outfile_true(hasher, mocker):
         queries=encoding_map,
         distance_function=Hashing.hamming_distance,
         threshold=threshold,
-        search_method='bktree')
+        search_method='bktree',
+    )
     hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
     save_json_mocker.assert_called_once_with(
         hasheval_mocker.return_value.retrieve_results.return_value, outfile
@@ -255,7 +257,7 @@ def test__find_duplicates_dir(hasher, mocker):
     outfile = True
     ret_val_find_dup_dict = {
         'filename.jpg': [('dup1.jpg', 3)],
-        'filename2.jpg': [('dup2.jpg', 10)]
+        'filename2.jpg': [('dup2.jpg', 10)],
     }
     encode_images_mocker = mocker.patch(
         'imagededup.methods.hashing.Hashing.encode_images', return_value=encoding_map
