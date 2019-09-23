@@ -6,10 +6,10 @@ import pywt
 import numpy as np
 from scipy.fftpack import dct
 
+
 from imagededup.handlers.search.retrieval import HashEval
-from imagededup.utils.general_utils import get_files_to_remove, save_json
+from imagededup.utils.general_utils import get_files_to_remove, save_json, parallelise
 from imagededup.utils.image_utils import load_image, preprocess_image
-from imagededup.utils.logger import return_logger
 
 
 """
@@ -23,7 +23,6 @@ Wavelet hash: Allow possibility of different wavelet functions
 class Hashing:
     def __init__(self) -> None:
         self.target_size = (8, 8)  # resizing to dims
-        self.logger = return_logger(__name__, os.getcwd())
 
     @staticmethod
     def hamming_distance(hash1: str, hash2: str) -> float:
@@ -122,18 +121,18 @@ class Hashing:
         image_dir = Path(image_dir)
 
         files = [
-            i.absolute() for i in image_dir.glob("*") if not i.name.startswith(".")
+            i.absolute() for i in image_dir.glob('*') if not i.name.startswith('.')
         ]  # ignore hidden files
 
-        hash_dict = dict()
-        self.logger.info(f'Start: Calculating hashes...')
-        for _file in files:
-            encoding = self.encode_image(_file)
+        print(f'Start: Calculating hashes...')
 
-            if encoding:
-                hash_dict[_file.name] = encoding
+        hashes = parallelise(self.encode_image, files)
+        hash_initial_dict = dict(zip([f.name for f in files], hashes))
+        hash_dict = {
+            k: v for k, v in hash_initial_dict.items() if v
+        }  # To ignore None (returned if some probelm with image file)
 
-        self.logger.info(f'End: Calculating hashes!')
+        print(f'End: Calculating hashes!')
         return hash_dict
 
     def _hash_algo(self, image_array: np.ndarray):
@@ -189,15 +188,18 @@ class Hashing:
             if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
             'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
         """
-        self.logger.info('Start: Evaluating hamming distances for getting duplicates')
+        print('Start: Evaluating hamming distances for getting duplicates')
 
         result_set = HashEval(
             test=encoding_map,
             queries=encoding_map,
             distance_function=self.hamming_distance,
             threshold=max_distance_threshold,
-            search_method='bktree')
-        self.logger.info('End: Evaluating hamming distances for getting duplicates')
+            search_method='bktree',
+        )
+
+        print('End: Evaluating hamming distances for getting duplicates')
+
         self.results = result_set.retrieve_results(scores=scores)
         if outfile:
             save_json(self.results, outfile)
@@ -296,7 +298,7 @@ class Hashing:
                 outfile=outfile,
             )
         else:
-            raise ValueError("Provide either an image directory or encodings!")
+            raise ValueError('Provide either an image directory or encodings!')
         return result
 
     def find_duplicates_to_remove(

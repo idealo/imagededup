@@ -95,4 +95,3 @@ def test_load_image_all_inputs_correct():
     assert np.issubdtype(
         np.uint8, loaded_image.dtype
     )  # return numpy array dtype is uint8
-
