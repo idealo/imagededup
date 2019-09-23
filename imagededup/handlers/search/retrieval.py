@@ -1,4 +1,4 @@
-from typing import Dict, Union, Callable
+from typing import Callable, Dict, Union
 
 from imagededup.handlers.search.bktree import BKTree
 from imagededup.handlers.search.brute_force import BruteForce
