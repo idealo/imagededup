@@ -73,8 +73,9 @@ def _plot_images(
 
 def _validate_args(
     image_dir: Union[PosixPath, str], duplicate_map: Dict, filename: str
-) -> None:
-    """Argument validator for plot_duplicates() defined below."""
+) -> PosixPath:
+    """Argument validator for plot_duplicates() defined below.
+    Return PosixPath to the image directory"""
 
     image_dir = Path(image_dir)
     assert (
@@ -87,6 +88,7 @@ def _validate_args(
         raise ValueError(
             'Please provide a valid filename present as a key in the duplicate_map!'
         )
+    return image_dir
 
 
 def plot_duplicates(
@@ -106,7 +108,7 @@ def plot_duplicates(
         outfile: Name of the file to save the plot.
     """
     # validate args
-    _validate_args(image_dir=image_dir, duplicate_map=duplicate_map, filename=filename)
+    image_dir = _validate_args(image_dir=image_dir, duplicate_map=duplicate_map, filename=filename)
 
     retrieved = duplicate_map[filename]
     assert len(retrieved) != 0, 'Provided filename has no duplicates!'
