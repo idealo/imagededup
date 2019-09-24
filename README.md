@@ -241,8 +241,8 @@ duplicates = cnn_encoder.find_duplicates_to_remove(image_dir='path/to/image/dire
 It might be desirable to only generate the hashes/cnn encodings for a given image or all images in the directory instead
  of directly deduplicating using find_duplicates. Features can be generated for a directory of images or for a single 
  image. There are two levels at which feature generation can be done:
-- For all images in a directory
-- For a single image
+- [For all images in a directory](#feature-generation-for-all-images-in-a-directory)
+- [For a single image](#feature-generation-for-a-single-image)
 
 
 #### Feature generation for all images in a directory
