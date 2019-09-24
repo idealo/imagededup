@@ -28,6 +28,9 @@ def test__formatter_float_not_npfloat32():
 
 # test_validate_args (n tcs)
 
+def test__validate_args_nonposixpath():
+    assert _validate_args(image_dir=PATH_DIR, duplicate_map={'1': ['2']}, filename='1') == PATH_DIR_POSIX
+
 
 def test__validate_args_image_dir():
     with pytest.raises(AssertionError) as e:
@@ -56,7 +59,7 @@ def test__validate_args_filename():
 # test plot_duplicates, assert calls
 @pytest.fixture
 def mocker_validate_args(mocker):
-    return mocker.patch('imagededup.utils.plotter._validate_args')
+    return mocker.patch('imagededup.utils.plotter._validate_args', return_value=PATH_DIR_POSIX)
 
 
 @pytest.fixture
