@@ -152,7 +152,7 @@ Returns a list of files in the image directory that are considered as duplicates
 
 The api is similar to *find_duplicates* function (except the *score* attribute in *find_duplicates*). This function 
 allows the return of a single list of file names in directory that are found to be duplicates.
-The common api for the method is as below:
+The general api for the method is as below:
 ```python
 from imagededup.methods import <method-name>
 method_object = <method-name>()
@@ -246,7 +246,7 @@ It might be desirable to only generate the hashes/cnn encodings for a given imag
 
 
 #### Feature generation for all images in a directory
-To generate encodings for all images in an image directory, the common api is:
+To generate encodings for all images in an image directory, the general api is:
 ```python
 from imagededup.methods import <method-name>
 method_object = <method-name>()
@@ -279,7 +279,7 @@ encodings = dhasher.encode_images(image_dir='path/to/image/directory')
 ```
 
 #### Feature generation for a single image
-To generate encodings for a single image, the common api is:
+To generate encodings for a single image, the general api is:
 ```python
 from imagededup.methods import <method-name>
 method_object = <method-name>()
@@ -367,11 +367,15 @@ where *filename* is the file for which duplicates are to be plotted.
 - *image_dir*: Directory where all image files are present.
 
 - *duplicate_map*: A dictionary representing retrieved duplicates with filenames as key and a list of retrieved duplicate 
-filenames as value.
+filenames as value. The duplicate_map with scores can also be passed (obtained from [find_duplicates](#find_duplicates)
+function with scores attribute set to True).
 
 - *filename*: Image file for which duplicates are to be plotted.
 
 - *outfile*: Name of the file the plot should be saved to. *None* by default.
+
+The output looks as below:
+![figs](/Users/tanuj.jain/Documents/dedup-data/readme_dups.png)
 
 ## Contribute
 
