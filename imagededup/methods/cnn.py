@@ -1,6 +1,6 @@
 import os
 from pathlib import Path, PosixPath
-from typing import Dict, Optional, Union, List
+from typing import Dict, List, Optional, Union
 
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity

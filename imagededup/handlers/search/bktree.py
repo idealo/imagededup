@@ -1,6 +1,5 @@
 import copy
-from types import FunctionType
-from typing import Tuple, Dict
+from typing import Callable, Dict, Tuple
 
 # Implementation reference: https://signal-to-noise.xyz/post/bk-tree/
 
@@ -24,7 +23,7 @@ class BKTree:
     Class to construct and perform search using a BKTree.
     """
 
-    def __init__(self, hash_dict: Dict, distance_function: FunctionType) -> None:
+    def __init__(self, hash_dict: Dict, distance_function: Callable) -> None:
         """
         Initialize a root for the BKTree and triggers the tree construction using the dictionary for mapping file names
         and corresponding hashes.

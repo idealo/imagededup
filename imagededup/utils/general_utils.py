@@ -1,9 +1,7 @@
 import json
 import tqdm
-from typing import Dict, List
-
 from multiprocessing import cpu_count, Pool
-from typing import Callable
+from typing import Callable, Dict, List
 
 
 def get_files_to_remove(duplicates: Dict[str, List]) -> List:
