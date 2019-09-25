@@ -14,10 +14,10 @@ logger = return_logger(__name__, os.getcwd())
 
 def _transpose_checker(mapping):
     """
-    Check for the given dictionary that transpose relationship holds.
+    Check for the given dictionary that transpose (symmetric) relationship holds.
 
     Args:
-        mapping: Dictionary respresenting a mapping of filenames to the list of respective duplicate filenames.
+        mapping: Dictionary representing a mapping of filenames to the list of respective duplicate filenames.
     """
     for key, val in mapping.items():
         # check for each value in the list if the key is present as its value
