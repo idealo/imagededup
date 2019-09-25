@@ -1,0 +1,47 @@
+site_name: Image-dedup
+site_author: idealo Data Science Team
+
+nav:
+    - Home: index.md
+    # - Getting Started: start.md
+    # - Examples:
+      # - Cats and Dogs: examples/cats_and_dogs.md
+      # - Imagenette: examples/imagenette.md
+    - Documentation:
+        - Evaluation:
+            - Evaluation: evaluation/evaluation.md
+        - Methods:
+            - CNN: methods/cnn.md
+        - Components:
+            - Cloud: components/cloud.md
+            - Data Preparation: components/dataprep.md
+            - Training: components/training.md
+            - Evaluation: components/evaluation.md
+        - Handlers:
+            - Data Generator: handlers/data_generator.md
+            - Image Classifer: handlers/image_classifier.md
+        - Scripts:
+            - Run Cloud: scripts/run_cloud.md
+            - Run Data Prep: scripts/run_dataprep.md
+            - Run Training: scripts/run_training.md
+            - Run Training Cloud: scripts/run_training_cloud.md
+            - Run Evaluation: scripts/run_evaluation.md
+    - Contribution: CONTRIBUTING.md
+    - License: LICENSE.md
+theme:
+  name: 'material'
+  palette:
+    primary: 'red'
+    accent: 'red'
+  logo: 'img/logo.svg'
+  favicon: 'img/favicon.ico'
+
+repo_name: 'idealo/image-dedup'
+repo_url: 'https://github.com/idealo/image-dedup'
+
+google_analytics:
+  - 'UA-137434942-2'
+  - 'auto'
+
+markdown_extensions:
+  - codehilite

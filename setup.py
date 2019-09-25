@@ -21,6 +21,7 @@ setup(
         'matplotlib==3.1.1',
     ],
     extras_require={
-        'tests': ['pytest==4.4.1', 'pytest-cov==2.6.1', 'pytest-mock==1.10.4']
+        'tests': ['pytest==4.4.1', 'pytest-cov==2.6.1', 'pytest-mock==1.10.4'],
+        'docs': ['mkdocs==1.0.4', 'mkdocs-material==4.0.2'],
     },
 )

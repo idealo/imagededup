@@ -187,23 +187,20 @@ class CNN:
         )
 
     def encode_images(self, image_dir: Union[PosixPath, str]) -> Dict:
-        """
-        Generate CNN features for all images in a given directory of images.
+        """Generate CNN features for all images in a given directory of images.
 
         Args:
             image_dir: Path to the image directory.
-
         Returns:
-            A dictionary that contains a mapping of filenames and corresponding numpy array of CNN features.
-
-        Example usage:
-        ```
-        from imagededup.methods import CNN
-        myencoder = CNN()
-        mapping = myencoder.encode_images('path/to/directory')
-
-        'mapping' contains: {'Image1.jpg': np.array([1.0, -0.2, ...]), 'Image2.jpg': np.array([0.3, 0.06, ...]), ...}
-        ```
+            dictionary: Contains a mapping of filenames and corresponding numpy array of CNN features.
+        Example:
+            ```
+            from imagededup.methods import CNN
+            myencoder = CNN()
+            feature_vector = myencoder.encode_images(image_file='path/to/image.jpg')
+            OR
+            feature_vector = myencoder.encode_images(image_array=<numpy array of image>)
+            ```
         """
         if isinstance(image_dir, str):
             image_dir = Path(image_dir)
@@ -347,7 +344,7 @@ class CNN:
             outfile: Name of the file to save the results.
 
         Returns:
-            if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
+            dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
             score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}
             if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
             'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
