@@ -3,7 +3,18 @@
 Finding duplicates in an image dataset is a recurring task. imagededup is a python package that provides functionality
 to carry out this task effectively. The deduplication problem generally caters to 2 broad issues:
 * Finding exact duplicates
+
+<p align="center">
+  <img src="_readme_figures/103500.jpg" width="300" />
+  <img src="_readme_figures/103500.jpg" width="300" />
+</p>
+
 * Finding near duplicates
+
+<p align="center">
+  <img src="_readme_figures/103500.jpg" width="300" />
+  <img src="_readme_figures/103501.jpg" width="300" />
+</p>
 
 Traditional methods such as hashing algorithms are particularly good at finding exact duplicates while more modern 
 methods involving convolutional neural networks are also adept at finding near duplicates due to their ability to 
@@ -68,7 +79,7 @@ where the returned variable *duplicates* is a dictionary with the following cont
 {
   'image1.jpg': ['image1_duplicate1.jpg',
                 'image1_duplicate2.jpg'],
-  'image2.jpg': [],
+  'image2.jpg': [..],
   ..
 }
 ```
@@ -310,12 +321,12 @@ To determine the quality of deduplication algorithm and corresponding threshold,
 
 Given a ground truth mapping consisting of file names and a list of duplicates for each file along with a retrieved 
 mapping from the deduplication algorithm for the same files, the following metrics can be obtained using the framework:
-- Mean Average Precision (MAP)
-- Mean Normalized Discounted Cumulative Gain (NDCG)
-- Jaccard Index
-- Per class Precision (class 0 = non-duplicate image pairs, class 1 = duplicate image pairs)
-- Per class Recall (class 0 = non-duplicate image pairs, class 1 = duplicate image pairs)
-- Per class f1-score (class 0 = non-duplicate image pairs, class 1 = duplicate image pairs)
+- [Mean Average Precision](https://en.wikipedia.org/wiki/Evaluation_measures_(information_retrieval)#Mean_average_precision) (MAP)
+- [Mean Normalized Discounted Cumulative Gain](https://en.wikipedia.org/wiki/Discounted_cumulative_gain) (NDCG)
+- [Jaccard Index](https://en.wikipedia.org/wiki/Jaccard_index)
+- Per class [Precision](https://en.wikipedia.org/wiki/Precision_and_recall) (class 0 = non-duplicate image pairs, class 1 = duplicate image pairs)
+- Per class [Recall](https://en.wikipedia.org/wiki/Precision_and_recall) (class 0 = non-duplicate image pairs, class 1 = duplicate image pairs)
+- Per class [f1-score](https://en.wikipedia.org/wiki/F1_score) (class 0 = non-duplicate image pairs, class 1 = duplicate image pairs)
 
 The api for obtaining these metrics  is as below:
 ```python
@@ -375,12 +386,29 @@ function with scores attribute set to True).
 - *outfile*: Name of the file the plot should be saved to. *None* by default.
 
 The output looks as below:
-![figs](/Users/tanuj.jain/Documents/dedup-data/readme_dups.png)
+![figs](_readme_figures/plot_dups.png)
 
 ## Contribute
+We welcome all kinds of contributions, models trained on different datasets, new model architectures and/or hyperparameters combinations that improve the performance of the currently published model.
+
+Will publish the performances of new models in this repository.
+
+See the [Contribution](CONTRIBUTING.md) guide for more details.
 
 ## Citation
+Please cite Imagededup in your publications if this is useful for your research. Here is an example BibTeX entry:
+```
+@misc{idealods2019imagededup,
+  title={Imagededup},
+  author={Tanuj Jain and Christopher Lennan and Zubin John},
+  year={2019},
+  howpublished={\url{https://github.com/idealo/image-dedup}},
+}
+```
 
 ## Maintainers
+* Tanuj Jain, github: [tanujjain](https://github.com/tanujjain)
+* Christopher Lennan, github: [clennan](https://github.com/clennan)
 
 ## Copyright
+See [LICENSE](LICENSE) for details.
