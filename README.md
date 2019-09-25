@@ -6,11 +6,11 @@ to carry out this task effectively. The deduplication problem generally caters t
 * Finding near duplicates
 
 Traditional methods such as hashing algorithms are particularly good at finding exact duplicates while more modern 
-methods involving convolutional neural networks are adept at finding near duplicates due to their ability to capture 
-basic contours in images.
+methods involving convolutional neural networks are also adept at finding near duplicates due to their ability to 
+capture basic contours in images.
 
-This package provides functionality to address both problems. Additionally, an evaluation and experimentation framework 
-is also provided. Following details the functionality provided by the package:
+This package provides functionality to address both problems. Additionally, an evaluation framework is also provided to
+judge the quality of deduplication. Following details the functionality provided by the package:
 * Finding duplicates in a directory using one of the following algorithms:
     - [Convolutional Neural Network](https://arxiv.org/abs/1704.04861)
     - [Perceptual hashing](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html)
@@ -82,7 +82,7 @@ duplicates for the key file.
 
 - *encoding_map*: Optional, used instead of *image_dir* attribute. Set it equal to the dictionary of file names and 
 corresponding features (hashes/cnn encodings). The mentioned map can be generated using the corresponding 
-*encode_images* method.
+[*encode_images*](#feature-generation-for-all-images-in-a-directory) method.
 - *scores*: Setting it to *True* returns the scores representing the hamming distance (for hashing) or cosine similarity
  (for cnn) of each of the duplicate file names from the key file. In this case, the returned 'duplicates' dictionary has
   the following content:
@@ -90,7 +90,7 @@ corresponding features (hashes/cnn encodings). The mentioned map can be generate
 {
   'image1.jpg': [('image1_duplicate1.jpg', score),
                  ('image1_duplicate2.jpg', score)],
-  'image2.jpg': [],
+  'image2.jpg': [..],
   ..
 }
 ```
@@ -174,7 +174,7 @@ duplicates of some file in the directory:
 
 - *encoding_map*: Optional, used instead of image_dir attribute. Set it equal to the dictionary of file names and 
 corresponding features (hashes/cnn encodings). The mentioned map can be generated using the corresponding 
-*encode_images* method. Each key in the 'duplicates' dictionary corresponds to a file in the image directory passed to 
+[*encode_images*](#feature-generation-for-all-images-in-a-directory) method. Each key in the 'duplicates' dictionary corresponds to a file in the image directory passed to 
 the image_dir parameter of the find_duplicates function. The value is a list of all tuples representing the file names 
 and corresponding scores in the image directory that were found to be duplicates for the key file.
 
@@ -310,8 +310,8 @@ To determine the quality of deduplication algorithm and corresponding threshold,
 
 Given a ground truth mapping consisting of file names and a list of duplicates for each file along with a retrieved 
 mapping from the deduplication algorithm for the same files, the following metrics can be obtained using the framework:
-- MAP
-- Mean NDCG
+- Mean Average Precision (MAP)
+- Mean Normalized Discounted Cumulative Gain (NDCG)
 - Jaccard Index
 - Per class Precision (class 0 = non-duplicate image pairs, class 1 = duplicate image pairs)
 - Per class Recall (class 0 = non-duplicate image pairs, class 1 = duplicate image pairs)
@@ -349,7 +349,7 @@ filenames as value.
 
 ##### Considerations
 - Presently, the ground truth map should be prepared manually by the user. Symmetric relations between duplicates must 
-be represented in ground truth map. If an image *i* is a duplicate for image *j*, then *j* must also be represented as a
+be represented in the ground truth map. If an image *i* is a duplicate for image *j*, then *j* must also be represented as a
  duplicate of *i*. Absence of symmetric relations will lead to an exception.
 
 - Both the ground_truth_map and retrieved_map must have the same keys.
@@ -364,7 +364,7 @@ plot_duplicates(image_dir, duplicate_map, filename)
 where *filename* is the file for which duplicates are to be plotted.
 
 ##### Options
-- *image_dir*: Optional, directory where all image files are present.
+- *image_dir*: Directory where all image files are present.
 
 - *duplicate_map*: A dictionary representing retrieved duplicates with filenames as key and a list of retrieved duplicate 
 filenames as value.
@@ -372,10 +372,6 @@ filenames as value.
 - *filename*: Image file for which duplicates are to be plotted.
 
 - *outfile*: Name of the file the plot should be saved to. *None* by default.
-
-##### Considerations
-- *image_dir* must have all the files present in duplicate_map including the filename.
-
 
 ## Contribute
 
