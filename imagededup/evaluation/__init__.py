@@ -1,1 +1,1 @@
-from . import evaluation
+from .evaluation import evaluate

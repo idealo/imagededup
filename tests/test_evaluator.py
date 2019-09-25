@@ -1,4 +1,5 @@
 import pytest
+
 import numpy as np
 
 from imagededup.evaluation.evaluation import (
@@ -155,7 +156,6 @@ def test_correct_values_all():
     ground_truth, retrieved = return_ground_incorrect_retrievals()
     score = evaluate(ground_truth, retrieved)
     assert isinstance(score, dict)
-    print(score)
     assert set(score.keys()) == set(
         ['map', 'ndcg', 'jaccard', 'precision', 'recall', 'f1_score', 'support']
     )

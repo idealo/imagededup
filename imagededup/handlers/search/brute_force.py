@@ -1,5 +1,4 @@
-from typing import Dict
-from types import FunctionType
+from typing import Callable, Dict
 
 
 class BruteForce:
@@ -7,7 +6,7 @@ class BruteForce:
     Class to perform search using a Brute force.
     """
 
-    def __init__(self, hash_dict: Dict, distance_function: FunctionType) -> None:
+    def __init__(self, hash_dict: Dict, distance_function: Callable) -> None:
         """
         Initialize a dictionary for mapping file names and corresponding hashes anda  distance function to be used for
         getting distance between two hash strings.
