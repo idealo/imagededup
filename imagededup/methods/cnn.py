@@ -234,7 +234,7 @@ class CNN:
     def _find_duplicates_dict(
         self,
         encoding_map: Dict[str, list],
-        min_similarity_threshold: int,
+        min_similarity_threshold: float,
         scores: bool,
         outfile: Optional[str] = None,
     ) -> Dict:
@@ -294,7 +294,7 @@ class CNN:
     def _find_duplicates_dir(
         self,
         image_dir: Union[PosixPath, str],
-        min_similarity_threshold: int,
+        min_similarity_threshold: float,
         scores: bool,
         outfile: Optional[str] = None,
     ) -> Dict:
@@ -328,7 +328,7 @@ class CNN:
         self,
         image_dir: Union[PosixPath, str] = None,
         encoding_map: Dict[str, list] = None,
-        min_similarity_threshold: int = 0.9,
+        min_similarity_threshold: float = 0.9,
         scores: bool = False,
         outfile: Optional[str] = None,
     ) -> Dict:
@@ -393,7 +393,7 @@ class CNN:
         self,
         image_dir: PosixPath = None,
         encoding_map: Dict[str, np.ndarray] = None,
-        min_similarity_threshold: int = 0.9,
+        min_similarity_threshold: float = 0.9,
         outfile: Optional[str] = None,
     ) -> List:
         """
