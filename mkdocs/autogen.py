@@ -122,6 +122,7 @@ def parse_func_string(comment):
             elif start_with.startswith(paras[3]):
                 comments[paras[3]] = part
             elif start_with.startswith(paras[4]):
+                # write some custom handler for examples here
                 comments[paras[4]] = part
             ind = skip_space_line(parts, ind)
         else:
