@@ -4,15 +4,16 @@ long_description = '''
 imagededup is a python  package that provides functionality to find duplicates in a collection of images using a variety
 of algorithms. Additionally, an evaluation and experimentation framework, is also provided. Following details the
 functionality provided by the package:
-- Finding duplicates in a directory using one of the following algorithms:
+
+* Finding duplicates in a directory using one of the following algorithms:
     - Convolutional Neural Network
     - Perceptual hashing
     - Difference hashing
     - Wavelet hashing
     - Average hashing
-- Generation of features for images using one of the above stated algorithms.
-- Framework to evaluate effectiveness of deduplication given a ground truth mapping.
-- Plotting duplicates found for a given image file.
+* Generation of features for images using one of the above stated algorithms.
+* Framework to evaluate effectiveness of deduplication given a ground truth mapping.
+* Plotting duplicates found for a given image file.
 '''
 
 setup(
