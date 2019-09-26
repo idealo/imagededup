@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 long_description = '''
 imagededup is a python  package that provides functionality to find duplicates in a collection of images using a variety
@@ -19,7 +19,7 @@ functionality provided by the package:
 setup(
     name='imagededup',
     version='0.0.1',
-    packages=['imagededup'],
+    packages=find_packages(exclude=('tests',)),
     url='',
     long_description=long_description,
     license='Apache 2.0',
