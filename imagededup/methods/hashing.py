@@ -35,7 +35,7 @@ class Hashing:
             hash2: hash string
 
         Returns:
-            Hamming distance between the two hashes.
+            hamming_distance: Hamming distance between the two hashes.
         """
         hash1_bin = bin(int(hash1, 16))[2:].zfill(
             64
@@ -67,9 +67,9 @@ class Hashing:
             image_array: Image typecast to numpy array.
 
         Returns:
-            A 64 character string hash for the image.
+            hash: A 16 character hexadecimal string hash for the image.
 
-        Example usage:
+        Example:
         ```
         from imagededup.methods import <hash-method>
         myencoder = <hash-method>()
@@ -104,15 +104,13 @@ class Hashing:
             image_dir: Path to the image directory.
 
         Returns:
-            A dictionary that contains a mapping of filenames and corresponding 64 character hash string.
+            dictionary: A dictionary that contains a mapping of filenames and corresponding 64 character hash string such as {'Image1.jpg': 'hash_string1', 'Image2.jpg': 'hash_string2', ...}
 
-        Example usage:
+        Example:
         ```
         from imagededup.methods import <hash-method>
         myencoder = <hash-method>()
         mapping = myencoder.encode_images('path/to/directory')
-
-        'mapping' contains: {'Image1.jpg': 'hash_string1', 'Image2.jpg': 'hash_string2', ...}
         ```
         """
         if not os.path.isdir(image_dir):
@@ -262,12 +260,9 @@ class Hashing:
             outfile: Name of the file to save the results.
 
         Returns:
-            if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
-            score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}
-            if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
-            'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
+            dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg', score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}. if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
 
-            Example usage:
+        Example:
         ```
         from imagededup.methods import <hash-method>
         myencoder = <hash-method>()
@@ -321,9 +316,9 @@ class Hashing:
             outfile: Name of the file to save the results.
 
         Returns:
-            List of image file names that should be removed.
+            duplicates list: List of image file names that should be removed.
 
-        Example usage:
+        Example:
         ```
         from imagededup.methods import <hash-method>
         myencoder = <hash-method>()
@@ -361,34 +356,35 @@ class PHash(Hashing):
     possibilities to get hashes:
     1. At a single image level: Using the method 'encode_image', the perceptual hash for a single image can be
     obtained.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import PHash
     myencoder = PHash()
     hash = myencoder.encode_image('path/to/image.jpg')
     ```
+
     2. At a directory level: In case perceptual hash for several images needs to be generated, the images can be
     placed in a directory and hashes for all of the images can be obtained using the 'encode_images' method.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import PHash
     myencoder = PHash()
     hashes = myencoder.encode_images('path/to/directory')
-        ```
+    ```
     Duplicate detection:
 
     Find duplicates either using the hashes generated previously using 'encode_images' or using a Path to the
     directory that contains the image dataset that needs to be deduplicated. There are 2 inputs that can be provided to
     the find_duplicates function:
     1. Dictionary generated using 'encode_images' function above.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import PHash
     myencoder = PHash()
     duplicates = myencoder.find_duplicates(encoding_map, max_distance_threshold=15, scores=True)
     ```
     2. Using the Path of the directory where all images are present.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import PHash
     myencoder = PHash()
@@ -398,7 +394,7 @@ class PHash(Hashing):
     the path to the image directory as input or the dictionary with features. A threshold for maximum hamming distance
     should be considered.
 
-    Example usage:
+    Example:
         ```
         from imagededup.methods import PHash
         myencoder = PHash()
@@ -450,7 +446,7 @@ class AHash(Hashing):
     possibilities to get hashes:
     1. At a single image level: Using the method 'encode_image', the average hash for a single image can be
     obtained.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import AHash
     myencoder = AHash()
@@ -458,7 +454,7 @@ class AHash(Hashing):
     ```
     2. At a directory level: In case average hash for several images need to be generated, the images can be
     placed in a directory and hashes for all of the images can be obtained using the 'encode_images' method.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import AHash
     myencoder = AHash()
@@ -471,14 +467,14 @@ class AHash(Hashing):
     directory that contains the image dataset that needs to be deduplicated. There are 2 inputs that can be provided to
     the find_duplicates function:
     1. Dictionary generated using 'encode_images' function above.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import AHash
     myencoder = AHash()
     duplicates = myencoder.find_duplicates(encoding_map, max_distance_threshold=15, scores=True)
     ```
     2. Using the Path of the directory where all images are present.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import AHash
     myencoder = AHash()
@@ -488,7 +484,7 @@ class AHash(Hashing):
     the path to the image directory as input or the dictionary with features. A threshold for maximum hamming distance
     should be considered.
 
-    Example usage:
+    Example:
         ```
         from imagededup.methods import AHash
         myencoder = AHash()
@@ -526,7 +522,7 @@ class DHash(Hashing):
     possibilities to get hashes:
     1. At a single image level: Using the method 'encode_image', the difference hash for a single image can be
     obtained.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import DHash
     myencoder = DHash()
@@ -534,7 +530,7 @@ class DHash(Hashing):
     ```
     2. At a directory level: In case difference hash for several images need to be generated, the images can be
     placed in a directory and hashes for all of the images can be obtained using the 'encode_images' method.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import DHash
     myencoder = DHash()
@@ -547,14 +543,14 @@ class DHash(Hashing):
     directory that contains the image dataset that needs to be deduplicated. There are 2 inputs that can be provided to
     the find_duplicates function:
     1. Dictionary generated using 'encode_images' function above.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import DHash
     myencoder = DHash()
     duplicates = myencoder.find_duplicates(encoding_map, max_distance_threshold=15, scores=True)
     ```
     2. Using the Path of the directory where all images are present.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import DHash
     myencoder = DHash()
@@ -564,7 +560,7 @@ class DHash(Hashing):
     the path to the image directory as input or the dictionary with features. A threshold for maximum hamming distance
     should be considered.
 
-    Example usage:
+    Example:
         ```
         from imagededup.methods import DHash
         myencoder = DHash()
@@ -604,7 +600,7 @@ class WHash(Hashing):
     possibilities to get hashes:
     1. At a single image level: Using the method 'encode_image', the wavelet hash for a single image can be
     obtained.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import WHash
     myencoder = WHash()
@@ -612,7 +608,7 @@ class WHash(Hashing):
     ```
     2. At a directory level: In case wavelet hash for several images need to be generated, the images can be
     placed in a directory and hashes for all of the images can be obtained using the 'encode_images' method.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import WHash
     myencoder = WHash()
@@ -625,14 +621,14 @@ class WHash(Hashing):
     directory that contains the image dataset that needs to be deduplicated. There are 2 inputs that can be provided to
     the find_duplicates function:
     1. Dictionary generated using 'encode_images' function above.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import WHash
     myencoder = WHash()
     duplicates = myencoder.find_duplicates(encoding_map, max_distance_threshold=15, scores=True)
     ```
     2. Using the Path of the directory where all images are present.
-    Example usage:
+    Example:
     ```
     from imagededup.methods import WHash
     myencoder = WHash()
@@ -642,7 +638,7 @@ class WHash(Hashing):
     the path to the image directory as input or the dictionary with features. A threshold for maximum hamming distance
     should be considered.
 
-    Example usage:
+    Example:
         ```
         from imagededup.methods import WHash
         myencoder = WHash()

@@ -10,10 +10,7 @@ Given a ground truth map and a duplicate map retrieved from a deduplication algo
 
 * **retrieved_map**: A dictionary representing retrieved duplicates with filenames as key and a list of retrieved
 
-* **metric**: Name of metric to be evaluated and returned. Accepted values are
+* **metric**:  Name of metric to be evaluated and returned. Accepted values are: 'map', 'ndcg', 'jaccard',
 
 ##### Returns
-##### Example usage:
-```python
-```
 

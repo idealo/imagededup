@@ -15,7 +15,7 @@ def delete_space(parts, start, end):
             count += 1
         else:
             break
-    return '\n'.join(y for y in [x[count:] for x in parts[start : end + 1] if len(x) > count])
+    return '\n'.join(y for y in [x[count:] for x in parts[start: end + 1] if len(x) > count])
 
 
 def change_args_to_dict(string):
@@ -35,9 +35,14 @@ def change_args_to_dict(string):
             ind += 1
     d = {}
     for line in ans:
-        if ":" in line and len(line) > 0:
+        if (":" in line) and (line.count(':') == 1) and (len(line) > 0):
             lines = line.split(":")
             d[lines[0]] = lines[1].strip()
+        elif (":" in line) and (line.count(':') > 1) and (len(line) > 0):
+            lines = line.split(":")
+            keyname = lines[0]
+            val = ':'.join(lines[1:])
+            d[keyname] = val
     return d
 
 
@@ -59,7 +64,6 @@ def skip_space_line(parts, ind):
 
 # check if comment is None or len(comment) == 0 return {}
 def parse_func_string(comment):
-    print(f'yooooooo {comment}ooooooop')
     if comment is None or len(comment) == 0:
         return {}
     comments = {}
@@ -76,8 +80,19 @@ def parse_func_string(comment):
     for x in comment_parts:
         comments[x] = None
 
-    parts = re.split(r'\n', comment)
-    print(f'{parts}')
+    parts_init = re.split(r'\n', comment)
+
+    parts = []
+
+    for i in range(len(parts_init)):
+        if parts_init[i] == 'Example:':
+            parts.append(parts_init[i])
+            code_part = '<sep>'.join([i.strip() for i in parts_init[len(parts):]]).replace('```', '')
+            parts.append(code_part)
+            break
+        else:
+            parts.append(parts_init[i])
+
     ind = 1
     while ind < len(parts):
         if re.match(r'^\s*$', parts[ind]):
@@ -122,14 +137,12 @@ def parse_func_string(comment):
             elif start_with.startswith(paras[3]):
                 comments[paras[3]] = part
             elif start_with.startswith(paras[4]):
-                # write some custom handler for examples here
                 comments[paras[4]] = part
             ind = skip_space_line(parts, ind)
         else:
             ind += 1
 
     remove_next_line(comments)
-    # print(comments)
     return comments
 
 
@@ -167,13 +180,13 @@ def to_md(comment_dict):
             for arg, des in comment_dict['Returns'].items():
                 doc += '* **' + arg + '**: ' + des + '\n\n'
 
-    if 'Example' in comment_dict:
+    if 'Example' in comment_dict and comment_dict['Example'] is not None:
         doc += '##### Example usage:\n'
         doc += '```python\n'
         if isinstance(comment_dict['Example'], str):
-            # print(len(comment_dict['Example'].split(' ')))
-            doc += md_parse_line_break(comment_dict['Example'].split('```')[1])
-            doc += '\n'
+            for i in comment_dict['Example'].split('<sep>'):
+                doc = doc + i
+                doc += '\n'
         doc += '```\n'
     return doc
 
@@ -191,7 +204,6 @@ def get_func_comments(function_definitions):
     doc = ''
     for f in function_definitions:
         temp_str = to_md(parse_func_string(ast.get_docstring(f)))
-        # print(temp_str)
         doc += ''.join(
             [
                 '### ',

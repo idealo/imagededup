@@ -11,7 +11,4 @@ Given ground truth dictionary and retrieved dictionary, return per class precisi
 * **retrieved**: A dictionary representing retrieved duplicates with filenames as key and a list of retrieved
 
 ##### Returns
-##### Example usage:
-```python
-```
 

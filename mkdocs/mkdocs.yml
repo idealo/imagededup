@@ -12,6 +12,7 @@ nav:
             - Evaluation: evaluation/evaluation.md
         - Methods:
             - CNN: methods/cnn.md
+            - Hashing: methods/hashing.md
         - Components:
             - Cloud: components/cloud.md
             - Data Preparation: components/dataprep.md
