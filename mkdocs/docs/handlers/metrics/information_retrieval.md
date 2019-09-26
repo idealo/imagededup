@@ -11,9 +11,6 @@ Get average precision(AP) for a single query given correct and retrieved file na
 * **retrieved_duplicates**: List of retrieved duplicates for one single query
 
 ##### Returns
-##### Example usage:
-```python
-```
 
 ### ndcg
 ```python
@@ -28,9 +25,6 @@ Get Normalized discounted cumulative gain(NDCG) for a single query given correct
 * **retrieved_duplicates**: List of retrieved duplicates for one single query
 
 ##### Returns
-##### Example usage:
-```python
-```
 
 ### jaccard\_similarity
 ```python
@@ -45,9 +39,6 @@ Get jaccard similarity for a single query given correct and retrieved file names
 * **retrieved_duplicates**: List of retrieved duplicates for one single query
 
 ##### Returns
-##### Example usage:
-```python
-```
 
 ### mean\_metric
 ```python
@@ -60,9 +51,6 @@ Get mean of specified metric.
 * **metric_func**: metric function on which mean is to be calculated across all queries
 
 ##### Returns
-##### Example usage:
-```python
-```
 
 ### get\_all\_metrics
 ```python
@@ -77,7 +65,4 @@ Get mean of all information retrieval metrics across all queries.
 * **retrieved**: A dictionary representing retrieved duplicates with filenames as key and a list of retrieved
 
 ##### Returns
-##### Example usage:
-```python
-```
 

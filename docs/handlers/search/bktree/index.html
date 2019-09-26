@@ -356,6 +356,18 @@
   </li>
 
         
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../../methods/hashing/" title="Hashing" class="md-nav__link">
+      Hashing
+    </a>
+  </li>
+
+        
       </ul>
     </nav>
   </li>
@@ -621,13 +633,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#example-usage" title="Example usage:" class="md-nav__link">
-    Example usage:
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#9595init9595" title="__init__" class="md-nav__link">
     __init__
   </a>
@@ -648,13 +653,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#example-usage_1" title="Example usage:" class="md-nav__link">
-    Example usage:
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#9595init9595_1" title="__init__" class="md-nav__link">
     __init__
   </a>
@@ -669,13 +667,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#example-usage_2" title="Example usage:" class="md-nav__link">
-    Example usage:
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -685,19 +676,6 @@
   <a href="#construct95tree" title="construct_tree" class="md-nav__link">
     construct_tree
   </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#example-usage_3" title="Example usage:" class="md-nav__link">
-    Example usage:
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -719,13 +697,6 @@
           <li class="md-nav__item">
   <a href="#returns" title="Returns" class="md-nav__link">
     Returns
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-usage_4" title="Example usage:" class="md-nav__link">
-    Example usage:
   </a>
   
 </li>
@@ -763,11 +734,6 @@
                 
                 <h2 id="class-bktreenode">class BkTreeNode</h2>
 <p>Class to contain the attributes of a single node in the BKTree.</p>
-<h5 id="example-usage">Example usage:</h5>
-<div class="codehilite"><pre><span></span>
-</pre></div>
-
-
 <h3 id="9595init9595">__init__</h3>
 <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="n">node_name</span><span class="p">,</span> <span class="n">node_value</span><span class="p">,</span> <span class="n">parent_name</span><span class="p">)</span>
 </pre></div>
@@ -775,11 +741,6 @@
 
 <h2 id="class-bktree">class BKTree</h2>
 <p>Class to construct and perform search using a BKTree.</p>
-<h5 id="example-usage_1">Example usage:</h5>
-<div class="codehilite"><pre><span></span>
-</pre></div>
-
-
 <h3 id="9595init9595_1">__init__</h3>
 <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="n">hash_dict</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">)</span>
 </pre></div>
@@ -789,28 +750,18 @@
 <h5 id="args">Args</h5>
 <ul>
 <li>
-<p><strong>hash_dict</strong>: Dictionary mapping file names to corresponding hash strings {filename</p>
+<p><strong>hash_dict</strong>:  Dictionary mapping file names to corresponding hash strings {filename: hash}</p>
 </li>
 <li>
 <p><strong>distance_function</strong>: A function for calculating distance between the hashes.</p>
 </li>
 </ul>
-<h5 id="example-usage_2">Example usage:</h5>
-<div class="codehilite"><pre><span></span>
-</pre></div>
-
-
 <h3 id="construct95tree">construct_tree</h3>
 <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">construct_tree</span><span class="p">()</span>
 </pre></div>
 
 
 <p>Construct the BKTree.</p>
-<h5 id="example-usage_3">Example usage:</h5>
-<div class="codehilite"><pre><span></span>
-</pre></div>
-
-
 <h3 id="search">search</h3>
 <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span>
 </pre></div>
@@ -828,11 +779,8 @@
 </ul>
 <h5 id="returns">Returns</h5>
 <ul>
-<li><strong>List of tuples of the form [(valid_retrieval_filename1</strong>: distance), (valid_retrieval_filename2</li>
+<li><strong>List of tuples of the form [(valid_retrieval_filename1</strong>:  distance), (valid_retrieval_filename2: distance)]</li>
 </ul>
-<h5 id="example-usage_4">Example usage:</h5>
-<div class="codehilite"><pre><span></span>
-</pre></div>
                 
                   
                 

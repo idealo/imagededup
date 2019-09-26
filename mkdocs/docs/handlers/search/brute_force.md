@@ -2,9 +2,6 @@
 Class to perform search using a Brute force.
 
 
-##### Example usage:
-```python
-```
 ### \_\_init\_\_
 ```python
 def __init__(hash_dict, distance_function)
@@ -13,13 +10,10 @@ Initialize a dictionary for mapping file names and corresponding hashes anda  di
 
 
 ##### Args
-* **hash_dict**: Dictionary mapping file names to corresponding hash strings {filename
+* **hash_dict**:  Dictionary mapping file names to corresponding hash strings {filename: hash}
 
 * **distance_function**: A function for calculating distance between the hashes.
 
-##### Example usage:
-```python
-```
 
 ### search
 ```python
@@ -34,9 +28,6 @@ Function for searching using brute force.
 * **tol**: distance upto which duplicate is valid.
 
 ##### Returns
-* **List of tuples of the form [(valid_retrieval_filename1**: distance), (valid_retrieval_filename2
+* **List of tuples of the form [(valid_retrieval_filename1**:  distance), (valid_retrieval_filename2: distance)]
 
-##### Example usage:
-```python
-```
 

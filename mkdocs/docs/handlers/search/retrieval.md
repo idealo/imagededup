@@ -6,9 +6,6 @@ def __init__(test, queries, distance_function, threshold, search_method)
 Initialize a HashEval object which offers an interface to control hashing and search methods for desired dataset. Compute a map of duplicate images in the document space given certain input control parameters.
 
 
-##### Example usage:
-```python
-```
 
 ### retrieve\_results
 ```python
@@ -29,7 +26,4 @@ Return results with or without scores.
 
 * **'image1_duplicate2.jpg'], 'image2.jpg'**: ['image1_duplicate1.jpg',..], ..}
 
-##### Example usage:
-```python
-```
 

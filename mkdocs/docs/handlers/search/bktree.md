@@ -2,9 +2,6 @@
 Class to contain the attributes of a single node in the BKTree.
 
 
-##### Example usage:
-```python
-```
 ### \_\_init\_\_
 ```python
 def __init__(node_name, node_value, parent_name)
@@ -14,9 +11,6 @@ def __init__(node_name, node_value, parent_name)
 Class to construct and perform search using a BKTree.
 
 
-##### Example usage:
-```python
-```
 ### \_\_init\_\_
 ```python
 def __init__(hash_dict, distance_function)
@@ -25,13 +19,10 @@ Initialize a root for the BKTree and triggers the tree construction using the di
 
 
 ##### Args
-* **hash_dict**: Dictionary mapping file names to corresponding hash strings {filename
+* **hash_dict**:  Dictionary mapping file names to corresponding hash strings {filename: hash}
 
 * **distance_function**: A function for calculating distance between the hashes.
 
-##### Example usage:
-```python
-```
 
 ### construct\_tree
 ```python
@@ -40,9 +31,6 @@ def construct_tree()
 Construct the BKTree.
 
 
-##### Example usage:
-```python
-```
 
 ### search
 ```python
@@ -57,9 +45,6 @@ Function to search the bktree given a hash of the query image.
 * **tol**: distance upto which duplicate is valid.
 
 ##### Returns
-* **List of tuples of the form [(valid_retrieval_filename1**: distance), (valid_retrieval_filename2
+* **List of tuples of the form [(valid_retrieval_filename1**:  distance), (valid_retrieval_filename2: distance)]
 
-##### Example usage:
-```python
-```
 

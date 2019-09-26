@@ -13,9 +13,6 @@ Take as input an image as numpy array or Pillow format. Returns an array version
 * **grayscale**: A boolean indicating whether to grayscale the image.
 
 ##### Returns
-##### Example usage:
-```python
-```
 
 ### load\_image
 ```python
@@ -33,7 +30,4 @@ Load an image given its path. Returns an array version of optionally resized and
 
 * **img_formats**: List of allowed image formats that can be loaded.
 
-##### Example usage:
-```python
-```
 
