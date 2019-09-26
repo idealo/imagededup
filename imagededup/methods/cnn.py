@@ -15,14 +15,14 @@ class CNN:
     Find duplicates using CNN and/or generates CNN features given a single image or a directory of images.
     The module can be used for 2 purposes: Feature generation and duplicate detection.
 
-    * Feature generation:
+    - Feature generation:
     To propagate an image through a Convolutional Neural Network architecture and generate features. The generated
-    features can be used at a later time for deduplication. There are two possibilities to get features: a) At a single
-    image level: Using the method 'encode_image', the CNN feature for a single image can be obtained. b) At a directory
-    level: In case features for several images need to be generated, the images can be placed in a
-    directory and features for all of the images can be obtained using the 'encode_images' method.
+    features can be used at a later time for deduplication. There are two possibilities to get features:
 
-    * Duplicate detection:
+        - At a single image level: Using the method 'encode_image', the CNN feature for a single image can be obtained.
+        - At a directory level: In case features for several images need to be generated, the images can be placed in a directory and features for all of the images can be obtained using the 'encode_images' method.
+
+    - Duplicate detection:
     Find duplicates either using the feature mapping generated previously using 'encode_images' or using a Path to the
     directory that contains the images that need to be deduplicated. There are 2 inputs that can be provided to the
     find_duplicates function:

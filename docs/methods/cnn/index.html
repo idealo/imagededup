@@ -414,8 +414,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example-usage" title="Example usage:" class="md-nav__link">
-    Example usage:
+  <a href="#example-usage" title="Example usage" class="md-nav__link">
+    Example usage
   </a>
   
 </li>
@@ -448,8 +448,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example-usage_1" title="Example usage:" class="md-nav__link">
-    Example usage:
+  <a href="#example-usage_1" title="Example usage" class="md-nav__link">
+    Example usage
   </a>
   
 </li>
@@ -482,8 +482,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example-usage_2" title="Example usage:" class="md-nav__link">
-    Example usage:
+  <a href="#example-usage_2" title="Example usage" class="md-nav__link">
+    Example usage
   </a>
   
 </li>
@@ -516,8 +516,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example-usage_3" title="Example usage:" class="md-nav__link">
-    Example usage:
+  <a href="#example-usage_3" title="Example usage" class="md-nav__link">
+    Example usage
   </a>
   
 </li>
@@ -849,8 +849,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example-usage" title="Example usage:" class="md-nav__link">
-    Example usage:
+  <a href="#example-usage" title="Example usage" class="md-nav__link">
+    Example usage
   </a>
   
 </li>
@@ -883,8 +883,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example-usage_1" title="Example usage:" class="md-nav__link">
-    Example usage:
+  <a href="#example-usage_1" title="Example usage" class="md-nav__link">
+    Example usage
   </a>
   
 </li>
@@ -917,8 +917,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example-usage_2" title="Example usage:" class="md-nav__link">
-    Example usage:
+  <a href="#example-usage_2" title="Example usage" class="md-nav__link">
+    Example usage
   </a>
   
 </li>
@@ -951,8 +951,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example-usage_3" title="Example usage:" class="md-nav__link">
-    Example usage:
+  <a href="#example-usage_3" title="Example usage" class="md-nav__link">
+    Example usage
   </a>
   
 </li>
@@ -992,7 +992,13 @@
 <p>Find duplicates using CNN and/or generates CNN features given a single image or a directory of images. The module can be used for 2 purposes: Feature generation and duplicate detection.</p>
 <ul>
 <li>
-<p>Feature generation: To propagate an image through a Convolutional Neural Network architecture and generate features. The generated features can be used at a later time for deduplication. There are two possibilities to get features: a) At a single image level: Using the method 'encode_image', the CNN feature for a single image can be obtained. b) At a directory level: In case features for several images need to be generated, the images can be placed in a directory and features for all of the images can be obtained using the 'encode_images' method.</p>
+<p>Feature generation: To propagate an image through a Convolutional Neural Network architecture and generate features. The generated features can be used at a later time for deduplication. There are two possibilities to get features:</p>
+</li>
+<li>
+<p>At a single image level: Using the method 'encode_image', the CNN feature for a single image can be obtained.</p>
+</li>
+<li>
+<p>At a directory level: In case features for several images need to be generated, the images can be placed in a directory and features for all of the images can be obtained using the 'encode_images' method.</p>
 </li>
 <li>
 <p>Duplicate detection: Find duplicates either using the feature mapping generated previously using 'encode_images' or using a Path to the directory that contains the images that need to be deduplicated. There are 2 inputs that can be provided to the find_duplicates function: a) Dictionary generated using 'encode_images' function above. b) Using the Path of the directory where all images are present.</p>
@@ -1024,7 +1030,7 @@
 <ul>
 <li><strong>feature</strong>: Features for the image in the form of numpy array.</li>
 </ul>
-<h5 id="example-usage">Example usage:</h5>
+<h5 id="example-usage">Example usage</h5>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">CNN</span>
 <span class="n">myencoder</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">()</span>
 <span class="n">feature_vector</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_file</span><span class="o">=</span><span class="s1">&#39;path/to/image.jpg&#39;</span><span class="p">)</span>
@@ -1047,7 +1053,7 @@
 <ul>
 <li><strong>dictionary</strong>: Contains a mapping of filenames and corresponding numpy array of CNN features.</li>
 </ul>
-<h5 id="example-usage_1">Example usage:</h5>
+<h5 id="example-usage_1">Example usage</h5>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">CNN</span>
 <span class="n">myencoder</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">()</span>
 <span class="n">feature_map</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_images</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/image/directory&#39;</span><span class="p">)</span>
@@ -1082,7 +1088,7 @@
 <ul>
 <li><strong>dictionary</strong>:  if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg', score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}. if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}</li>
 </ul>
-<h5 id="example-usage_2">Example usage:</h5>
+<h5 id="example-usage_2">Example usage</h5>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">CNN</span>
 <span class="n">myencoder</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">()</span>
 <span class="n">duplicates</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/directory&#39;</span><span class="p">,</span> <span class="n">min_similarity_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
@@ -1122,7 +1128,7 @@
 <ul>
 <li><strong>duplicates</strong>: List of image file names that should be removed.</li>
 </ul>
-<h5 id="example-usage_3">Example usage:</h5>
+<h5 id="example-usage_3">Example usage</h5>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">CNN</span>
 <span class="n">myencoder</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">()</span>
 <span class="n">duplicates</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/images/directory&#39;</span><span class="p">),</span>
