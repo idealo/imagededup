@@ -2,6 +2,7 @@
 
 Finding duplicates in an image dataset is a recurring task. imagededup is a python package that provides functionality
 to carry out this task effectively. The deduplication problem generally caters to 2 broad issues:
+
 * Finding exact duplicates
 
 <p align="center">
@@ -22,15 +23,16 @@ capture basic contours in images.
 
 This package provides functionality to address both problems. Additionally, an evaluation framework is also provided to
 judge the quality of deduplication. Following details the functionality provided by the package:
-* Finding duplicates in a directory using one of the following algorithms:
+
+- Finding duplicates in a directory using one of the following algorithms:
     - [Convolutional Neural Network](https://arxiv.org/abs/1704.04861)
     - [Perceptual hashing](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html)
     - [Difference hashing](http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html)
     - [Wavelet hashing](https://fullstackml.com/wavelet-image-hash-in-python-3504fdd282b5)
     - [Average hashing](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html)
-* Generation of features for images using one of the above stated algorithms.
-* Framework to evaluate effectiveness of deduplication  given a ground truth mapping.
-* Plotting duplicates found for a given image file.
+- Generation of features for images using one of the above stated algorithms.
+- Framework to evaluate effectiveness of deduplication  given a ground truth mapping.
+- Plotting duplicates found for a given image file.
 
 imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0 license.
 
@@ -250,8 +252,9 @@ duplicates = cnn_encoder.find_duplicates_to_remove(image_dir='path/to/image/dire
 
 ### Feature generation
 It might be desirable to only generate the hashes/cnn encodings for a given image or all images in the directory instead
- of directly deduplicating using find_duplicates method. Features can be generated for a directory of images or for a single 
- image:
+of directly deduplicating using find_duplicates method. Features can be generated for a directory of images or for a 
+single image:
+
 - [Feature generation for all images in a directory](#feature-generation-for-all-images-in-a-directory)
 - [Feature generation for a single image](#feature-generation-for-a-single-image)
 

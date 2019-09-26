@@ -181,7 +181,7 @@ def to_md(comment_dict):
                 doc += '* **' + arg + '**: ' + des + '\n\n'
 
     if 'Example' in comment_dict and comment_dict['Example'] is not None:
-        doc += '##### Example usage:\n'
+        doc += '##### Example usage\n'
         doc += '```python\n'
         if isinstance(comment_dict['Example'], str):
             for i in comment_dict['Example'].split('<sep>'):

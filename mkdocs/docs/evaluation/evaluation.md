@@ -13,4 +13,6 @@ Given a ground truth map and a duplicate map retrieved from a deduplication algo
 * **metric**:  Name of metric to be evaluated and returned. Accepted values are: 'map', 'ndcg', 'jaccard',
 
 ##### Returns
+* **dictionary**: A dictionary with metric name as key and corresponding calculated metric as the value.
+
 

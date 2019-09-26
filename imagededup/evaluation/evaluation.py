@@ -88,7 +88,7 @@ def evaluate(
         'classification', 'all' where 'all' returns every metric.
 
     Returns:
-        A dictionary with metric name as key and corresponding calculated metric as the value.
+        dictionary: A dictionary with metric name as key and corresponding calculated metric as the value.
         'map', 'ndcg' and 'jaccard' return a single number denoting the corresponding information retrieval metric.
         'classification' metrics include 'precision', 'recall' and 'f1-score' which are returned in the form of
          individual entries in the returned dictionary. The value for each of the classification metric is a numpy array

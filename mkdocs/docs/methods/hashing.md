@@ -35,7 +35,7 @@ Generate hash for a single image.
 ##### Returns
 * **hash**: A 16 character hexadecimal string hash for the image.
 
-##### Example usage:
+##### Example usage
 ```python
 
 from imagededup.methods import <hash-method>
@@ -59,7 +59,7 @@ Generate hashes for all images in a given directory of images.
 ##### Returns
 * **dictionary**:  A dictionary that contains a mapping of filenames and corresponding 64 character hash string such as {'Image1.jpg': 'hash_string1', 'Image2.jpg': 'hash_string2', ...}
 
-##### Example usage:
+##### Example usage
 ```python
 
 from imagededup.methods import <hash-method>
@@ -89,7 +89,7 @@ Find duplicates for each file. Takes in path of the directory or encoding dictio
 ##### Returns
 * **dictionary**:  if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg', score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}. if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
 
-##### Example usage:
+##### Example usage
 ```python
 
 from imagededup.methods import <hash-method>
@@ -125,7 +125,7 @@ Give out a list of image file names to remove based on the hamming distance thre
 ##### Returns
 * **duplicates list**: List of image file names that should be removed.
 
-##### Example usage:
+##### Example usage
 ```python
 
 from imagededup.methods import <hash-method>
@@ -148,7 +148,7 @@ Find duplicates using perceptual hashing algorithm and/or generate perceptual ha
 Feature generation:
 
 To generate perceptual hashes. The generated hashes can be used at a later time for deduplication. There are two possibilities to get hashes: 1. At a single image level: Using the method 'encode_image', the perceptual hash for a single image can be obtained.
-##### Example usage:
+##### Example usage
 ```python
 
 from imagededup.methods import PHash
@@ -204,7 +204,7 @@ def __init__()
 Find duplicates using average hashing algorithm and/or generates average hashes given a single image or a directory of images. The module can be used for 2 purposes: Feature generation and duplicate detection.
 
 Feature generation: To generate average hashes. The generated hashes can be used at a later time for deduplication. There are two possibilities to get hashes: 1. At a single image level: Using the method 'encode_image', the average hash for a single image can be obtained.
-##### Example usage:
+##### Example usage
 ```python
 
 from imagededup.methods import AHash
@@ -260,7 +260,7 @@ def __init__()
 Find duplicates using difference hashing algorithm and/or generates difference hashes given a single image or a directory of images. The module can be used for 2 purposes: Feature generation and duplicate detection.
 
 Feature generation: To generate difference hashes. The generated hashes can be used at a later time for deduplication. There are two possibilities to get hashes: 1. At a single image level: Using the method 'encode_image', the difference hash for a single image can be obtained.
-##### Example usage:
+##### Example usage
 ```python
 
 from imagededup.methods import DHash
@@ -316,7 +316,7 @@ def __init__()
 Find duplicates using wavelet hashing algorithm and/or generates wavelet hashes given a single image or a directory of images. The module can be used for 2 purposes: Feature generation and duplicate detection.
 
 Feature generation: To generate wavelet hashes. The generated hashes can be used at a later time for deduplication. There are two possibilities to get hashes: 1. At a single image level: Using the method 'encode_image', the wavelet hash for a single image can be obtained.
-##### Example usage:
+##### Example usage
 ```python
 
 from imagededup.methods import WHash

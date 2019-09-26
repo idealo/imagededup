@@ -1192,8 +1192,10 @@
                 
                 <h1 id="imagededup">imagededup</h1>
 <p>Finding duplicates in an image dataset is a recurring task. imagededup is a python package that provides functionality
-to carry out this task effectively. The deduplication problem generally caters to 2 broad issues:
-* Finding exact duplicates</p>
+to carry out this task effectively. The deduplication problem generally caters to 2 broad issues:</p>
+<ul>
+<li>Finding exact duplicates</li>
+</ul>
 <p align="center">
   <img src="_readme_figures/103500.jpg" width="300" />
   <img src="_readme_figures/103500.jpg" width="300" />
@@ -1211,16 +1213,20 @@ to carry out this task effectively. The deduplication problem generally caters t
 methods involving convolutional neural networks are also adept at finding near duplicates due to their ability to 
 capture basic contours in images.</p>
 <p>This package provides functionality to address both problems. Additionally, an evaluation framework is also provided to
-judge the quality of deduplication. Following details the functionality provided by the package:
-* Finding duplicates in a directory using one of the following algorithms:
-    - <a href="https://arxiv.org/abs/1704.04861">Convolutional Neural Network</a>
-    - <a href="http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html">Perceptual hashing</a>
-    - <a href="http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html">Difference hashing</a>
-    - <a href="https://fullstackml.com/wavelet-image-hash-in-python-3504fdd282b5">Wavelet hashing</a>
-    - <a href="http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html">Average hashing</a>
-* Generation of features for images using one of the above stated algorithms.
-* Framework to evaluate effectiveness of deduplication  given a ground truth mapping.
-* Plotting duplicates found for a given image file.</p>
+judge the quality of deduplication. Following details the functionality provided by the package:</p>
+<ul>
+<li>Finding duplicates in a directory using one of the following algorithms:<ul>
+<li><a href="https://arxiv.org/abs/1704.04861">Convolutional Neural Network</a></li>
+<li><a href="http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html">Perceptual hashing</a></li>
+<li><a href="http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html">Difference hashing</a></li>
+<li><a href="https://fullstackml.com/wavelet-image-hash-in-python-3504fdd282b5">Wavelet hashing</a></li>
+<li><a href="http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html">Average hashing</a></li>
+</ul>
+</li>
+<li>Generation of features for images using one of the above stated algorithms.</li>
+<li>Framework to evaluate effectiveness of deduplication  given a ground truth mapping.</li>
+<li>Plotting duplicates found for a given image file.</li>
+</ul>
 <p>imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0 license.</p>
 <h2 id="table-of-contents">Table of contents</h2>
 <ul>
@@ -1461,10 +1467,12 @@ file 'my_duplicates.json', use the following:</p>
 
 <h3 id="feature-generation">Feature generation</h3>
 <p>It might be desirable to only generate the hashes/cnn encodings for a given image or all images in the directory instead
- of directly deduplicating using find_duplicates method. Features can be generated for a directory of images or for a single 
- image:
-- <a href="#feature-generation-for-all-images-in-a-directory">Feature generation for all images in a directory</a>
-- <a href="#feature-generation-for-a-single-image">Feature generation for a single image</a></p>
+of directly deduplicating using find_duplicates method. Features can be generated for a directory of images or for a 
+single image:</p>
+<ul>
+<li><a href="#feature-generation-for-all-images-in-a-directory">Feature generation for all images in a directory</a></li>
+<li><a href="#feature-generation-for-a-single-image">Feature generation for a single image</a></li>
+</ul>
 <h4 id="feature-generation-for-all-images-in-a-directory">Feature generation for all images in a directory</h4>
 <p>To generate encodings for all images in an image directory <em>encode_images</em> function can be used. The general api for 
 using <em>encode_images</em> is:</p>
