@@ -13,20 +13,8 @@ nav:
         - Methods:
             - CNN: methods/cnn.md
             - Hashing: methods/hashing.md
-        - Components:
-            - Cloud: components/cloud.md
-            - Data Preparation: components/dataprep.md
-            - Training: components/training.md
-            - Evaluation: components/evaluation.md
-        - Handlers:
-            - Data Generator: handlers/data_generator.md
-            - Image Classifer: handlers/image_classifier.md
-        - Scripts:
-            - Run Cloud: scripts/run_cloud.md
-            - Run Data Prep: scripts/run_dataprep.md
-            - Run Training: scripts/run_training.md
-            - Run Training Cloud: scripts/run_training_cloud.md
-            - Run Evaluation: scripts/run_evaluation.md
+        - Utils:
+            - Plot duplicates: utils/plotter.md
     - Contribution: CONTRIBUTING.md
     - License: LICENSE.md
 theme:
