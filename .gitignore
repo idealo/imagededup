@@ -234,7 +234,6 @@ notebooks/post_analysis_hashing_transformationDS.ipynb
 notebooks/efficient_nets.ipynb
 notebooks/mobilenet.ipynb
 notebooks/resnet.ipynb
-*.pkl
 *.db
 notebooks
 notebooks/all_average_metrics.pkl
