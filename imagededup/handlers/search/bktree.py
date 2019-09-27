@@ -90,7 +90,7 @@ class BKTree:
         Args:
             query: The hash for which retrievals are needed.
             candidate_obj: A BKTree object which is a candidate for being checked as valid.
-            tolerance: Distance within which the cadidate is considered valid.
+            tolerance: Distance within which the candidate is considered valid.
 
         Returns:
             new candidates to examine, validity flag indicating whether current candidate is within the distance

@@ -570,11 +570,11 @@
       <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3">
     
     <label class="md-nav__link" for="nav-2-3">
-      Components
+      Utils
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
       <label class="md-nav__title" for="nav-2-3">
-        Components
+        Utils
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
         
@@ -585,176 +585,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../../components/cloud.md" title="Cloud" class="md-nav__link">
-      Cloud
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../components/dataprep.md" title="Data Preparation" class="md-nav__link">
-      Data Preparation
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../components/training.md" title="Training" class="md-nav__link">
-      Training
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../components/evaluation.md" title="Evaluation" class="md-nav__link">
-      Evaluation
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item md-nav__item--nested">
-    
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-4" type="checkbox" id="nav-2-4">
-    
-    <label class="md-nav__link" for="nav-2-4">
-      Handlers
-    </label>
-    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
-      <label class="md-nav__title" for="nav-2-4">
-        Handlers
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../handlers/data_generator.md" title="Data Generator" class="md-nav__link">
-      Data Generator
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../handlers/image_classifier.md" title="Image Classifer" class="md-nav__link">
-      Image Classifer
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item md-nav__item--nested">
-    
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-5" type="checkbox" id="nav-2-5">
-    
-    <label class="md-nav__link" for="nav-2-5">
-      Scripts
-    </label>
-    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
-      <label class="md-nav__title" for="nav-2-5">
-        Scripts
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../scripts/run_cloud.md" title="Run Cloud" class="md-nav__link">
-      Run Cloud
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../scripts/run_dataprep.md" title="Run Data Prep" class="md-nav__link">
-      Run Data Prep
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../scripts/run_training.md" title="Run Training" class="md-nav__link">
-      Run Training
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../scripts/run_training_cloud.md" title="Run Training Cloud" class="md-nav__link">
-      Run Training Cloud
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../scripts/run_evaluation.md" title="Run Evaluation" class="md-nav__link">
-      Run Evaluation
+    <a href="../../utils/plotter/" title="Plot duplicates" class="md-nav__link">
+      Plot duplicates
     </a>
   </li>
 
@@ -989,22 +821,16 @@
                   <h1>CNN</h1>
                 
                 <h2 id="class-cnn">class CNN</h2>
-<p>Find duplicates using CNN and/or generates CNN features given a single image or a directory of images. The module can be used for 2 purposes: Feature generation and duplicate detection.</p>
+<p>Find duplicates using CNN and/or generate CNN features given a single image or a directory of images.</p>
+<p>The module can be used for 2 purposes: Feature generation and duplicate detection.</p>
 <ul>
 <li>
-<p>Feature generation: To propagate an image through a Convolutional Neural Network architecture and generate features. The generated features can be used at a later time for deduplication. There are two possibilities to get features:</p>
+<p>Feature generation: To propagate an image through a Convolutional Neural Network architecture and generate features. The generated features can be used at a later time for deduplication. Using the method 'encode_image', the CNN feature for a single image can be obtained while the 'encode_images' method can be used to get features for all images in a directory.</p>
 </li>
 <li>
-<p>At a single image level: Using the method 'encode_image', the CNN feature for a single image can be obtained.</p>
-</li>
-<li>
-<p>At a directory level: In case features for several images need to be generated, the images can be placed in a directory and features for all of the images can be obtained using the 'encode_images' method.</p>
-</li>
-<li>
-<p>Duplicate detection: Find duplicates either using the feature mapping generated previously using 'encode_images' or using a Path to the directory that contains the images that need to be deduplicated. There are 2 inputs that can be provided to the find_duplicates function: a) Dictionary generated using 'encode_images' function above. b) Using the Path of the directory where all images are present.</p>
+<p>Duplicate detection: Find duplicates either using the feature mapping generated previously using 'encode_images' or using a Path to the directory that contains the images that need to be deduplicated. 'find_duplciates' and 'find_duplicates_to_remove' methods are provided to accomplish these tasks.</p>
 </li>
 </ul>
-<p>If a list of file names to remove are desired, then the function find_duplicates_to_remove can be used with either the path to the image directory as input or the dictionary with features. A threshold for similarity should be considered.</p>
 <h3 id="9595init9595">__init__</h3>
 <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">()</span>
 </pre></div>
@@ -1086,7 +912,10 @@
 </ul>
 <h5 id="returns_2">Returns</h5>
 <ul>
-<li><strong>dictionary</strong>:  if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg', score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}. if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}</li>
+<li><strong>dictionary</strong>:  if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
+            score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}. if scores is False, then a
+            dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg'],
+            'image2.jpg':['image1_duplicate1.jpg',..], ..}</li>
 </ul>
 <h5 id="example-usage_2">Example usage</h5>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">CNN</span>
@@ -1112,7 +941,8 @@
 <h5 id="args_3">Args</h5>
 <ul>
 <li>
-<p><strong>image_dir</strong>: Path to the directory containing all the images or dictionary with keys as file names</p>
+<p><strong>image_dir</strong>: Path to the directory containing all the images or dictionary with keys as file names
+           and values as numpy arrays which represent the CNN feature for the key image file.</p>
 </li>
 <li>
 <p><strong>encoding_map</strong>: A dictionary containing mapping of filenames and corresponding CNN features.</p>
