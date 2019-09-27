@@ -38,7 +38,7 @@
     
     
       
-        <title>Evaluation - Image-dedup</title>
+        <title>Feature generation - Image-dedup</title>
       
     
     
@@ -129,7 +129,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#evaluate" tabindex="1" class="md-skip">
+      <a href="#feature-generation" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -154,7 +154,7 @@
               Image-dedup
             </span>
             <span class="md-header-nav__topic">
-              Evaluation
+              Feature generation
             </span>
           
         </div>
@@ -274,10 +274,12 @@
       
       
 
+  
 
-  <li class="md-nav__item md-nav__item--nested">
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
     
     <label class="md-nav__link" for="nav-2">
       Tutorials
@@ -295,7 +297,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../tutorials/finding_duplicates/" title="Find duplicates" class="md-nav__link">
+    <a href="../finding_duplicates/" title="Find duplicates" class="md-nav__link">
       Find duplicates
     </a>
   </li>
@@ -305,11 +307,112 @@
           
           
 
+  
 
-  <li class="md-nav__item">
-    <a href="../../tutorials/feature_generation/" title="Feature generation" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Feature generation
+      </label>
+    
+    <a href="./" title="Feature generation" class="md-nav__link md-nav__link--active">
       Feature generation
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#feature-generation" title="Feature generation" class="md-nav__link">
+    Feature generation
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#feature-generation-for-all-images-in-a-directory" title="Feature generation for all images in a directory" class="md-nav__link">
+    Feature generation for all images in a directory
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#considerations" title="Considerations" class="md-nav__link">
+    Considerations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples" title="Examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#feature-generation-for-a-single-image" title="Feature generation for a single image" class="md-nav__link">
+    Feature generation for a single image
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#options" title="Options" class="md-nav__link">
+    Options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#considerations_1" title="Considerations" class="md-nav__link">
+    Considerations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_1" title="Examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
         
@@ -319,7 +422,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../tutorials/evaluating_performance/" title="Evaluating performance" class="md-nav__link">
+    <a href="../evaluating_performance/" title="Evaluating performance" class="md-nav__link">
       Evaluating performance
     </a>
   </li>
@@ -331,7 +434,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../tutorials/plotting_duplicates/" title="Plotting duplicates" class="md-nav__link">
+    <a href="../plotting_duplicates/" title="Plotting duplicates" class="md-nav__link">
       Plotting duplicates
     </a>
   </li>
@@ -346,12 +449,10 @@
       
       
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+  <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
     
     <label class="md-nav__link" for="nav-3">
       Documentation
@@ -415,12 +516,10 @@
           
           
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+  <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2" checked>
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2">
     
     <label class="md-nav__link" for="nav-3-2">
       Evaluation
@@ -436,65 +535,11 @@
           
           
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        Evaluation
-      </label>
-    
-    <a href="./" title="Evaluation" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../../evaluation/evaluation/" title="Evaluation" class="md-nav__link">
       Evaluation
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary">
-  
-  
-  
-    <label class="md-nav__title" for="__toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#evaluate" title="evaluate" class="md-nav__link">
-    evaluate
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#args" title="Args" class="md-nav__link">
-    Args
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#returns" title="Returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-      
-      
-      
-      
-    </ul>
-  
-</nav>
-    
   </li>
 
         
@@ -587,24 +632,71 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#evaluate" title="evaluate" class="md-nav__link">
-    evaluate
+  <a href="#feature-generation" title="Feature generation" class="md-nav__link">
+    Feature generation
   </a>
   
     <nav class="md-nav">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#args" title="Args" class="md-nav__link">
-    Args
+  <a href="#feature-generation-for-all-images-in-a-directory" title="Feature generation for all images in a directory" class="md-nav__link">
+    Feature generation for all images in a directory
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#considerations" title="Considerations" class="md-nav__link">
+    Considerations
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#returns" title="Returns" class="md-nav__link">
-    Returns
+  <a href="#examples" title="Examples" class="md-nav__link">
+    Examples
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#feature-generation-for-a-single-image" title="Feature generation for a single image" class="md-nav__link">
+    Feature generation for a single image
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#options" title="Options" class="md-nav__link">
+    Options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#considerations_1" title="Considerations" class="md-nav__link">
+    Considerations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_1" title="Examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -629,43 +721,74 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/idealo/image-dedup/edit/master/docs/evaluation/evaluation.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/idealo/image-dedup/edit/master/docs/tutorials/feature_generation.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                  <h1>Evaluation</h1>
+                  <h1>Feature generation</h1>
                 
-                <h3 id="evaluate">evaluate</h3>
-<div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">ground_truth_map</span><span class="p">,</span> <span class="n">retrieved_map</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
+                <h3 id="feature-generation">Feature generation</h3>
+<p>It might be desirable to only generate the hashes/cnn encodings for a given image or all images in the directory instead
+of directly deduplicating using find_duplicates method. Features can be generated for a directory of images or for a 
+single image:</p>
+<ul>
+<li><a href="#feature-generation-for-all-images-in-a-directory">Feature generation for all images in a directory</a></li>
+<li><a href="#feature-generation-for-a-single-image">Feature generation for a single image</a></li>
+</ul>
+<h4 id="feature-generation-for-all-images-in-a-directory">Feature generation for all images in a directory</h4>
+<p>To generate encodings for all images in an image directory <em>encode_images</em> function can be used. The general api for 
+using <em>encode_images</em> is:</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="o">&lt;</span><span class="n">method</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+<span class="n">method_object</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">method</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="n">encodings</span> <span class="o">=</span> <span class="n">method_object</span><span class="o">.</span><span class="n">encode_images</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/image/directory&#39;</span><span class="p">)</span>
 </pre></div>
 
 
-<p>Given a ground truth map and a duplicate map retrieved from a deduplication algorithm, get metrics to evaluate the effectiveness of the applied deduplication algorithm.</p>
-<h5 id="args">Args</h5>
+<p>where the returned variable <em>encodings</em> is a dictionary mapping image file names to corresponding encoding:</p>
+<div class="codehilite"><pre><span></span><span class="err">{</span>
+  <span class="s1">&#39;image1.jpg&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">feature</span><span class="o">-</span><span class="n">image</span><span class="o">-</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">,</span>
+  <span class="s1">&#39;image2.jpg&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">feature</span><span class="o">-</span><span class="n">image</span><span class="o">-</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">,</span>
+   <span class="p">..</span>
+<span class="err">}</span>
+</pre></div>
+
+
+<p>For hashing algorithms, the features are 64 bit hashes represented as 16 character hexadecimal strings.</p>
+<p>For cnn, the features are numpy array with shape (1, 1024).</p>
+<h5 id="considerations">Considerations</h5>
+<p>If an image in the image directory can't be loaded, no features are generated for the image. Hence, there is no entry 
+for the image in the returned encodings dictionary.</p>
+<h5 id="examples">Examples</h5>
+<p>Generating features using Difference hash,</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">DHash</span>
+<span class="n">dhasher</span> <span class="o">=</span> <span class="n">DHash</span><span class="p">()</span>
+<span class="n">encodings</span> <span class="o">=</span> <span class="n">dhasher</span><span class="o">.</span><span class="n">encode_images</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/image/directory&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<h4 id="feature-generation-for-a-single-image">Feature generation for a single image</h4>
+<p>To generate encodings for a single image <em>encode_image</em> function can be used. The general api for 
+using <em>encode_image</em> is:</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="o">&lt;</span><span class="n">method</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+<span class="n">method_object</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">method</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="n">encoding</span> <span class="o">=</span> <span class="n">method_object</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_file</span><span class="o">=</span><span class="s1">&#39;path/to/image/file&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>where the returned variable <em>encoding</em> is either a hexadecimal string if a hashing method is used or a (1, 1024) numpy 
+array if cnn is used.</p>
+<h5 id="options">Options</h5>
 <ul>
-<li>
-<p><strong>ground_truth_map</strong>: A dictionary representing ground truth with filenames as key and a list of duplicate filenames
-                  as value.</p>
-</li>
-<li>
-<p><strong>retrieved_map</strong>: A dictionary representing retrieved duplicates with filenames as key and a list of retrieved
-               duplicate filenames as value.</p>
-</li>
-<li>
-<p><strong>metric</strong>:  Name of metric to be evaluated and returned. Accepted values are: 'map', 'ndcg', 'jaccard',
-        'classification', 'all'(returns every metric).</p>
-</li>
+<li>image_file: Optional, path to the image file for which encodings are to be generated.</li>
+<li>image_array: Optional, used instead of <em>image_file</em> attribute. A numpy array representing the image.</li>
 </ul>
-<h5 id="returns">Returns</h5>
-<ul>
-<li><strong>dictionary</strong>: A dictionary with metric name as key and corresponding calculated metric as the value. 'map', 'ndcg'
-            and 'jaccard' return a single number denoting the corresponding information retrieval metric.
-            'classification' metrics include 'precision', 'recall' and 'f1-score' which are returned in the form
-             of individual entries in the returned dictionary. The value for each of the classification metric
-             is a numpy array with first entry as the score for non-duplicate file pairs(class-0) and second
-             entry as the score for duplicate file pairs (class-1). Additionally, a support is also returned as
-             another key with first entry denoting number of non-duplicate file pairs and second entry having
-             duplicate file pairs.</li>
-</ul>
+<h5 id="considerations_1">Considerations</h5>
+<p>If the image can't be loaded, no features are generated for the image and <em>None</em> is returned.</p>
+<h5 id="examples_1">Examples</h5>
+<p>Generating features using Difference hash,</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">DHash</span>
+<span class="n">dhasher</span> <span class="o">=</span> <span class="n">DHash</span><span class="p">()</span>
+<span class="n">encoding</span> <span class="o">=</span> <span class="n">dhasher</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_file</span><span class="o">=</span><span class="s1">&#39;path/to/image/file&#39;</span><span class="p">)</span>
+</pre></div>
                 
                   
                 
@@ -686,7 +809,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../../methods/hashing/" title="Hashing" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../finding_duplicates/" title="Find duplicates" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -695,19 +818,19 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Hashing
+                Find duplicates
               </span>
             </div>
           </a>
         
         
-          <a href="../../utils/plotter/" title="Plot duplicates" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../evaluating_performance/" title="Evaluating performance" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Plot duplicates
+                Evaluating performance
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">

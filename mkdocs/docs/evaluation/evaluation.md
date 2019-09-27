@@ -13,11 +13,11 @@ Given a ground truth map and a duplicate map retrieved from a deduplication algo
                duplicate filenames as value.
 
 * **metric**:  Name of metric to be evaluated and returned. Accepted values are: 'map', 'ndcg', 'jaccard',
-        'classification', 'all' where 'all' returns every metric. 'map', 'ndcg' and 'jaccard' return a single
-        number denoting the corresponding information retrieval metric.
+        'classification', 'all'(returns every metric).
 
 ##### Returns
-* **dictionary**: A dictionary with metric name as key and corresponding calculated metric as the value.
+* **dictionary**: A dictionary with metric name as key and corresponding calculated metric as the value. 'map', 'ndcg'
+            and 'jaccard' return a single number denoting the corresponding information retrieval metric.
             'classification' metrics include 'precision', 'recall' and 'f1-score' which are returned in the form
              of individual entries in the returned dictionary. The value for each of the classification metric
              is a numpy array with first entry as the score for non-duplicate file pairs(class-0) and second

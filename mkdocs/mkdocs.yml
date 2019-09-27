@@ -3,16 +3,20 @@ site_author: idealo Data Science Team
 
 nav:
     - Home: index.md
-    # - Getting Started: start.md
+    - Tutorials:
+        - Find duplicates: tutorials/finding_duplicates.md
+        - Feature generation: tutorials/feature_generation.md
+        - Evaluating performance: tutorials/evaluating_performance.md
+        - Plotting duplicates: tutorials/plotting_duplicates.md
     # - Examples:
       # - Cats and Dogs: examples/cats_and_dogs.md
       # - Imagenette: examples/imagenette.md
     - Documentation:
-        - Evaluation:
-            - Evaluation: evaluation/evaluation.md
         - Methods:
             - CNN: methods/cnn.md
             - Hashing: methods/hashing.md
+        - Evaluation:
+            - Evaluation: evaluation/evaluation.md
         - Utils:
             - Plot duplicates: utils/plotter.md
     - Contribution: CONTRIBUTING.md

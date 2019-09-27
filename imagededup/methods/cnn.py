@@ -300,7 +300,7 @@ class CNN:
             image_dir: Path to the directory containing all the images or dictionary with keys as file names
             and values as numpy arrays which represent the CNN feature for the key image file.
             encoding_map: A dictionary containing mapping of filenames and corresponding CNN features.
-            min_similarity_threshold: Threshold value (must be float between -1.0 and 1.0)
+            min_similarity_threshold: Threshold value (must be float between -1.0 and 1.0). Default is 0.9
             scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
             outfile: Name of the file to save the results.
 
@@ -362,7 +362,7 @@ class CNN:
             image_dir: Path to the directory containing all the images or dictionary with keys as file names
                        and values as numpy arrays which represent the CNN feature for the key image file.
             encoding_map: A dictionary containing mapping of filenames and corresponding CNN features.
-            min_similarity_threshold: Threshold value (must be float between -1.0 and 1.0)
+            min_similarity_threshold: Threshold value (must be float between -1.0 and 1.0). Default is 0.9
             outfile: Name of the file to save the results.
 
         Returns:

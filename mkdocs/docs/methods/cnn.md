@@ -74,7 +74,7 @@ Find duplicates for each file. Take in path of the directory or encoding diction
 
 * **encoding_map**: A dictionary containing mapping of filenames and corresponding CNN features.
 
-* **min_similarity_threshold**: Threshold value (must be float between -1.0 and 1.0)
+* **min_similarity_threshold**: Threshold value (must be float between -1.0 and 1.0). Default is 0.9
 
 * **scores**: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
 
@@ -116,7 +116,7 @@ Give out a list of image file names to remove based on the similarity threshold.
 
 * **encoding_map**: A dictionary containing mapping of filenames and corresponding CNN features.
 
-* **min_similarity_threshold**: Threshold value (must be float between -1.0 and 1.0)
+* **min_similarity_threshold**: Threshold value (must be float between -1.0 and 1.0). Default is 0.9
 
 * **outfile**: Name of the file to save the results.
 

@@ -65,6 +65,7 @@ python setup.py install
 ## Getting started
 ### Finding duplicates
 There are two methods available to perform deduplication:
+
 - [find_duplicates()](#find_duplicates)
 - [find_duplicates_to_remove()](#find_duplicates_to_remove)
 
@@ -326,6 +327,7 @@ To determine the quality of deduplication algorithm and the corresponding thresh
 
 Given a ground truth mapping consisting of file names and a list of duplicates for each file along with a retrieved 
 mapping from the deduplication algorithm for the same files, the following metrics can be obtained using the framework:
+
 - [Mean Average Precision](https://en.wikipedia.org/wiki/Evaluation_measures_(information_retrieval)#Mean_average_precision) (MAP)
 - [Mean Normalized Discounted Cumulative Gain](https://en.wikipedia.org/wiki/Discounted_cumulative_gain) (NDCG)
 - [Jaccard Index](https://en.wikipedia.org/wiki/Jaccard_index)
