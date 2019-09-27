@@ -274,38 +274,17 @@
       
       
 
-  
-
-
-  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-    
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
-    
-    <label class="md-nav__link" for="nav-2">
-      Documentation
-    </label>
-    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-2">
-        Documentation
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
 
   <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-1" type="checkbox" id="nav-2-1">
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
     
-    <label class="md-nav__link" for="nav-2-1">
-      Evaluation
+    <label class="md-nav__link" for="nav-2">
+      Tutorials
     </label>
-    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
-      <label class="md-nav__title" for="nav-2-1">
-        Evaluation
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        Tutorials
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
         
@@ -316,8 +295,44 @@
 
 
   <li class="md-nav__item">
-    <a href="../../evaluation/evaluation/" title="Evaluation" class="md-nav__link">
-      Evaluation
+    <a href="../../tutorials/finding_duplicates/" title="Find duplicates" class="md-nav__link">
+      Find duplicates
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorials/feature_generation/" title="Feature generation" class="md-nav__link">
+      Feature generation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorials/evaluating_performance/" title="Evaluating performance" class="md-nav__link">
+      Evaluating performance
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../tutorials/plotting_duplicates/" title="Plotting duplicates" class="md-nav__link">
+      Plotting duplicates
     </a>
   </li>
 
@@ -326,6 +341,27 @@
     </nav>
   </li>
 
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+    
+    <label class="md-nav__link" for="nav-3">
+      Documentation
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        Documentation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
         
           
           
@@ -336,13 +372,13 @@
 
   <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-2" type="checkbox" id="nav-2-2" checked>
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3-1" type="checkbox" id="nav-3-1" checked>
     
-    <label class="md-nav__link" for="nav-2-2">
+    <label class="md-nav__link" for="nav-3-1">
       Methods
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
-      <label class="md-nav__title" for="nav-2-2">
+      <label class="md-nav__title" for="nav-3-1">
         Methods
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -702,13 +738,49 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3">
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2">
     
-    <label class="md-nav__link" for="nav-2-3">
+    <label class="md-nav__link" for="nav-3-2">
+      Evaluation
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-2">
+        Evaluation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../evaluation/evaluation/" title="Evaluation" class="md-nav__link">
+      Evaluation
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3-3" type="checkbox" id="nav-3-3">
+    
+    <label class="md-nav__link" for="nav-3-3">
       Utils
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
-      <label class="md-nav__title" for="nav-2-3">
+      <label class="md-nav__title" for="nav-3-3">
         Utils
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -1192,7 +1264,7 @@
 </li>
 <li>
 <p><strong>max_distance_threshold</strong>: Hamming distance between two images below which retrieved duplicates are valid.
-                        (must be an int between 0 and 64)</p>
+                        (must be an int between 0 and 64). Default is 10.</p>
 </li>
 <li>
 <p><strong>scores</strong>: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.</p>
@@ -1240,7 +1312,7 @@
 </li>
 <li>
 <p><strong>max_distance_threshold</strong>: Hamming distance between two images below which retrieved duplicates are valid.
-                        (must be an int between 0 and 64)</p>
+                        (must be an int between 0 and 64). Default is 10.</p>
 </li>
 <li>
 <p><strong>outfile</strong>: Name of the file to save the results.</p>
@@ -1438,13 +1510,13 @@
           </a>
         
         
-          <a href="../../utils/plotter/" title="Plot duplicates" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../../evaluation/evaluation/" title="Evaluation" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Plot duplicates
+                Evaluation
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">

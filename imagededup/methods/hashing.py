@@ -271,7 +271,7 @@ class Hashing:
                        and values as hash strings for the key image file.
             encoding_map: A dictionary containing mapping of filenames and corresponding hashes.
             max_distance_threshold: Hamming distance between two images below which retrieved duplicates are valid.
-                                    (must be an int between 0 and 64)
+                                    (must be an int between 0 and 64). Default is 10.
             scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
             outfile: Name of the file to save the results.
 
@@ -331,7 +331,7 @@ class Hashing:
                        and values as hash strings for the key image file.
             encoding_map: A dictionary containing mapping of filenames and corresponding hashes.
             max_distance_threshold: Hamming distance between two images below which retrieved duplicates are valid.
-                                    (must be an int between 0 and 64)
+                                    (must be an int between 0 and 64). Default is 10.
             outfile: Name of the file to save the results.
 
         Returns:

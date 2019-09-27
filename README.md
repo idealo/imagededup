@@ -6,15 +6,15 @@ to carry out this task effectively. The deduplication problem generally caters t
 * Finding exact duplicates
 
 <p align="center">
-  <img src="_readme_figures/103500.jpg" width="300" />
-  <img src="_readme_figures/103500.jpg" width="300" />
+  <img src="../_readme_figures/103500.jpg" width="300" />
+  <img src="../_readme_figures/103500.jpg" width="300" />
 </p>
 
 * Finding near duplicates
 
 <p align="center">
-  <img src="_readme_figures/103500.jpg" width="300" />
-  <img src="_readme_figures/103501.jpg" width="300" />
+  <img src="../_readme_figures/103500.jpg" width="300" />
+  <img src="../_readme_figures/103501.jpg" width="300" />
 </p>
 
 Traditional methods such as hashing algorithms are particularly good at finding exact duplicates while more modern 
@@ -62,19 +62,27 @@ cd image-dedup
 python setup.py install
 ```  
 
-## Getting started
+## Quick start
 ### Finding duplicates
 There are two methods available to perform deduplication:
+
 - [find_duplicates()](#find_duplicates)
 - [find_duplicates_to_remove()](#find_duplicates_to_remove)
 
 #### find_duplicates
-To deduplicate an image directory, the general api is:
+To deduplicate an image directory using perceptual hashing:
 ```python
-from imagededup.methods import <method-name>
-method_object = <method-name>()
-duplicates = method_object.find_duplicates(image_dir='path/to/image/directory',
-                                           <threshold-parameter-value>)
+from imagededup.methods import PHash
+phasher = PHash()
+duplicates = phasher.find_duplicates(image_dir='path/to/image/directory', max_distance_threshold=15)
+```
+Other hashing methods can be used instead of PHash: Ahash, DHash, WHash
+
+To deduplicate an image directory using cnn:
+```python
+from imagededup.methods import CNN
+cnn_encoder = CNN()
+duplicates = cnn_encoder.find_duplicates(image_dir='path/to/image/directory', min_similarity_threshold=0.85)
 ```
 where the returned variable *duplicates* is a dictionary with the following content:
 ```
@@ -85,94 +93,25 @@ where the returned variable *duplicates* is a dictionary with the following cont
   ..
 }
 ```
-
 Each key in the *duplicates* dictionary corresponds to a file in the image directory passed to the *image_dir* parameter
 of the *find_duplicates* function. The value is a list of all file names in the image directory that were found to be 
 duplicates for the key file.
 
-##### Options
-- *image_dir*: Optional, directory where all image files are present.
+For an advanced usage, look at the tutorial part of the documentation.
 
-- *encoding_map*: Optional, used instead of *image_dir* attribute. Set it equal to the dictionary of file names and 
-corresponding features (hashes/cnn encodings). The mentioned dictionary can be generated using the corresponding 
-[*encode_images*](#feature-generation-for-all-images-in-a-directory) method.
-- *scores*: Setting it to *True* returns the scores representing the hamming distance (for hashing) or cosine similarity
- (for cnn) of each of the duplicate file names from the key file. In this case, the returned 'duplicates' dictionary has
-  the following content:
-```
-{
-  'image1.jpg': [('image1_duplicate1.jpg', score),
-                 ('image1_duplicate2.jpg', score)],
-  'image2.jpg': [..],
-  ..
-}
-```
-Each key in the *duplicates* dictionary corresponds to a file in the image directory passed to the image_dir parameter 
-of the find_duplicates function. The value is a list of all tuples representing the file names and corresponding scores 
-in the image directory that were found to be duplicates for the key file.
-
-- *outfile*: Name of file to which the returned duplicates dictionary is to be written. *None* by default.
-
-- threshold parameter:
-  * *min_similarity_threshold* for cnn method indicating the minimum amount of cosine similarity that should exist 
-  between the key image and a candidate image so that the candidate image can be considered as a duplicate for the key 
-  image. Should be a float between -1.0 and 1.0. Default value is 0.9.
-
-  * *max_distance_threshold* for hashing methods indicating the maximum amount of hamming distance that can exist 
-  between the key image and a candidate image so that the candidate image can be considered as a duplicate for the key 
-  image. Should be an int between 0 and 64. Default value is 10.
-
-##### Considerations
-
-- The returned duplicates dictionary contains symmetric relationships i.e., if an image *i* is a duplicate of image *j*,
- then image *j* must also be a duplicate of image *i*. Let's say that the image directory only consists of images *i* 
- and *j*, then the duplicates dictionary would have the following content:
-```
-{
-  'i': ['j'],
-  'j': ['i']
-}
-```
-- If an image in the image directory can't be loaded, no features are generated for the image. Hence, the image is 
-disregarded for deduplication and has no entry in the returned *duplicates* dictionary.
-
-##### Examples
-
-To deduplicate an image directory using perceptual hashing, with a maximum allowed hamming distance of 12, scores 
-returned along with duplicate filenames and the returned dictionary saved to file 'my_duplicates.json', use the 
-following:
-```python
-from imagededup.methods import PHash
-phasher = PHash()
-duplicates = phasher.find_duplicates(image_dir='path/to/image/directory',
-                                     max_distance_threshold=12, 
-                                     scores=True, 
-                                     outfile='my_duplicates.json')
-```
-To deduplicate an image directory using cnn, with a minimum cosine similarity of 0.85, no scores returned and the 
-returned dictionary saved to file 'my_duplicates.json', use the following:
-
-```python
-from imagededup.methods import CNN
-cnn_encoder = CNN()
-duplicates = cnn_encoder.find_duplicates(image_dir='path/to/image/directory', 
-                                         min_similarity_threshold=0.85, 
-                                         scores=False, 
-                                         outfile='my_duplicates.json')
-```
 #### find_duplicates_to_remove
 Returns a list of files in the image directory that are considered as duplicates. Does **NOT** remove the said files.
 
 The api is similar to *find_duplicates* function (except the *score* attribute in *find_duplicates*). This function 
 allows the return of a single list of file names in directory that are found to be duplicates.
-The general api for the method is as below:
+
+To deduplicate an image directory using cnn:
 ```python
-from imagededup.methods import <method-name>
-method_object = <method-name>()
-duplicates = method_object.find_duplicates_to_remove(image_dir='path/to/image/directory', 
-                                                     <threshold-parameter-value>)
+from imagededup.methods import CNN
+cnn_encoder = CNN()
+duplicates = cnn_encoder.find_duplicates_to_remove(image_dir='path/to/image/directory', min_similarity_threshold=0.85)
 ```
-In this case, the returned variable *duplicates* is a list containing the name of image files that are found to be 
+*duplicates* is a list containing the name of image files that are found to be 
 duplicates of some file in the directory:
 ```
 [
@@ -182,92 +121,23 @@ duplicates of some file in the directory:
 ]
 ```
 
-##### Options
-- *image_dir*: Optional, directory where all image files are present.
-
-- *encoding_map*: Optional, used instead of image_dir attribute. Set it equal to the dictionary of file names and 
-corresponding features (hashes/cnn encodings). The mentioned dictionary can be generated using the corresponding 
-[*encode_images*](#feature-generation-for-all-images-in-a-directory) method. Each key in the 'duplicates' dictionary corresponds to a file in the image directory passed to 
-the image_dir parameter of the find_duplicates function. The value is a list of all tuples representing the file names 
-and corresponding scores in the image directory that were found to be duplicates for the key file.
-
-- *outfile*: Name of file to which the returned duplicates dictionary is to be written. *None* by default.
-
-- threshold parameter:
-  * *min_similarity_threshold* for cnn method indicating the minimum amount of cosine similarity that should exist 
-  between the key image and a candidate image so that the candidate image can be considered as a duplicate for the key 
-  image. Should be a float between -1.0 and 1.0. Default value is 0.9.
-
-  * *max_distance_threshold* for hashing methods indicating the maximum amount of hamming distance that can exist 
-  between the key image and a candidate image so that the candidate image can be considered as a duplicate for the key 
-  image. Should be an int between 0 and 64. Default value is 10.
-
-##### Considerations
-- This method must be used with caution. The symmetric nature of duplicates imposes an issue of marking one image as 
-duplicate and the other as original. Consider the following *duplicates* dictionary:
-```
-{
-  '1.jpg': ['2.jpg'],
-  '2.jpg': ['1.jpg', '3.jpg'],
-  '3.jpg': ['2.jpg']
-}
-```
-In this case, it is possible to remove only *2.jpg* which leaves *1.jpg* and *3.jpg* as non-duplicates of each other. 
-However, it is also possible to remove both *1.jpg* and *3.jpg* leaving only *2.jpg*. The *find_duplicates_to_remove* 
-method makes this decision based on the alphabetical sorting of filenames in the directory. In the above example, the 
-filename *1.jpg* appears alphabetically before *2.jpg*. So, *1.jpg* would be retained, while its duplicate, *2.jpg*, 
-would be marked as a duplicate. Once *2.jpg* is marked as duplicate, its own found duplicates would be disregarded. 
-Thus, *1.jpg* and *3.jpg* would not be considered as duplicates. So, the final return would be:
-```
-['2.jpg']
-```
-This leaves *1.jpg* and *3.jpg* as non-duplicates in the directory.
-If the user does not wish to impose this heuristic, it is advised to use [*find_duplicates*](#find_duplicates) function and use a custom 
-heuristic to mark a file as duplicate.
-
-- If an image in the image directory can't be loaded, no features are generated for the image. Hence, the image is 
-disregarded for deduplication and has no entry in the returned *duplicates* dictionary.
-
-##### Examples
-
-To deduplicate an image directory using perceptual hashing, with a maximum allowed hamming distance of 12, and the 
-returned list saved to file 'my_duplicates.json', use the following:
-```python
-from imagededup.methods import PHash
-phasher = PHash()
-duplicates = phasher.find_duplicates_to_remove(image_dir='path/to/image/directory', 
-                                               max_distance_threshold=12, 
-                                               outfile='my_duplicates.json')
-```
-To deduplicate an image directory using cnn, with a minimum cosine similarity of 0.85 and the returned list saved to 
-file 'my_duplicates.json', use the following:
-
-```python
-from imagededup.methods import CNN
-cnn_encoder = CNN()
-duplicates = cnn_encoder.find_duplicates_to_remove(image_dir='path/to/image/directory', 
-                                                   min_similarity_threshold=0.85, 
-                                                   outfile='my_duplicates.json')
-```
+For an advanced usage, look at the tutorial part of the documentation.
 
 ### Feature generation
-It might be desirable to only generate the hashes/cnn encodings for a given image or all images in the directory instead
-of directly deduplicating using find_duplicates method. Features can be generated for a directory of images or for a 
-single image:
+To only generate the hashes/cnn encodings for a given image or all images in the directory:
 
 - [Feature generation for all images in a directory](#feature-generation-for-all-images-in-a-directory)
 - [Feature generation for a single image](#feature-generation-for-a-single-image)
 
 
 #### Feature generation for all images in a directory
-To generate encodings for all images in an image directory *encode_images* function can be used. The general api for 
-using *encode_images* is:
+*encode_images* function can be used here:
 ```python
-from imagededup.methods import <method-name>
-method_object = <method-name>()
-encodings = method_object.encode_images(image_dir='path/to/image/directory')
+from imagededup.methods import Dhash
+dhasher = Dhash()
+encodings = dhasher.encode_images(image_dir='path/to/image/directory')
 ```
-where the returned variable *encodings* is a dictionary mapping image file names to corresponding encoding:
+where the returned *encodings*:
 ```
 {
   'image1.jpg': <feature-image-1>,
@@ -279,53 +149,22 @@ For hashing algorithms, the features are 64 bit hashes represented as 16 charact
 
 For cnn, the features are numpy array with shape (1, 1024).
 
-##### Considerations
-
-If an image in the image directory can't be loaded, no features are generated for the image. Hence, there is no entry 
-for the image in the returned encodings dictionary.
-
-##### Examples
-
-Generating features using Difference hash,
-```python
-from imagededup.methods import DHash
-dhasher = DHash()
-encodings = dhasher.encode_images(image_dir='path/to/image/directory')
-```
-
 #### Feature generation for a single image
-To generate encodings for a single image *encode_image* function can be used. The general api for 
-using *encode_image* is:
+To generate encodings for a single image *encode_image* function can be used:
 ```python
-from imagededup.methods import <method-name>
-method_object = <method-name>()
-encoding = method_object.encode_image(image_file='path/to/image/file')
+from imagededup.methods import AHash
+ahasher = AHash()
+encoding = ahasher.encode_image(image_file='path/to/image/file')
 ```
 where the returned variable *encoding* is either a hexadecimal string if a hashing method is used or a (1, 1024) numpy 
 array if cnn is used.
-
-##### Options
-- image_file: Optional, path to the image file for which encodings are to be generated.
-- image_array: Optional, used instead of *image_file* attribute. A numpy array representing the image.
-
-##### Considerations
-
-If the image can't be loaded, no features are generated for the image and *None* is returned.
-
-##### Examples
-
-Generating features using Difference hash,
-```python
-from imagededup.methods import DHash
-dhasher = DHash()
-encoding = dhasher.encode_image(image_file='path/to/image/file')
-```
 
 ### Evaluation of deduplication quality
 To determine the quality of deduplication algorithm and the corresponding threshold, an evaluation framework is provided.
 
 Given a ground truth mapping consisting of file names and a list of duplicates for each file along with a retrieved 
 mapping from the deduplication algorithm for the same files, the following metrics can be obtained using the framework:
+
 - [Mean Average Precision](https://en.wikipedia.org/wiki/Evaluation_measures_(information_retrieval)#Mean_average_precision) (MAP)
 - [Mean Normalized Discounted Cumulative Gain](https://en.wikipedia.org/wiki/Discounted_cumulative_gain) (NDCG)
 - [Jaccard Index](https://en.wikipedia.org/wiki/Jaccard_index)
@@ -350,45 +189,14 @@ where the returned variable *metrics* is a dictionary containing the following c
   'support': <numpy array having per class support>
 }
 ```
-##### Options
-- ground_truth_map:  A dictionary representing ground truth with filenames as key and a list of duplicate filenames as 
-value.
-- retrieved_map: A dictionary representing retrieved duplicates with filenames as key and a list of retrieved duplicate 
-filenames as value.
-- metric can take one of the following values:
-  - 'map'
-  - 'ndcg'
-  - 'jaccard'
-  - 'classification': Returns per class precision, recall, f1-score, support
-  - 'all' (default, returns all the above metrics)
-
-
-##### Considerations
-- Presently, the ground truth map should be prepared manually by the user. Symmetric relations between duplicates must 
-be represented in the ground truth map. If an image *i* is a duplicate for image *j*, then *j* must also be represented as a
- duplicate of *i*. Absence of symmetric relations will lead to an exception.
-
-- Both the ground_truth_map and retrieved_map must have the same keys.
 
 ### Plotting duplicates of an image
-Once a duplicate dictionary corresponding to an image directory has been obtained (using [find_duplicates](#find_duplicates)), duplicates 
-for an image can be plotted using *plot_duplicates* method as below:
+Duplicates for an image can be plotted using *plot_duplicates* method as below:
 ```python
 from imagededup.utils import plot_duplicates
 plot_duplicates(image_dir, duplicate_map, filename)
 ```
-where *filename* is the file for which duplicates are to be plotted.
-
-##### Options
-- *image_dir*: Directory where all image files are present.
-
-- *duplicate_map*: A dictionary representing retrieved duplicates with filenames as key and a list of retrieved duplicate 
-filenames as value. A duplicate_map with scores can also be passed (obtained from [find_duplicates](#find_duplicates)
-function with scores attribute set to True).
-
-- *filename*: Image file name for which duplicates are to be plotted.
-
-- *outfile*: Name of the file the plot should be saved to. *None* by default.
+where *duplicate_map* is the duplciate map obtained after running [find_duplicates()](#find_duplicates) and  *filename* is the file for which duplicates are to be plotted.
 
 The output looks as below:
 

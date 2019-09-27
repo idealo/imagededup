@@ -109,8 +109,12 @@ def plot_duplicates(
         outfile: Name of the file to save the plot.
 
     Example:
+    ```
         from imagededup.utils import plot_duplicates
         plot_duplicates(image_dir='path/to/image/directory', filename='path/to/image.jpg')
+        OR
+        plot_duplicates(duplicate_map=duplicate_map, filename='path/to/image.jpg')
+    ```
     """
     # validate args
     image_dir = _validate_args(image_dir=image_dir, duplicate_map=duplicate_map, filename=filename)

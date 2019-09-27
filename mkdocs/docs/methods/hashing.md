@@ -90,7 +90,7 @@ Find duplicates for each file. Takes in path of the directory or encoding dictio
 * **encoding_map**: A dictionary containing mapping of filenames and corresponding hashes.
 
 * **max_distance_threshold**: Hamming distance between two images below which retrieved duplicates are valid.
-                        (must be an int between 0 and 64)
+                        (must be an int between 0 and 64). Default is 10.
 
 * **scores**: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
 
@@ -133,7 +133,7 @@ Give out a list of image file names to remove based on the hamming distance thre
 * **encoding_map**: A dictionary containing mapping of filenames and corresponding hashes.
 
 * **max_distance_threshold**: Hamming distance between two images below which retrieved duplicates are valid.
-                        (must be an int between 0 and 64)
+                        (must be an int between 0 and 64). Default is 10.
 
 * **outfile**: Name of the file to save the results.
 

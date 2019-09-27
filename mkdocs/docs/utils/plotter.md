@@ -14,4 +14,13 @@ Given filename for an image, plot duplicates along with the original image using
 
 * **outfile**: Name of the file to save the plot.
 
+##### Example usage
+```python
+
+from imagededup.utils import plot_duplicates
+plot_duplicates(image_dir='path/to/image/directory', filename='path/to/image.jpg')
+OR
+plot_duplicates(duplicate_map=duplicate_map, filename='path/to/image.jpg')
+
+```
 
