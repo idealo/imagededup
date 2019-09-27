@@ -7,7 +7,7 @@ from typing import Callable, Dict, List
 def get_files_to_remove(duplicates: Dict[str, List]) -> List:
     """
     Get a list of files to remove.
-    
+
     Args:
         duplicates: A dictionary with file name as key and a list of duplicate file names as value.
 
@@ -18,9 +18,7 @@ def get_files_to_remove(duplicates: Dict[str, List]) -> List:
     files_to_remove = set()
 
     for k, v in duplicates.items():
-        tmp = [
-            i[0] if isinstance(i, tuple) else i for i in v
-        ]  # handle tuples (image_id, score)
+        tmp = [i[0] if isinstance(i, tuple) else i for i in v]  # handle tuples (image_id, score)
 
         if k not in files_to_remove:
             files_to_remove.update(tmp)
