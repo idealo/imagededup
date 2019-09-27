@@ -12,26 +12,19 @@ from imagededup.utils.logger import return_logger
 
 class CNN:
     """
-    Find duplicates using CNN and/or generates CNN features given a single image or a directory of images.
-    The module can be used for 2 purposes: Feature generation and duplicate detection.
+    Find duplicates using CNN and/or generate CNN features given a single image or a directory of images.
 
+    The module can be used for 2 purposes: Feature generation and duplicate detection.
     - Feature generation:
     To propagate an image through a Convolutional Neural Network architecture and generate features. The generated
-    features can be used at a later time for deduplication. There are two possibilities to get features:
-
-        - At a single image level: Using the method 'encode_image', the CNN feature for a single image can be obtained.
-        - At a directory level: In case features for several images need to be generated, the images can be placed in a directory and features for all of the images can be obtained using the 'encode_images' method.
+    features can be used at a later time for deduplication. Using the method 'encode_image', the CNN feature for a
+    single image can be obtained while the 'encode_images' method can be used to get features for all images in a
+    directory.
 
     - Duplicate detection:
     Find duplicates either using the feature mapping generated previously using 'encode_images' or using a Path to the
-    directory that contains the images that need to be deduplicated. There are 2 inputs that can be provided to the
-    find_duplicates function:
-    a) Dictionary generated using 'encode_images' function above.
-    b) Using the Path of the directory where all images are present.
-
-    If a list of file names to remove are desired, then the function find_duplicates_to_remove can be used with either
-    the path to the image directory as input or the dictionary with features. A threshold for similarity should be
-    considered.
+    directory that contains the images that need to be deduplicated. 'find_duplciates' and 'find_duplicates_to_remove'
+    methods are provided to accomplish these tasks.
     """
 
     def __init__(self) -> None:
@@ -312,7 +305,10 @@ class CNN:
             outfile: Name of the file to save the results.
 
         Returns:
-            dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg', score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}. if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
+            dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
+                        score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}. if scores is False, then a
+                        dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg'],
+                        'image2.jpg':['image1_duplicate1.jpg',..], ..}
 
         Example:
         ```
@@ -364,7 +360,7 @@ class CNN:
 
         Args:
             image_dir: Path to the directory containing all the images or dictionary with keys as file names
-            and values as numpy arrays which represent the CNN feature for the key image file.
+                       and values as numpy arrays which represent the CNN feature for the key image file.
             encoding_map: A dictionary containing mapping of filenames and corresponding CNN features.
             min_similarity_threshold: Threshold value (must be float between -1.0 and 1.0)
             outfile: Name of the file to save the results.

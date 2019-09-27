@@ -705,11 +705,11 @@
       <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3">
     
     <label class="md-nav__link" for="nav-2-3">
-      Components
+      Utils
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
       <label class="md-nav__title" for="nav-2-3">
-        Components
+        Utils
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
         
@@ -720,176 +720,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../../components/cloud.md" title="Cloud" class="md-nav__link">
-      Cloud
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../components/dataprep.md" title="Data Preparation" class="md-nav__link">
-      Data Preparation
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../components/training.md" title="Training" class="md-nav__link">
-      Training
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../components/evaluation.md" title="Evaluation" class="md-nav__link">
-      Evaluation
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item md-nav__item--nested">
-    
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-4" type="checkbox" id="nav-2-4">
-    
-    <label class="md-nav__link" for="nav-2-4">
-      Handlers
-    </label>
-    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
-      <label class="md-nav__title" for="nav-2-4">
-        Handlers
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../handlers/data_generator.md" title="Data Generator" class="md-nav__link">
-      Data Generator
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../handlers/image_classifier.md" title="Image Classifer" class="md-nav__link">
-      Image Classifer
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item md-nav__item--nested">
-    
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-5" type="checkbox" id="nav-2-5">
-    
-    <label class="md-nav__link" for="nav-2-5">
-      Scripts
-    </label>
-    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
-      <label class="md-nav__title" for="nav-2-5">
-        Scripts
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../scripts/run_cloud.md" title="Run Cloud" class="md-nav__link">
-      Run Cloud
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../scripts/run_dataprep.md" title="Run Data Prep" class="md-nav__link">
-      Run Data Prep
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../scripts/run_training.md" title="Run Training" class="md-nav__link">
-      Run Training
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../scripts/run_training_cloud.md" title="Run Training Cloud" class="md-nav__link">
-      Run Training Cloud
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../scripts/run_evaluation.md" title="Run Evaluation" class="md-nav__link">
-      Run Evaluation
+    <a href="../../utils/plotter/" title="Plot duplicates" class="md-nav__link">
+      Plot duplicates
     </a>
   </li>
 
@@ -1259,6 +1091,16 @@
                   <h1>Hashing</h1>
                 
                 <h2 id="class-hashing">class Hashing</h2>
+<p>Find duplicates using hashing algorithms and/or generate hashes given a single image or a directory of images.</p>
+<p>The module can be used for 2 purposes: Feature generation and duplicate detection.</p>
+<ul>
+<li>
+<p>Feature generation: To generate hashes using specific hashing method. The generated hashes can be used at a later time for deduplication. Using the method 'encode_image' from the specific hashing method object, the hash for a single image can be obtained while the 'encode_images' method can be used to get hashes for all images in a directory.</p>
+</li>
+<li>
+<p>Duplicate detection: Find duplicates either using the feature mapping generated previously using 'encode_images' or using a Path to the directory that contains the images that need to be deduplicated. 'find_duplciates' and 'find_duplicates_to_remove' methods are provided to accomplish these tasks.</p>
+</li>
+</ul>
 <h3 id="9595init9595">__init__</h3>
 <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">()</span>
 </pre></div>
@@ -1305,9 +1147,9 @@
 <h5 id="example-usage">Example usage</h5>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="o">&lt;</span><span class="nb">hash</span><span class="o">-</span><span class="n">method</span><span class="o">&gt;</span>
 <span class="n">myencoder</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nb">hash</span><span class="o">-</span><span class="n">method</span><span class="o">&gt;</span><span class="p">()</span>
-<span class="nb">hash</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_file</span><span class="o">=</span><span class="s1">&#39;path/to/image.jpg&#39;</span><span class="p">)</span>
+<span class="n">myhash</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_file</span><span class="o">=</span><span class="s1">&#39;path/to/image.jpg&#39;</span><span class="p">)</span>
 <span class="n">OR</span>
-<span class="nb">hash</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_array</span><span class="o">=&lt;</span><span class="n">numpy</span> <span class="n">array</span> <span class="n">of</span> <span class="n">image</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">myhash</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_array</span><span class="o">=&lt;</span><span class="n">numpy</span> <span class="n">array</span> <span class="n">of</span> <span class="n">image</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 
 
@@ -1323,7 +1165,8 @@
 </ul>
 <h5 id="returns_2">Returns</h5>
 <ul>
-<li><strong>dictionary</strong>:  A dictionary that contains a mapping of filenames and corresponding 64 character hash string such as {'Image1.jpg': 'hash_string1', 'Image2.jpg': 'hash_string2', ...}</li>
+<li><strong>dictionary</strong>:  A dictionary that contains a mapping of filenames and corresponding 64 character hash string
+            such as {'Image1.jpg': 'hash_string1', 'Image2.jpg': 'hash_string2', ...}</li>
 </ul>
 <h5 id="example-usage_1">Example usage</h5>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="o">&lt;</span><span class="nb">hash</span><span class="o">-</span><span class="n">method</span><span class="o">&gt;</span>
@@ -1337,17 +1180,19 @@
 </pre></div>
 
 
-<p>Find duplicates for each file. Takes in path of the directory or encoding dictionary in which duplicates are to be detected below the given hamming distance threshold. Returns dictionary containing key as filename and value as a list of duplicate file names. Optionally, the below the given hamming distance could be returned instead of just duplicate filenames for each query file.</p>
+<p>Find duplicates for each file. Takes in path of the directory or encoding dictionary in which duplicates are to be detected. All images with hamming distance less than or equal to the max_distance_threshold are regarded as duplicates. Returns dictionary containing key as filename and value as a list of duplicate file names. Optionally, the below the given hamming distance could be returned instead of just duplicate filenames for each query file.</p>
 <h5 id="args_3">Args</h5>
 <ul>
 <li>
-<p><strong>image_dir</strong>: Path to the directory containing all the images or dictionary with keys as file names</p>
+<p><strong>image_dir</strong>: Path to the directory containing all the images or dictionary with keys as file names
+           and values as hash strings for the key image file.</p>
 </li>
 <li>
 <p><strong>encoding_map</strong>: A dictionary containing mapping of filenames and corresponding hashes.</p>
 </li>
 <li>
-<p><strong>max_distance_threshold</strong>: Hamming distance between two images below which retrieved duplicates are valid.</p>
+<p><strong>max_distance_threshold</strong>: Hamming distance between two images below which retrieved duplicates are valid.
+                        (must be an int between 0 and 64)</p>
 </li>
 <li>
 <p><strong>scores</strong>: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.</p>
@@ -1358,7 +1203,10 @@
 </ul>
 <h5 id="returns_3">Returns</h5>
 <ul>
-<li><strong>dictionary</strong>:  if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg', score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}. if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}</li>
+<li><strong>duplicates dictionary</strong>:  if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
+            score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}. if scores is False, then a
+            dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg'],
+            'image2.jpg':['image1_duplicate1.jpg',..], ..}</li>
 </ul>
 <h5 id="example-usage_2">Example usage</h5>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="o">&lt;</span><span class="nb">hash</span><span class="o">-</span><span class="n">method</span><span class="o">&gt;</span>
@@ -1384,13 +1232,15 @@
 <h5 id="args_4">Args</h5>
 <ul>
 <li>
-<p><strong>image_dir</strong>: Path to the directory containing all the images or dictionary with keys as file names</p>
+<p><strong>image_dir</strong>: Path to the directory containing all the images or dictionary with keys as file names
+           and values as hash strings for the key image file.</p>
 </li>
 <li>
 <p><strong>encoding_map</strong>: A dictionary containing mapping of filenames and corresponding hashes.</p>
 </li>
 <li>
-<p><strong>max_distance_threshold</strong>: Hamming distance between two images below which retrieved duplicates are valid.</p>
+<p><strong>max_distance_threshold</strong>: Hamming distance between two images below which retrieved duplicates are valid.
+                        (must be an int between 0 and 64)</p>
 </li>
 <li>
 <p><strong>outfile</strong>: Name of the file to save the results.</p>
@@ -1398,12 +1248,12 @@
 </ul>
 <h5 id="returns_4">Returns</h5>
 <ul>
-<li><strong>duplicates list</strong>: List of image file names that should be removed.</li>
+<li><strong>duplicates</strong>: List of image file names that are found to be duplicate of me other file in the directory.</li>
 </ul>
 <h5 id="example-usage_3">Example usage</h5>
 <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="o">&lt;</span><span class="nb">hash</span><span class="o">-</span><span class="n">method</span><span class="o">&gt;</span>
 <span class="n">myencoder</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nb">hash</span><span class="o">-</span><span class="n">method</span><span class="o">&gt;</span><span class="p">()</span>
-<span class="n">list_of_files_to_remove</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/images/directory&#39;</span><span class="p">),</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/images/directory&#39;</span><span class="p">),</span>
 <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 
 <span class="n">OR</span>
@@ -1416,52 +1266,32 @@
 
 
 <h2 id="class-phash">class PHash</h2>
-<p>Find duplicates using perceptual hashing algorithm and/or generate perceptual hashes given a single image or a directory of images. The module can be used for 2 purposes: Feature generation and duplicate detection.</p>
-<p>Feature generation:</p>
-<p>To generate perceptual hashes. The generated hashes can be used at a later time for deduplication. There are two possibilities to get hashes: 1. At a single image level: Using the method 'encode_image', the perceptual hash for a single image can be obtained.</p>
+<p>Inherits from Hashing base class and implements perceptual hashing (Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html).</p>
+<p>Offers all the functionality mentioned in hashing class.</p>
 <h5 id="example-usage_4">Example usage</h5>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">PHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">PHash</span><span class="p">()</span>
-<span class="nb">hash</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="s1">&#39;path/to/image.jpg&#39;</span><span class="p">)</span>
-
-
-<span class="mf">2.</span> <span class="n">At</span> <span class="n">a</span> <span class="n">directory</span> <span class="n">level</span><span class="p">:</span> <span class="n">In</span> <span class="n">case</span> <span class="n">perceptual</span> <span class="nb">hash</span> <span class="k">for</span> <span class="n">several</span> <span class="n">images</span> <span class="n">needs</span> <span class="n">to</span> <span class="n">be</span> <span class="n">generated</span><span class="p">,</span> <span class="n">the</span> <span class="n">images</span> <span class="n">can</span> <span class="n">be</span>
-<span class="n">placed</span> <span class="ow">in</span> <span class="n">a</span> <span class="n">directory</span> <span class="ow">and</span> <span class="n">hashes</span> <span class="k">for</span> <span class="nb">all</span> <span class="n">of</span> <span class="n">the</span> <span class="n">images</span> <span class="n">can</span> <span class="n">be</span> <span class="n">obtained</span> <span class="n">using</span> <span class="n">the</span> <span class="s1">&#39;encode_images&#39;</span> <span class="n">method</span><span class="o">.</span>
-<span class="n">Example</span><span class="p">:</span>
-
+<div class="codehilite"><pre><span></span><span class="c1"># Perceptual hash for images</span>
 <span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">PHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">PHash</span><span class="p">()</span>
-<span class="n">hashes</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_images</span><span class="p">(</span><span class="s1">&#39;path/to/directory&#39;</span><span class="p">)</span>
+<span class="n">phasher</span> <span class="o">=</span> <span class="n">PHash</span><span class="p">()</span>
+<span class="n">perceptual_hash</span> <span class="o">=</span> <span class="n">phasher</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_file</span> <span class="o">=</span> <span class="s1">&#39;path/to/image.jpg&#39;</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">perceptual_hash</span> <span class="o">=</span> <span class="n">phasher</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_array</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">numpy</span> <span class="n">image</span> <span class="n">array</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">perceptual_hashes</span> <span class="o">=</span> <span class="n">phasher</span><span class="o">.</span><span class="n">encode_images</span><span class="p">(</span><span class="n">image_dir</span> <span class="o">=</span> <span class="s1">&#39;path/to/directory&#39;</span><span class="p">)</span>  <span class="c1"># for a directory of images</span>
 
-<span class="n">Duplicate</span> <span class="n">detection</span><span class="p">:</span>
-
-<span class="n">Find</span> <span class="n">duplicates</span> <span class="n">either</span> <span class="n">using</span> <span class="n">the</span> <span class="n">hashes</span> <span class="n">generated</span> <span class="n">previously</span> <span class="n">using</span> <span class="s1">&#39;encode_images&#39;</span> <span class="ow">or</span> <span class="n">using</span> <span class="n">a</span> <span class="n">Path</span> <span class="n">to</span> <span class="n">the</span>
-<span class="n">directory</span> <span class="n">that</span> <span class="n">contains</span> <span class="n">the</span> <span class="n">image</span> <span class="n">dataset</span> <span class="n">that</span> <span class="n">needs</span> <span class="n">to</span> <span class="n">be</span> <span class="n">deduplicated</span><span class="o">.</span> <span class="n">There</span> <span class="n">are</span> <span class="mi">2</span> <span class="n">inputs</span> <span class="n">that</span> <span class="n">can</span> <span class="n">be</span> <span class="n">provided</span> <span class="n">to</span>
-<span class="n">the</span> <span class="n">find_duplicates</span> <span class="n">function</span><span class="p">:</span>
-<span class="mf">1.</span> <span class="n">Dictionary</span> <span class="n">generated</span> <span class="n">using</span> <span class="s1">&#39;encode_images&#39;</span> <span class="n">function</span> <span class="n">above</span><span class="o">.</span>
-<span class="n">Example</span><span class="p">:</span>
-
+<span class="c1"># Finding duplicates:</span>
 <span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">PHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">PHash</span><span class="p">()</span>
-<span class="n">duplicates</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">phasher</span> <span class="o">=</span> <span class="n">PHash</span><span class="p">()</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">phasher</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/directory&#39;</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">phasher</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">encoding_map</span><span class="o">=</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="mf">2.</span> <span class="n">Using</span> <span class="n">the</span> <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">directory</span> <span class="n">where</span> <span class="nb">all</span> <span class="n">images</span> <span class="n">are</span> <span class="n">present</span><span class="o">.</span>
-<span class="n">Example</span><span class="p">:</span>
-
+<span class="c1"># Finding duplicates to return a single list of duplicates in the image collection</span>
 <span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">PHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">PHash</span><span class="p">()</span>
-<span class="n">duplicates</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/directory&#39;</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-<span class="n">If</span> <span class="n">a</span> <span class="nb">list</span> <span class="n">of</span> <span class="nb">file</span> <span class="n">names</span> <span class="n">to</span> <span class="n">remove</span> <span class="n">are</span> <span class="n">desired</span><span class="p">,</span> <span class="n">then</span> <span class="n">the</span> <span class="n">function</span> <span class="n">find_duplicates_to_remove</span> <span class="n">can</span> <span class="n">be</span> <span class="n">used</span> <span class="k">with</span> <span class="n">either</span>
-<span class="n">the</span> <span class="n">path</span> <span class="n">to</span> <span class="n">the</span> <span class="n">image</span> <span class="n">directory</span> <span class="k">as</span> <span class="nb">input</span> <span class="ow">or</span> <span class="n">the</span> <span class="n">dictionary</span> <span class="k">with</span> <span class="n">features</span><span class="o">.</span> <span class="n">A</span> <span class="n">threshold</span> <span class="k">for</span> <span class="n">maximum</span> <span class="n">hamming</span> <span class="n">distance</span>
-<span class="n">should</span> <span class="n">be</span> <span class="n">considered</span><span class="o">.</span>
-
-<span class="n">Example</span><span class="p">:</span>
-
-<span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">PHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">PHash</span><span class="p">()</span>
-<span class="n">files_to_remove</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/images/directory&#39;</span><span class="p">,</span>
+<span class="n">phasher</span> <span class="o">=</span> <span class="n">PHash</span><span class="p">()</span>
+<span class="n">files_to_remove</span> <span class="o">=</span> <span class="n">phasher</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/images/directory&#39;</span><span class="p">,</span>
 <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">files_to_remove</span> <span class="o">=</span> <span class="n">phasher</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">encoding_map</span><span class="o">=</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 </pre></div>
 
 
@@ -1471,51 +1301,32 @@
 
 
 <h2 id="class-ahash">class AHash</h2>
-<p>Find duplicates using average hashing algorithm and/or generates average hashes given a single image or a directory of images. The module can be used for 2 purposes: Feature generation and duplicate detection.</p>
-<p>Feature generation: To generate average hashes. The generated hashes can be used at a later time for deduplication. There are two possibilities to get hashes: 1. At a single image level: Using the method 'encode_image', the average hash for a single image can be obtained.</p>
+<p>Inherits from Hashing base class and implements average hashing. (Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html)</p>
+<p>Offers all the functionality mentioned in hashing class.</p>
 <h5 id="example-usage_5">Example usage</h5>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">AHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">AHash</span><span class="p">()</span>
-<span class="nb">hash</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="s1">&#39;path/to/image.jpg&#39;</span><span class="p">)</span>
-
-<span class="mf">2.</span> <span class="n">At</span> <span class="n">a</span> <span class="n">directory</span> <span class="n">level</span><span class="p">:</span> <span class="n">In</span> <span class="n">case</span> <span class="n">average</span> <span class="nb">hash</span> <span class="k">for</span> <span class="n">several</span> <span class="n">images</span> <span class="n">need</span> <span class="n">to</span> <span class="n">be</span> <span class="n">generated</span><span class="p">,</span> <span class="n">the</span> <span class="n">images</span> <span class="n">can</span> <span class="n">be</span>
-<span class="n">placed</span> <span class="ow">in</span> <span class="n">a</span> <span class="n">directory</span> <span class="ow">and</span> <span class="n">hashes</span> <span class="k">for</span> <span class="nb">all</span> <span class="n">of</span> <span class="n">the</span> <span class="n">images</span> <span class="n">can</span> <span class="n">be</span> <span class="n">obtained</span> <span class="n">using</span> <span class="n">the</span> <span class="s1">&#39;encode_images&#39;</span> <span class="n">method</span><span class="o">.</span>
-<span class="n">Example</span><span class="p">:</span>
-
+<div class="codehilite"><pre><span></span><span class="c1"># Average hash for images</span>
 <span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">AHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">AHash</span><span class="p">()</span>
-<span class="n">hashes</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_images</span><span class="p">(</span><span class="s1">&#39;path/to/directory&#39;</span><span class="p">)</span>
+<span class="n">ahasher</span> <span class="o">=</span> <span class="n">AHash</span><span class="p">()</span>
+<span class="n">average_hash</span> <span class="o">=</span> <span class="n">ahasher</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_file</span> <span class="o">=</span> <span class="s1">&#39;path/to/image.jpg&#39;</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">average_hash</span> <span class="o">=</span> <span class="n">ahasher</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_array</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">numpy</span> <span class="n">image</span> <span class="n">array</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">average_hashes</span> <span class="o">=</span> <span class="n">ahasher</span><span class="o">.</span><span class="n">encode_images</span><span class="p">(</span><span class="n">image_dir</span> <span class="o">=</span> <span class="s1">&#39;path/to/directory&#39;</span><span class="p">)</span>  <span class="c1"># for a directory of images</span>
 
-
-<span class="n">Duplicate</span> <span class="n">detection</span><span class="p">:</span>
-
-<span class="n">Find</span> <span class="n">duplicates</span> <span class="n">either</span> <span class="n">using</span> <span class="n">the</span> <span class="n">hashes</span> <span class="n">generated</span> <span class="n">previously</span> <span class="n">using</span> <span class="s1">&#39;encode_images&#39;</span> <span class="ow">or</span> <span class="n">using</span> <span class="n">a</span> <span class="n">Path</span> <span class="n">to</span> <span class="n">the</span>
-<span class="n">directory</span> <span class="n">that</span> <span class="n">contains</span> <span class="n">the</span> <span class="n">image</span> <span class="n">dataset</span> <span class="n">that</span> <span class="n">needs</span> <span class="n">to</span> <span class="n">be</span> <span class="n">deduplicated</span><span class="o">.</span> <span class="n">There</span> <span class="n">are</span> <span class="mi">2</span> <span class="n">inputs</span> <span class="n">that</span> <span class="n">can</span> <span class="n">be</span> <span class="n">provided</span> <span class="n">to</span>
-<span class="n">the</span> <span class="n">find_duplicates</span> <span class="n">function</span><span class="p">:</span>
-<span class="mf">1.</span> <span class="n">Dictionary</span> <span class="n">generated</span> <span class="n">using</span> <span class="s1">&#39;encode_images&#39;</span> <span class="n">function</span> <span class="n">above</span><span class="o">.</span>
-<span class="n">Example</span><span class="p">:</span>
-
+<span class="c1"># Finding duplicates:</span>
 <span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">AHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">AHash</span><span class="p">()</span>
-<span class="n">duplicates</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">ahasher</span> <span class="o">=</span> <span class="n">AHash</span><span class="p">()</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">ahasher</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/directory&#39;</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">ahasher</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">encoding_map</span><span class="o">=</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="mf">2.</span> <span class="n">Using</span> <span class="n">the</span> <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">directory</span> <span class="n">where</span> <span class="nb">all</span> <span class="n">images</span> <span class="n">are</span> <span class="n">present</span><span class="o">.</span>
-<span class="n">Example</span><span class="p">:</span>
-
+<span class="c1"># Finding duplicates to return a single list of duplicates in the image collection</span>
 <span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">AHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">AHash</span><span class="p">()</span>
-<span class="n">duplicates</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/directory&#39;</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-<span class="n">If</span> <span class="n">a</span> <span class="nb">list</span> <span class="n">of</span> <span class="nb">file</span> <span class="n">names</span> <span class="n">to</span> <span class="n">remove</span> <span class="n">are</span> <span class="n">desired</span><span class="p">,</span> <span class="n">then</span> <span class="n">the</span> <span class="n">function</span> <span class="n">find_duplicates_to_remove</span> <span class="n">can</span> <span class="n">be</span> <span class="n">used</span> <span class="k">with</span> <span class="n">either</span>
-<span class="n">the</span> <span class="n">path</span> <span class="n">to</span> <span class="n">the</span> <span class="n">image</span> <span class="n">directory</span> <span class="k">as</span> <span class="nb">input</span> <span class="ow">or</span> <span class="n">the</span> <span class="n">dictionary</span> <span class="k">with</span> <span class="n">features</span><span class="o">.</span> <span class="n">A</span> <span class="n">threshold</span> <span class="k">for</span> <span class="n">maximum</span> <span class="n">hamming</span> <span class="n">distance</span>
-<span class="n">should</span> <span class="n">be</span> <span class="n">considered</span><span class="o">.</span>
-
-<span class="n">Example</span><span class="p">:</span>
-
-<span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">AHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">AHash</span><span class="p">()</span>
-<span class="n">files_to_remove</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/images/directory&#39;</span><span class="p">,</span>
+<span class="n">ahasher</span> <span class="o">=</span> <span class="n">AHash</span><span class="p">()</span>
+<span class="n">files_to_remove</span> <span class="o">=</span> <span class="n">ahasher</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/images/directory&#39;</span><span class="p">,</span>
 <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">files_to_remove</span> <span class="o">=</span> <span class="n">ahasher</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">encoding_map</span><span class="o">=</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 </pre></div>
 
 
@@ -1525,51 +1336,32 @@
 
 
 <h2 id="class-dhash">class DHash</h2>
-<p>Find duplicates using difference hashing algorithm and/or generates difference hashes given a single image or a directory of images. The module can be used for 2 purposes: Feature generation and duplicate detection.</p>
-<p>Feature generation: To generate difference hashes. The generated hashes can be used at a later time for deduplication. There are two possibilities to get hashes: 1. At a single image level: Using the method 'encode_image', the difference hash for a single image can be obtained.</p>
+<p>Inherits from Hashing base class and implements difference hashing. (Implementation reference: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html)</p>
+<p>Offers all the functionality mentioned in hashing class.</p>
 <h5 id="example-usage_6">Example usage</h5>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">DHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">DHash</span><span class="p">()</span>
-<span class="nb">hash</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="s1">&#39;path/to/image.jpg&#39;</span><span class="p">)</span>
-
-<span class="mf">2.</span> <span class="n">At</span> <span class="n">a</span> <span class="n">directory</span> <span class="n">level</span><span class="p">:</span> <span class="n">In</span> <span class="n">case</span> <span class="n">difference</span> <span class="nb">hash</span> <span class="k">for</span> <span class="n">several</span> <span class="n">images</span> <span class="n">need</span> <span class="n">to</span> <span class="n">be</span> <span class="n">generated</span><span class="p">,</span> <span class="n">the</span> <span class="n">images</span> <span class="n">can</span> <span class="n">be</span>
-<span class="n">placed</span> <span class="ow">in</span> <span class="n">a</span> <span class="n">directory</span> <span class="ow">and</span> <span class="n">hashes</span> <span class="k">for</span> <span class="nb">all</span> <span class="n">of</span> <span class="n">the</span> <span class="n">images</span> <span class="n">can</span> <span class="n">be</span> <span class="n">obtained</span> <span class="n">using</span> <span class="n">the</span> <span class="s1">&#39;encode_images&#39;</span> <span class="n">method</span><span class="o">.</span>
-<span class="n">Example</span><span class="p">:</span>
-
+<div class="codehilite"><pre><span></span><span class="c1"># Difference hash for images</span>
 <span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">DHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">DHash</span><span class="p">()</span>
-<span class="n">hashes</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_images</span><span class="p">(</span><span class="s1">&#39;path/to/directory&#39;</span><span class="p">)</span>
+<span class="n">dhasher</span> <span class="o">=</span> <span class="n">DHash</span><span class="p">()</span>
+<span class="n">difference_hash</span> <span class="o">=</span> <span class="n">dhasher</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_file</span> <span class="o">=</span> <span class="s1">&#39;path/to/image.jpg&#39;</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">difference_hash</span> <span class="o">=</span> <span class="n">dhasher</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_array</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">numpy</span> <span class="n">image</span> <span class="n">array</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">difference_hashes</span> <span class="o">=</span> <span class="n">dhasher</span><span class="o">.</span><span class="n">encode_images</span><span class="p">(</span><span class="n">image_dir</span> <span class="o">=</span> <span class="s1">&#39;path/to/directory&#39;</span><span class="p">)</span>  <span class="c1"># for a directory of images</span>
 
-
-<span class="n">Duplicate</span> <span class="n">detection</span><span class="p">:</span>
-
-<span class="n">Find</span> <span class="n">duplicates</span> <span class="n">either</span> <span class="n">using</span> <span class="n">the</span> <span class="n">hashes</span> <span class="n">generated</span> <span class="n">previously</span> <span class="n">using</span> <span class="s1">&#39;encode_images&#39;</span> <span class="ow">or</span> <span class="n">using</span> <span class="n">a</span> <span class="n">Path</span> <span class="n">to</span> <span class="n">the</span>
-<span class="n">directory</span> <span class="n">that</span> <span class="n">contains</span> <span class="n">the</span> <span class="n">image</span> <span class="n">dataset</span> <span class="n">that</span> <span class="n">needs</span> <span class="n">to</span> <span class="n">be</span> <span class="n">deduplicated</span><span class="o">.</span> <span class="n">There</span> <span class="n">are</span> <span class="mi">2</span> <span class="n">inputs</span> <span class="n">that</span> <span class="n">can</span> <span class="n">be</span> <span class="n">provided</span> <span class="n">to</span>
-<span class="n">the</span> <span class="n">find_duplicates</span> <span class="n">function</span><span class="p">:</span>
-<span class="mf">1.</span> <span class="n">Dictionary</span> <span class="n">generated</span> <span class="n">using</span> <span class="s1">&#39;encode_images&#39;</span> <span class="n">function</span> <span class="n">above</span><span class="o">.</span>
-<span class="n">Example</span><span class="p">:</span>
-
+<span class="c1"># Finding duplicates:</span>
 <span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">DHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">DHash</span><span class="p">()</span>
-<span class="n">duplicates</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">dhasher</span> <span class="o">=</span> <span class="n">DHash</span><span class="p">()</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">dhasher</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/directory&#39;</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">dhasher</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">encoding_map</span><span class="o">=</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="mf">2.</span> <span class="n">Using</span> <span class="n">the</span> <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">directory</span> <span class="n">where</span> <span class="nb">all</span> <span class="n">images</span> <span class="n">are</span> <span class="n">present</span><span class="o">.</span>
-<span class="n">Example</span><span class="p">:</span>
-
+<span class="c1"># Finding duplicates to return a single list of duplicates in the image collection</span>
 <span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">DHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">DHash</span><span class="p">()</span>
-<span class="n">duplicates</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/directory&#39;</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-<span class="n">If</span> <span class="n">a</span> <span class="nb">list</span> <span class="n">of</span> <span class="nb">file</span> <span class="n">names</span> <span class="n">to</span> <span class="n">remove</span> <span class="n">are</span> <span class="n">desired</span><span class="p">,</span> <span class="n">then</span> <span class="n">the</span> <span class="n">function</span> <span class="n">find_duplicates_to_remove</span> <span class="n">can</span> <span class="n">be</span> <span class="n">used</span> <span class="k">with</span> <span class="n">either</span>
-<span class="n">the</span> <span class="n">path</span> <span class="n">to</span> <span class="n">the</span> <span class="n">image</span> <span class="n">directory</span> <span class="k">as</span> <span class="nb">input</span> <span class="ow">or</span> <span class="n">the</span> <span class="n">dictionary</span> <span class="k">with</span> <span class="n">features</span><span class="o">.</span> <span class="n">A</span> <span class="n">threshold</span> <span class="k">for</span> <span class="n">maximum</span> <span class="n">hamming</span> <span class="n">distance</span>
-<span class="n">should</span> <span class="n">be</span> <span class="n">considered</span><span class="o">.</span>
-
-<span class="n">Example</span><span class="p">:</span>
-
-<span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">DHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">DHash</span><span class="p">()</span>
-<span class="n">files_to_remove</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/images/directory&#39;</span><span class="p">,</span>
+<span class="n">dhasher</span> <span class="o">=</span> <span class="n">DHash</span><span class="p">()</span>
+<span class="n">files_to_remove</span> <span class="o">=</span> <span class="n">dhasher</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/images/directory&#39;</span><span class="p">,</span>
 <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">files_to_remove</span> <span class="o">=</span> <span class="n">dhasher</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">encoding_map</span><span class="o">=</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 </pre></div>
 
 
@@ -1579,51 +1371,32 @@
 
 
 <h2 id="class-whash">class WHash</h2>
-<p>Find duplicates using wavelet hashing algorithm and/or generates wavelet hashes given a single image or a directory of images. The module can be used for 2 purposes: Feature generation and duplicate detection.</p>
-<p>Feature generation: To generate wavelet hashes. The generated hashes can be used at a later time for deduplication. There are two possibilities to get hashes: 1. At a single image level: Using the method 'encode_image', the wavelet hash for a single image can be obtained.</p>
+<p>Inherits from Hashing base class and implements wavelet hashing. (Implementation reference: https://fullstackml.com/wavelet-image-hash-in-python-3504fdd282b5)</p>
+<p>Offers all the functionality mentioned in hashing class.</p>
 <h5 id="example-usage_7">Example usage</h5>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">WHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">WHash</span><span class="p">()</span>
-<span class="nb">hash</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="s1">&#39;path/to/image.jpg&#39;</span><span class="p">)</span>
-
-<span class="mf">2.</span> <span class="n">At</span> <span class="n">a</span> <span class="n">directory</span> <span class="n">level</span><span class="p">:</span> <span class="n">In</span> <span class="n">case</span> <span class="n">wavelet</span> <span class="nb">hash</span> <span class="k">for</span> <span class="n">several</span> <span class="n">images</span> <span class="n">need</span> <span class="n">to</span> <span class="n">be</span> <span class="n">generated</span><span class="p">,</span> <span class="n">the</span> <span class="n">images</span> <span class="n">can</span> <span class="n">be</span>
-<span class="n">placed</span> <span class="ow">in</span> <span class="n">a</span> <span class="n">directory</span> <span class="ow">and</span> <span class="n">hashes</span> <span class="k">for</span> <span class="nb">all</span> <span class="n">of</span> <span class="n">the</span> <span class="n">images</span> <span class="n">can</span> <span class="n">be</span> <span class="n">obtained</span> <span class="n">using</span> <span class="n">the</span> <span class="s1">&#39;encode_images&#39;</span> <span class="n">method</span><span class="o">.</span>
-<span class="n">Example</span><span class="p">:</span>
-
+<div class="codehilite"><pre><span></span><span class="c1"># Wavelet hash for images</span>
 <span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">WHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">WHash</span><span class="p">()</span>
-<span class="n">hashes</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_images</span><span class="p">(</span><span class="s1">&#39;path/to/directory&#39;</span><span class="p">)</span>
+<span class="n">whasher</span> <span class="o">=</span> <span class="n">WHash</span><span class="p">()</span>
+<span class="n">wavelet_hash</span> <span class="o">=</span> <span class="n">whasher</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_file</span> <span class="o">=</span> <span class="s1">&#39;path/to/image.jpg&#39;</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">wavelet_hash</span> <span class="o">=</span> <span class="n">whasher</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_array</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">numpy</span> <span class="n">image</span> <span class="n">array</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">wavelet_hashes</span> <span class="o">=</span> <span class="n">whasher</span><span class="o">.</span><span class="n">encode_images</span><span class="p">(</span><span class="n">image_dir</span> <span class="o">=</span> <span class="s1">&#39;path/to/directory&#39;</span><span class="p">)</span>  <span class="c1"># for a directory of images</span>
 
-
-<span class="n">Duplicate</span> <span class="n">detection</span><span class="p">:</span>
-
-<span class="n">Find</span> <span class="n">duplicates</span> <span class="n">either</span> <span class="n">using</span> <span class="n">the</span> <span class="n">hashes</span> <span class="n">generated</span> <span class="n">previously</span> <span class="n">using</span> <span class="s1">&#39;encode_images&#39;</span> <span class="ow">or</span> <span class="n">using</span> <span class="n">a</span> <span class="n">Path</span> <span class="n">to</span> <span class="n">the</span>
-<span class="n">directory</span> <span class="n">that</span> <span class="n">contains</span> <span class="n">the</span> <span class="n">image</span> <span class="n">dataset</span> <span class="n">that</span> <span class="n">needs</span> <span class="n">to</span> <span class="n">be</span> <span class="n">deduplicated</span><span class="o">.</span> <span class="n">There</span> <span class="n">are</span> <span class="mi">2</span> <span class="n">inputs</span> <span class="n">that</span> <span class="n">can</span> <span class="n">be</span> <span class="n">provided</span> <span class="n">to</span>
-<span class="n">the</span> <span class="n">find_duplicates</span> <span class="n">function</span><span class="p">:</span>
-<span class="mf">1.</span> <span class="n">Dictionary</span> <span class="n">generated</span> <span class="n">using</span> <span class="s1">&#39;encode_images&#39;</span> <span class="n">function</span> <span class="n">above</span><span class="o">.</span>
-<span class="n">Example</span><span class="p">:</span>
-
+<span class="c1"># Finding duplicates:</span>
 <span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">WHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">WHash</span><span class="p">()</span>
-<span class="n">duplicates</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">whasher</span> <span class="o">=</span> <span class="n">WHash</span><span class="p">()</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">whasher</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/directory&#39;</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">whasher</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">encoding_map</span><span class="o">=</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="mf">2.</span> <span class="n">Using</span> <span class="n">the</span> <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">directory</span> <span class="n">where</span> <span class="nb">all</span> <span class="n">images</span> <span class="n">are</span> <span class="n">present</span><span class="o">.</span>
-<span class="n">Example</span><span class="p">:</span>
-
+<span class="c1"># Finding duplicates to return a single list of duplicates in the image collection</span>
 <span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">WHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">WHash</span><span class="p">()</span>
-<span class="n">duplicates</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/directory&#39;</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-<span class="n">If</span> <span class="n">a</span> <span class="nb">list</span> <span class="n">of</span> <span class="nb">file</span> <span class="n">names</span> <span class="n">to</span> <span class="n">remove</span> <span class="n">are</span> <span class="n">desired</span><span class="p">,</span> <span class="n">then</span> <span class="n">the</span> <span class="n">function</span> <span class="n">find_duplicates_to_remove</span> <span class="n">can</span> <span class="n">be</span> <span class="n">used</span> <span class="k">with</span> <span class="n">either</span>
-<span class="n">the</span> <span class="n">path</span> <span class="n">to</span> <span class="n">the</span> <span class="n">image</span> <span class="n">directory</span> <span class="k">as</span> <span class="nb">input</span> <span class="ow">or</span> <span class="n">the</span> <span class="n">dictionary</span> <span class="k">with</span> <span class="n">features</span><span class="o">.</span> <span class="n">A</span> <span class="n">threshold</span> <span class="k">for</span> <span class="n">maximum</span> <span class="n">hamming</span> <span class="n">distance</span>
-<span class="n">should</span> <span class="n">be</span> <span class="n">considered</span><span class="o">.</span>
-
-<span class="n">Example</span><span class="p">:</span>
-
-<span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">WHash</span>
-<span class="n">myencoder</span> <span class="o">=</span> <span class="n">WHash</span><span class="p">()</span>
-<span class="n">files_to_remove</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/images/directory&#39;</span><span class="p">,</span>
+<span class="n">whasher</span> <span class="o">=</span> <span class="n">WHash</span><span class="p">()</span>
+<span class="n">files_to_remove</span> <span class="o">=</span> <span class="n">whasher</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/images/directory&#39;</span><span class="p">,</span>
 <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">files_to_remove</span> <span class="o">=</span> <span class="n">whasher</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">encoding_map</span><span class="o">=</span><span class="n">encoding_map</span><span class="p">,</span> <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 </pre></div>
 
 
@@ -1665,13 +1438,13 @@
           </a>
         
         
-          <a href="../../CONTRIBUTING/" title="Contribution" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../../utils/plotter/" title="Plot duplicates" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Contribution
+                Plot duplicates
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
