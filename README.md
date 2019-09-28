@@ -52,7 +52,9 @@ There are two ways to install imagededup:
 
 Install imagededup from PyPI (recommended):
 
-`pip install imagededup`
+```
+pip install imagededup
+```
 
 Install imagededup from the GitHub source:
 
