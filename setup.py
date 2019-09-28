@@ -1,10 +1,8 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='image-dedup',
     version='',
-    packages=['imagededup'],
-    url='',
     license='Apache 2.0',
     author='Tanuj Jain, Christopher Lennan, Zubin John',
     author_email='tanuj.jain.10@gmail.com, christopherlennan@gmail.com, zrjohn@yahoo.com',
