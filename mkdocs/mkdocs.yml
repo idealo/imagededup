@@ -3,12 +3,12 @@ site_author: idealo Data Science Team
 
 nav:
     - Home: index.md
-    - Tutorials:
-        - Find duplicates: tutorials/finding_duplicates.md
-        - Feature generation: tutorials/feature_generation.md
-        - Evaluating performance: tutorials/evaluating_performance.md
-        - Plotting duplicates: tutorials/plotting_duplicates.md
-    - Documentation:
+    - User Guide:
+        - Finding duplicates: user_guide/finding_duplicates.md
+        - Feature generation: user_guide/feature_generation.md
+        - Evaluating performance: user_guide/evaluating_performance.md
+        - Plotting duplicates: user_guide/plotting_duplicates.md
+    - API documentation:
         - Methods:
             - CNN: methods/cnn.md
             - Hashing: methods/hashing.md
