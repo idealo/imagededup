@@ -585,7 +585,7 @@ def test_find_duplicates_to_remove_dir():
         image_dir=PATH_IMAGE_DIR, max_distance_threshold=10
     )
     assert isinstance(removal_list, list)
-    assert removal_list == ['ukbench00120.jpg']
+    assert (removal_list == ['ukbench00120.jpg'] or removal_list == ['ukbench00120_resize.jpg'])
 
 
 def test_find_duplicates_to_remove_encoding():
@@ -601,7 +601,7 @@ def test_find_duplicates_to_remove_encoding():
         encoding_map=encoding, max_distance_threshold=10
     )
     assert isinstance(removal_list, list)
-    assert removal_list == ['ukbench00120.jpg']
+    assert (removal_list == ['ukbench00120.jpg'] or removal_list == ['ukbench00120_resize.jpg'])
 
 
 def test_find_duplicates_to_remove_outfile():
