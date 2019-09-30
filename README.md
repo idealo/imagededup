@@ -6,15 +6,15 @@ to carry out this task effectively. The deduplication problem generally caters t
 * Finding exact duplicates
 
 <p align="center">
-  <img src="_readme_figures/103500.jpg" width="300" />
-  <img src="_readme_figures/103500.jpg" width="300" />
+  <img src="readme_figures/103500.jpg" width="300" />
+  <img src="readme_figures/103500.jpg" width="300" />
 </p>
 
 * Finding near duplicates
 
 <p align="center">
-  <img src="../_readme_figures/103500.jpg" width="300" />
-  <img src="../_readme_figures/103501.jpg" width="300" />
+  <img src="readme_figures/103500.jpg" width="300" />
+  <img src="readme_figures/103501.jpg" width="300" />
 </p>
 
 Traditional methods such as hashing algorithms are particularly good at finding exact duplicates while more modern 
@@ -202,7 +202,7 @@ where *duplicate_map* is the duplciate map obtained after running [find_duplicat
 
 The output looks as below:
 
-![figs](_readme_figures/plot_dups.png)
+![figs](readme_figures/plot_dups.png)
 
 ## Contribute
 We welcome all kinds of contributions.

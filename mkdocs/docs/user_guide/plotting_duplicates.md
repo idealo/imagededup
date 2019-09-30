@@ -12,7 +12,7 @@ where *filename* is the file for which duplicates are to be plotted.
 - *image_dir*: Directory where all image files are present.
 
 - *duplicate_map*: A dictionary representing retrieved duplicates with filenames as key and a list of retrieved duplicate 
-filenames as value. A duplicate_map with scores can also be passed (obtained from [find_duplicates](#find_duplicates)
+filenames as value. A duplicate_map with scores can also be passed (obtained from [find_duplicates](finding_duplicates.md)
 function with scores attribute set to True).
 
 - *filename*: Image file name for which duplicates are to be plotted.
@@ -21,4 +21,4 @@ function with scores attribute set to True).
 
 The output looks as below:
 
-![figs](../_readme_figures/plot_dups.png)
+![figs](../readme_figures/plot_dups.png)
