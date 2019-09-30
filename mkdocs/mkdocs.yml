@@ -8,7 +8,7 @@ nav:
         - Feature generation: user_guide/feature_generation.md
         - Evaluating performance: user_guide/evaluating_performance.md
         - Plotting duplicates: user_guide/plotting_duplicates.md
-    - API documentation:
+    - API reference:
         - Methods:
             - CNN: methods/cnn.md
             - Hashing: methods/hashing.md
@@ -26,8 +26,8 @@ theme:
   logo: 'img/logo.svg'
   favicon: 'img/favicon.ico'
 
-repo_name: 'idealo/image-dedup'
-repo_url: 'https://github.com/idealo/image-dedup'
+repo_name: 'idealo/imagededup'
+repo_url: 'https://github.com/idealo/imagededup'
 
 markdown_extensions:
   - codehilite

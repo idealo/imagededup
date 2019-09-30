@@ -109,7 +109,7 @@ class CNN:
 
         Args:
             image_file: Path to the image file.
-            image_array: Image typecast to numpy array.
+            image_array: Optional, used instead of image_file. Image typecast to numpy array.
 
         Returns:
             feature: Features for the image in the form of numpy array.
@@ -263,9 +263,10 @@ class CNN:
 
         Args:
             image_dir: Path to the directory containing all the images.
-            min_similarity_threshold: Hamming distance above which retrieved duplicates are valid.
-            scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
-            outfile: Name of the file the results should be written to.
+            min_similarity_threshold: Optional, hamming distance above which retrieved duplicates are valid. Default 0.9
+            scores: Optional, boolean indicating whether Hamming distances are to be returned along with retrieved
+                    duplicates.
+            outfile: Optional, name of the file the results should be written to.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -299,10 +300,12 @@ class CNN:
         Args:
             image_dir: Path to the directory containing all the images or dictionary with keys as file names
             and values as numpy arrays which represent the CNN feature for the key image file.
-            encoding_map: A dictionary containing mapping of filenames and corresponding CNN features.
-            min_similarity_threshold: Threshold value (must be float between -1.0 and 1.0). Default is 0.9
-            scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
-            outfile: Name of the file to save the results.
+            encoding_map: Optional, used instead of image_dir, a dictionary containing mapping of filenames and
+                          corresponding CNN features.
+            min_similarity_threshold: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9
+            scores: Optional, boolean indicating whether similarity scores are to be returned along with retrieved
+                    duplicates.
+            outfile: Optional, name of the file to save the results. Default is None.
 
         Returns:
             dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -361,9 +364,10 @@ class CNN:
         Args:
             image_dir: Path to the directory containing all the images or dictionary with keys as file names
                        and values as numpy arrays which represent the CNN feature for the key image file.
-            encoding_map: A dictionary containing mapping of filenames and corresponding CNN features.
-            min_similarity_threshold: Threshold value (must be float between -1.0 and 1.0). Default is 0.9
-            outfile: Name of the file to save the results.
+            encoding_map: Optional, used instead of image_dir, a dictionary containing mapping of filenames and
+                          corresponding CNN features.
+            min_similarity_threshold: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9
+            outfile: Optional, name of the file to save the results. Default is None.
 
         Returns:
             duplicates: List of image file names that should be removed.

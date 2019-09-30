@@ -104,16 +104,14 @@ def plot_duplicates(
     Args:
         image_dir: image directory where all files in duplicate_map are present.
         duplicate_map: mapping of filename to found duplicates (could be with or without scores).
-        filename: Name of the file for which duplicates are to be plotted, must be a key in the duplicate_map
+        filename: Name of the file for which duplicates are to be plotted, must be a key in the duplicate_map.
         dictionary.
-        outfile: Name of the file to save the plot.
+        outfile: Optional, name of the file to save the plot. Default is None.
 
     Example:
     ```
         from imagededup.utils import plot_duplicates
-        plot_duplicates(image_dir='path/to/image/directory', filename='path/to/image.jpg')
-        OR
-        plot_duplicates(duplicate_map=duplicate_map, filename='path/to/image.jpg')
+        plot_duplicates(image_dir='path/to/image/directory', duplicate_map=duplicate_map, filename='path/to/image.jpg')
     ```
     """
     # validate args

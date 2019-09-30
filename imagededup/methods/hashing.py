@@ -78,7 +78,7 @@ class Hashing:
 
         Args:
             image_file: Path to the image file.
-            image_array: Image typecast to numpy array.
+            image_array: Optional, used instead of image_file. Image typecast to numpy array.
 
         Returns:
             hash: A 16 character hexadecimal string hash for the image.
@@ -269,11 +269,12 @@ class Hashing:
         Args:
             image_dir: Path to the directory containing all the images or dictionary with keys as file names
                        and values as hash strings for the key image file.
-            encoding_map: A dictionary containing mapping of filenames and corresponding hashes.
-            max_distance_threshold: Hamming distance between two images below which retrieved duplicates are valid.
-                                    (must be an int between 0 and 64). Default is 10.
-            scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
-            outfile: Name of the file to save the results.
+            encoding_map: Optional,  used instead of image_dir, a dictionary containing mapping of filenames and
+                          corresponding hashes.
+            max_distance_threshold: Optional, hamming distance between two images below which retrieved duplicates are
+                                    valid. (must be an int between 0 and 64). Default is 10.
+            scores: Optional, boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
+            outfile: Optional, name of the file to save the results. Default is None.
 
         Returns:
             duplicates dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -329,10 +330,11 @@ class Hashing:
         Args:
             image_dir: Path to the directory containing all the images or dictionary with keys as file names
                        and values as hash strings for the key image file.
-            encoding_map: A dictionary containing mapping of filenames and corresponding hashes.
-            max_distance_threshold: Hamming distance between two images below which retrieved duplicates are valid.
-                                    (must be an int between 0 and 64). Default is 10.
-            outfile: Name of the file to save the results.
+            encoding_map: Optional, used instead of image_dir, a dictionary containing mapping of filenames and
+                          corresponding hashes.
+            max_distance_threshold: Optional, hamming distance between two images below which retrieved duplicates are
+                                    valid. (must be an int between 0 and 64). Default is 10.
+            outfile: Optional, name of the file to save the results.
 
         Returns:
             duplicates: List of image file names that are found to be duplicate of me other file in the directory.
