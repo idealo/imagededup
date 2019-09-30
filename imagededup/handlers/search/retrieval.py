@@ -1,8 +1,35 @@
-from typing import Callable, Dict, Union
+from typing import Callable, Dict, Union, Tuple
+
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
 
 from imagededup.handlers.search.bktree import BKTree
 from imagededup.handlers.search.brute_force import BruteForce
 from imagededup.utils.general_utils import parallelise
+
+
+def cosine_similarity_chunk(t: Tuple) -> np.ndarray:
+    return cosine_similarity(t[0][t[1][0] : t[1][1]], t[0]).astype('float16')
+
+
+def get_cosine_similarity(
+    X: np.ndarray, chunk_size: int = 1000, threshold: int = 10000
+) -> np.ndarray:
+    n_rows = X.shape[0]
+
+    if n_rows <= threshold:
+        return cosine_similarity(X)
+
+    else:
+        print('Large feature matrix thus calculating cosine similarities in chunks...')
+        start_idxs = list(range(0, n_rows, chunk_size))
+        end_idxs = start_idxs[1:] + [n_rows]
+        cos_sim = parallelise(
+            cosine_similarity_chunk,
+            [(X, idxs) for i, idxs in enumerate(zip(start_idxs, end_idxs))],
+        )
+
+        return np.vstack(cos_sim)
 
 
 class HashEval:

@@ -7,7 +7,7 @@ from typing import Callable, Dict, List
 def get_files_to_remove(duplicates: Dict[str, List]) -> List:
     """
     Get a list of files to remove.
-    
+
     Args:
         duplicates: A dictionary with file name as key and a list of duplicate file names as value.
 
