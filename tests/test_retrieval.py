@@ -49,7 +49,10 @@ def test_initialization():
     db = {'ukbench09060.jpg': 'e064ece078d7c96a'}
     threshold = 10
     hasheval_obj = HashEval(
-        test=db, queries=db, distance_function=HAMMING_DISTANCE_FUNCTION, threshold=threshold
+        test=db,
+        queries=db,
+        distance_function=HAMMING_DISTANCE_FUNCTION,
+        threshold=threshold,
     )
     assert hasheval_obj.queries and hasheval_obj.test
     assert hasheval_obj.threshold == threshold
@@ -64,14 +67,19 @@ def test_retrieve_results_dtypes():
 
 
 def test_retrieve_results_dtypes_scores():
-    query = {'ukbench00120.jpg': '2b69707551f1b87a', 'ukbench09268.jpg': 'ac9c72f8e1c2c448'}
+    query = {
+        'ukbench00120.jpg': '2b69707551f1b87a',
+        'ukbench09268.jpg': 'ac9c72f8e1c2c448',
+    }
 
     db = {
         'ukbench00120_hflip.jpg': '2b69f1517570e2a1',
         'ukbench00120_resize.jpg': '2b69707551f1b87a',
         'ukbench09268.jpg': 'ac9c72f8e1c2c448',
     }
-    out_map = HashEval(db, query, HAMMING_DISTANCE_FUNCTION).retrieve_results(scores=True)
+    out_map = HashEval(db, query, HAMMING_DISTANCE_FUNCTION).retrieve_results(
+        scores=True
+    )
     assert isinstance(out_map, dict)
     assert isinstance(list(out_map.values())[0], list)
     assert isinstance(list(out_map.values())[0][0], tuple)
@@ -79,7 +87,10 @@ def test_retrieve_results_dtypes_scores():
 
 
 def test_resultset_correctness():
-    query = {'ukbench00120.jpg': '2b69707551f1b87a', 'ukbench09268.jpg': 'ac9c72f8e1c2c448'}
+    query = {
+        'ukbench00120.jpg': '2b69707551f1b87a',
+        'ukbench09268.jpg': 'ac9c72f8e1c2c448',
+    }
     db = {
         'ukbench00120_fake.jpg': '2b69707551f1b87d',
         'ukbench00120_resize.jpg': '2b69707551f1b87a',
@@ -92,7 +103,10 @@ def test_resultset_correctness():
 
 
 def test_result_consistency_across_search_methods():
-    query = {'ukbench00120.jpg': '2b69707551f1b87a', 'ukbench09268.jpg': 'ac9c72f8e1c2c448'}
+    query = {
+        'ukbench00120.jpg': '2b69707551f1b87a',
+        'ukbench09268.jpg': 'ac9c72f8e1c2c448',
+    }
     db = {
         'ukbench00120_hflip.jpg': '2b69f1517570e2a1',
         'ukbench00120_resize.jpg': '2b69707551f1b87a',
@@ -107,7 +121,10 @@ def test_result_consistency_across_search_methods():
 
 
 def test_result_consistency_across_search_methods_scores():
-    query = {'ukbench00120.jpg': '2b69707551f1b87a', 'ukbench09268.jpg': 'ac9c72f8e1c2c448'}
+    query = {
+        'ukbench00120.jpg': '2b69707551f1b87a',
+        'ukbench09268.jpg': 'ac9c72f8e1c2c448',
+    }
 
     db = {
         'ukbench00120_hflip.jpg': '2b69f1517570e2a1',
@@ -118,12 +135,17 @@ def test_result_consistency_across_search_methods_scores():
         db, query, HAMMING_DISTANCE_FUNCTION, search_method='brute_force'
     ).retrieve_results(scores=True)
 
-    bktree_result = HashEval(db, query, HAMMING_DISTANCE_FUNCTION).retrieve_results(scores=True)
+    bktree_result = HashEval(db, query, HAMMING_DISTANCE_FUNCTION).retrieve_results(
+        scores=True
+    )
     assert brute_force_result == bktree_result
 
 
 def test_no_self_retrieval():
-    query = {'ukbench00120.jpg': '2b69707551f1b87a', 'ukbench09268.jpg': 'ac9c72f8e1c2c448'}
+    query = {
+        'ukbench00120.jpg': '2b69707551f1b87a',
+        'ukbench09268.jpg': 'ac9c72f8e1c2c448',
+    }
     db = {
         'ukbench00120_hflip.jpg': '2b69f1517570e2a1',
         'ukbench00120_resize.jpg': '2b69707551f1b87a',
@@ -139,7 +161,10 @@ def test_no_self_retrieval():
 
 
 def test_max_hamming_threshold_not_violated():
-    query = {'ukbench00120.jpg': '2b69707551f1b87a', 'ukbench09268.jpg': 'ac9c72f8e1c2c448'}
+    query = {
+        'ukbench00120.jpg': '2b69707551f1b87a',
+        'ukbench09268.jpg': 'ac9c72f8e1c2c448',
+    }
     db = {
         'ukbench00120_hflip.jpg': '2b69f1517570e2a1',
         'ukbench00120_resize.jpg': '2b69707551f1b870',

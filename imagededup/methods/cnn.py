@@ -86,7 +86,9 @@ class CNN:
         """
         Build MobileNet model sliced at the last convolutional layer with global average pooling added.
         """
-        self.model = self.MobileNet(input_shape=(224, 224, 3), include_top=False, pooling='avg')
+        self.model = self.MobileNet(
+            input_shape=(224, 224, 3), include_top=False, pooling='avg'
+        )
 
         self.logger.info(
             'Initialized: MobileNet pretrained on ImageNet dataset sliced at last conv layer and added '
@@ -163,7 +165,9 @@ class CNN:
 
         if isinstance(image_file, PosixPath):
             if not image_file.is_file():
-                raise ValueError('Please provide either image file path or image array!')
+                raise ValueError(
+                    'Please provide either image file path or image array!'
+                )
 
             image_pp = load_image(
                 image_file=image_file, target_size=self.target_size, grayscale=False
@@ -176,7 +180,11 @@ class CNN:
         else:
             raise ValueError('Please provide either image file path or image array!')
 
-        return self._get_cnn_features_single(image_pp) if isinstance(image_pp, np.ndarray) else None
+        return (
+            self._get_cnn_features_single(image_pp)
+            if isinstance(image_pp, np.ndarray)
+            else None
+        )
 
     def encode_images(self, image_dir: Union[PosixPath, str]) -> Dict:
         """
