@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Union
+from typing import Callable, Dict, Union, Tuple
 
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
@@ -8,11 +8,13 @@ from imagededup.handlers.search.brute_force import BruteForce
 from imagededup.utils.general_utils import parallelise
 
 
-def cosine_similarity_chunk(t):
+def cosine_similarity_chunk(t: Tuple) -> np.ndarray:
     return cosine_similarity(t[0][t[1][0] : t[1][1]], t[0]).astype('float16')
 
 
-def get_cosine_similarity(X, chunk_size=100, threshold=10000):
+def get_cosine_similarity(
+    X: np.ndarray, chunk_size: int = 1000, threshold: int = 10000
+) -> np.ndarray:
     n_rows = X.shape[0]
 
     if n_rows <= threshold:
