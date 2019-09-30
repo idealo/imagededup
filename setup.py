@@ -18,7 +18,7 @@ functionality provided by the package:
 
 setup(
     name='imagededup',
-    version='0.0.2',
+    version='0.0.3',
     packages=find_packages(exclude=('tests',)),
     url='',
     long_description=long_description,
