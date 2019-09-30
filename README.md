@@ -6,8 +6,8 @@ to carry out this task effectively. The deduplication problem generally caters t
 * Finding exact duplicates
 
 <p align="center">
-  <img src="../_readme_figures/103500.jpg" width="300" />
-  <img src="../_readme_figures/103500.jpg" width="300" />
+  <img src="_readme_figures/103500.jpg" width="300" />
+  <img src="_readme_figures/103500.jpg" width="300" />
 </p>
 
 * Finding near duplicates
@@ -99,7 +99,7 @@ Each key in the *duplicates* dictionary corresponds to a file in the image direc
 of the *find_duplicates* function. The value is a list of all file names in the image directory that were found to be 
 duplicates for the key file.
 
-For an advanced usage, look at the tutorial part of the documentation.
+For an advanced usage, look at the user guide.
 
 #### find_duplicates_to_remove
 Returns a list of files in the image directory that are considered as duplicates. Does **NOT** remove the said files.
@@ -123,7 +123,7 @@ duplicates of some file in the directory:
 ]
 ```
 
-For an advanced usage, look at the tutorial part of the documentation.
+For an advanced usage, look at the user guide.
 
 ### Feature generation
 To only generate the hashes/cnn encodings for a given image or all images in the directory:
