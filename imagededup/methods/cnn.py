@@ -3,8 +3,8 @@ from pathlib import Path, PosixPath
 from typing import Dict, List, Optional, Union
 
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
 
+from imagededup.handlers.search.retrieval import get_cosine_similarity
 from imagededup.utils.general_utils import save_json, get_files_to_remove
 from imagededup.utils.image_utils import load_image, preprocess_image
 from imagededup.utils.logger import return_logger
@@ -222,7 +222,7 @@ class CNN:
 
         self.logger.info('Start: Calculating cosine similarities...')
 
-        self.cosine_scores = cosine_similarity(features)
+        self.cosine_scores = get_cosine_similarity(features)
         # print(self.cosine_scores)
 
         np.fill_diagonal(
