@@ -246,4 +246,4 @@ mkdocs/docs/utils/
 mkdocs/docs/CONTRIBUTING.md
 mkdocs/docs/LICENSE.md
 mkdocs/docs/index.md
-docs
+docs/*
