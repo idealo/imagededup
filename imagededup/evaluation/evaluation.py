@@ -85,7 +85,7 @@ def evaluate(
         retrieved_map: A dictionary representing retrieved duplicates with filenames as key and a list of retrieved
                        duplicate filenames as value.
         metric: Name of metric to be evaluated and returned. Accepted values are: 'map', 'ndcg', 'jaccard',
-                'classification', 'all'(returns every metric).
+                'classification', 'all'(default, returns every metric).
 
     Returns:
         dictionary: A dictionary with metric name as key and corresponding calculated metric as the value. 'map', 'ndcg'
