@@ -1,7 +1,48 @@
-from imagededup.handlers.search.retrieval import HashEval
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+
+from imagededup.handlers.search.retrieval import (
+    HashEval,
+    cosine_similarity_chunk,
+    get_cosine_similarity,
+)
 from imagededup.methods.hashing import Hashing
 
 HAMMING_DISTANCE_FUNCTION = Hashing().hamming_distance
+
+
+def test_cosine_similarity_chunk():
+    X = np.random.rand(333, 100)
+    start_idx = 10
+    end_idx = 100
+
+    input_tuple = (X, (start_idx, end_idx))
+
+    result = cosine_similarity_chunk(input_tuple)
+
+    np.testing.assert_array_almost_equal(
+        result, cosine_similarity(X[start_idx:end_idx, :], X).astype('float16')
+    )
+
+
+def test_get_cosine_similarity():
+    X = np.random.rand(333, 10)
+    expected = cosine_similarity(X)
+
+    # threshold not triggered
+    result = get_cosine_similarity(X)
+
+    np.testing.assert_array_almost_equal(result, expected)
+
+    # threshold triggered
+    result = get_cosine_similarity(X, threshold=20)
+
+    np.testing.assert_array_almost_equal(result, expected.astype('float16'))
+
+    # multiple chunks
+    result = get_cosine_similarity(X, threshold=20, chunk_size=10)
+
+    np.testing.assert_array_almost_equal(result, expected.astype('float16'))
 
 
 def test_initialization():
