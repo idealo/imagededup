@@ -25,7 +25,8 @@ def get_cosine_similarity(
         start_idxs = list(range(0, n_rows, chunk_size))
         end_idxs = start_idxs[1:] + [n_rows]
         cos_sim = parallelise(
-            cosine_similarity_chunk, [(X, idxs) for i, idxs in enumerate(zip(start_idxs, end_idxs))]
+            cosine_similarity_chunk,
+            [(X, idxs) for i, idxs in enumerate(zip(start_idxs, end_idxs))],
         )
 
         return np.vstack(cos_sim)
@@ -70,7 +71,9 @@ class HashEval:
         res = [i for i in res if i[0] != query_key]  # to avoid self retrieval
         return res
 
-    def _get_query_results(self, search_method_object: Union[BruteForce, BKTree]) -> None:
+    def _get_query_results(
+        self, search_method_object: Union[BruteForce, BKTree]
+    ) -> None:
         """
         Get result for the query using specified search object. Populate the global query_results_map.
 
