@@ -23,15 +23,15 @@ class Hashing:
     """
     Find duplicates using hashing algorithms and/or generate hashes given a single image or a directory of images.
 
-    The module can be used for 2 purposes: Feature generation and duplicate detection.
-    - Feature generation:
+    The module can be used for 2 purposes: Encoding generation and duplicate detection.
+    - Encoding generation:
     To generate hashes using specific hashing method. The generated hashes can be used at a later time for
     deduplication. Using the method 'encode_image' from the specific hashing method object, the hash for a
     single image can be obtained while the 'encode_images' method can be used to get hashes for all images in a
     directory.
 
     - Duplicate detection:
-    Find duplicates either using the feature mapping generated previously using 'encode_images' or using a Path to the
+    Find duplicates either using the encoding mapping generated previously using 'encode_images' or using a Path to the
     directory that contains the images that need to be deduplicated. 'find_duplciates' and 'find_duplicates_to_remove'
     methods are provided to accomplish these tasks.
     """

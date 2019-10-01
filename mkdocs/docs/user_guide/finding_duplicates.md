@@ -45,7 +45,7 @@ The 'method-name' corresponds to one of the deduplication methods available and 
 - *image_dir*: Optional, directory where all image files are present.
 
 - *encoding_map*: Optional, used instead of *image_dir* attribute. Set it equal to the dictionary of file names and 
-corresponding features (hashes/cnn encodings). The mentioned dictionary can be generated using the corresponding 
+corresponding encodings (hashes/cnn encodings). The mentioned dictionary can be generated using the corresponding 
 [*encode_images*](encoding_generation.md) method.
 - *scores*: Setting it to *True* returns the scores representing the hamming distance (for hashing) or cosine similarity
  (for cnn) of each of the duplicate file names from the key file. In this case, the returned 'duplicates' dictionary has
@@ -84,7 +84,7 @@ in the image directory that were found to be duplicates of the key file.
   'j': ['i']
 }
 ```
-- If an image in the image directory can't be loaded, no features are generated for the image. Hence, the image is 
+- If an image in the image directory can't be loaded, no encodings are generated for the image. Hence, the image is 
 disregarded for deduplication and has no entry in the returned *duplicates* dictionary.
 
 #### Examples
@@ -148,7 +148,7 @@ The 'method-name' corresponds to one of the deduplication methods available and 
 - *image_dir*: Optional, directory where all image files are present.
 
 - *encoding_map*: Optional, used instead of image_dir attribute. Set it equal to the dictionary of file names and 
-corresponding features (hashes/cnn encodings). The mentioned dictionary can be generated using the corresponding 
+corresponding encodings (hashes/cnn encodings). The mentioned dictionary can be generated using the corresponding 
 [*encode_images*](encoding_generation.md) method. Each key in the 'duplicates' dictionary corresponds to a file in the image directory passed to 
 the image_dir parameter of the find_duplicates function. The value is a list of all tuples representing the file names 
 and corresponding scores in the image directory that were found to be duplicates for the key file.
@@ -186,7 +186,7 @@ This leaves *1.jpg* and *3.jpg* as non-duplicates in the directory.
 If the user does not wish to impose this heuristic, it is advised to use [*find_duplicates*](#find_duplicates) function 
 and use a custom heuristic to mark a file as duplicate.
 
-- If an image in the image directory can't be loaded, no features are generated for the image. Hence, the image is 
+- If an image in the image directory can't be loaded, no encodings are generated for the image. Hence, the image is 
 disregarded for deduplication and has no entry in the returned *duplicates* dictionary.
 
 #### Examples
