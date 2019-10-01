@@ -7,8 +7,8 @@ imagededup is a python package that simplifies the task of finding **exact** and
 </p>
 
 This package provides functionality to make use of hashing algorithms that are particularly good at finding exact 
-duplicates as well as convolutional neural networks which are also adept at finding near duplicates. Additionally, an 
-evaluation framework is also provided to judge the quality of deduplication for a given dataset.
+duplicates as well as convolutional neural networks which are also adept at finding near duplicates. An evaluation 
+framework is also provided to judge the quality of deduplication for a given dataset.
 
 Following details the functionality provided by the package:
 
@@ -73,7 +73,7 @@ encodings = phasher.encode_images(image_dir='path/to/image/directory')
 duplicates = phasher.find_duplicates(encoding_map=encodings)
 ```
 
-- Plot duplicates obtained for a given file using the duplicates dictionary
+- Plot duplicates obtained for a given file (eg: 'ukbench00120.jpg') using the duplicates dictionary
 ```python
 from imagededup.utils import plot_duplicates
 plot_duplicates(image_dir='path/to/image/directory', 
