@@ -2,7 +2,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from keras.models import Model
+from tensorflow.keras.models import Model
 
 from imagededup.methods.cnn import CNN
 from imagededup.utils.image_utils import load_image
