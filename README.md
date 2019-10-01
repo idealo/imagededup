@@ -198,7 +198,7 @@ Duplicates for an image can be plotted using *plot_duplicates* method as below:
 from imagededup.utils import plot_duplicates
 plot_duplicates(image_dir, duplicate_map, filename)
 ```
-where *duplicate_map* is the duplciate map obtained after running [find_duplicates()](#find_duplicates) and  *filename* is the file for which duplicates are to be plotted.
+where *duplicate_map* is the duplicate map obtained after running [find_duplicates()](#find_duplicates) and  *filename* is the file for which duplicates are to be plotted.
 
 The output looks as below:
 
