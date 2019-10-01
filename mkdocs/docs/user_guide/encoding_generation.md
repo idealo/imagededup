@@ -1,13 +1,13 @@
-# Feature generation
+# Encoding generation
 It might be desirable to only generate the hashes/cnn encodings for a given image or all images in a directory instead
-of directly deduplicating using find_duplicates method. Features can be generated for a directory of images or for a 
+of directly deduplicating using find_duplicates method. Encodings can be generated for a directory of images or for a 
 single image:
 
-- [Feature generation for all images in a directory](#feature-generation-for-all-images-in-a-directory)
-- [Feature generation for a single image](#feature-generation-for-a-single-image)
+- [Encoding generation for all images in a directory](#encoding-generation-for-all-images-in-a-directory)
+- [Encoding generation for a single image](#encoding-generation-for-a-single-image)
 
 
-## Feature generation for all images in a directory
+## Encoding generation for all images in a directory
 To generate encodings for all images in an image directory *encode_images* function can be used. The general api for 
 using *encode_images* is:
 ```python
@@ -18,14 +18,14 @@ encodings = method_object.encode_images(image_dir='path/to/image/directory')
 where the returned variable *encodings* is a dictionary mapping image file names to corresponding encoding:
 ```
 {
-  'image1.jpg': <feature-image-1>,
-  'image2.jpg': <feature-image-2>,
+  'image1.jpg': <encoding-image-1>,
+  'image2.jpg': <encoding-image-2>,
    ..
 }
 ```
-For hashing algorithms, the features are 64 bit hashes represented as 16 character hexadecimal strings.
+For hashing algorithms, the encodings are 64 bit hashes represented as 16 character hexadecimal strings.
 
-For cnn, the features are numpy array with shape (1, 1024).
+For cnn, the encodings are numpy array with shape (1, 1024).
 
 The 'method-name' corresponds to one of the deduplication methods available and can be set to:
 
@@ -41,19 +41,19 @@ The 'method-name' corresponds to one of the deduplication methods available and 
 
 #### Considerations
 
-If an image in the image directory can't be loaded, no features are generated for the image. Hence, there is no entry 
+If an image in the image directory can't be loaded, no encodings are generated for the image. Hence, there is no entry 
 for the image in the returned encodings dictionary.
 
 #### Examples
 
-Generating features using Difference hash:
+Generating encodings using Difference hash:
 ```python
 from imagededup.methods import DHash
 dhasher = DHash()
 encodings = dhasher.encode_images(image_dir='path/to/image/directory')
 ```
 
-## Feature generation for a single image
+## Encoding generation for a single image
 To generate encodings for a single image *encode_image* function can be used. The general api for 
 using *encode_image* is:
 ```python
@@ -70,11 +70,11 @@ array if cnn is used.
 
 #### Considerations
 
-If the image can't be loaded, no features are generated for the image and *None* is returned.
+If the image can't be loaded, no encodings are generated for the image and *None* is returned.
 
 #### Examples
 
-Generating features using Difference hash:
+Generating encodings using Difference hash:
 ```python
 from imagededup.methods import DHash
 dhasher = DHash()
