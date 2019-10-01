@@ -1,7 +1,6 @@
 import pickle
 import pytest
 from pathlib import Path
-
 from imagededup.handlers.metrics.information_retrieval import *
 
 p = Path(__file__)

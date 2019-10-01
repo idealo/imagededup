@@ -1,7 +1,5 @@
 import pytest
-
 import numpy as np
-
 from imagededup.evaluation.evaluation import (
     evaluate,
     _check_map_correctness,

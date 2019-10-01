@@ -1,5 +1,4 @@
 import numpy as np
-
 from imagededup.handlers.metrics.classification import (
     _get_unique_ordered_tuples,
     _make_all_unique_possible_pairs,

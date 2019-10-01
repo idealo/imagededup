@@ -1,5 +1,4 @@
 from collections import OrderedDict
-
 from imagededup.methods.hashing import Hashing
 from imagededup.handlers.search.bktree import BKTree, BkTreeNode
 

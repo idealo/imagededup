@@ -1,10 +1,9 @@
+import numpy as np
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 from matplotlib import figure
 from pathlib import Path, PosixPath
 from typing import Dict, Union, List
-
-import numpy as np
 from PIL import Image
 
 

@@ -1,6 +1,5 @@
-from typing import List, Dict
-
 import numpy as np
+from typing import List, Dict
 
 
 def avg_prec(correct_duplicates: List, retrieved_duplicates: List) -> float:

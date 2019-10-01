@@ -1,8 +1,6 @@
-from typing import Callable, Dict, Union, Tuple
-
 import numpy as np
+from typing import Callable, Dict, Union, Tuple
 from sklearn.metrics.pairwise import cosine_similarity
-
 from imagededup.handlers.search.bktree import BKTree
 from imagededup.handlers.search.brute_force import BruteForce
 from imagededup.utils.general_utils import parallelise

@@ -1,5 +1,4 @@
 from collections import OrderedDict
-
 from imagededup.handlers.search.brute_force import BruteForce
 from imagededup.methods.hashing import Hashing
 

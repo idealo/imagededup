@@ -1,6 +1,5 @@
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-
 from imagededup.handlers.search.retrieval import (
     HashEval,
     cosine_similarity_chunk,

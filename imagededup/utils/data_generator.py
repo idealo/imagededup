@@ -1,9 +1,7 @@
+import numpy as np
 from pathlib import PosixPath
 from typing import Tuple, List, Callable
-
-import numpy as np
 from tensorflow.keras.utils import Sequence
-
 from imagededup.utils.image_utils import load_image
 
 

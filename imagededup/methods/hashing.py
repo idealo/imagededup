@@ -1,11 +1,9 @@
 import os
-from pathlib import PosixPath, Path
-from typing import Dict, List, Optional
-
 import pywt
 import numpy as np
+from pathlib import PosixPath, Path
+from typing import Dict, List, Optional
 from scipy.fftpack import dct
-
 from imagededup.handlers.search.retrieval import HashEval
 from imagededup.utils.general_utils import get_files_to_remove, save_json, parallelise
 from imagededup.utils.image_utils import load_image, preprocess_image

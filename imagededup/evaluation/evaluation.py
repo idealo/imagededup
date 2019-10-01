@@ -1,7 +1,6 @@
 import os
 import itertools
 from typing import Dict
-
 from imagededup.handlers.metrics.classification import classification_metrics
 from imagededup.handlers.metrics.information_retrieval import (
     mean_metric,

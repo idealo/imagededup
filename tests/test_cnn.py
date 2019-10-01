@@ -1,9 +1,7 @@
-from pathlib import Path
-
-import numpy as np
 import pytest
+import numpy as np
+from pathlib import Path
 from tensorflow.keras.models import Model
-
 from imagededup.methods.cnn import CNN
 from imagededup.utils.image_utils import load_image
 

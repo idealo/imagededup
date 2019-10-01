@@ -1,8 +1,6 @@
 import itertools
-from typing import Dict, List, Tuple
-
 import numpy as np
-
+from typing import Dict, List, Tuple
 from sklearn.metrics import (
     classification_report,
     precision_score,

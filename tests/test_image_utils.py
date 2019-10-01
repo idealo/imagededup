@@ -1,9 +1,7 @@
 import pytest
-from pathlib import Path
-
 import numpy as np
+from pathlib import Path
 from PIL import Image
-
 from imagededup.utils.image_utils import preprocess_image, load_image
 
 p = Path(__file__)

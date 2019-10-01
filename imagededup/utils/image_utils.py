@@ -1,10 +1,8 @@
 import os
+import numpy as np
 from pathlib import PosixPath
 from typing import List, Union, Tuple
-
-import numpy as np
 from PIL import Image
-
 from imagededup.utils.logger import return_logger
 
 

@@ -1,10 +1,7 @@
 import os
 import pytest
-import matplotlib.pyplot as plt
-from pathlib import Path
-
 import numpy as np
-
+from pathlib import Path
 from imagededup.utils.plotter import _formatter, _validate_args, plot_duplicates
 
 p = Path(__file__)

@@ -1,10 +1,8 @@
 import os
-from pathlib import Path
-from PIL import Image
-
 import pytest
 import numpy as np
-
+from pathlib import Path
+from PIL import Image
 from imagededup.methods.hashing import Hashing, PHash, DHash, AHash, WHash
 
 p = Path(__file__)

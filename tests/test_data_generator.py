@@ -1,8 +1,6 @@
 import pytest
 from pathlib import Path
-
 from tensorflow.keras.applications.mobilenet import preprocess_input
-
 from imagededup.utils.data_generator import DataGenerator
 
 p = Path(__file__)

@@ -1,9 +1,7 @@
 import os
+import numpy as np
 from pathlib import Path, PosixPath
 from typing import Dict, List, Optional, Union
-
-import numpy as np
-
 from imagededup.handlers.search.retrieval import get_cosine_similarity
 from imagededup.utils.general_utils import save_json, get_files_to_remove
 from imagededup.utils.image_utils import load_image, preprocess_image
