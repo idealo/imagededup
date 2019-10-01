@@ -23,8 +23,8 @@ setup(
     url='',
     long_description=long_description,
     license='Apache 2.0',
-    author='Tanuj Jain, Christopher Lennan, Zubin John',
-    author_email='tanuj.jain.10@gmail.com, christopherlennan@gmail.com, zrjohn@yahoo.com',
+    author='Tanuj Jain, Christopher Lennan, Zubin John, Dat Tran',
+    author_email='tanuj.jain.10@gmail.com, christopherlennan@gmail.com, zrjohn@yahoo.com, datitran@gmail.com',
     description='Package for image deduplication',
     install_requires=[
         'numpy==1.16.3',
