@@ -33,7 +33,7 @@ class CNN:
         Set the batch size for keras generators to be 64 samples. Set the input image size to (224, 224) for providing
         as input to MobileNet model.
         """
-        from keras.applications.mobilenet import MobileNet, preprocess_input
+        from tensorflow.keras.applications.mobilenet import MobileNet, preprocess_input
         from imagededup.utils.data_generator import DataGenerator
 
         self.MobileNet = MobileNet
