@@ -1,6 +1,6 @@
 # Contribution Guide
 
-We welcome any contributions whether it's,
+We welcome any contributions whether it is:
 
 - Submitting feedback
 - Fixing bugs
@@ -9,7 +9,7 @@ We welcome any contributions whether it's,
 Please read this guide before making any contributions.
 
 #### Submit Feedback
-The feedback should be submitted by creating an issue at [GitHub issues](https://github.com/idealo/image-dedup/issues).
+The feedback should be submitted by creating an issue on [GitHub issues](https://github.com/idealo/image-dedup/issues).
 Select the related template (bug report, feature request, or custom) and add the corresponding labels.
 
 #### Fix Bugs:
@@ -19,9 +19,9 @@ You may look through the [GitHub issues](https://github.com/idealo/image-dedup/i
 You may look through the [GitHub issues](https://github.com/idealo/image-dedup/issues) for feature requests.
 
 ## Pull Requests (PR)
-1. Fork the repository and a create a new branch from the master branch.
-2. For bug fixes, add new tests and for new features please add changes to the documentation.
-3. Do a PR from your new branch to our `dev` branch of the original Image Super-Resolution repo.
+1. Fork the repository and create a new branch from the master branch.
+2. For bug fixes, add new tests and for new features, please add changes to the documentation.
+3. Do a PR from your new branch to our `dev` branch of the original Imagededup repo.
 
 ## Documentation
 - Make sure any new function or class you introduce has proper docstrings.

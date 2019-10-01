@@ -46,7 +46,7 @@ The 'method-name' corresponds to one of the deduplication methods available and 
 
 - *encoding_map*: Optional, used instead of *image_dir* attribute. Set it equal to the dictionary of file names and 
 corresponding features (hashes/cnn encodings). The mentioned dictionary can be generated using the corresponding 
-[*encode_images*](feature_generation.md) method.
+[*encode_images*](encoding_generation.md) method.
 - *scores*: Setting it to *True* returns the scores representing the hamming distance (for hashing) or cosine similarity
  (for cnn) of each of the duplicate file names from the key file. In this case, the returned 'duplicates' dictionary has
   the following content:
@@ -149,7 +149,7 @@ The 'method-name' corresponds to one of the deduplication methods available and 
 
 - *encoding_map*: Optional, used instead of image_dir attribute. Set it equal to the dictionary of file names and 
 corresponding features (hashes/cnn encodings). The mentioned dictionary can be generated using the corresponding 
-[*encode_images*](feature_generation.md) method. Each key in the 'duplicates' dictionary corresponds to a file in the image directory passed to 
+[*encode_images*](encoding_generation.md) method. Each key in the 'duplicates' dictionary corresponds to a file in the image directory passed to 
 the image_dir parameter of the find_duplicates function. The value is a list of all tuples representing the file names 
 and corresponding scores in the image directory that were found to be duplicates for the key file.
 

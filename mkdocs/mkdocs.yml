@@ -1,11 +1,11 @@
-site_name: Image-dedup
+site_name: Imagededup
 site_author: idealo Data Science Team
 
 nav:
     - Home: index.md
     - User Guide:
         - Finding duplicates: user_guide/finding_duplicates.md
-        - Feature generation: user_guide/feature_generation.md
+        - Encoding generation: user_guide/encoding_generation.md
         - Evaluating performance: user_guide/evaluating_performance.md
         - Plotting duplicates: user_guide/plotting_duplicates.md
     - API reference:
