@@ -14,8 +14,12 @@ def avg_prec(correct_duplicates: List, retrieved_duplicates: List) -> float:
     Returns:
         Average precision for this query.
     """
-    if not len(retrieved_duplicates):
+    if len(retrieved_duplicates) == 0 and len(correct_duplicates) == 0:
+        return 1.0
+
+    if not len(retrieved_duplicates) or not len(correct_duplicates):
         return 0.0
+
     count_real_correct = len(correct_duplicates)
     relevance = np.array(
         [1 if i in correct_duplicates else 0 for i in retrieved_duplicates]
@@ -38,7 +42,10 @@ def ndcg(correct_duplicates: List, retrieved_duplicates: List) -> float:
     Returns:
         NDCG for this query.
     """
-    if not len(retrieved_duplicates):
+    if len(retrieved_duplicates) == 0 and len(correct_duplicates) == 0:
+        return 1.0
+
+    if not len(retrieved_duplicates) or not len(correct_duplicates):
         return 0.0
 
     def dcg(rel):
@@ -77,8 +84,12 @@ def jaccard_similarity(correct_duplicates: List, retrieved_duplicates: List) -> 
     Returns:
         Jaccard similarity for this query.
     """
-    if not len(retrieved_duplicates):
+    if len(retrieved_duplicates) == 0 and len(correct_duplicates) == 0:
+        return 1.0
+
+    if not len(retrieved_duplicates) or not len(correct_duplicates):
         return 0.0
+
     set_correct_duplicates = set(correct_duplicates)
     set_retrieved_duplicates = set(retrieved_duplicates)
 
