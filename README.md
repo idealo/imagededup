@@ -1,108 +1,131 @@
-# imagededup
+# Image Deduplicator (imagededup)
 
-Finding duplicates in an image dataset is a recurring task. imagededup is a python package that provides functionality 
-to carry out this task effectively. The deduplication problem generally caters to 2 broad set of issues:
-* Finding exact duplicates
-* Finding near duplicates
+imagededup is a python package that simplifies the task of finding **exact** and **near duplicates** in an image collection.
 
-Traditional methods such as hashing algorithms are particularly good at finding exact duplicates while more modern
-methods involving convolutional neural networks are adept at finding near duplicates due to their ability to capture
-basic contours in images.
- 
-This package provides functionality to address both problems. Additionally, an evaluation and experimentation framework,
- is also provided. Following details the functionality provided by the package:
-* Generation of features for images using one of the following algorithms:
-    - Convolutional Neural Network
-    - Perceptual hashing
-    - Difference hashing
-    - Wavelet hashing
-    - Average hashing
-* Obtaining duplicates based on the features generated.
-* Framework to evaluate effectiveness of deduplication  given a ground truth mapping.
-* Framework to find an effective deduplication algorithm with corresponding parameters given a grid of parameters for a
- target dataset.
+<p align="center">
+  <img src="readme_figures/mona_lisa.png" width="600" />
+</p>
+
+This package provides functionality to make use of hashing algorithms that are particularly good at finding exact 
+duplicates as well as convolutional neural networks which are also adept at finding near duplicates. An evaluation 
+framework is also provided to judge the quality of deduplication for a given dataset.
+
+Following details the functionality provided by the package:
+
+- Finding duplicates in a directory using one of the following algorithms:
+    - [Convolutional Neural Network](https://arxiv.org/abs/1704.04861) (CNN)
+    - [Perceptual hashing](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html) (PHash)
+    - [Difference hashing](http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html) (DHash)
+    - [Wavelet hashing](https://fullstackml.com/wavelet-image-hash-in-python-3504fdd282b5) (WHash)
+    - [Average hashing](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html) (AHash)
+- Generation of encodings for images using one of the above stated algorithms.
+- Framework to evaluate effectiveness of deduplication  given a ground truth mapping.
+- Plotting duplicates found for a given image file.
+
+Detailed documentation for the package can be found at: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
 
 imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0 license.
+
+## Contents
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Contribute](#contribute)
+- [Citation](#citation)
+- [Maintainers](#maintainers)
+- [License](#copyright)
 
 ## Installation
 There are two ways to install imagededup:
 
 Install imagededup from PyPI (recommended):
 
-`pip install imagededup`
+```
+pip install imagededup
+```
 
 Install imagededup from the GitHub source:
 
 ```
-git clone https://github.com/idealo/image-dedup.git
+git clone https://github.com/idealo/imagededup.git
 cd imagededup  
 python setup.py install
 ```  
 
-## Getting started
+## Quick start
 
-#### Generate perceptual hash for one image given image path
+In order to find duplicates in an image directory using perceptual hashing, following workflow can be used:
+
+- Import perceptual hashing method
+
 ```python
 from imagededup.methods import PHash
 phasher = PHash()
-feature_map = phasher.encode_image(image_file='path/to/image/file')
-```
-#### Generate perceptual hash for one image given as a numpy array
-```python
-import numpy as np
-from imagededup.methods import PHash
-phasher = PHash()
-feature_map = phasher.encode_image(image_array=np.array(image))
 ```
 
-#### Generate perceptual hashes for all images in an image directory
+- Generate encodings for all images in an image directory
+
 ```python
-from imagededup.methods import PHash
-phasher = PHash()
-feature_map = phasher.encode_images(image_dir='path/to/image/directory')
+encodings = phasher.encode_images(image_dir='path/to/image/directory')
 ```
 
-#### Generate convolutional neural network features for all images in an image directory
+- Find duplicates using the generated encodings
 ```python
-from imagededup.methods import CNN
-cnn_encoder = CNN()
-feature_map = cnn_encoder.encode_images(image_dir='path/to/image/directory')
+duplicates = phasher.find_duplicates(encoding_map=encodings)
 ```
 
-#### Find duplicates given image directory
+- Plot duplicates obtained for a given file (eg: 'ukbench00120.jpg') using the duplicates dictionary
 ```python
-from imagededup.methods import PHash
-phasher = PHash()
-map_filename_to_duplicates = phasher.find_duplicates(image_dir='path/to/image/directory')
+from imagededup.utils import plot_duplicates
+plot_duplicates(image_dir='path/to/image/directory', 
+                duplicate_map=duplicates, 
+                filename='ukbench00120.jpg')
 ```
+The output looks as below:
 
-#### Find duplicates based on the generated features
+![figs](readme_figures/plot_dups.png)
+
+
+The complete code for the workflow is:
 ```python
 from imagededup.methods import PHash
 phasher = PHash()
-feature_map = phasher.encode_images(image_dir='path/to/image/directory')
-map_filename_to_duplicates = phasher.find_duplicates(encoding_map=feature_map)
+
+# Generate encodings for all images in an image directory
+encodings = phasher.encode_images(image_dir='path/to/image/directory')
+
+# Find duplicates using the generated encodings
+duplicates = phasher.find_duplicates(encoding_map=encodings)
+
+# plot duplicates obtained for a given file using the duplicates dictionary
+from imagededup.utils import plot_duplicates
+plot_duplicates(image_dir='path/to/image/directory', 
+                duplicate_map=duplicates, 
+                filename='ukbench00120.jpg')
 ```
+For more examples, refer [this](https://github.com/idealo/imagededup/tree/add-documentation/examples) part of the 
+repository.
 
-#### Get a list of duplicate files given features
-```python
-from imagededup.methods import PHash
-phasher = PHash()
-duplicate_filenames = phasher.find_duplicates_to_remove(image_dir='path/to/image/directory')
-```
-
-#### Evaluate the effectiveness of deduplication if a ground truth on a minimal dataset is available
-To be filled after implementing
-
-#### Find an optimum deduplication method along with a threshold if a ground truth on a minimal dataset is available
-To be filled after implementing
-
-## Considerations
+For more detailed usage of the package functionality, refer: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
 
 ## Contribute
+We welcome all kinds of contributions.
+See the [Contribution](CONTRIBUTING.md) guide for more details.
 
 ## Citation
+Please cite Imagededup in your publications if this is useful for your research. Here is an example BibTeX entry:
+```
+@misc{idealods2019imagededup,
+  title={Imagededup},
+  author={Tanuj Jain and Christopher Lennan and Zubin John and Dat Tran},
+  year={2019},
+  howpublished={\url{https://github.com/idealo/imagededup}},
+}
+```
 
 ## Maintainers
+* Tanuj Jain, github: [tanujjain](https://github.com/tanujjain)
+* Christopher Lennan, github: [clennan](https://github.com/clennan)
+* Dat Tran, github: [datitran](https://github.com/datitran)
 
-
+## Copyright
+See [LICENSE](LICENSE) for details.

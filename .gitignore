@@ -239,3 +239,11 @@ notebooks
 notebooks/all_average_metrics.pkl
 notebooks/cnn_explorer.ipynb
 notebooks/cnn_variants.ipynb
+mkdocs/docs/evaluation/
+mkdocs/docs/handlers/
+mkdocs/docs/methods/
+mkdocs/docs/utils/
+mkdocs/docs/CONTRIBUTING.md
+mkdocs/docs/LICENSE.md
+mkdocs/docs/index.md
+docs/*

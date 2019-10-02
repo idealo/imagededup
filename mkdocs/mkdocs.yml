@@ -1,0 +1,35 @@
+site_name: Imagededup
+site_author: idealo Data Science Team
+
+nav:
+    - Home: index.md
+    - User Guide:
+        - Finding duplicates: user_guide/finding_duplicates.md
+        - Encoding generation: user_guide/encoding_generation.md
+        - Evaluating performance: user_guide/evaluating_performance.md
+        - Plotting duplicates: user_guide/plotting_duplicates.md
+    - API reference:
+        - Methods:
+            - CNN: methods/cnn.md
+            - Hashing: methods/hashing.md
+        - Evaluation:
+            - Evaluation: evaluation/evaluation.md
+        - Utils:
+            - Plot duplicates: utils/plotter.md
+    - Example:
+        - CIFAR10 deduplication: examples/CIFAR10-deduplication.md
+    - Contribution: CONTRIBUTING.md
+    - License: LICENSE.md
+theme:
+  name: 'material'
+  palette:
+    primary: 'indigo'
+    accent: 'indigo'
+  logo: 'img/logo.svg'
+  favicon: 'img/favicon.ico'
+
+repo_name: 'idealo/imagededup'
+repo_url: 'https://github.com/idealo/imagededup'
+
+markdown_extensions:
+  - codehilite

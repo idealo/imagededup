@@ -14,10 +14,10 @@ logger = return_logger(__name__, os.getcwd())
 
 def _transpose_checker(mapping):
     """
-    Check for the given dictionary that transpose relationship holds.
+    Check for the given dictionary that transpose (symmetric) relationship holds.
 
     Args:
-        mapping: Dictionary respresenting a mapping of filenames to the list of respective duplicate filenames.
+        mapping: Dictionary representing a mapping of filenames to the list of respective duplicate filenames.
     """
     for key, val in mapping.items():
         # check for each value in the list if the key is present as its value
@@ -81,20 +81,21 @@ def evaluate(
 
     Args:
         ground_truth_map: A dictionary representing ground truth with filenames as key and a list of duplicate filenames
-        as value.
+                          as value.
         retrieved_map: A dictionary representing retrieved duplicates with filenames as key and a list of retrieved
-        duplicate filenames as value.
+                       duplicate filenames as value.
         metric: Name of metric to be evaluated and returned. Accepted values are: 'map', 'ndcg', 'jaccard',
-        'classification', 'all' where 'all' returns every metric.
+                'classification', 'all'(default, returns every metric).
 
     Returns:
-        A dictionary with metric name as key and corresponding calculated metric as the value.
-        'map', 'ndcg' and 'jaccard' return a single number denoting the corresponding information retrieval metric.
-        'classification' metrics include 'precision', 'recall' and 'f1-score' which are returned in the form of
-         individual entries in the returned dictionary. The value for each of the classification metric is a numpy array
-        with first entry as the score for non-duplicate file pairs(class-0) and second entry as the score for duplicate
-        file pairs (class-1). Additionally, a support is also returned as another key with first entry denoting number
-        of non-duplicate file pairs and second entry having duplicate file pairs.
+        dictionary: A dictionary with metric name as key and corresponding calculated metric as the value. 'map', 'ndcg'
+                    and 'jaccard' return a single number denoting the corresponding information retrieval metric.
+                    'classification' metrics include 'precision', 'recall' and 'f1-score' which are returned in the form
+                     of individual entries in the returned dictionary. The value for each of the classification metric
+                     is a numpy array with first entry as the score for non-duplicate file pairs(class-0) and second
+                     entry as the score for duplicate file pairs (class-1). Additionally, a support is also returned as
+                     another key with first entry denoting number of non-duplicate file pairs and second entry having
+                     duplicate file pairs.
     """
     metric = metric.lower()
     _check_map_correctness(ground_truth_map, retrieved_map)

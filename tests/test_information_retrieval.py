@@ -83,6 +83,20 @@ def test_zero_retrieval(metric_func):
     av_val = metric_func(corr_dup, ret_dups)
     assert av_val == 0.0
 
+@pytest.mark.parametrize('metric_function, expected_value', [(avg_prec, 1.0), (ndcg, 1.0),
+                                                        (jaccard_similarity, 1.0)])
+def test_zero_correct_and_zero_retrieved(metric_function, expected_value):
+    corr_dup = []
+    ret_dups = []
+    assert metric_function(corr_dup, ret_dups) == expected_value
+
+
+@pytest.mark.parametrize('metric_function, expected_value', [(avg_prec, 0.0), (ndcg, 0.0),
+                                                        (jaccard_similarity, 0.0)])
+def test_zero_correct_and_one_retrieved(metric_function, expected_value):
+    corr_dup = []
+    ret_dups = ['1']
+    assert metric_function(corr_dup, ret_dups) == expected_value
 
 @pytest.mark.parametrize('metric, expected_value', [('map', 0.5555555555555556), ('ndcg', 0.75),
                                                         ('jaccard', 0.6)])
@@ -105,6 +119,7 @@ def test_get_metrics_returns_dict():
     ground_truth, retrieved = return_ground_incorrect_retrievals()
     assert isinstance(get_all_metrics(ground_truth, retrieved), dict)
     assert len(get_all_metrics(ground_truth, retrieved).values()) == 3  # 3 metrics
+
 
 
 

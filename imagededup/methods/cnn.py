@@ -12,56 +12,19 @@ from imagededup.utils.logger import return_logger
 
 class CNN:
     """
-    Find duplicates using CNN and/or generates CNN features given a single image or a directory of images.
-    The module can be used for 2 purposes: Feature generation and duplicate detection.
+    Find duplicates using CNN and/or generate CNN encodings given a single image or a directory of images.
 
-    Feature generation:
-    To propagate an image through a Convolutional Neural Network architecture and generate features. The generated
-    features can be used at a later time for deduplication. There are two possibilities to get features:
-    1. At a single image level: Using the method 'encode_image', the CNN feature for a single image can be obtained.
-    Example usage:
-    ```
-    from imagededup.methods import CNN
-    myencoder = CNN()
-    feature_vector = myencoder.encode_image('path/to/image.jpg')
-    ```
-    2. At a directory level: In case features for several images need to be generated, the images can be placed in a
-    directory and features for all of the images can be obtained using the 'encode_images' method.
-    Example usage:
-    ```
-    from imagededup.methods import CNN
-    myencoder = CNN()
-    feature_vectors = myencoder.encode_images('path/to/directory')
-    ```
+    The module can be used for 2 purposes: Encoding generation and duplicate detection.
+    - Encodings generation:
+    To propagate an image through a Convolutional Neural Network architecture and generate encodings. The generated
+    encodings can be used at a later time for deduplication. Using the method 'encode_image', the CNN encodings for a
+    single image can be obtained while the 'encode_images' method can be used to get encodings for all images in a
+    directory.
 
-    Duplicate detection:
-    Find duplicates either using the feature mapping generated previously using 'encode_images' or using a Path to the
-    directory that contains the images that need to be deduplicated. There are 2 inputs that can be provided to the
-    find_duplicates function:
-    1. Dictionary generated using 'encode_images' function above.
-    Example usage:
-    ```
-    from imagededup.methods import CNN
-    myencoder = CNN()
-    duplicates = myencoder.find_duplicates(encoding_map, min_similarity_threshold=0.9, scores=True)
-    ```
-    2. Using the Path of the directory where all images are present.
-    Example usage:
-    ```
-    from imagededup.methods import CNN
-    myencoder = CNN()
-    duplicates = myencoder.find_duplicates(image_dir='path/to/directory', min_similarity_threshold=0.9, scores=True)
-    ```
-    If a list of file names to remove are desired, then the function find_duplicates_to_remove can be used with either
-    the path to the image directory as input or the dictionary with features. A threshold for similarity should be
-    considered.
-    Example usage:
-        ```
-        from imagededup.methods import CNN
-        myencoder = CNN()
-        files_to_remove = myencoder.find_duplicates_to_remove(image_dir='path/to/images/directory',
-        min_similarity_threshold=0.9)
-        ```
+    - Duplicate detection:
+    Find duplicates either using the encoding mapping generated previously using 'encode_images' or using a Path to the
+    directory that contains the images that need to be deduplicated. 'find_duplciates' and 'find_duplicates_to_remove'
+    methods are provided to accomplish these tasks.
     """
 
     def __init__(self) -> None:
@@ -70,7 +33,7 @@ class CNN:
         Set the batch size for keras generators to be 64 samples. Set the input image size to (224, 224) for providing
         as input to MobileNet model.
         """
-        from keras.applications.mobilenet import MobileNet, preprocess_input
+        from tensorflow.keras.applications.mobilenet import MobileNet, preprocess_input
         from imagededup.utils.data_generator import DataGenerator
 
         self.MobileNet = MobileNet
@@ -97,13 +60,13 @@ class CNN:
 
     def _get_cnn_features_single(self, image_array: np.ndarray) -> np.ndarray:
         """
-        Generate CNN features for a single image.
+        Generate CNN encodings for a single image.
 
         Args:
             image_array: Image typecast to numpy array.
 
         Returns:
-            Features for the image in the form of numpy array.
+            Encodings for the image in the form of numpy array.
         """
         image_pp = self.preprocess_input(image_array)
         image_pp = np.array(image_pp)[np.newaxis, :]
@@ -111,14 +74,14 @@ class CNN:
 
     def _get_cnn_features_batch(self, image_dir: PosixPath) -> Dict[str, np.ndarray]:
         """
-        Generate CNN features for all images in a given directory of images.
+        Generate CNN encodings for all images in a given directory of images.
         Args:
             image_dir: Path to the image directory.
 
         Returns:
-            A dictionary that contains a mapping of filenames and corresponding numpy array of CNN features.
+            A dictionary that contains a mapping of filenames and corresponding numpy array of CNN encodings.
         """
-        self.logger.info('Start: Image feature generation')
+        self.logger.info('Start: Image encoding generation')
         self.data_generator = self.DataGenerator(
             image_dir=image_dir,
             batch_size=self.batch_size,
@@ -129,7 +92,7 @@ class CNN:
         feat_vec = self.model.predict_generator(
             self.data_generator, len(self.data_generator), verbose=1
         )
-        self.logger.info('End: Image feature generation')
+        self.logger.info('End: Image encoding generation')
 
         filenames = [i.name for i in self.data_generator.valid_image_files]
 
@@ -142,22 +105,22 @@ class CNN:
         image_array: Optional[np.ndarray] = None,
     ) -> np.ndarray:
         """
-        Generate CNN features for a single image.
+        Generate CNN encoding for a single image.
 
         Args:
             image_file: Path to the image file.
-            image_array: Image typecast to numpy array.
+            image_array: Optional, used instead of image_file. Image typecast to numpy array.
 
         Returns:
-            Features for the image in the form of numpy array.
+            encoding: Encodings for the image in the form of numpy array.
 
-        Example usage:
+        Example:
         ```
         from imagededup.methods import CNN
         myencoder = CNN()
-        feature_vector = myencoder.encode_image(image_file='path/to/image.jpg')
+        encoding = myencoder.encode_image(image_file='path/to/image.jpg')
         OR
-        feature_vector = myencoder.encode_image(image_array=<numpy array of image>)
+        encoding = myencoder.encode_image(image_array=<numpy array of image>)
         ```
         """
         if isinstance(image_file, str):
@@ -187,23 +150,18 @@ class CNN:
         )
 
     def encode_images(self, image_dir: Union[PosixPath, str]) -> Dict:
-        """
-        Generate CNN features for all images in a given directory of images.
+        """Generate CNN encodings for all images in a given directory of images.
 
         Args:
             image_dir: Path to the image directory.
-
         Returns:
-            A dictionary that contains a mapping of filenames and corresponding numpy array of CNN features.
-
-        Example usage:
-        ```
-        from imagededup.methods import CNN
-        myencoder = CNN()
-        mapping = myencoder.encode_images('path/to/directory')
-
-        'mapping' contains: {'Image1.jpg': np.array([1.0, -0.2, ...]), 'Image2.jpg': np.array([0.3, 0.06, ...]), ...}
-        ```
+            dictionary: Contains a mapping of filenames and corresponding numpy array of CNN encodings.
+        Example:
+            ```
+            from imagededup.methods import CNN
+            myencoder = CNN()
+            encoding_map = myencoder.encode_images(image_dir='path/to/image/directory')
+            ```
         """
         if isinstance(image_dir, str):
             image_dir = Path(image_dir)
@@ -234,7 +192,7 @@ class CNN:
     def _find_duplicates_dict(
         self,
         encoding_map: Dict[str, list],
-        min_similarity_threshold: int,
+        min_similarity_threshold: float,
         scores: bool,
         outfile: Optional[str] = None,
     ) -> Dict:
@@ -294,7 +252,7 @@ class CNN:
     def _find_duplicates_dir(
         self,
         image_dir: Union[PosixPath, str],
-        min_similarity_threshold: int,
+        min_similarity_threshold: float,
         scores: bool,
         outfile: Optional[str] = None,
     ) -> Dict:
@@ -305,9 +263,10 @@ class CNN:
 
         Args:
             image_dir: Path to the directory containing all the images.
-            min_similarity_threshold: Hamming distance above which retrieved duplicates are valid.
-            scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
-            outfile: Name of the file the results should be written to.
+            min_similarity_threshold: Optional, hamming distance above which retrieved duplicates are valid. Default 0.9
+            scores: Optional, boolean indicating whether Hamming distances are to be returned along with retrieved
+                    duplicates.
+            outfile: Optional, name of the file the results should be written to.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -328,7 +287,7 @@ class CNN:
         self,
         image_dir: Union[PosixPath, str] = None,
         encoding_map: Dict[str, list] = None,
-        min_similarity_threshold: int = 0.9,
+        min_similarity_threshold: float = 0.9,
         scores: bool = False,
         outfile: Optional[str] = None,
     ) -> Dict:
@@ -340,19 +299,21 @@ class CNN:
 
         Args:
             image_dir: Path to the directory containing all the images or dictionary with keys as file names
-            and values as numpy arrays which represent the CNN feature for the key image file.
-            encoding_map: A dictionary containing mapping of filenames and corresponding CNN features.
-            min_similarity_threshold: Threshold value (must be float between -1.0 and 1.0)
-            scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
-            outfile: Name of the file to save the results.
+            and values as numpy arrays which represent the CNN encoding for the key image file.
+            encoding_map: Optional, used instead of image_dir, a dictionary containing mapping of filenames and
+                          corresponding CNN encodings.
+            min_similarity_threshold: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9
+            scores: Optional, boolean indicating whether similarity scores are to be returned along with retrieved
+                    duplicates.
+            outfile: Optional, name of the file to save the results. Default is None.
 
         Returns:
-            if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
-            score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}
-            if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
-            'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
+            dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
+                        score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}. if scores is False, then a
+                        dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg'],
+                        'image2.jpg':['image1_duplicate1.jpg',..], ..}
 
-            Example usage:
+        Example:
         ```
         from imagededup.methods import CNN
         myencoder = CNN()
@@ -363,7 +324,7 @@ class CNN:
 
         from imagededup.methods import CNN
         myencoder = CNN()
-        duplicates = myencoder.find_duplicates(encoding_map=<mapping filename to cnn features>,
+        duplicates = myencoder.find_duplicates(encoding_map=<mapping filename to cnn encodings>,
         min_similarity_threshold=15, scores=True, outfile='results.json')
         ```
         """
@@ -393,7 +354,7 @@ class CNN:
         self,
         image_dir: PosixPath = None,
         encoding_map: Dict[str, np.ndarray] = None,
-        min_similarity_threshold: int = 0.9,
+        min_similarity_threshold: float = 0.9,
         outfile: Optional[str] = None,
     ) -> List:
         """
@@ -402,26 +363,27 @@ class CNN:
 
         Args:
             image_dir: Path to the directory containing all the images or dictionary with keys as file names
-            and values as numpy arrays which represent the CNN feature for the key image file.
-            encoding_map: A dictionary containing mapping of filenames and corresponding CNN features.
-            min_similarity_threshold: Threshold value (must be float between -1.0 and 1.0)
-            outfile: Name of the file to save the results.
+                       and values as numpy arrays which represent the CNN encoding for the key image file.
+            encoding_map: Optional, used instead of image_dir, a dictionary containing mapping of filenames and
+                          corresponding CNN encodings.
+            min_similarity_threshold: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9
+            outfile: Optional, name of the file to save the results. Default is None.
 
         Returns:
-            List of image file names that should be removed.
+            duplicates: List of image file names that should be removed.
 
-        Example usage:
+        Example:
         ```
         from imagededup.methods import CNN
         myencoder = CNN()
-        list_of_files_to_remove = myencoder.find_duplicates_to_remove(image_dir='path/to/images/directory'),
+        duplicates = myencoder.find_duplicates_to_remove(image_dir='path/to/images/directory'),
         min_similarity_threshold=15)
 
         OR
 
         from imagededup.methods import CNN
         myencoder = CNN()
-        duplicates = myencoder.find_duplicates(encoding_map=<mapping filename to cnn features>,
+        duplicates = myencoder.find_duplicates_to_remove(encoding_map=<mapping filename to cnn encodings>,
         min_similarity_threshold=15, outfile='results.json')
         ```
         """
