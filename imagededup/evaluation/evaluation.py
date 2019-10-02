@@ -91,11 +91,11 @@ def evaluate(
         dictionary: A dictionary with metric name as key and corresponding calculated metric as the value. 'map', 'ndcg'
                     and 'jaccard' return a single number denoting the corresponding information retrieval metric.
                     'classification' metrics include 'precision', 'recall' and 'f1-score' which are returned in the form
-                     of individual entries in the returned dictionary. The value for each of the classification metric
-                     is a numpy array with first entry as the score for non-duplicate file pairs(class-0) and second
-                     entry as the score for duplicate file pairs (class-1). Additionally, a support is also returned as
-                     another key with first entry denoting number of non-duplicate file pairs and second entry having
-                     duplicate file pairs.
+                    of individual entries in the returned dictionary. The value for each of the classification metric
+                    is a numpy array with first entry as the score for non-duplicate file pairs(class-0) and second
+                    entry as the score for duplicate file pairs (class-1). Additionally, a support is also returned as
+                    another key with first entry denoting number of non-duplicate file pairs and second entry having
+                    duplicate file pairs.
     """
     metric = metric.lower()
     _check_map_correctness(ground_truth_map, retrieved_map)
