@@ -219,7 +219,31 @@ venv.bak/
 ### Python Patch ###
 .venv/
 
+# Dataset files
+*_dataset/
+.vscode
 
 # End of https://www.gitignore.io/api/linux,macos,python,pycharm
 
 # Customized
+archive
+Untitled
+imagededup/Untitled.ipynb
+notebooks/Untitled.ipynb
+notebooks/post_analysis_hashing_transformationDS.ipynb
+notebooks/efficient_nets.ipynb
+notebooks/mobilenet.ipynb
+notebooks/resnet.ipynb
+*.db
+notebooks
+notebooks/all_average_metrics.pkl
+notebooks/cnn_explorer.ipynb
+notebooks/cnn_variants.ipynb
+mkdocs/docs/evaluation/
+mkdocs/docs/handlers/
+mkdocs/docs/methods/
+mkdocs/docs/utils/
+mkdocs/docs/CONTRIBUTING.md
+mkdocs/docs/LICENSE.md
+mkdocs/docs/index.md
+docs/*
