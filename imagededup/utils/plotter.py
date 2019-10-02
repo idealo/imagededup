@@ -111,7 +111,9 @@ def plot_duplicates(
     Example:
     ```
         from imagededup.utils import plot_duplicates
-        plot_duplicates(image_dir='path/to/image/directory', duplicate_map=duplicate_map, filename='path/to/image.jpg')
+        plot_duplicates(image_dir='path/to/image/directory',
+                        duplicate_map=duplicate_map,
+                        filename='path/to/image.jpg')
     ```
     """
     # validate args

@@ -1,6 +1,6 @@
 # Plotting duplicates of an image
 
-Once a duplicate dictionary corresponding to an image directory has been obtained (using [find_duplicates](#find_duplicates)), duplicates 
+Once a duplicate dictionary corresponding to an image directory has been obtained (using [find_duplicates](finding_duplicates.md)), duplicates 
 for an image can be plotted using *plot_duplicates* method as below:
 ```python
 from imagededup.utils import plot_duplicates

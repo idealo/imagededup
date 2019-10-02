@@ -1,6 +1,6 @@
 # CIFAR10 deduplication example
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/idealo/imagededup/blob/add-documentation/examples/CIFAR10-duplicates.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/idealo/imagededup/master/examples/CIFAR10-duplicates.ipynb)
 
 
 ### Install imagededup via PyPi
