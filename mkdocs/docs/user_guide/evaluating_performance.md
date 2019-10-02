@@ -44,8 +44,8 @@ filenames as value.
 
 #### Considerations
 - Presently, the ground truth map should be prepared manually by the user. Symmetric relations between duplicates must 
-be represented in the ground truth map. If an image *i* is a duplicate of image *j*, then *j* must also be represented as a
- duplicate of *i*. Absence of symmetric relations will lead to an exception.
+be represented in the ground truth map. If an image *i* is a duplicate of image *j*, then *j* must also be represented 
+as a duplicate of *i*. Absence of symmetric relations will lead to an exception.
 
 - Both the ground_truth_map and retrieved_map must have the same keys.
 
@@ -72,13 +72,13 @@ retrieved_map:
   '4.jpg': []
 }
 ```
-From the above, it can be seen that images '1.jpg' and '4.jpg' are not found to be duplicates of each other by the 
+From the above, it can be seen that images *'1.jpg'* and *'4.jpg'* are not found to be duplicates of each other by the 
 deduplication algorithm.
 
 For calculating information retrieval metrics, each key in the maps is considered as an independent 'query'. 
-In the ground truth, '4.jpg' is a duplicate of the key '1.jpg'. When it is not retrieved, it is considered a miss for 
-query '1.jpg'.  Similarly, '1.jpg' is a duplicate of the key '4.jpg' in the ground truth. When this is not retrieved, 
-it is considered a miss for query '4.jpg'.  Thus, the missing relationship is accounted for twice instead of just once.
+In the ground truth, *'4.jpg'* is a duplicate of the key *'1.jpg'*. When it is not retrieved, it is considered a miss for 
+query *'1.jpg'*.  Similarly, *'1.jpg'* is a duplicate of the key *'4.jpg'* in the ground truth. When this is not retrieved, 
+it is considered a miss for query *'4.jpg'*.  Thus, the missing relationship is accounted for twice instead of just once.
 
 Classification metrics, on the other hand, consider the relationships only once by forming unique pairs of images and 
 labelling each pair as a 0 (non-duplicate image pair) and 1 (duplicate image pair). 
@@ -107,4 +107,4 @@ Similarly, using retrieved_map, the retrieved pairs are generated:
 | ('3.jpg', '4.jpg')| 0  
 
 These two sets of pairs are then used to calculate metrics such as precision/recall/f1-score. It can be seen that the 
-missing relationship between pair ('1jpg', '4.jpg') is accounted for only once.
+missing relationship between pair *('1jpg', '4.jpg')* is accounted for only once.
