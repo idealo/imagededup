@@ -16,6 +16,8 @@ nav:
             - Evaluation: evaluation/evaluation.md
         - Utils:
             - Plot duplicates: utils/plotter.md
+    - Example:
+        - CIFAR10 deduplication: examples/CIFAR10-deduplication.md
     - Contribution: CONTRIBUTING.md
     - License: LICENSE.md
 theme:

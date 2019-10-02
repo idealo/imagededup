@@ -102,6 +102,8 @@ plot_duplicates(image_dir='path/to/image/directory',
                 duplicate_map=duplicates, 
                 filename='ukbench00120.jpg')
 ```
+For more examples, refer [this](https://github.com/idealo/imagededup/tree/add-documentation/examples) part of the 
+repository.
 
 For more detailed usage of the package functionality, refer: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
 
