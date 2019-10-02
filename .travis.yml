@@ -5,6 +5,7 @@ install:
 - pip install -e ".[tests]"
 script:
 - pytest -vs --cov=imagededup --show-capture=no tests
+- cd mkdocs && sh build_docs.sh
 deploy:
   provider: pages
   skip_cleanup: true

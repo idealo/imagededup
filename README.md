@@ -1,5 +1,8 @@
 # Image Deduplicator (imagededup)
 
+[![Build Status](https://travis-ci.org/idealo/imagededup.svg?branch=master)](https://travis-ci.org/idealo/imagededup)
+[![License](https://img.shields.io/badge/License-Apache%202.0-orange.svg)](https://github.com/idealo/imagededup/blob/master/LICENSE)
+
 imagededup is a python package that simplifies the task of finding **exact** and **near duplicates** in an image collection.
 
 <p align="center">
