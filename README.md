@@ -40,7 +40,7 @@ imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0
 ## Installation
 There are two ways to install imagededup:
 
-Install imagededup from PyPI (recommended):
+* Install imagededup from PyPI (recommended):
 
 ```
 pip install imagededup
@@ -50,7 +50,7 @@ pip install imagededup
 especially if you use CNN to find duplicates. It's way faster. See the [TensorFlow guide](https://www.tensorflow.org/install/gpu) 
 for more details on how to install it. 
 
-Install imagededup from the GitHub source:
+* Install imagededup from the GitHub source:
 
 ```
 git clone https://github.com/idealo/imagededup.git
