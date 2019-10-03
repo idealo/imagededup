@@ -17,7 +17,7 @@ nav:
         - Utils:
             - Plot duplicates: utils/plotter.md
     - Example:
-        - CIFAR10 deduplication: examples/CIFAR10-deduplication.md
+        - CIFAR10 deduplication: examples/CIFAR10_deduplication.md
     - Contribution: CONTRIBUTING.md
     - License: LICENSE.md
 theme:
