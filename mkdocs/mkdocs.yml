@@ -31,5 +31,9 @@ theme:
 repo_name: 'idealo/imagededup'
 repo_url: 'https://github.com/idealo/imagededup'
 
+google_analytics:
+  - 'UA-137434942-4'
+  - 'auto'
+
 markdown_extensions:
   - codehilite
