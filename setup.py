@@ -22,7 +22,7 @@ imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0
 
 setup(
     name='imagededup',
-    version='0.0.4',
+    version='0.1.0',
     author='Tanuj Jain, Christopher Lennan, Zubin John, Dat Tran',
     author_email='tanuj.jain.10@gmail.com, christopherlennan@gmail.com, zrjohn@yahoo.com, datitran@gmail.com',
     description='Package for image deduplication',
