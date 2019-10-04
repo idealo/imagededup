@@ -317,7 +317,7 @@ class CNN:
         ```
         from imagededup.methods import CNN
         myencoder = CNN()
-        duplicates = myencoder.find_duplicates(image_dir='path/to/directory', min_similarity_threshold=15, scores=True,
+        duplicates = myencoder.find_duplicates(image_dir='path/to/directory', min_similarity_threshold=0.85, scores=True,
         outfile='results.json')
 
         OR
@@ -325,7 +325,7 @@ class CNN:
         from imagededup.methods import CNN
         myencoder = CNN()
         duplicates = myencoder.find_duplicates(encoding_map=<mapping filename to cnn encodings>,
-        min_similarity_threshold=15, scores=True, outfile='results.json')
+        min_similarity_threshold=0.85, scores=True, outfile='results.json')
         ```
         """
         self._check_threshold_bounds(min_similarity_threshold)
@@ -377,14 +377,14 @@ class CNN:
         from imagededup.methods import CNN
         myencoder = CNN()
         duplicates = myencoder.find_duplicates_to_remove(image_dir='path/to/images/directory'),
-        min_similarity_threshold=15)
+        min_similarity_threshold=0.85)
 
         OR
 
         from imagededup.methods import CNN
         myencoder = CNN()
         duplicates = myencoder.find_duplicates_to_remove(encoding_map=<mapping filename to cnn encodings>,
-        min_similarity_threshold=15, outfile='results.json')
+        min_similarity_threshold=0.85, outfile='results.json')
         ```
         """
         if image_dir or encoding_map:
