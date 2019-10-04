@@ -1,7 +1,10 @@
 # Image Deduplicator (imagededup)
 
 [![Build Status](https://travis-ci.org/idealo/imagededup.svg?branch=master)](https://travis-ci.org/idealo/imagededup)
-[![License](https://img.shields.io/badge/License-Apache%202.0-orange.svg)](https://github.com/idealo/imagededup/blob/master/LICENSE)
+[![Docs](https://img.shields.io/badge/docs-online-brightgreen)](https://idealo.github.io/imagededup/)
+[![PyPI Version](https://img.shields.io/pypi/v/imagededup)](https://pypi.org/project/imagededup/)
+[![codecov](https://codecov.io/gh/idealo/imagededup/branch/master/graph/badge.svg)](https://codecov.io/gh/idealo/imagededup)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/idealo/imagededup/blob/master/LICENSE)
 
 imagededup is a python package that simplifies the task of finding **exact** and **near duplicates** in an image collection.
 
@@ -40,13 +43,17 @@ imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0
 ## Installation
 There are two ways to install imagededup:
 
-Install imagededup from PyPI (recommended):
+* Install imagededup from PyPI (recommended):
 
 ```
 pip install imagededup
 ```
 
-Install imagededup from the GitHub source:
+⚠️ **Note**: imagededup comes with TensorFlow CPU-only support by default. If you have a machine with GPU support, you should rather install it
+especially if you use CNN to find duplicates. It's way faster. See the [TensorFlow guide](https://www.tensorflow.org/install/gpu) 
+for more details on how to install it. 
+
+* Install imagededup from the GitHub source:
 
 ```
 git clone https://github.com/idealo/imagededup.git
