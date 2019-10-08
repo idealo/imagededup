@@ -6,6 +6,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 from imagededup.handlers.search.bktree import BKTree
 from imagededup.handlers.search.brute_force import BruteForce
 from imagededup.utils.general_utils import parallelise
+from imagededup.utils.logger import return_logger
+
+logger = return_logger(__name__)
 
 
 def cosine_similarity_chunk(t: Tuple) -> np.ndarray:
@@ -21,7 +24,7 @@ def get_cosine_similarity(
         return cosine_similarity(X)
 
     else:
-        print('Large feature matrix thus calculating cosine similarities in chunks...')
+        logger.info('Large feature matrix thus calculating cosine similarities in chunks...')
         start_idxs = list(range(0, n_rows, chunk_size))
         end_idxs = start_idxs[1:] + [n_rows]
         cos_sim = parallelise(
@@ -100,19 +103,19 @@ class HashEval:
         """
         Wrapper function to retrieve results for all queries in dataset using brute-force search.
         """
-        print('Start: Retrieving duplicates using Brute force algorithm')
+        logger.info('Start: Retrieving duplicates using Brute force algorithm')
         bruteforce = BruteForce(self.test, self.distance_invoker)
         self._get_query_results(bruteforce)
-        print('End: Retrieving duplicates using Brute force algorithm')
+        logger.info('End: Retrieving duplicates using Brute force algorithm')
 
     def _fetch_nearest_neighbors_bktree(self) -> None:
         """
         Wrapper function to retrieve results for all queries in dataset using a BKTree search.
         """
-        print('Start: Retrieving duplicates using BKTree algorithm')
+        logger.info('Start: Retrieving duplicates using BKTree algorithm')
         built_tree = BKTree(self.test, self.distance_invoker)  # construct bktree
         self._get_query_results(built_tree)
-        print('End: Retrieving duplicates using BKTree algorithm')
+        logger.info('End: Retrieving duplicates using BKTree algorithm')
 
     def retrieve_results(self, scores: bool = False) -> Dict:
         """

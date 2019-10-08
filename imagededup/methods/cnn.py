@@ -222,7 +222,6 @@ class CNN:
         self.logger.info('Start: Calculating cosine similarities...')
 
         self.cosine_scores = get_cosine_similarity(features)
-        # print(self.cosine_scores)
 
         np.fill_diagonal(
             self.cosine_scores, 2.0
