@@ -32,11 +32,11 @@ setup(
         'numpy<1.17',
         'Pillow<7.0.0',
         'PyWavelets~=1.0.3',
-        'scipy~=1.2.1',
+        'scipy',
         'tensorflow~=2.0.0',
         'tqdm',
-        'scikit-learn~=0.21.2',
-        'matplotlib~=3.1.1',
+        'scikit-learn',
+        'matplotlib'
     ],
     extras_require={
         'tests': ['pytest', 'pytest-cov', 'pytest-mock', 'codecov'],
