@@ -118,7 +118,7 @@ repository.
 For more detailed usage of the package functionality, refer: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
 
 ## Contribute
-We welcome all kinds of contributions.
+All contributions are welcome.
 See the [Contribution](CONTRIBUTING.md) guide for more details.
 
 ## Citation
