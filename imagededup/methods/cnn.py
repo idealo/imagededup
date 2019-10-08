@@ -1,4 +1,3 @@
-import os
 from pathlib import Path, PosixPath
 from typing import Dict, List, Optional, Union
 
@@ -42,7 +41,7 @@ class CNN:
 
         self.target_size = (224, 224)
         self.batch_size = 64
-        self.logger = return_logger(__name__, os.getcwd())
+        self.logger = return_logger(__name__)
         self._build_model()
 
     def _build_model(self):
