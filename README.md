@@ -55,7 +55,7 @@ install the TensorFlow version with GPU support especially when you use CNN to f
 
 * Install imagededup from the GitHub source:
 
-```
+```bash
 git clone https://github.com/idealo/imagededup.git
 cd imagededup  
 python setup.py install
@@ -123,7 +123,7 @@ See the [Contribution](CONTRIBUTING.md) guide for more details.
 
 ## Citation
 Please cite Imagededup in your publications if this is useful for your research. Here is an example BibTeX entry:
-```
+```BibTeX
 @misc{idealods2019imagededup,
   title={Imagededup},
   author={Tanuj Jain and Christopher Lennan and Zubin John and Dat Tran},
