@@ -61,7 +61,7 @@ cd imagededup
 python setup.py install
 ```  
 
-## 🚀 Quick start
+## 🚀 Quick Start
 
 In order to find duplicates in an image directory using perceptual hashing, following workflow can be used:
 
@@ -121,11 +121,11 @@ repository.
 
 For more detailed usage of the package functionality, refer: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
 
-## Contribute
+## 🤝 Contribute
 We welcome all kinds of contributions.
 See the [Contribution](CONTRIBUTING.md) guide for more details.
 
-## Citation
+## 📝 Citation
 Please cite Imagededup in your publications if this is useful for your research. Here is an example BibTeX entry:
 ```
 @misc{idealods2019imagededup,
@@ -136,10 +136,10 @@ Please cite Imagededup in your publications if this is useful for your research.
 }
 ```
 
-## Maintainers
+## 🏗 Maintainers
 * Tanuj Jain, github: [tanujjain](https://github.com/tanujjain)
 * Christopher Lennan, github: [clennan](https://github.com/clennan)
 * Dat Tran, github: [datitran](https://github.com/datitran)
 
-## Copyright
+## © Copyright
 See [LICENSE](LICENSE) for details.
