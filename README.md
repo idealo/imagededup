@@ -30,7 +30,7 @@ Following details the functionality provided by the package:
 
 Detailed documentation for the package can be found at: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
 
-imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0 license.
+Imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0 license.
 
 ## Contents
 - [Installation](#installation)
