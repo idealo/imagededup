@@ -12,8 +12,8 @@ imagededup is a python package that simplifies the task of finding **exact** and
   <img src="readme_figures/mona_lisa.png" width="600" />
 </p>
 
-This package provides functionality to make use of hashing algorithms that are particularly good at finding exact 
-duplicates as well as convolutional neural networks which are also adept at finding near duplicates. An evaluation 
+This package provides functionality to make use of hashing algorithms that are particularly good at finding exact
+duplicates as well as convolutional neural networks which are also adept at finding near duplicates. An evaluation
 framework is also provided to judge the quality of deduplication for a given dataset.
 
 Following details the functionality provided by the package:
@@ -32,7 +32,7 @@ Detailed documentation for the package can be found at: [https://idealo.github.i
 
 imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0 license.
 
-## Contents
+## 📖 Contents
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Contribute](#contribute)
@@ -40,7 +40,7 @@ imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0
 - [Maintainers](#maintainers)
 - [License](#copyright)
 
-## Installation
+## ⚙️ Installation
 There are two ways to install imagededup:
 
 * Install imagededup from PyPI (recommended):
@@ -49,9 +49,9 @@ There are two ways to install imagededup:
 pip install imagededup
 ```
 
-⚠️ **Note**: imagededup comes with TensorFlow CPU-only support by default. If you have GPUs, you should rather 
-install the TensorFlow version with GPU support especially when you use CNN to find duplicates. It's way faster. See the 
-[TensorFlow guide](https://www.tensorflow.org/install/gpu) for more details on how to install it. 
+> ⚠️ **Note**: imagededup comes with TensorFlow CPU-only support by default. If you have GPUs, you should rather
+> install the TensorFlow version with GPU support especially when you use CNN to find duplicates. It's way faster. See the
+> [TensorFlow guide](https://www.tensorflow.org/install/gpu) for more details on how to install it.
 
 * Install imagededup from the GitHub source:
 
@@ -61,7 +61,7 @@ cd imagededup
 python setup.py install
 ```  
 
-## Quick start
+## 🚀 Quick start
 
 In order to find duplicates in an image directory using perceptual hashing, following workflow can be used:
 
@@ -79,20 +79,24 @@ encodings = phasher.encode_images(image_dir='path/to/image/directory')
 ```
 
 - Find duplicates using the generated encodings
+
 ```python
 duplicates = phasher.find_duplicates(encoding_map=encodings)
 ```
 
 - Plot duplicates obtained for a given file (eg: 'ukbench00120.jpg') using the duplicates dictionary
+
 ```python
 from imagededup.utils import plot_duplicates
-plot_duplicates(image_dir='path/to/image/directory', 
-                duplicate_map=duplicates, 
+plot_duplicates(image_dir='path/to/image/directory',
+                duplicate_map=duplicates,
                 filename='ukbench00120.jpg')
 ```
 The output looks as below:
 
-![figs](readme_figures/plot_dups.png)
+<p align="center">
+  <img src="readme_figures/plot_dups.png" width="600" />
+</p>
 
 
 The complete code for the workflow is:
@@ -108,11 +112,11 @@ duplicates = phasher.find_duplicates(encoding_map=encodings)
 
 # plot duplicates obtained for a given file using the duplicates dictionary
 from imagededup.utils import plot_duplicates
-plot_duplicates(image_dir='path/to/image/directory', 
-                duplicate_map=duplicates, 
+plot_duplicates(image_dir='path/to/image/directory',
+                duplicate_map=duplicates,
                 filename='ukbench00120.jpg')
 ```
-For more examples, refer [this](https://github.com/idealo/imagededup/tree/master/examples) part of the 
+For more examples, refer [this](https://github.com/idealo/imagededup/tree/master/examples) part of the
 repository.
 
 For more detailed usage of the package functionality, refer: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
