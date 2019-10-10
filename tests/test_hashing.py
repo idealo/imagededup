@@ -198,6 +198,7 @@ def test__find_duplicates_dict_outfile_none(hasher, mocker):
     threshold = 10
     scores = True
     outfile = None
+    verbose = True
     hasheval_mocker = mocker.patch('imagededup.methods.hashing.HashEval')
     save_json_mocker = mocker.patch('imagededup.methods.hashing.save_json')
     hasher._find_duplicates_dict(
@@ -210,6 +211,7 @@ def test__find_duplicates_dict_outfile_none(hasher, mocker):
         test=encoding_map,
         queries=encoding_map,
         distance_function=Hashing.hamming_distance,
+        verbose=verbose,
         threshold=threshold,
         search_method='bktree',
     )
@@ -222,6 +224,7 @@ def test__find_duplicates_dict_outfile_true(hasher, mocker):
     threshold = 10
     scores = True
     outfile = True
+    verbose = True
     hasheval_mocker = mocker.patch('imagededup.methods.hashing.HashEval')
     hasheval_mocker.return_value.retrieve_results.return_value = {
         'filename.jpg': [('dup1.jpg', 3)],
@@ -238,6 +241,7 @@ def test__find_duplicates_dict_outfile_true(hasher, mocker):
         test=encoding_map,
         queries=encoding_map,
         distance_function=Hashing.hamming_distance,
+        verbose=verbose,
         threshold=threshold,
         search_method='bktree',
     )

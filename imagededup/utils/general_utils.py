@@ -45,9 +45,9 @@ def save_json(results: Dict, filename: str) -> None:
     logger.info('End: Saving duplicates as json!')
 
 
-def parallelise(function: Callable, data: List) -> List:
+def parallelise(function: Callable, data: List, verbose: bool) -> List:
     pool = Pool(processes=cpu_count())
-    results = list(tqdm.tqdm(pool.imap(function, data), total=len(data)))
+    results = list(tqdm.tqdm(pool.imap(function, data), total=len(data), disable=not verbose))
     pool.close()
     pool.join()
     return results

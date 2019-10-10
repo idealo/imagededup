@@ -16,7 +16,7 @@ def cosine_similarity_chunk(t: Tuple) -> np.ndarray:
 
 
 def get_cosine_similarity(
-    X: np.ndarray, chunk_size: int = 1000, threshold: int = 10000
+    X: np.ndarray, verbose: bool = True, chunk_size: int = 1000, threshold: int = 10000,
 ) -> np.ndarray:
     n_rows = X.shape[0]
 
@@ -30,6 +30,7 @@ def get_cosine_similarity(
         cos_sim = parallelise(
             cosine_similarity_chunk,
             [(X, idxs) for i, idxs in enumerate(zip(start_idxs, end_idxs))],
+            verbose
         )
 
         return np.vstack(cos_sim)
@@ -41,6 +42,7 @@ class HashEval:
         test: Dict,
         queries: Dict,
         distance_function: Callable,
+        verbose: bool = True,
         threshold: int = 5,
         search_method: str = 'bktree',
     ) -> None:
@@ -51,6 +53,7 @@ class HashEval:
         self.test = test  # database
         self.queries = queries
         self.distance_invoker = distance_function
+        self.verbose = verbose
         self.threshold = threshold
         self.query_results_map = None
 
@@ -91,7 +94,7 @@ class HashEval:
                 [self.threshold] * len(self.queries),
             )
         )
-        result_map_list = parallelise(self._searcher, args)
+        result_map_list = parallelise(self._searcher, args, self.verbose)
         result_map = dict(zip(list(self.queries.keys()), result_map_list))
 
         self.query_results_map = {
