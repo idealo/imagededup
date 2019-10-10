@@ -116,6 +116,13 @@ plot_duplicates(image_dir='path/to/image/directory',
                 duplicate_map=duplicates,
                 filename='ukbench00120.jpg')
 ```
+
+Alternatively, you can also use our library in the CLI:
+```bash
+imagededup find-duplicates --image_dir path/to/image/directory --method PHash
+``` 
+For more information on the available options use the `--help` flag. 
+
 For more examples, refer [this](https://github.com/idealo/imagededup/tree/master/examples) part of the
 repository.
 

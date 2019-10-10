@@ -55,4 +55,5 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     packages=find_packages(exclude=('tests',)),
+    entry_points={'console_scripts': ['imagededup=imagededup.client.client:cli']},
 )
