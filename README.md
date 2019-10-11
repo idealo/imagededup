@@ -121,7 +121,7 @@ Alternatively, you can also use our library in the CLI:
 ```bash
 imagededup find-duplicates --image_dir path/to/image/directory --method PHash
 ``` 
-For more information on the available options use the `--help` flag. 
+Use the `--help` flag to get more information on the available options.
 
 For more examples, refer [this](https://github.com/idealo/imagededup/tree/master/examples) part of the
 repository.
