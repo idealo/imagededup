@@ -36,7 +36,8 @@ setup(
         'tensorflow~=2.0.0',
         'tqdm',
         'scikit-learn',
-        'matplotlib'
+        'matplotlib',
+        'Click'
     ],
     extras_require={
         'tests': ['pytest', 'pytest-cov', 'pytest-mock', 'codecov'],
