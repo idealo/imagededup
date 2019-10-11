@@ -1,3 +1,4 @@
+import importlib
 import click
 
 from typing import Optional
@@ -30,8 +31,7 @@ def find_duplicates(image_dir: PosixPath,
                     min_similarity_threshold: float,
                     max_distance_threshold: int,
                     scores: bool) -> None:
-    import imagededup.methods
-    selected_method = eval('imagededup.methods.{}()'.format(method))
+    selected_method = getattr(importlib.import_module('imagededup.methods'), method)()
     encodings = selected_method.encode_images(image_dir)
 
     if method == 'CNN':
