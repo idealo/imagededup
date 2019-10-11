@@ -41,18 +41,102 @@ def test_file_is_created():
     os.remove(FILENAME)
 
 
-def test_max_distance_threshold_int():
+def test_hash_max_distance_threshold_int():
     runner = CliRunner()
     result = runner.invoke(find_duplicates,
                            ['--image_dir', PATH_IMAGE_DIR, '--method', 'PHash', '--max_distance_threshold', '20'])
     assert result.exit_code == 0
 
 
-def test_max_distance_threshold_no_int():
+def test_hash_max_distance_threshold_no_int():
     runner = CliRunner()
     result = runner.invoke(find_duplicates,
                            ['--image_dir', PATH_IMAGE_DIR, '--method', 'PHash', '--max_distance_threshold', '0.5'])
     assert result.exit_code == 2
+
+
+def test_hash_max_distance_threshold_in_range_left_interval():
+    runner = CliRunner()
+    result = runner.invoke(find_duplicates,
+                           ['--image_dir', PATH_IMAGE_DIR, '--method', 'PHash', '--max_distance_threshold', '0'])
+    assert result.exit_code == 0
+
+
+def test_hash_max_distance_threshold_in_range_right_interval():
+    runner = CliRunner()
+    result = runner.invoke(find_duplicates,
+                           ['--image_dir', PATH_IMAGE_DIR, '--method', 'PHash', '--max_distance_threshold', '64'])
+    assert result.exit_code == 0
+
+
+def test_hash_max_distance_threshold_out_of_range_negative():
+    runner = CliRunner()
+    result = runner.invoke(find_duplicates,
+                           ['--image_dir', PATH_IMAGE_DIR, '--method', 'PHash', '--max_distance_threshold', '-30'])
+    assert result.exit_code == 2
+
+
+def test_hash_max_distance_threshold_out_of_range_positive():
+    runner = CliRunner()
+    result = runner.invoke(find_duplicates,
+                           ['--image_dir', PATH_IMAGE_DIR, '--method', 'PHash', '--max_distance_threshold', '900'])
+    assert result.exit_code == 2
+
+
+def test_hash_min_similarity_threshold_has_no_effect():
+    runner = CliRunner()
+    result = runner.invoke(find_duplicates,
+                           ['--image_dir', PATH_IMAGE_DIR, '--method', 'PHash', '--min_similarity_threshold', '0.5'])
+    assert result.exit_code == 0
+
+
+def test_cnn_min_similarity_threshold_float():
+    runner = CliRunner()
+    result = runner.invoke(find_duplicates,
+                           ['--image_dir', PATH_IMAGE_DIR, '--method', 'CNN', '--min_similarity_threshold', '0.5'])
+    assert result.exit_code == 0
+
+
+def test_cnn_min_similarity_threshold_no_float():
+    runner = CliRunner()
+    result = runner.invoke(find_duplicates,
+                           ['--image_dir', PATH_IMAGE_DIR, '--method', 'CNN', '--min_similarity_threshold', '10'])
+    assert result.exit_code == 2
+
+
+def test_cnn_min_similarity_threshold_in_range_left_interval():
+    runner = CliRunner()
+    result = runner.invoke(find_duplicates,
+                           ['--image_dir', PATH_IMAGE_DIR, '--method', 'CNN', '--min_similarity_threshold', '-1.0'])
+    assert result.exit_code == 0
+
+
+def test_cnn_min_similarity_threshold_in_range_right_interval():
+    runner = CliRunner()
+    result = runner.invoke(find_duplicates,
+                           ['--image_dir', PATH_IMAGE_DIR, '--method', 'CNN', '--min_similarity_threshold', '1.0'])
+    assert result.exit_code == 0
+
+
+def test_cnn_min_similarity_threshold_out_of_range_negative():
+    runner = CliRunner()
+    result = runner.invoke(find_duplicates,
+                           ['--image_dir', PATH_IMAGE_DIR, '--method', 'CNN', '--min_similarity_threshold', '-1.5'])
+    assert result.exit_code == 2
+
+
+def test_cnn_min_similarity_threshold_out_of_range_positive():
+    runner = CliRunner()
+    result = runner.invoke(find_duplicates,
+                           ['--image_dir', PATH_IMAGE_DIR, '--method', 'CNN', '--min_similarity_threshold', '1.5'])
+    assert result.exit_code == 2
+
+
+def test_cnn_max_distance_threshold_has_no_effect():
+    runner = CliRunner()
+    result = runner.invoke(find_duplicates,
+                           ['--image_dir', PATH_IMAGE_DIR, '--method', 'PHash', '--max_distance_threshold', '10'])
+    assert result.exit_code == 0
 
 
 def test_scores_boolean():
