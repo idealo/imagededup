@@ -1,6 +1,7 @@
+import os
 import json
 import tqdm
-from multiprocessing import cpu_count, Pool
+from concurrent.futures import ProcessPoolExecutor
 from typing import Callable, Dict, List
 
 
@@ -43,8 +44,18 @@ def save_json(results: Dict, filename: str) -> None:
 
 
 def parallelise(function: Callable, data: List) -> List:
-    pool = Pool(processes=cpu_count())
-    results = list(tqdm.tqdm(pool.imap(function, data), total=len(data)))
-    pool.close()
-    pool.join()
+    """
+    Get a function to execute and a list, the function is
+    executed in parallel (the number of workers is depends on the number
+    of the CPU on the local machine).
+
+    Args:
+        function: A function to be called in parallel.
+        data: A list for the function to oparate.
+
+    Returns:
+        A list, the content is dependent on the passed varible called 'data'.
+    """
+    with ProcessPoolExecutor(max_workers=os.cpu_count()) as executor:
+        results = list(tqdm.tqdm(executor.map(function, data), total=len(data)))
     return results
