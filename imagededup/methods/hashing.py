@@ -183,6 +183,7 @@ class Hashing:
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
+        search_method: str = 'bktree',
     ) -> Dict:
         """
         Take in dictionary {filename: encoded image}, detects duplicates below the given hamming distance threshold
@@ -208,7 +209,7 @@ class Hashing:
             queries=encoding_map,
             distance_function=self.hamming_distance,
             threshold=max_distance_threshold,
-            search_method='bktree',
+            search_method=search_method,
         )
 
         print('End: Evaluating hamming distances for getting duplicates')
@@ -224,6 +225,7 @@ class Hashing:
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
+        search_method: str = 'bktree',
     ) -> Dict:
         """
         Take in path of the directory in which duplicates are to be detected below the given hamming distance
@@ -248,6 +250,7 @@ class Hashing:
             max_distance_threshold=max_distance_threshold,
             scores=scores,
             outfile=outfile,
+            search_method='bktree',
         )
         return results
 
@@ -258,6 +261,7 @@ class Hashing:
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
+        search_method: str = 'bktree',
     ) -> Dict:
         """
         Find duplicates for each file. Takes in path of the directory or encoding dictionary in which duplicates are to
@@ -304,6 +308,7 @@ class Hashing:
                 max_distance_threshold=max_distance_threshold,
                 scores=scores,
                 outfile=outfile,
+                search_method=search_method,
             )
         elif encoding_map:
             result = self._find_duplicates_dict(
@@ -311,6 +316,7 @@ class Hashing:
                 max_distance_threshold=max_distance_threshold,
                 scores=scores,
                 outfile=outfile,
+                search_method=search_method,
             )
         else:
             raise ValueError('Provide either an image directory or encodings!')

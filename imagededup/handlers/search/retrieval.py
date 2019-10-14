@@ -5,6 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from imagededup.handlers.search.bktree import BKTree
 from imagededup.handlers.search.brute_force import BruteForce
+from imagededup.handlers.search.brute_force_cython import BruteForceCython
 from imagededup.utils.general_utils import parallelise
 
 
@@ -53,6 +54,8 @@ class HashEval:
 
         if search_method == 'bktree':
             self._fetch_nearest_neighbors_bktree()  # bktree is the default search method
+        elif search_method == 'brute_force_cython':
+            self._fetch_nearest_neighbors_brute_force_cython()
         else:
             self._fetch_nearest_neighbors_brute_force()
 
@@ -104,6 +107,15 @@ class HashEval:
         bruteforce = BruteForce(self.test, self.distance_invoker)
         self._get_query_results(bruteforce)
         print('End: Retrieving duplicates using Brute force algorithm')
+
+    def _fetch_nearest_neighbors_brute_force_cython(self) -> None:
+        """
+        Wrapper function to retrieve results for all queries in dataset using brute-force search.
+        """
+        print('Start: Retrieving duplicates using Cython Brute force algorithm')
+        bruteforce = BruteForceCython(self.test, self.distance_invoker)
+        self._get_query_results(bruteforce)
+        print('End: Retrieving duplicates using Cython Brute force algorithm')
 
     def _fetch_nearest_neighbors_bktree(self) -> None:
         """
