@@ -37,8 +37,13 @@ class Hashing:
     directory that contains the images that need to be deduplicated. 'find_duplciates' and 'find_duplicates_to_remove'
     methods are provided to accomplish these tasks.
     """
-    def __init__(self) -> None:
+    def __init__(self, verbose: bool = True) -> None:
+        """
+        Args:
+            verbose: Display progress bar if True else disable it. Default value is True.
+        """
         self.target_size = (8, 8)  # resizing to dims
+        self.verbose = verbose
 
     @staticmethod
     def hamming_distance(hash1: str, hash2: str) -> float:
@@ -141,7 +146,7 @@ class Hashing:
 
         logger.info(f'Start: Calculating hashes...')
 
-        hashes = parallelise(self.encode_image, files)
+        hashes = parallelise(self.encode_image, files, self.verbose)
         hash_initial_dict = dict(zip([f.name for f in files], hashes))
         hash_dict = {
             k: v for k, v in hash_initial_dict.items() if v
@@ -209,6 +214,7 @@ class Hashing:
             test=encoding_map,
             queries=encoding_map,
             distance_function=self.hamming_distance,
+            verbose=self.verbose,
             threshold=max_distance_threshold,
             search_method='bktree',
         )
@@ -403,8 +409,12 @@ class PHash(Hashing):
     ```
     """
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, verbose: bool = True) -> None:
+        """
+        Args:
+            verbose: Display progress bar if True else disable it. Default value is True.
+        """
+        super().__init__(verbose)
         self.__coefficient_extract = (8, 8)
         self.target_size = (32, 32)
 
@@ -469,8 +479,8 @@ class AHash(Hashing):
     ```
     """
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, verbose: bool = True) -> None:
+        super().__init__(verbose)
         self.target_size = (8, 8)
 
     def _hash_algo(self, image_array: np.ndarray):
@@ -523,8 +533,12 @@ class DHash(Hashing):
     ```
     """
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, verbose: bool = True) -> None:
+        """
+        Args:
+            verbose: Display progress bar if True else disable it. Default value is True.
+        """
+        super().__init__(verbose)
         self.target_size = (9, 8)
 
     def _hash_algo(self, image_array):
@@ -577,8 +591,12 @@ class WHash(Hashing):
     ```
     """
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, verbose: bool = True) -> None:
+        """
+        Args:
+            verbose: Display progress bar if True else disable it. Default value is True.
+        """
+        super().__init__(verbose)
         self.target_size = (256, 256)
         self.__wavelet_func = 'haar'
 
