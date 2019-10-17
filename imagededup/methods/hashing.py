@@ -480,6 +480,10 @@ class AHash(Hashing):
     """
 
     def __init__(self, verbose: bool = True) -> None:
+        """
+        Args:
+            verbose: Display progress bar if True else disable it. Default value is True.
+        """
         super().__init__(verbose)
         self.target_size = (8, 8)
 

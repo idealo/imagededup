@@ -192,13 +192,38 @@ def test_hash_func(hasher, mocker):
 
 # _find_duplicates_dict
 
-
-def test__find_duplicates_dict_outfile_none(hasher, mocker):
+def test__find_duplicates_dict_outfile_none(mocker):
     encoding_map = {'1.jpg': '123456'}
     threshold = 10
     scores = True
     outfile = None
-    verbose = True
+    verbose = False
+    myhasher = PHash(verbose=verbose)
+    hasheval_mocker = mocker.patch('imagededup.methods.hashing.HashEval')
+    save_json_mocker = mocker.patch('imagededup.methods.hashing.save_json')
+    myhasher._find_duplicates_dict(
+        encoding_map=encoding_map,
+        max_distance_threshold=threshold,
+        scores=scores,
+        outfile=outfile,
+    )
+    hasheval_mocker.assert_called_with(
+        test=encoding_map,
+        queries=encoding_map,
+        distance_function=Hashing.hamming_distance,
+        verbose=verbose,
+        threshold=threshold,
+        search_method='bktree',
+    )
+    hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
+    save_json_mocker.assert_not_called()
+
+
+def test__find_duplicates_dict_outfile_none_verbose(hasher, mocker):
+    encoding_map = {'1.jpg': '123456'}
+    threshold = 10
+    scores = True
+    outfile = None
     hasheval_mocker = mocker.patch('imagededup.methods.hashing.HashEval')
     save_json_mocker = mocker.patch('imagededup.methods.hashing.save_json')
     hasher._find_duplicates_dict(
@@ -211,7 +236,7 @@ def test__find_duplicates_dict_outfile_none(hasher, mocker):
         test=encoding_map,
         queries=encoding_map,
         distance_function=Hashing.hamming_distance,
-        verbose=verbose,
+        verbose=True,
         threshold=threshold,
         search_method='bktree',
     )
@@ -620,3 +645,25 @@ def test_find_duplicates_to_remove_outfile():
     # clean up
     if os.path.exists(outfile_name):
         os.remove(outfile_name)
+
+
+# with verbose
+
+def test_find_duplicates_verbose_true(capsys):
+    phasher = PHash(verbose=True)
+    phasher.find_duplicates(image_dir=PATH_IMAGE_DIR, max_distance_threshold=10,
+        scores=False,
+        outfile=False)
+    out, err = capsys.readouterr()
+    assert '%' in err
+    assert '%' not in out
+
+
+def test_find_duplicates_verbose_false(capsys):
+    phasher = PHash(verbose=False)
+    phasher.find_duplicates(image_dir=PATH_IMAGE_DIR, max_distance_threshold=10,
+        scores=False,
+        outfile=False)
+    out, err = capsys.readouterr()
+    assert '%' not in out
+    assert '%' not in err
