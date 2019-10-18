@@ -192,6 +192,7 @@ def test_hash_func(hasher, mocker):
 
 # _find_duplicates_dict
 
+
 def test__find_duplicates_dict_outfile_none(mocker):
     encoding_map = {'1.jpg': '123456'}
     threshold = 10
@@ -614,7 +615,9 @@ def test_find_duplicates_to_remove_dir():
         image_dir=PATH_IMAGE_DIR, max_distance_threshold=10
     )
     assert isinstance(removal_list, list)
-    assert (removal_list == ['ukbench00120.jpg'] or removal_list == ['ukbench00120_resize.jpg'])
+    assert removal_list == ['ukbench00120.jpg'] or removal_list == [
+        'ukbench00120_resize.jpg'
+    ]
 
 
 def test_find_duplicates_to_remove_encoding():
@@ -630,7 +633,9 @@ def test_find_duplicates_to_remove_encoding():
         encoding_map=encoding, max_distance_threshold=10
     )
     assert isinstance(removal_list, list)
-    assert (removal_list == ['ukbench00120.jpg'] or removal_list == ['ukbench00120_resize.jpg'])
+    assert removal_list == ['ukbench00120.jpg'] or removal_list == [
+        'ukbench00120_resize.jpg'
+    ]
 
 
 def test_find_duplicates_to_remove_outfile():
@@ -647,23 +652,42 @@ def test_find_duplicates_to_remove_outfile():
         os.remove(outfile_name)
 
 
-# with verbose
+# test verbose
+def test_encode_images_verbose_true(capsys):
+    phasher = PHash(verbose=True)
+    phasher.encode_images(image_dir=PATH_IMAGE_DIR)
+    out, err = capsys.readouterr()
+
+    assert '%' in err
+    assert '' == out
+
+
+def test_encode_images_verbose_false(capsys):
+    phasher = PHash(verbose=False)
+    phasher.encode_images(image_dir=PATH_IMAGE_DIR)
+    out, err = capsys.readouterr()
+
+    assert '' == err
+    assert '' == out
+
 
 def test_find_duplicates_verbose_true(capsys):
     phasher = PHash(verbose=True)
-    phasher.find_duplicates(image_dir=PATH_IMAGE_DIR, max_distance_threshold=10,
-        scores=False,
-        outfile=False)
+    phasher.find_duplicates(
+        image_dir=PATH_IMAGE_DIR, max_distance_threshold=10, scores=False, outfile=False
+    )
     out, err = capsys.readouterr()
+
     assert '%' in err
-    assert '%' not in out
+    assert '' == out
 
 
 def test_find_duplicates_verbose_false(capsys):
     phasher = PHash(verbose=False)
-    phasher.find_duplicates(image_dir=PATH_IMAGE_DIR, max_distance_threshold=10,
-        scores=False,
-        outfile=False)
+    phasher.find_duplicates(
+        image_dir=PATH_IMAGE_DIR, max_distance_threshold=10, scores=False, outfile=False
+    )
     out, err = capsys.readouterr()
-    assert '%' not in out
-    assert '%' not in err
+
+    assert '' == out
+    assert '' == err
