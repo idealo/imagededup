@@ -37,6 +37,7 @@ class Hashing:
     directory that contains the images that need to be deduplicated. 'find_duplciates' and 'find_duplicates_to_remove'
     methods are provided to accomplish these tasks.
     """
+
     def __init__(self, verbose: bool = True) -> None:
         """
         Args:
@@ -190,7 +191,7 @@ class Hashing:
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
-        search_method: str = 'bktree',
+        search_method: str = 'brute_force_cython',
     ) -> Dict:
         """
         Take in dictionary {filename: encoded image}, detects duplicates below the given hamming distance threshold
@@ -233,7 +234,7 @@ class Hashing:
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
-        search_method: str = 'bktree',
+        search_method: str = 'brute_force_cython',
     ) -> Dict:
         """
         Take in path of the directory in which duplicates are to be detected below the given hamming distance
@@ -258,7 +259,7 @@ class Hashing:
             max_distance_threshold=max_distance_threshold,
             scores=scores,
             outfile=outfile,
-            search_method='bktree',
+            search_method='brute_force_cython',
         )
         return results
 
@@ -269,7 +270,7 @@ class Hashing:
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
-        search_method: str = 'bktree',
+        search_method: str = 'brute_force_cython',
     ) -> Dict:
         """
         Find duplicates for each file. Takes in path of the directory or encoding dictionary in which duplicates are to

@@ -17,7 +17,7 @@ def cosine_similarity_chunk(t: Tuple) -> np.ndarray:
 
 
 def get_cosine_similarity(
-    X: np.ndarray, verbose: bool = True, chunk_size: int = 1000, threshold: int = 10000,
+    X: np.ndarray, verbose: bool = True, chunk_size: int = 1000, threshold: int = 10000
 ) -> np.ndarray:
     n_rows = X.shape[0]
 
@@ -25,13 +25,15 @@ def get_cosine_similarity(
         return cosine_similarity(X)
 
     else:
-        logger.info('Large feature matrix thus calculating cosine similarities in chunks...')
+        logger.info(
+            'Large feature matrix thus calculating cosine similarities in chunks...'
+        )
         start_idxs = list(range(0, n_rows, chunk_size))
         end_idxs = start_idxs[1:] + [n_rows]
         cos_sim = parallelise(
             cosine_similarity_chunk,
             [(X, idxs) for i, idxs in enumerate(zip(start_idxs, end_idxs))],
-            verbose
+            verbose,
         )
 
         return np.vstack(cos_sim)
@@ -45,7 +47,7 @@ class HashEval:
         distance_function: Callable,
         verbose: bool = True,
         threshold: int = 5,
-        search_method: str = 'bktree',
+        search_method: str = 'brute_force_cython',
     ) -> None:
         """
         Initialize a HashEval object which offers an interface to control hashing and search methods for desired
@@ -118,10 +120,10 @@ class HashEval:
         """
         Wrapper function to retrieve results for all queries in dataset using brute-force search.
         """
-        print('Start: Retrieving duplicates using Cython Brute force algorithm')
+        logger.info('Start: Retrieving duplicates using Cython Brute force algorithm')
         bruteforce = BruteForceCython(self.test, self.distance_invoker)
         self._get_query_results(bruteforce)
-        print('End: Retrieving duplicates using Cython Brute force algorithm')
+        logger.info('End: Retrieving duplicates using Cython Brute force algorithm')
 
     def _fetch_nearest_neighbors_bktree(self) -> None:
         """
