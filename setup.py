@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Extension
 
 long_description = '''
 imagededup is a python package that provides functionality to find duplicates in a collection of images using a variety
@@ -36,7 +36,8 @@ setup(
         'tensorflow~=2.0.0',
         'tqdm',
         'scikit-learn',
-        'matplotlib'
+        'matplotlib',
+        'cython',
     ],
     extras_require={
         'tests': ['pytest', 'pytest-cov', 'pytest-mock', 'codecov'],
@@ -55,4 +56,13 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     packages=find_packages(exclude=('tests',)),
+    ext_modules=[
+        Extension(
+            "brute_force_cython_ext",
+            ["imagededup/handlers/search/brute_force_cython_ext.pyx"],
+            language="c++",
+            extra_compile_args=['-O3', '-march=native', '-mtune=native'],
+            extra_link_args=['-O3', '-march=native', '-mtune=native'],
+        )
+    ],
 )
