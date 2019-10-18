@@ -1,4 +1,3 @@
-import os
 from pathlib import PosixPath
 from typing import List, Union, Tuple
 
@@ -13,7 +12,7 @@ Todo: Parallelize files validation/ hash generation
 """
 
 IMG_FORMATS = ['JPEG', 'PNG', 'BMP']
-logger = return_logger(__name__, os.getcwd())
+logger = return_logger(__name__)
 
 
 def preprocess_image(

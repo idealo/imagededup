@@ -9,6 +9,9 @@ from sklearn.metrics import (
     recall_score,
     precision_recall_fscore_support,
 )
+from imagededup.utils.logger import return_logger
+
+logger = return_logger(__name__)
 
 
 def _get_unique_ordered_tuples(unique_tuples: List[Tuple]) -> List[Tuple]:
@@ -91,7 +94,7 @@ def classification_metrics(ground_truth: Dict, retrieved: Dict) -> np.ndarray:
     y_true, y_pred = _prepare_labels(
         all_pairs, ground_truth_duplicate_pairs, retrieved_duplicate_pairs
     )
-    print(classification_report(y_true, y_pred))
+    logger.info(classification_report(y_true, y_pred))
     prec_rec_fscore_support = dict(
         zip(
             ('precision', 'recall', 'f1_score', 'support'),

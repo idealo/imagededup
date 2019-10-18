@@ -1,4 +1,3 @@
-import os
 import itertools
 from typing import Dict
 
@@ -9,7 +8,7 @@ from imagededup.handlers.metrics.information_retrieval import (
 )
 from imagededup.utils.logger import return_logger
 
-logger = return_logger(__name__, os.getcwd())
+logger = return_logger(__name__)
 
 
 def _transpose_checker(mapping):
