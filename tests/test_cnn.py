@@ -77,6 +77,12 @@ def test__get_cnn_features_batch(cnn):
     result = cnn._get_cnn_features_batch(TEST_IMAGE_FORMATS_DIR)
 
     expected_predicted_files = [
+        'Iggy.1024.ppm',
+        'baboon.pgm',
+        'copyleft.tiff',
+        'giphy.gif',
+        'marbles.pbm',
+        'mpo_image.MPO',
         'ukbench09380.bmp',
         'ukbench09380.jpeg',
         'ukbench09380.png',
@@ -134,6 +140,12 @@ def test_encode_images(cnn):
     result = cnn.encode_images(TEST_IMAGE_FORMATS_DIR)
 
     expected_predicted_files = [
+        'Iggy.1024.ppm',
+        'baboon.pgm',
+        'copyleft.tiff',
+        'giphy.gif',
+        'marbles.pbm',
+        'mpo_image.MPO',
         'ukbench09380.bmp',
         'ukbench09380.jpeg',
         'ukbench09380.png',
@@ -149,6 +161,12 @@ def test_encode_images(cnn):
     result = cnn.encode_images(str(TEST_IMAGE_FORMATS_DIR))
 
     expected_predicted_files = [
+        'Iggy.1024.ppm',
+        'baboon.pgm',
+        'copyleft.tiff',
+        'giphy.gif',
+        'marbles.pbm',
+        'mpo_image.MPO',
         'ukbench09380.bmp',
         'ukbench09380.jpeg',
         'ukbench09380.png',

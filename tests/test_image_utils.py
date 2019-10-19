@@ -57,10 +57,6 @@ def test_load_image_returns_none_wrong_input():
     assert load_image(inp) is None
 
 
-def test_load_image_wrong_image_format():
-    assert load_image(p.parent / 'data/formats_images/Iggy.1024.ppm') is None
-
-
 @pytest.fixture
 def preprocess_mocker(mocker):
     return mocker.patch('imagededup.utils.image_utils.preprocess_image')
