@@ -39,6 +39,8 @@ class Hashing:
     """
     def __init__(self, verbose: bool = True) -> None:
         """
+        Initialize hashing class.
+
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
@@ -411,6 +413,8 @@ class PHash(Hashing):
 
     def __init__(self, verbose: bool = True) -> None:
         """
+        Initialize perceptual hashing class.
+
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
@@ -481,6 +485,8 @@ class AHash(Hashing):
 
     def __init__(self, verbose: bool = True) -> None:
         """
+        Initialize average hashing class.
+
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
@@ -539,6 +545,8 @@ class DHash(Hashing):
 
     def __init__(self, verbose: bool = True) -> None:
         """
+        Initialize difference hashing class.
+
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
@@ -597,6 +605,8 @@ class WHash(Hashing):
 
     def __init__(self, verbose: bool = True) -> None:
         """
+        Initialize wavelet hashing class.
+
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
