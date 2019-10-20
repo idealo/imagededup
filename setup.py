@@ -1,3 +1,4 @@
+import sys
 from setuptools import setup, find_packages, Extension
 
 long_description = '''
@@ -20,6 +21,54 @@ Read the documentation at: https://idealo.github.io/imagededup/
 imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0 license.
 '''
 
+# Cython compilation is not enabled by default
+# http://docs.cython.org/en/latest/src/userguide/source_files_and_compilation.html#distributing-cython-modules
+try:
+    from Cython.Build import cythonize
+except ImportError:
+    use_cython = False
+else:
+    use_cython = True
+
+# Check whether we're on OSX or not
+on_mac = True if sys.platform == 'darwin' else False
+
+ext_modules = []
+if use_cython and not on_mac:
+    ext_modules += cythonize([
+        Extension(
+            'brute_force_cython_ext',
+            ['imagededup/handlers/search/brute_force_cython_ext.pyx'],
+            language='c++',
+            extra_compile_args=['-O3', '-march=native', '-mtune=native'],
+            extra_link_args=['-O3', '-march=native', '-mtune=native'],
+        )
+    ])
+elif use_cython and on_mac:
+    # On Mac, use libc++ because Apple deprecated use of libstdc
+    ext_modules += cythonize([
+        Extension(
+            'brute_force_cython_ext',
+            ['imagededup/handlers/search/brute_force_cython_ext.pyx'],
+            language='c++',
+            extra_compile_args=['-O3', '-march=native', '-mtune=native', '-stdlib=libc++'],
+            extra_link_args=['-O3', '-march=native', '-mtune=native', '-lc++', '-nodefaultlibs'],
+        )
+    ])
+else:
+    if not on_mac:
+        ext_modules += [Extension('brute_force_cython_ext',
+                                  ['imagededup/handlers/search/brute_force_cython_ext.cpp'],
+                                  )
+                        ]
+    else:
+        ext_modules += [Extension('brute_force_cython_ext',
+                                  ['imagededup/handlers/search/brute_force_cython_ext.cpp'],
+                                  extra_compile_args=['-stdlib=libc++'],
+                                  extra_link_args=['-lc++', '-nodefaultlibs'],
+                                  )
+                        ]
+
 setup(
     name='imagededup',
     version='0.1.0',
@@ -29,6 +78,7 @@ setup(
     long_description=long_description,
     license='Apache 2.0',
     install_requires=[
+        'setuptools',
         'numpy<1.17',
         'Pillow<7.0.0',
         'PyWavelets~=1.0.3',
@@ -37,12 +87,14 @@ setup(
         'tqdm',
         'scikit-learn',
         'matplotlib',
-        'cython',
+    ],
+    setup_requires=[
+        'cython>=0.29',
     ],
     extras_require={
         'tests': ['pytest', 'pytest-cov', 'pytest-mock', 'codecov'],
         'docs': ['mkdocs', 'mkdocs-material'],
-        'dev': ['bumpversion'],
+        'dev': ['bumpversion', 'twine', 'cython>=0.29'],
     },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -56,13 +108,5 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     packages=find_packages(exclude=('tests',)),
-    ext_modules=[
-        Extension(
-            "brute_force_cython_ext",
-            ["imagededup/handlers/search/brute_force_cython_ext.pyx"],
-            language="c++",
-            extra_compile_args=['-O3', '-march=native', '-mtune=native'],
-            extra_link_args=['-O3', '-march=native', '-mtune=native'],
-        )
-    ],
+    ext_modules=ext_modules
 )

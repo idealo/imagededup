@@ -2,7 +2,7 @@ language: python
 python:
   - 3.6
 install:
-  - pip install -e ".[tests, docs]"
+  - pip install -e ".[tests, docs, dev]"
 script:
   - pytest -vs --cov=imagededup --cov-report xml --show-capture=no tests
   - cd mkdocs && sh build_docs.sh
