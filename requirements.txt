@@ -1,0 +1,17 @@
+numpy<1.17
+Pillow<7.0.0
+PyWavelets~=1.0.3
+scipy
+tensorflow~=2.0.0
+tqdm
+scikit-learn
+matplotlib
+cython>=0.29
+pytest
+pytest-cov
+pytest-mock
+codecov
+mkdocs
+mkdocs-material
+bumpversion
+twine

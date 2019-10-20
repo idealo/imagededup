@@ -33,39 +33,45 @@ else:
 # Check whether we're on OSX or not
 on_mac = True if sys.platform == 'darwin' else False
 
+MOD_NAME = 'brute_force_cython_ext'
+MOD_PATH = 'imagededup/handlers/search/brute_force_cython_ext'
+COMPILE_LINK_ARGS = ['-O3', '-march=native', '-mtune=native']
+# On Mac, use libc++ because Apple deprecated use of libstdc
+COMPILE_ARGS_OSX = ['-stdlib=libc++']
+LINK_ARGS_OSX = ['-lc++', '-nodefaultlibs']
+
 ext_modules = []
 if use_cython and not on_mac:
     ext_modules += cythonize([
         Extension(
-            'brute_force_cython_ext',
-            ['imagededup/handlers/search/brute_force_cython_ext.pyx'],
+            MOD_NAME,
+            [MOD_PATH + '.pyx'],
             language='c++',
-            extra_compile_args=['-O3', '-march=native', '-mtune=native'],
-            extra_link_args=['-O3', '-march=native', '-mtune=native'],
+            extra_compile_args=COMPILE_LINK_ARGS,
+            extra_link_args=COMPILE_LINK_ARGS,
         )
     ])
 elif use_cython and on_mac:
-    # On Mac, use libc++ because Apple deprecated use of libstdc
     ext_modules += cythonize([
         Extension(
-            'brute_force_cython_ext',
-            ['imagededup/handlers/search/brute_force_cython_ext.pyx'],
+            MOD_NAME,
+            [MOD_PATH + '.pyx'],
             language='c++',
-            extra_compile_args=['-O3', '-march=native', '-mtune=native', '-stdlib=libc++'],
-            extra_link_args=['-O3', '-march=native', '-mtune=native', '-lc++', '-nodefaultlibs'],
+            extra_compile_args=COMPILE_LINK_ARGS + COMPILE_ARGS_OSX,
+            extra_link_args=COMPILE_LINK_ARGS + LINK_ARGS_OSX,
         )
     ])
 else:
     if not on_mac:
-        ext_modules += [Extension('brute_force_cython_ext',
-                                  ['imagededup/handlers/search/brute_force_cython_ext.cpp'],
+        ext_modules += [Extension(MOD_NAME,
+                                  [MOD_PATH + '.cpp'],
                                   )
                         ]
     else:
-        ext_modules += [Extension('brute_force_cython_ext',
-                                  ['imagededup/handlers/search/brute_force_cython_ext.cpp'],
-                                  extra_compile_args=['-stdlib=libc++'],
-                                  extra_link_args=['-lc++', '-nodefaultlibs'],
+        ext_modules += [Extension(MOD_NAME,
+                                  [MOD_PATH + '.cpp'],
+                                  extra_compile_args=COMPILE_ARGS_OSX,
+                                  extra_link_args=LINK_ARGS_OSX,
                                   )
                         ]
 
@@ -102,6 +108,7 @@ setup(
         'Intended Audience :: Education',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: Apache Software License',
+        'Programming Language :: Cython',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Topic :: Software Development :: Libraries',

@@ -2,7 +2,9 @@ language: python
 python:
   - 3.6
 install:
-  - pip install -e ".[tests, docs, dev]"
+  - pip install -r requirements.txt
+  - python setup.py build_ext --inplace
+  - pip install -e .
 script:
   - pytest -vs --cov=imagededup --cov-report xml --show-capture=no tests
   - cd mkdocs && sh build_docs.sh
