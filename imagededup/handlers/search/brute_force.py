@@ -8,7 +8,7 @@ class BruteForce:
 
     def __init__(self, hash_dict: Dict, distance_function: Callable) -> None:
         """
-        Initialize a dictionary for mapping file names and corresponding hashes anda  distance function to be used for
+        Initialize a dictionary for mapping file names and corresponding hashes and a distance function to be used for
         getting distance between two hash strings.
 
         Args:

@@ -203,6 +203,8 @@ class Hashing:
             max_distance_threshold: Hamming distance between two images below which retrieved duplicates are valid.
             scores: Boolean indicating whether hamming distance scores are to be returned along with retrieved
             duplicates.
+            outfile: Optional, name of the file to save the results. Default is None.
+            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -246,6 +248,7 @@ class Hashing:
             max_distance_threshold: Hamming distance between two images below which retrieved duplicates are valid.
             scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
             outfile: Name of the file the results should be written to.
+            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -259,7 +262,7 @@ class Hashing:
             max_distance_threshold=max_distance_threshold,
             scores=scores,
             outfile=outfile,
-            search_method='brute_force_cython',
+            search_method=search_method,
         )
         return results
 
@@ -288,6 +291,7 @@ class Hashing:
                                     valid. (must be an int between 0 and 64). Default is 10.
             scores: Optional, boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
             outfile: Optional, name of the file to save the results. Default is None.
+            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython.
 
         Returns:
             duplicates dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',

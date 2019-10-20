@@ -61,11 +61,11 @@ class HashEval:
         self.query_results_map = None
 
         if search_method == 'bktree':
-            self._fetch_nearest_neighbors_bktree()  # bktree is the default search method
-        elif search_method == 'brute_force_cython':
-            self._fetch_nearest_neighbors_brute_force_cython()
-        else:
+            self._fetch_nearest_neighbors_bktree()
+        elif search_method == 'brute_force':
             self._fetch_nearest_neighbors_brute_force()
+        else:
+            self._fetch_nearest_neighbors_brute_force_cython()
 
     def _searcher(self, data_tuple) -> None:
         """
@@ -112,8 +112,8 @@ class HashEval:
         Wrapper function to retrieve results for all queries in dataset using brute-force search.
         """
         logger.info('Start: Retrieving duplicates using Brute force algorithm')
-        bruteforce = BruteForce(self.test, self.distance_invoker)
-        self._get_query_results(bruteforce)
+        brute_force = BruteForce(self.test, self.distance_invoker)
+        self._get_query_results(brute_force)
         logger.info('End: Retrieving duplicates using Brute force algorithm')
 
     def _fetch_nearest_neighbors_brute_force_cython(self) -> None:
@@ -121,8 +121,8 @@ class HashEval:
         Wrapper function to retrieve results for all queries in dataset using brute-force search.
         """
         logger.info('Start: Retrieving duplicates using Cython Brute force algorithm')
-        bruteforce = BruteForceCython(self.test, self.distance_invoker)
-        self._get_query_results(bruteforce)
+        brute_force_cython = BruteForceCython(self.test, self.distance_invoker)
+        self._get_query_results(brute_force_cython)
         logger.info('End: Retrieving duplicates using Cython Brute force algorithm')
 
     def _fetch_nearest_neighbors_bktree(self) -> None:
