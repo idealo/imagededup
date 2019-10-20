@@ -57,7 +57,8 @@ pip install imagededup
 
 ```bash
 git clone https://github.com/idealo/imagededup.git
-cd imagededup  
+cd imagededup
+pip install ".[dev]"  
 python setup.py install
 ```  
 
