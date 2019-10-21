@@ -135,7 +135,7 @@ def test_result_consistency_across_search_methods_scores():
         db, query, HAMMING_DISTANCE_FUNCTION, search_method='brute_force'
     ).retrieve_results(scores=True)
 
-    bktree_result = HashEval(db, query, HAMMING_DISTANCE_FUNCTION).retrieve_results(
+    bktree_result = HashEval(db, query, HAMMING_DISTANCE_FUNCTION,search_method='bktree').retrieve_results(
         scores=True
     )
 
