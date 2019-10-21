@@ -36,9 +36,9 @@ imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0
 - [Installation](#%EF%B8%8F-installation)
 - [Quick Start](#-quick-start)
 - [Contribute](#-contribute)
-- [Citation](#-contribute)
-- [Maintainers](#-contribute)
-- [License](#-contribute)
+- [Citation](#-citation)
+- [Maintainers](#-maintainers)
+- [License](#-copyright)
 
 ## ⚙️ Installation
 There are two ways to install imagededup:
