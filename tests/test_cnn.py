@@ -492,3 +492,28 @@ def test_find_duplicates_to_remove_encoding_integration(cnn):
     assert set(duplicates_list) == set(
         ['ukbench00120_resize.jpg', 'ukbench00120_hflip.jpg']
     )
+
+# test to fix float32 not json serializable bug in find_duplicates 
+def test_find_duplicates_to_fix_not_json_serializable(cnn):
+    #expected .json file format 
+    duplicates_json = {
+        'image_1.jpg': [
+            ['image_2.jpg', '0.8673661'],
+            ['image_3.jpg', '0.8125544'],
+        ],
+        'image_2.jpg': [
+            ['image_1.jpg', '0.8673661'],
+            ['image_3.jpg', '0.8567523'],
+        ],
+        'image_3.jpg': [
+            ['image_1.jpg', '0.8125544'],
+            ['image_2.jpg', '0.8567523'],
+        ],
+        'image_4.jpg': []
+    }
+    duplicates = cnn.find_duplicates(
+        image_dir=TEST_IMAGE_DIR_MIXED,
+        min_similarity_threshold=0.8,
+        scores=True,
+        outfile= 'duplicates.json',
+    )
