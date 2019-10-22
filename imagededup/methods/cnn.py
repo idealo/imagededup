@@ -236,7 +236,7 @@ class CNN:
             duplicates_bool = (j >= min_similarity_threshold) & (j < 2)
 
             if scores:
-                tmp = np.array([*zip(image_ids, j)], dtype=object)
+                tmp = np.array([*zip(image_ids, list(map(str,j)))], dtype=object)
                 duplicates = list(map(tuple, tmp[duplicates_bool]))
 
             else:
