@@ -84,7 +84,6 @@ setup(
     long_description=long_description,
     license='Apache 2.0',
     install_requires=[
-        'setuptools',
         'numpy<1.17',
         'Pillow<7.0.0',
         'PyWavelets~=1.0.3',
@@ -100,7 +99,7 @@ setup(
     extras_require={
         'tests': ['pytest', 'pytest-cov', 'pytest-mock', 'codecov'],
         'docs': ['mkdocs', 'mkdocs-material'],
-        'dev': ['bumpversion', 'twine', 'cython>=0.29'],
+        'dev': ['bumpversion', 'twine'],
     },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
