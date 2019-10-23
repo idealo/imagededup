@@ -38,7 +38,7 @@ def save_json(results: Dict, filename: str, float_scores: bool = False) -> None:
     Args:
         results: Dictionary of results to be saved.
         filename: Name of the file to be saved.
-        float_scores: boolean to indicate of scores are floats.
+        float_scores: boolean to indicate if scores are floats.
     """
     logger.info('Start: Saving duplicates as json!')
 
@@ -53,8 +53,6 @@ def save_json(results: Dict, filename: str, float_scores: bool = False) -> None:
                     typecasted_dup_list.append((dup[0], float(dup[1])))
 
                 results[_file] = typecasted_dup_list
-            else:
-                results[_file] = dup_list
 
         with open(filename, 'w') as f:
             json.dump(results, f, indent=2, sort_keys=True)
