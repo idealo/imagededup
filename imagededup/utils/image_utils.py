@@ -7,11 +7,7 @@ from PIL import Image
 from imagededup.utils.logger import return_logger
 
 
-"""
-Todo: Parallelize files validation/ hash generation
-"""
-
-IMG_FORMATS = ['JPEG', 'PNG', 'BMP']
+IMG_FORMATS = ['JPEG', 'PNG', 'BMP', 'MPO', 'PPM', 'TIFF', 'GIF']
 logger = return_logger(__name__)
 
 
