@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import os
+import json
 import numpy as np
 import pytest
 from tensorflow.keras.models import Model
@@ -235,7 +237,7 @@ def test__find_duplicates_dict_outfile_true(cnn, mocker_save_json):
         scores=scores,
         outfile=outfile,
     )
-    mocker_save_json.assert_called_once_with(cnn.results, outfile)
+    mocker_save_json.assert_called_once_with(results=cnn.results, filename=outfile, float_scores=True)
 
 
 # _find_duplicates_dir
@@ -560,3 +562,25 @@ def test_find_duplicates_verbose_false(capsys):
 
     assert '' == out
     assert '' == err
+
+
+def test_scores_saving(cnn):
+    save_file = 'myduplicates.json'
+    cnn.find_duplicates(
+        image_dir=TEST_IMAGE_DIR_MIXED,
+        min_similarity_threshold=0.6,
+        scores=True,
+        outfile=save_file,
+    )
+    with open(save_file, 'r') as f:
+        saved_json = json.load(f)
+
+    assert len(saved_json) == 5  # all valid files present as keys
+    assert len(saved_json['ukbench00120.jpg']) == 3  # file with duplicates have all entries
+    assert len(saved_json['ukbench09268.jpg']) == 0  # file with no duplicates have no entries
+    assert isinstance(saved_json['ukbench00120.jpg'], list)  # a list of files is returned
+    assert isinstance(saved_json['ukbench00120.jpg'][0], list) # each entry in the duplicate list is a list (not a tuple, since json can't save tuples)
+    assert isinstance(saved_json['ukbench00120.jpg'][0][1], float) # saved score is of type 'float'
+
+    os.remove(save_file)  # clean up
+
