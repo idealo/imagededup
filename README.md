@@ -58,7 +58,7 @@ pip install imagededup
 ```bash
 git clone https://github.com/idealo/imagededup.git
 cd imagededup
-pip install -r requirements.txt
+pip install cython>=0.29.*
 python setup.py install
 ```  
 

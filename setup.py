@@ -23,6 +23,8 @@ imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0
 
 # Cython compilation is not enabled by default
 # http://docs.cython.org/en/latest/src/userguide/source_files_and_compilation.html#distributing-cython-modules
+
+
 try:
     from Cython.Build import cythonize
 except ImportError:
@@ -75,6 +77,7 @@ else:
                                   )
                         ]
 
+
 setup(
     name='imagededup',
     version='0.1.0',
@@ -84,7 +87,6 @@ setup(
     long_description=long_description,
     license='Apache 2.0',
     install_requires=[
-        'setuptools',
         'numpy<1.17',
         'Pillow<7.0.0',
         'PyWavelets~=1.0.3',
@@ -93,9 +95,6 @@ setup(
         'tqdm',
         'scikit-learn',
         'matplotlib',
-    ],
-    setup_requires=[
-        'cython>=0.29',
     ],
     extras_require={
         'tests': ['pytest', 'pytest-cov', 'pytest-mock', 'codecov'],
