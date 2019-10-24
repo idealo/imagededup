@@ -31,17 +31,32 @@ def get_files_to_remove(duplicates: Dict[str, List]) -> List:
     return list(files_to_remove)
 
 
-def save_json(results: Dict, filename: str) -> None:
+def save_json(results: Dict, filename: str, float_scores: bool = False) -> None:
     """
     Save results with a filename.
 
     Args:
         results: Dictionary of results to be saved.
         filename: Name of the file to be saved.
+        float_scores: boolean to indicate if scores are floats.
     """
     logger.info('Start: Saving duplicates as json!')
-    with open(filename, 'w') as f:
-        json.dump(results, f, indent=2, sort_keys=True)
+
+    if not float_scores:
+        with open(filename, 'w') as f:
+            json.dump(results, f, indent=2, sort_keys=True)
+    else:
+        for _file, dup_list in results.items():
+            if dup_list:
+                typecasted_dup_list = []
+                for dup in dup_list:
+                    typecasted_dup_list.append((dup[0], float(dup[1])))
+
+                results[_file] = typecasted_dup_list
+
+        with open(filename, 'w') as f:
+            json.dump(results, f, indent=2, sort_keys=True)
+
     logger.info('End: Saving duplicates as json!')
 
 

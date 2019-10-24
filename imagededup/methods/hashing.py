@@ -284,7 +284,7 @@ class Hashing:
             max_distance_threshold: Optional, hamming distance between two images below which retrieved duplicates are
                                     valid. (must be an int between 0 and 64). Default is 10.
             scores: Optional, boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
-            outfile: Optional, name of the file to save the results. Default is None.
+            outfile: Optional, name of the file to save the results, must be a json. Default is None.
 
         Returns:
             duplicates dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -344,7 +344,7 @@ class Hashing:
                           corresponding hashes.
             max_distance_threshold: Optional, hamming distance between two images below which retrieved duplicates are
                                     valid. (must be an int between 0 and 64). Default is 10.
-            outfile: Optional, name of the file to save the results.
+            outfile: Optional, name of the file to save the results, must be a json. Default is None.
 
         Returns:
             duplicates: List of image file names that are found to be duplicate of me other file in the directory.

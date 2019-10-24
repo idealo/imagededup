@@ -246,9 +246,10 @@ class CNN:
 
             self.results[image_ids[i]] = duplicates
 
-        if outfile:
-            save_json(self.results, outfile)
-
+        if outfile and scores:
+            save_json(results=self.results, filename=outfile, float_scores=True)
+        elif outfile:
+            save_json(results=self.results, filename=outfile)
         return self.results
 
     def _find_duplicates_dir(
@@ -307,7 +308,7 @@ class CNN:
             min_similarity_threshold: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9
             scores: Optional, boolean indicating whether similarity scores are to be returned along with retrieved
                     duplicates.
-            outfile: Optional, name of the file to save the results. Default is None.
+            outfile: Optional, name of the file to save the results, must be a json. Default is None.
 
         Returns:
             dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -369,7 +370,7 @@ class CNN:
             encoding_map: Optional, used instead of image_dir, a dictionary containing mapping of filenames and
                           corresponding CNN encodings.
             min_similarity_threshold: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9
-            outfile: Optional, name of the file to save the results. Default is None.
+            outfile: Optional, name of the file to save the results, must be a json. Default is None.
 
         Returns:
             duplicates: List of image file names that should be removed.
