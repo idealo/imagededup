@@ -1,4 +1,3 @@
-import os
 from pathlib import PosixPath
 from typing import List, Union, Tuple
 
@@ -8,12 +7,8 @@ from PIL import Image
 from imagededup.utils.logger import return_logger
 
 
-"""
-Todo: Parallelize files validation/ hash generation
-"""
-
-IMG_FORMATS = ['JPEG', 'PNG', 'BMP']
-logger = return_logger(__name__, os.getcwd())
+IMG_FORMATS = ['JPEG', 'PNG', 'BMP', 'MPO', 'PPM', 'TIFF', 'GIF']
+logger = return_logger(__name__)
 
 
 def preprocess_image(

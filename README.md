@@ -33,12 +33,12 @@ Detailed documentation for the package can be found at: [https://idealo.github.i
 imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0 license.
 
 ## 📖 Contents
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Contribute](#contribute)
-- [Citation](#citation)
-- [Maintainers](#maintainers)
-- [License](#copyright)
+- [Installation](#%EF%B8%8F-installation)
+- [Quick Start](#-quick-start)
+- [Contribute](#-contribute)
+- [Citation](#-citation)
+- [Maintainers](#-maintainers)
+- [License](#-copyright)
 
 ## ⚙️ Installation
 There are two ways to install imagededup:
@@ -55,7 +55,7 @@ pip install imagededup
 
 * Install imagededup from the GitHub source:
 
-```
+```bash
 git clone https://github.com/idealo/imagededup.git
 cd imagededup  
 python setup.py install
@@ -127,7 +127,7 @@ See the [Contribution](CONTRIBUTING.md) guide for more details.
 
 ## 📝 Citation
 Please cite Imagededup in your publications if this is useful for your research. Here is an example BibTeX entry:
-```
+```BibTeX
 @misc{idealods2019imagededup,
   title={Imagededup},
   author={Tanuj Jain and Christopher Lennan and Zubin John and Dat Tran},

@@ -193,7 +193,34 @@ def test_hash_func(hasher, mocker):
 # _find_duplicates_dict
 
 
-def test__find_duplicates_dict_outfile_none(hasher, mocker):
+def test__find_duplicates_dict_outfile_none(mocker):
+    encoding_map = {'1.jpg': '123456'}
+    threshold = 10
+    scores = True
+    outfile = None
+    verbose = False
+    myhasher = PHash(verbose=verbose)
+    hasheval_mocker = mocker.patch('imagededup.methods.hashing.HashEval')
+    save_json_mocker = mocker.patch('imagededup.methods.hashing.save_json')
+    myhasher._find_duplicates_dict(
+        encoding_map=encoding_map,
+        max_distance_threshold=threshold,
+        scores=scores,
+        outfile=outfile,
+    )
+    hasheval_mocker.assert_called_with(
+        test=encoding_map,
+        queries=encoding_map,
+        distance_function=Hashing.hamming_distance,
+        verbose=verbose,
+        threshold=threshold,
+        search_method='bktree',
+    )
+    hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
+    save_json_mocker.assert_not_called()
+
+
+def test__find_duplicates_dict_outfile_none_verbose(hasher, mocker):
     encoding_map = {'1.jpg': '123456'}
     threshold = 10
     scores = True
@@ -210,6 +237,7 @@ def test__find_duplicates_dict_outfile_none(hasher, mocker):
         test=encoding_map,
         queries=encoding_map,
         distance_function=Hashing.hamming_distance,
+        verbose=True,
         threshold=threshold,
         search_method='bktree',
     )
@@ -222,6 +250,7 @@ def test__find_duplicates_dict_outfile_true(hasher, mocker):
     threshold = 10
     scores = True
     outfile = True
+    verbose = True
     hasheval_mocker = mocker.patch('imagededup.methods.hashing.HashEval')
     hasheval_mocker.return_value.retrieve_results.return_value = {
         'filename.jpg': [('dup1.jpg', 3)],
@@ -238,6 +267,7 @@ def test__find_duplicates_dict_outfile_true(hasher, mocker):
         test=encoding_map,
         queries=encoding_map,
         distance_function=Hashing.hamming_distance,
+        verbose=verbose,
         threshold=threshold,
         search_method='bktree',
     )
@@ -585,7 +615,9 @@ def test_find_duplicates_to_remove_dir():
         image_dir=PATH_IMAGE_DIR, max_distance_threshold=10
     )
     assert isinstance(removal_list, list)
-    assert (removal_list == ['ukbench00120.jpg'] or removal_list == ['ukbench00120_resize.jpg'])
+    assert removal_list == ['ukbench00120.jpg'] or removal_list == [
+        'ukbench00120_resize.jpg'
+    ]
 
 
 def test_find_duplicates_to_remove_encoding():
@@ -601,7 +633,9 @@ def test_find_duplicates_to_remove_encoding():
         encoding_map=encoding, max_distance_threshold=10
     )
     assert isinstance(removal_list, list)
-    assert (removal_list == ['ukbench00120.jpg'] or removal_list == ['ukbench00120_resize.jpg'])
+    assert removal_list == ['ukbench00120.jpg'] or removal_list == [
+        'ukbench00120_resize.jpg'
+    ]
 
 
 def test_find_duplicates_to_remove_outfile():
@@ -616,3 +650,44 @@ def test_find_duplicates_to_remove_outfile():
     # clean up
     if os.path.exists(outfile_name):
         os.remove(outfile_name)
+
+
+# test verbose
+def test_encode_images_verbose_true(capsys):
+    phasher = PHash(verbose=True)
+    phasher.encode_images(image_dir=PATH_IMAGE_DIR)
+    out, err = capsys.readouterr()
+
+    assert '%' in err
+    assert '' == out
+
+
+def test_encode_images_verbose_false(capsys):
+    phasher = PHash(verbose=False)
+    phasher.encode_images(image_dir=PATH_IMAGE_DIR)
+    out, err = capsys.readouterr()
+
+    assert '' == err
+    assert '' == out
+
+
+def test_find_duplicates_verbose_true(capsys):
+    phasher = PHash(verbose=True)
+    phasher.find_duplicates(
+        image_dir=PATH_IMAGE_DIR, max_distance_threshold=10, scores=False, outfile=False
+    )
+    out, err = capsys.readouterr()
+
+    assert '%' in err
+    assert '' == out
+
+
+def test_find_duplicates_verbose_false(capsys):
+    phasher = PHash(verbose=False)
+    phasher.find_duplicates(
+        image_dir=PATH_IMAGE_DIR, max_distance_threshold=10, scores=False, outfile=False
+    )
+    out, err = capsys.readouterr()
+
+    assert '' == out
+    assert '' == err

@@ -62,7 +62,7 @@ Each key in the *duplicates* dictionary corresponds to a file in the image direc
 of the find_duplicates function. The value is a list of tuples representing the file names and corresponding scores 
 in the image directory that were found to be duplicates of the key file.
 
-- *outfile*: Name of file to which the returned duplicates dictionary is to be written. *None* by default.
+- *outfile*: Name of file to which the returned duplicates dictionary is to be written, must be a json. *None* by default.
 
 - threshold parameter:
     - *min_similarity_threshold* for cnn method indicating the minimum amount of cosine similarity that should exist 
@@ -153,7 +153,7 @@ corresponding encodings (hashes/cnn encodings). The mentioned dictionary can be 
 the image_dir parameter of the find_duplicates function. The value is a list of all tuples representing the file names 
 and corresponding scores in the image directory that were found to be duplicates for the key file.
 
-- *outfile*: Name of file to which the returned duplicates dictionary is to be written. *None* by default.
+- *outfile*: Name of file to which the returned duplicates dictionary is to be written, must be a json. *None* by default.
 
 - threshold parameter:
     - *min_similarity_threshold* for cnn method indicating the minimum amount of cosine similarity that should exist 

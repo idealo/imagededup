@@ -1,8 +1,7 @@
-import os
 import logging
 
 
-def return_logger(name: str, log_dir: str) -> logging.Logger:
+def return_logger(name: str) -> logging.Logger:
     # Set log message format
 
     logger = logging.getLogger(name)
@@ -16,10 +15,5 @@ def return_logger(name: str, log_dir: str) -> logging.Logger:
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(log_formatter)
         logger.addHandler(console_handler)
-
-        # Direct same logs to file
-        file_handler = logging.FileHandler(filename=os.path.join(log_dir, 'logfile.log'), mode='w')
-        file_handler.setFormatter(log_formatter)
-        logger.addHandler(file_handler)
 
     return logger
