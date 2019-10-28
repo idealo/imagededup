@@ -71,10 +71,10 @@ def test_on_epoch_end_1():
 
 def test_on_epoch_end_2():
     expected = [
-        FORMATS_IMAGE_DIR / 'Iggy.1024.ppm',
         FORMATS_IMAGE_DIR / 'baboon.pgm',
         FORMATS_IMAGE_DIR / 'copyleft.tiff',
         FORMATS_IMAGE_DIR / 'giphy.gif',
+        FORMATS_IMAGE_DIR / 'Iggy.1024.ppm',
         FORMATS_IMAGE_DIR / 'marbles.pbm',
         FORMATS_IMAGE_DIR / 'mpo_image.MPO',
         FORMATS_IMAGE_DIR / 'ukbench09380.bmp',
@@ -95,5 +95,4 @@ def test_on_epoch_end_2():
     generator.__getitem__(2)
 
     generator.on_epoch_end()
-
-    assert generator.valid_image_files == expected
+    assert sorted(generator.valid_image_files, key=lambda x: str(x).lower()) == expected
