@@ -70,7 +70,7 @@ def test__get_cnn_features_batch(cnn):
         'ukbench09380.jpg',
     ]
 
-    assert list(result.keys()) == expected_predicted_files
+    assert list(sorted(result.keys(), key=str.lower)) == expected_predicted_files
 
     for i in result.values():
         assert isinstance(i, np.ndarray)
@@ -79,10 +79,10 @@ def test__get_cnn_features_batch(cnn):
     result = cnn._get_cnn_features_batch(TEST_IMAGE_FORMATS_DIR)
 
     expected_predicted_files = [
-        'Iggy.1024.ppm',
         'baboon.pgm',
         'copyleft.tiff',
         'giphy.gif',
+        'Iggy.1024.ppm',
         'marbles.pbm',
         'mpo_image.MPO',
         'ukbench09380.bmp',
@@ -91,7 +91,7 @@ def test__get_cnn_features_batch(cnn):
         'ukbench09380.svg',
     ]
 
-    assert list(result.keys()) == expected_predicted_files
+    assert list(sorted(result.keys(), key=str.lower)) == expected_predicted_files
 
     for i in result.values():
         assert isinstance(i, np.ndarray)
@@ -133,7 +133,7 @@ def test_encode_images(cnn):
         'ukbench09380.jpg',
     ]
 
-    assert list(result.keys()) == expected_predicted_files
+    assert list(sorted(result.keys(), key=str.lower)) == expected_predicted_files
 
     for i in result.values():
         assert isinstance(i, np.ndarray)
@@ -142,10 +142,10 @@ def test_encode_images(cnn):
     result = cnn.encode_images(TEST_IMAGE_FORMATS_DIR)
 
     expected_predicted_files = [
-        'Iggy.1024.ppm',
         'baboon.pgm',
         'copyleft.tiff',
         'giphy.gif',
+        'Iggy.1024.ppm',
         'marbles.pbm',
         'mpo_image.MPO',
         'ukbench09380.bmp',
@@ -154,7 +154,7 @@ def test_encode_images(cnn):
         'ukbench09380.svg',
     ]
 
-    assert list(result.keys()) == expected_predicted_files
+    assert list(sorted(result.keys(), key=str.lower)) == expected_predicted_files
 
     for i in result.values():
         assert isinstance(i, np.ndarray)
@@ -163,10 +163,10 @@ def test_encode_images(cnn):
     result = cnn.encode_images(str(TEST_IMAGE_FORMATS_DIR))
 
     expected_predicted_files = [
-        'Iggy.1024.ppm',
         'baboon.pgm',
         'copyleft.tiff',
         'giphy.gif',
+        'Iggy.1024.ppm',
         'marbles.pbm',
         'mpo_image.MPO',
         'ukbench09380.bmp',
@@ -175,7 +175,7 @@ def test_encode_images(cnn):
         'ukbench09380.svg',
     ]
 
-    assert list(result.keys()) == expected_predicted_files
+    assert list(sorted(result.keys(), key=str.lower)) == expected_predicted_files
 
     for i in result.values():
         assert isinstance(i, np.ndarray)

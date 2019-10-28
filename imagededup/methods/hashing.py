@@ -1,5 +1,5 @@
 import os
-from pathlib import PosixPath, Path
+from pathlib import PurePath, Path
 from typing import Dict, List, Optional
 
 import pywt
@@ -230,7 +230,7 @@ class Hashing:
 
     def _find_duplicates_dir(
         self,
-        image_dir: PosixPath,
+        image_dir: PurePath,
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
@@ -263,7 +263,7 @@ class Hashing:
 
     def find_duplicates(
         self,
-        image_dir: PosixPath = None,
+        image_dir: PurePath = None,
         encoding_map: Dict[str, str] = None,
         max_distance_threshold: int = 10,
         scores: bool = False,
@@ -328,7 +328,7 @@ class Hashing:
 
     def find_duplicates_to_remove(
         self,
-        image_dir: PosixPath = None,
+        image_dir: PurePath = None,
         encoding_map: Dict[str, str] = None,
         max_distance_threshold: int = 10,
         outfile: Optional[str] = None,

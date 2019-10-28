@@ -1,4 +1,4 @@
-from pathlib import Path, PosixPath
+from pathlib import Path, PurePath
 from typing import Dict, List, Optional, Union
 
 import numpy as np
@@ -75,7 +75,7 @@ class CNN:
         image_pp = np.array(image_pp)[np.newaxis, :]
         return self.model.predict(image_pp)
 
-    def _get_cnn_features_batch(self, image_dir: PosixPath) -> Dict[str, np.ndarray]:
+    def _get_cnn_features_batch(self, image_dir: PurePath) -> Dict[str, np.ndarray]:
         """
         Generate CNN encodings for all images in a given directory of images.
         Args:
@@ -104,7 +104,7 @@ class CNN:
 
     def encode_image(
         self,
-        image_file: Optional[Union[PosixPath, str]] = None,
+        image_file: Optional[Union[PurePath, str]] = None,
         image_array: Optional[np.ndarray] = None,
     ) -> np.ndarray:
         """
@@ -129,7 +129,7 @@ class CNN:
         if isinstance(image_file, str):
             image_file = Path(image_file)
 
-        if isinstance(image_file, PosixPath):
+        if isinstance(image_file, PurePath):
             if not image_file.is_file():
                 raise ValueError(
                     'Please provide either image file path or image array!'
@@ -152,7 +152,7 @@ class CNN:
             else None
         )
 
-    def encode_images(self, image_dir: Union[PosixPath, str]) -> Dict:
+    def encode_images(self, image_dir: Union[PurePath, str]) -> Dict:
         """Generate CNN encodings for all images in a given directory of images.
 
         Args:
@@ -254,7 +254,7 @@ class CNN:
 
     def _find_duplicates_dir(
         self,
-        image_dir: Union[PosixPath, str],
+        image_dir: Union[PurePath, str],
         min_similarity_threshold: float,
         scores: bool,
         outfile: Optional[str] = None,
@@ -288,7 +288,7 @@ class CNN:
 
     def find_duplicates(
         self,
-        image_dir: Union[PosixPath, str] = None,
+        image_dir: Union[PurePath, str] = None,
         encoding_map: Dict[str, list] = None,
         min_similarity_threshold: float = 0.9,
         scores: bool = False,
@@ -355,7 +355,7 @@ class CNN:
 
     def find_duplicates_to_remove(
         self,
-        image_dir: PosixPath = None,
+        image_dir: PurePath = None,
         encoding_map: Dict[str, np.ndarray] = None,
         min_similarity_threshold: float = 0.9,
         outfile: Optional[str] = None,

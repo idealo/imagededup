@@ -1,4 +1,4 @@
-from pathlib import PosixPath
+from pathlib import PurePath
 from typing import List, Union, Tuple
 
 import numpy as np
@@ -45,7 +45,7 @@ def preprocess_image(
 
 
 def load_image(
-    image_file: Union[PosixPath, str],
+    image_file: Union[PurePath, str],
     target_size: Tuple[int, int] = None,
     grayscale: bool = False,
     img_formats: List[str] = IMG_FORMATS,
