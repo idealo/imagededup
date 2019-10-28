@@ -1,7 +1,7 @@
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 from matplotlib import figure
-from pathlib import Path, PosixPath
+from pathlib import Path, PurePath
 from typing import Dict, Union, List
 
 import numpy as np
@@ -19,7 +19,7 @@ def _formatter(val: Union[int, np.float32]):
 
 
 def _plot_images(
-    image_dir: PosixPath,
+    image_dir: PurePath,
     orig: str,
     image_list: List,
     scores: bool = False,
@@ -72,10 +72,10 @@ def _plot_images(
 
 
 def _validate_args(
-    image_dir: Union[PosixPath, str], duplicate_map: Dict, filename: str
-) -> PosixPath:
+    image_dir: Union[PurePath, str], duplicate_map: Dict, filename: str
+) -> PurePath:
     """Argument validator for plot_duplicates() defined below.
-    Return PosixPath to the image directory"""
+    Return PurePath to the image directory"""
 
     image_dir = Path(image_dir)
     assert (
@@ -92,7 +92,7 @@ def _validate_args(
 
 
 def plot_duplicates(
-    image_dir: Union[PosixPath, str],
+    image_dir: Union[PurePath, str],
     duplicate_map: Dict,
     filename: str,
     outfile: str = None,
