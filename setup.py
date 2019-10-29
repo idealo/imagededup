@@ -30,8 +30,8 @@ except ImportError:
 else:
     use_cython = True
 
-# Check whether we're on OSX or not
-on_mac = True if sys.platform == 'darwin' else False
+on_mac = sys.platform.startswith('darwin')
+on_windows = sys.platform.startswith('win')
 
 MOD_NAME = 'brute_force_cython_ext'
 MOD_PATH = 'imagededup/handlers/search/brute_force_cython_ext'
@@ -41,17 +41,7 @@ COMPILE_ARGS_OSX = ['-stdlib=libc++']
 LINK_ARGS_OSX = ['-lc++', '-nodefaultlibs']
 
 ext_modules = []
-if use_cython and not on_mac:
-    ext_modules += cythonize([
-        Extension(
-            MOD_NAME,
-            [MOD_PATH + '.pyx'],
-            language='c++',
-            extra_compile_args=COMPILE_LINK_ARGS,
-            extra_link_args=COMPILE_LINK_ARGS,
-        )
-    ])
-elif use_cython and on_mac:
+if use_cython and on_mac:
     ext_modules += cythonize([
         Extension(
             MOD_NAME,
@@ -61,17 +51,35 @@ elif use_cython and on_mac:
             extra_link_args=COMPILE_LINK_ARGS + LINK_ARGS_OSX,
         )
     ])
+elif use_cython and on_windows:
+    ext_modules += cythonize([
+        Extension(
+            MOD_NAME,
+            [MOD_PATH + '.pyx'],
+            language='c++',
+        )
+    ])
+elif use_cython:
+    ext_modules += cythonize([
+        Extension(
+            MOD_NAME,
+            [MOD_PATH + '.pyx'],
+            language='c++',
+            extra_compile_args=COMPILE_LINK_ARGS,
+            extra_link_args=COMPILE_LINK_ARGS,
+        )
+    ])
 else:
-    if not on_mac:
+    if on_mac:
         ext_modules += [Extension(MOD_NAME,
                                   [MOD_PATH + '.cpp'],
+                                  extra_compile_args=COMPILE_ARGS_OSX,
+                                  extra_link_args=LINK_ARGS_OSX,
                                   )
                         ]
     else:
         ext_modules += [Extension(MOD_NAME,
                                   [MOD_PATH + '.cpp'],
-                                  extra_compile_args=COMPILE_ARGS_OSX,
-                                  extra_link_args=LINK_ARGS_OSX,
                                   )
                         ]
 

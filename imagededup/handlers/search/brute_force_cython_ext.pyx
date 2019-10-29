@@ -6,7 +6,8 @@ from libcpp.string cimport string
 
 ctypedef unsigned long long ull
 
-cdef extern int __builtin_popcountll(unsigned long long) nogil
+cdef extern from "builtin/builtin.h":
+    int psnip_builtin_popcountll(unsigned long long) nogil
 
 cdef vector[string] all_filenames
 cdef vector[ull] all_hashes
@@ -28,7 +29,7 @@ def query(ull query_hash_val, unsigned int maxdist):
     for i in range(all_hashes.size()):
         hash_val = all_hashes[i]
         filename = all_filenames[i]
-        dist = __builtin_popcountll(hash_val ^ query_hash_val)  # requires hash_val and query_hash_val to be integers
+        dist = psnip_builtin_popcountll(hash_val ^ query_hash_val)  # requires hash_val and query_hash_val to be integers
         if dist <= maxdist:
             matches.append((filename.decode("utf-8"), dist))
 
