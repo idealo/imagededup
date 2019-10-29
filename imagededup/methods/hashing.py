@@ -193,7 +193,7 @@ class Hashing:
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
-        search_method: str = 'brute_force_cython',
+        search_method: str = 'brute_force_cython' if not os.name == 'nt' else 'bktree',
     ) -> Dict:
         """
         Take in dictionary {filename: encoded image}, detects duplicates below the given hamming distance threshold
@@ -206,7 +206,7 @@ class Hashing:
             scores: Boolean indicating whether hamming distance scores are to be returned along with retrieved
             duplicates.
             outfile: Optional, name of the file to save the results. Default is None.
-            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython.
+            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython for Unix else bktree.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -238,7 +238,7 @@ class Hashing:
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
-        search_method: str = 'brute_force_cython',
+        search_method: str = 'brute_force_cython' if not os.name == 'nt' else 'bktree',
     ) -> Dict:
         """
         Take in path of the directory in which duplicates are to be detected below the given hamming distance
@@ -250,7 +250,7 @@ class Hashing:
             max_distance_threshold: Hamming distance between two images below which retrieved duplicates are valid.
             scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
             outfile: Name of the file the results should be written to.
-            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython.
+            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython for Unix else bktree.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -275,7 +275,7 @@ class Hashing:
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
-        search_method: str = 'brute_force_cython',
+        search_method: str = 'brute_force_cython' if not os.name == 'nt' else 'bktree',
     ) -> Dict:
         """
         Find duplicates for each file. Takes in path of the directory or encoding dictionary in which duplicates are to
@@ -293,7 +293,7 @@ class Hashing:
                                     valid. (must be an int between 0 and 64). Default is 10.
             scores: Optional, boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
             outfile: Optional, name of the file to save the results, must be a json. Default is None.
-            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython.
+            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython for Unix else bktree.
 
         Returns:
             duplicates dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
