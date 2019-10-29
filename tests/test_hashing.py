@@ -193,6 +193,7 @@ def test_hash_func(hasher, mocker):
 # _find_duplicates_dict
 
 
+@pytest.mark.skipif(os.system == 'nt', reason='Test only runs on Unix.')
 def test__find_duplicates_dict_outfile_none(mocker):
     encoding_map = {'1.jpg': '123456'}
     threshold = 10
@@ -220,6 +221,7 @@ def test__find_duplicates_dict_outfile_none(mocker):
     save_json_mocker.assert_not_called()
 
 
+@pytest.mark.skipif(os.system == 'nt', reason='Test only runs on Unix.')
 def test__find_duplicates_dict_outfile_none_verbose(hasher, mocker):
     encoding_map = {'1.jpg': '123456'}
     threshold = 10
@@ -245,6 +247,7 @@ def test__find_duplicates_dict_outfile_none_verbose(hasher, mocker):
     save_json_mocker.assert_not_called()
 
 
+@pytest.mark.skipif(os.system == 'nt', reason='Test only runs on Unix.')
 def test__find_duplicates_dict_outfile_true(hasher, mocker):
     encoding_map = {'1.jpg': '123456'}
     threshold = 10
@@ -280,6 +283,7 @@ def test__find_duplicates_dict_outfile_true(hasher, mocker):
 # _find_duplicates_dir
 
 
+@pytest.mark.skipif(os.system == 'nt', reason='Test only runs on Unix.')
 def test__find_duplicates_dir(hasher, mocker):
     encoding_map = {'1.jpg': '123456'}
     threshold = 10
@@ -323,6 +327,7 @@ def mocker_hamming_distance(mocker):
     )
 
 
+@pytest.mark.skipif(os.system == 'nt', reason='Test only runs on Unix.')
 def test_find_duplicates_dir(hasher, mocker, mocker_hamming_distance):
     threshold = 10
     scores = True
@@ -347,6 +352,7 @@ def test_find_duplicates_dir(hasher, mocker, mocker_hamming_distance):
     )
 
 
+@pytest.mark.skipif(os.system == 'nt', reason='Test only runs on Unix.')
 def test_find_duplicates_dict(hasher, mocker, mocker_hamming_distance):
     encoding_map = {'1.jpg': '123456'}
     threshold = 10
@@ -580,6 +586,7 @@ def test_find_duplicates_correctness_score():
     assert duplicate_dict['ukbench00120.jpg'] == [('ukbench00120_resize.jpg', 0)]
 
 
+@pytest.mark.skipif(os.system == 'nt', reason='Test only runs on Unix.')
 def test_find_duplicates_clearing():
     phasher = PHash()
     duplicate_dict = phasher.find_duplicates(
