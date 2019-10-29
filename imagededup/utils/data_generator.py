@@ -1,4 +1,4 @@
-from pathlib import PosixPath
+from pathlib import PurePath
 from typing import Tuple, List, Callable
 
 import numpy as np
@@ -19,7 +19,7 @@ class DataGenerator(Sequence):
 
     def __init__(
         self,
-        image_dir: PosixPath,
+        image_dir: PurePath,
         batch_size: int,
         basenet_preprocess: Callable,
         target_size: Tuple[int, int],
@@ -67,7 +67,7 @@ class DataGenerator(Sequence):
         return X
 
     def _data_generator(
-        self, image_files: List[PosixPath]
+        self, image_files: List[PurePath]
     ) -> Tuple[np.array, np.array]:
         """Generate data from samples in specified batch."""
         #  initialize images and labels tensors for faster processing
