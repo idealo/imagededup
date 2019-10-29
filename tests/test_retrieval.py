@@ -1,3 +1,5 @@
+import sys
+import pytest
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -120,6 +122,7 @@ def test_result_consistency_across_search_methods():
     assert brute_force_result == bktree_result
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason='Does not run on Windows.')
 def test_result_consistency_across_search_methods_scores():
     query = {
         'ukbench00120.jpg': '2b69707551f1b87a',
