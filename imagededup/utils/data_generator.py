@@ -1,5 +1,18 @@
-from pathlib import PosixPath
+import os
 from typing import Tuple, List, Callable
+
+if os.name == 'nt':
+    from pathlib import WindowsPath as OSPath
+elif os.name == 'posix':
+    from pathlib import PosixPath as OSPath
+elif os.name == 'java':
+    import java.lang
+    if java.lang.System.getProperty("os.name") == "WINDOWS":
+        from pathlib import WindowsPath as OSPath
+    else:
+        from pathlib import PosixPath as OSPath
+else:
+    raise ImportError("Invalid platform ('{}')".format(os.name))
 
 import numpy as np
 from tensorflow.keras.utils import Sequence
@@ -19,7 +32,7 @@ class DataGenerator(Sequence):
 
     def __init__(
         self,
-        image_dir: PosixPath,
+        image_dir: OSPath,
         batch_size: int,
         basenet_preprocess: Callable,
         target_size: Tuple[int, int],
@@ -67,7 +80,7 @@ class DataGenerator(Sequence):
         return X
 
     def _data_generator(
-        self, image_files: List[PosixPath]
+        self, image_files: List[OSPath]
     ) -> Tuple[np.array, np.array]:
         """Generate data from samples in specified batch."""
         #  initialize images and labels tensors for faster processing

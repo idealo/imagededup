@@ -1,6 +1,18 @@
 import os
-from pathlib import PosixPath
 from typing import List, Union, Tuple
+
+if os.name == 'nt':
+    from pathlib import WindowsPath as OSPath
+elif os.name == 'posix':
+    from pathlib import PosixPath as OSPath
+elif os.name == 'java':
+    import java.lang
+    if java.lang.System.getProperty("os.name") == "WINDOWS":
+        from pathlib import WindowsPath as OSPath
+    else:
+        from pathlib import PosixPath as OSPath
+else:
+    raise ImportError("Invalid platform ('{}')".format(os.name))
 
 import numpy as np
 from PIL import Image
@@ -50,7 +62,7 @@ def preprocess_image(
 
 
 def load_image(
-    image_file: Union[PosixPath, str],
+    image_file: Union[OSPath, str],
     target_size: Tuple[int, int] = None,
     grayscale: bool = False,
     img_formats: List[str] = IMG_FORMATS,

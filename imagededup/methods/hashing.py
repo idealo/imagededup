@@ -1,6 +1,19 @@
 import os
-from pathlib import PosixPath, Path
 from typing import Dict, List, Optional
+from pathlib import Path
+
+if os.name == 'nt':
+    from pathlib import WindowsPath as OSPath
+elif os.name == 'posix':
+    from pathlib import PosixPath as OSPath
+elif os.name == 'java':
+    import java.lang
+    if java.lang.System.getProperty("os.name") == "WINDOWS":
+        from pathlib import WindowsPath as OSPath
+    else:
+        from pathlib import PosixPath as OSPath
+else:
+    raise ImportError("Invalid platform ('{}')".format(os.name))
 
 import pywt
 import numpy as np
@@ -220,7 +233,7 @@ class Hashing:
 
     def _find_duplicates_dir(
         self,
-        image_dir: PosixPath,
+        image_dir: OSPath,
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
@@ -253,7 +266,7 @@ class Hashing:
 
     def find_duplicates(
         self,
-        image_dir: PosixPath = None,
+        image_dir: OSPath = None,
         encoding_map: Dict[str, str] = None,
         max_distance_threshold: int = 10,
         scores: bool = False,
@@ -318,7 +331,7 @@ class Hashing:
 
     def find_duplicates_to_remove(
         self,
-        image_dir: PosixPath = None,
+        image_dir: OSPath = None,
         encoding_map: Dict[str, str] = None,
         max_distance_threshold: int = 10,
         outfile: Optional[str] = None,
