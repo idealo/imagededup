@@ -99,7 +99,7 @@ class CNN:
 
         filenames = [i.name for i in self.data_generator.valid_image_files]
 
-        self.encoding_map = {j: feat_vec[i] for i, j in enumerate(filenames)}
+        self.encoding_map = {j: feat_vec[i, :] for i, j in enumerate(filenames)}
         return self.encoding_map
 
     def encode_image(

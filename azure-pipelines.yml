@@ -34,7 +34,7 @@ jobs:
         Python37Mac:
           imageName: 'macos-10.13'
           python.version: '3.7'
-      maxParallel: 4
+      maxParallel: 2
     pool:
       vmImage: $(imageName)
 
