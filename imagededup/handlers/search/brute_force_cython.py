@@ -1,7 +1,9 @@
 from typing import Callable, Dict
 
+import brute_force_cython_ext
 
-class BruteForce:
+
+class BruteForceCython:
     """
     Class to perform search using a Brute force.
     """
@@ -18,6 +20,13 @@ class BruteForce:
         self.distance_function = distance_function
         self.hash_dict = hash_dict  # database
 
+        brute_force_cython_ext.clear()
+
+        for filename, hash_val in self.hash_dict.items():
+            brute_force_cython_ext.add(
+                int(hash_val, 16), filename.encode('utf-8')
+            )  # cast hex hash_val to decimals for __builtin_popcountll function
+
     def search(self, query: str, tol: int = 10) -> Dict[str, int]:
         """
         Function for searching using brute force.
@@ -29,8 +38,7 @@ class BruteForce:
         Returns:
             List of tuples of the form [(valid_retrieval_filename1: distance), (valid_retrieval_filename2: distance)]
         """
-        return [
-            (item, self.distance_function(query, self.hash_dict[item]))
-            for item in self.hash_dict
-            if self.distance_function(query, self.hash_dict[item]) <= tol
-        ]
+
+        return brute_force_cython_ext.query(
+            int(query, 16), tol
+        )  # cast hex hash_val to decimals for __builtin_popcountll function

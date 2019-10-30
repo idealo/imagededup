@@ -30,7 +30,7 @@ Following details the functionality provided by the package:
 
 Detailed documentation for the package can be found at: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
 
-imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0 license.
+imagededup is compatible with Python 3.6+ and is distributed under the Apache 2.0 license.
 
 ## 📖 Contents
 - [Installation](#%EF%B8%8F-installation)
@@ -57,7 +57,8 @@ pip install imagededup
 
 ```bash
 git clone https://github.com/idealo/imagededup.git
-cd imagededup  
+cd imagededup
+pip install "cython>=0.29"
 python setup.py install
 ```  
 

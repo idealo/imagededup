@@ -1,4 +1,5 @@
-from setuptools import setup, find_packages
+import sys
+from setuptools import setup, find_packages, Extension
 
 long_description = '''
 imagededup is a python package that provides functionality to find duplicates in a collection of images using a variety
@@ -20,6 +21,71 @@ Read the documentation at: https://idealo.github.io/imagededup/
 imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0 license.
 '''
 
+# Cython compilation is not enabled by default
+# http://docs.cython.org/en/latest/src/userguide/source_files_and_compilation.html#distributing-cython-modules
+
+
+try:
+    from Cython.Build import cythonize
+except ImportError:
+    use_cython = False
+else:
+    use_cython = True
+
+on_mac = sys.platform.startswith('darwin')
+on_windows = sys.platform.startswith('win')
+
+MOD_NAME = 'brute_force_cython_ext'
+MOD_PATH = 'imagededup/handlers/search/brute_force_cython_ext'
+COMPILE_LINK_ARGS = ['-O3', '-march=native', '-mtune=native']
+# On Mac, use libc++ because Apple deprecated use of libstdc
+COMPILE_ARGS_OSX = ['-stdlib=libc++']
+LINK_ARGS_OSX = ['-lc++', '-nodefaultlibs']
+
+ext_modules = []
+if use_cython and on_mac:
+    ext_modules += cythonize([
+        Extension(
+            MOD_NAME,
+            [MOD_PATH + '.pyx'],
+            language='c++',
+            extra_compile_args=COMPILE_LINK_ARGS + COMPILE_ARGS_OSX,
+            extra_link_args=COMPILE_LINK_ARGS + LINK_ARGS_OSX,
+        )
+    ])
+elif use_cython and on_windows:
+    ext_modules += cythonize([
+        Extension(
+            MOD_NAME,
+            [MOD_PATH + '.pyx'],
+            language='c++',
+        )
+    ])
+elif use_cython:
+    ext_modules += cythonize([
+        Extension(
+            MOD_NAME,
+            [MOD_PATH + '.pyx'],
+            language='c++',
+            extra_compile_args=COMPILE_LINK_ARGS,
+            extra_link_args=COMPILE_LINK_ARGS,
+        )
+    ])
+else:
+    if on_mac:
+        ext_modules += [Extension(MOD_NAME,
+                                  [MOD_PATH + '.cpp'],
+                                  extra_compile_args=COMPILE_ARGS_OSX,
+                                  extra_link_args=LINK_ARGS_OSX,
+                                  )
+                        ]
+    else:
+        ext_modules += [Extension(MOD_NAME,
+                                  [MOD_PATH + '.cpp'],
+                                  )
+                        ]
+
+
 setup(
     name='imagededup',
     version='0.1.0',
@@ -33,15 +99,15 @@ setup(
         'Pillow<7.0.0',
         'PyWavelets~=1.0.3',
         'scipy',
-        'tensorflow~=2.0.0',
+        'tensorflow>1.0',
         'tqdm',
         'scikit-learn',
-        'matplotlib'
+        'matplotlib',
     ],
     extras_require={
         'tests': ['pytest', 'pytest-cov', 'pytest-mock', 'codecov'],
         'docs': ['mkdocs', 'mkdocs-material'],
-        'dev': ['bumpversion'],
+        'dev': ['bumpversion', 'twine'],
     },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -49,10 +115,12 @@ setup(
         'Intended Audience :: Education',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: Apache Software License',
+        'Programming Language :: Cython',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Topic :: Software Development :: Libraries',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     packages=find_packages(exclude=('tests',)),
+    ext_modules=ext_modules
 )

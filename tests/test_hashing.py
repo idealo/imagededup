@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 from PIL import Image
 
@@ -193,6 +194,7 @@ def test_hash_func(hasher, mocker):
 # _find_duplicates_dict
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason='Does not run on Windows.')
 def test__find_duplicates_dict_outfile_none(mocker):
     encoding_map = {'1.jpg': '123456'}
     threshold = 10
@@ -214,12 +216,13 @@ def test__find_duplicates_dict_outfile_none(mocker):
         distance_function=Hashing.hamming_distance,
         verbose=verbose,
         threshold=threshold,
-        search_method='bktree',
+        search_method='brute_force_cython',
     )
     hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
     save_json_mocker.assert_not_called()
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason='Does not run on Windows.')
 def test__find_duplicates_dict_outfile_none_verbose(hasher, mocker):
     encoding_map = {'1.jpg': '123456'}
     threshold = 10
@@ -239,12 +242,13 @@ def test__find_duplicates_dict_outfile_none_verbose(hasher, mocker):
         distance_function=Hashing.hamming_distance,
         verbose=True,
         threshold=threshold,
-        search_method='bktree',
+        search_method='brute_force_cython',
     )
     hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
     save_json_mocker.assert_not_called()
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason='Does not run on Windows.')
 def test__find_duplicates_dict_outfile_true(hasher, mocker):
     encoding_map = {'1.jpg': '123456'}
     threshold = 10
@@ -269,7 +273,7 @@ def test__find_duplicates_dict_outfile_true(hasher, mocker):
         distance_function=Hashing.hamming_distance,
         verbose=verbose,
         threshold=threshold,
-        search_method='bktree',
+        search_method='brute_force_cython',
     )
     hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
     save_json_mocker.assert_called_once_with(
@@ -280,6 +284,7 @@ def test__find_duplicates_dict_outfile_true(hasher, mocker):
 # _find_duplicates_dir
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason='Does not run on Windows.')
 def test__find_duplicates_dir(hasher, mocker):
     encoding_map = {'1.jpg': '123456'}
     threshold = 10
@@ -301,6 +306,7 @@ def test__find_duplicates_dir(hasher, mocker):
         max_distance_threshold=threshold,
         scores=scores,
         outfile=outfile,
+        search_method='brute_force_cython',
     )
     encode_images_mocker.assert_called_once_with(PATH_IMAGE_DIR)
     find_dup_dict_mocker.assert_called_once_with(
@@ -308,6 +314,7 @@ def test__find_duplicates_dir(hasher, mocker):
         max_distance_threshold=threshold,
         scores=scores,
         outfile=outfile,
+        search_method='brute_force_cython',
     )
 
 
@@ -321,6 +328,7 @@ def mocker_hamming_distance(mocker):
     )
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason='Does not run on Windows.')
 def test_find_duplicates_dir(hasher, mocker, mocker_hamming_distance):
     threshold = 10
     scores = True
@@ -333,6 +341,7 @@ def test_find_duplicates_dir(hasher, mocker, mocker_hamming_distance):
         max_distance_threshold=threshold,
         outfile=outfile,
         scores=scores,
+        search_method='brute_force_cython',
     )
     mocker_hamming_distance.assert_called_once_with(thresh=threshold)
     find_dup_dir_mocker.assert_called_once_with(
@@ -340,9 +349,11 @@ def test_find_duplicates_dir(hasher, mocker, mocker_hamming_distance):
         max_distance_threshold=threshold,
         scores=scores,
         outfile=outfile,
+        search_method='brute_force_cython',
     )
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason='Does not run on Windows.')
 def test_find_duplicates_dict(hasher, mocker, mocker_hamming_distance):
     encoding_map = {'1.jpg': '123456'}
     threshold = 10
@@ -356,6 +367,7 @@ def test_find_duplicates_dict(hasher, mocker, mocker_hamming_distance):
         max_distance_threshold=threshold,
         outfile=outfile,
         scores=scores,
+        search_method='brute_force_cython',
     )
     mocker_hamming_distance.assert_called_once_with(thresh=threshold)
     find_dup_dict_mocker.assert_called_once_with(
@@ -363,6 +375,7 @@ def test_find_duplicates_dict(hasher, mocker, mocker_hamming_distance):
         max_distance_threshold=threshold,
         scores=scores,
         outfile=outfile,
+        search_method='brute_force_cython',
     )
 
 
@@ -566,6 +579,31 @@ def test_find_duplicates_correctness_score():
     duplicate_dict = phasher.find_duplicates(
         image_dir=PATH_IMAGE_DIR, max_distance_threshold=10, scores=True
     )
+    assert isinstance(duplicate_dict, dict)
+    duplicates = list(duplicate_dict.values())
+    assert isinstance(duplicates[0], list)
+    assert isinstance(duplicates[0][0], tuple)
+    assert duplicate_dict['ukbench09268.jpg'] == []
+    assert duplicate_dict['ukbench00120.jpg'] == [('ukbench00120_resize.jpg', 0)]
+
+
+@pytest.mark.skipif(sys.platform == 'win32', reason='Does not run on Windows.')
+def test_find_duplicates_clearing():
+    phasher = PHash()
+    duplicate_dict = phasher.find_duplicates(
+        image_dir=PATH_IMAGE_DIR,
+        max_distance_threshold=10,
+        scores=True,
+        search_method='brute_force_cython',
+    )
+
+    duplicate_dict = phasher.find_duplicates(
+        image_dir=PATH_IMAGE_DIR,
+        max_distance_threshold=10,
+        scores=True,
+        search_method='brute_force_cython',
+    )
+
     assert isinstance(duplicate_dict, dict)
     duplicates = list(duplicate_dict.values())
     assert isinstance(duplicates[0], list)

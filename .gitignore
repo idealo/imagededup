@@ -248,3 +248,6 @@ mkdocs/docs/readme_figures/
 mkdocs/docs/CONTRIBUTING.md
 mkdocs/docs/LICENSE.md
 mkdocs/docs/index.md
+
+# ignore cpp files from cython setup
+*.cpp
