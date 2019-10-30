@@ -1,4 +1,0 @@
-Collecting cython
-  Using cached https://files.pythonhosted.org/packages/79/9a/af4d8b449876ba4548029514ce1fc628b3858a2bda55133ac79921594506/Cython-0.29.13-cp36-cp36m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl
-Installing collected packages: cython
-Successfully installed cython-0.29.13
