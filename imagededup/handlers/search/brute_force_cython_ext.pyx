@@ -28,9 +28,9 @@ def query(ull query_hash_val, unsigned int maxdist):
 
     for i in range(all_hashes.size()):
         hash_val = all_hashes[i]
-        filename = all_filenames[i]
         dist = psnip_builtin_popcountll(hash_val ^ query_hash_val)  # requires hash_val and query_hash_val to be integers
         if dist <= maxdist:
+            filename = all_filenames[i]
             matches.append((filename.decode("utf-8"), dist))
 
     return matches
