@@ -99,7 +99,7 @@ setup(
         'Pillow<7.0.0',
         'PyWavelets~=1.0.3',
         'scipy',
-        'tensorflow~=2.0.0',
+        'tensorflow>1.0',
         'tqdm',
         'scikit-learn',
         'matplotlib',
