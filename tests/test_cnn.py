@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import os
+import json
 import numpy as np
 import pytest
 from tensorflow.keras.models import Model
@@ -68,7 +70,7 @@ def test__get_cnn_features_batch(cnn):
         'ukbench09380.jpg',
     ]
 
-    assert list(result.keys()) == expected_predicted_files
+    assert list(sorted(result.keys(), key=str.lower)) == expected_predicted_files
 
     for i in result.values():
         assert isinstance(i, np.ndarray)
@@ -77,13 +79,19 @@ def test__get_cnn_features_batch(cnn):
     result = cnn._get_cnn_features_batch(TEST_IMAGE_FORMATS_DIR)
 
     expected_predicted_files = [
+        'baboon.pgm',
+        'copyleft.tiff',
+        'giphy.gif',
+        'Iggy.1024.ppm',
+        'marbles.pbm',
+        'mpo_image.MPO',
         'ukbench09380.bmp',
         'ukbench09380.jpeg',
         'ukbench09380.png',
         'ukbench09380.svg',
     ]
 
-    assert list(result.keys()) == expected_predicted_files
+    assert list(sorted(result.keys(), key=str.lower)) == expected_predicted_files
 
     for i in result.values():
         assert isinstance(i, np.ndarray)
@@ -125,7 +133,7 @@ def test_encode_images(cnn):
         'ukbench09380.jpg',
     ]
 
-    assert list(result.keys()) == expected_predicted_files
+    assert list(sorted(result.keys(), key=str.lower)) == expected_predicted_files
 
     for i in result.values():
         assert isinstance(i, np.ndarray)
@@ -134,13 +142,19 @@ def test_encode_images(cnn):
     result = cnn.encode_images(TEST_IMAGE_FORMATS_DIR)
 
     expected_predicted_files = [
+        'baboon.pgm',
+        'copyleft.tiff',
+        'giphy.gif',
+        'Iggy.1024.ppm',
+        'marbles.pbm',
+        'mpo_image.MPO',
         'ukbench09380.bmp',
         'ukbench09380.jpeg',
         'ukbench09380.png',
         'ukbench09380.svg',
     ]
 
-    assert list(result.keys()) == expected_predicted_files
+    assert list(sorted(result.keys(), key=str.lower)) == expected_predicted_files
 
     for i in result.values():
         assert isinstance(i, np.ndarray)
@@ -149,13 +163,19 @@ def test_encode_images(cnn):
     result = cnn.encode_images(str(TEST_IMAGE_FORMATS_DIR))
 
     expected_predicted_files = [
+        'baboon.pgm',
+        'copyleft.tiff',
+        'giphy.gif',
+        'Iggy.1024.ppm',
+        'marbles.pbm',
+        'mpo_image.MPO',
         'ukbench09380.bmp',
         'ukbench09380.jpeg',
         'ukbench09380.png',
         'ukbench09380.svg',
     ]
 
-    assert list(result.keys()) == expected_predicted_files
+    assert list(sorted(result.keys(), key=str.lower)) == expected_predicted_files
 
     for i in result.values():
         assert isinstance(i, np.ndarray)
@@ -173,6 +193,9 @@ def test__check_threshold_bounds_input_not_float(cnn):
 def test__check_threshold_bounds_input_out_of_range(cnn):
     with pytest.raises(ValueError):
         cnn._check_threshold_bounds(thresh=1.1)
+
+
+# _find_duplicates_dict
 
 
 def test__find_duplicates_dict_scores_false(cnn):
@@ -214,7 +237,7 @@ def test__find_duplicates_dict_outfile_true(cnn, mocker_save_json):
         scores=scores,
         outfile=outfile,
     )
-    mocker_save_json.assert_called_once_with(cnn.results, outfile)
+    mocker_save_json.assert_called_once_with(results=cnn.results, filename=outfile, float_scores=True)
 
 
 # _find_duplicates_dir
@@ -492,3 +515,72 @@ def test_find_duplicates_to_remove_encoding_integration(cnn):
     assert set(duplicates_list) == set(
         ['ukbench00120_resize.jpg', 'ukbench00120_hflip.jpg']
     )
+
+
+# test verbose
+def test_encode_images_verbose_true(capsys):
+    cnn = CNN(verbose=True)
+    cnn.encode_images(image_dir=TEST_IMAGE_DIR)
+    out, err = capsys.readouterr()
+
+    assert '[==============================]' in out
+    assert '' == err
+
+
+def test_encode_images_verbose_false(capsys):
+    cnn = CNN(verbose=False)
+    cnn.encode_images(image_dir=TEST_IMAGE_DIR)
+    out, err = capsys.readouterr()
+
+    assert '' == out
+    assert '' == err
+
+
+def test_find_duplicates_verbose_true(capsys):
+    cnn = CNN(verbose=True)
+    cnn.find_duplicates(
+        image_dir=TEST_IMAGE_DIR,
+        min_similarity_threshold=0.8,
+        scores=False,
+        outfile=False,
+    )
+    out, err = capsys.readouterr()
+
+    assert '[==============================]' in out
+    assert '' == err
+
+
+def test_find_duplicates_verbose_false(capsys):
+    cnn = CNN(verbose=False)
+    cnn.find_duplicates(
+        image_dir=TEST_IMAGE_DIR,
+        min_similarity_threshold=0.8,
+        scores=False,
+        outfile=False,
+    )
+    out, err = capsys.readouterr()
+
+    assert '' == out
+    assert '' == err
+
+
+def test_scores_saving(cnn):
+    save_file = 'myduplicates.json'
+    cnn.find_duplicates(
+        image_dir=TEST_IMAGE_DIR_MIXED,
+        min_similarity_threshold=0.6,
+        scores=True,
+        outfile=save_file,
+    )
+    with open(save_file, 'r') as f:
+        saved_json = json.load(f)
+
+    assert len(saved_json) == 5  # all valid files present as keys
+    assert len(saved_json['ukbench00120.jpg']) == 3  # file with duplicates have all entries
+    assert len(saved_json['ukbench09268.jpg']) == 0  # file with no duplicates have no entries
+    assert isinstance(saved_json['ukbench00120.jpg'], list)  # a list of files is returned
+    assert isinstance(saved_json['ukbench00120.jpg'][0], list) # each entry in the duplicate list is a list (not a tuple, since json can't save tuples)
+    assert isinstance(saved_json['ukbench00120.jpg'][0][1], float) # saved score is of type 'float'
+
+    os.remove(save_file)  # clean up
+

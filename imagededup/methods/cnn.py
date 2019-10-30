@@ -1,5 +1,4 @@
-import os
-from pathlib import Path, PosixPath
+from pathlib import Path, PurePath
 from typing import Dict, List, Optional, Union
 
 import numpy as np
@@ -27,11 +26,14 @@ class CNN:
     methods are provided to accomplish these tasks.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, verbose: bool = True) -> None:
         """
         Initialize a keras MobileNet model that is sliced at the last convolutional layer.
         Set the batch size for keras generators to be 64 samples. Set the input image size to (224, 224) for providing
         as input to MobileNet model.
+
+        Args:
+            verbose: Display progress bar if True else disable it. Default value is True.
         """
         from tensorflow.keras.applications.mobilenet import MobileNet, preprocess_input
         from imagededup.utils.data_generator import DataGenerator
@@ -42,8 +44,9 @@ class CNN:
 
         self.target_size = (224, 224)
         self.batch_size = 64
-        self.logger = return_logger(__name__, os.getcwd())
+        self.logger = return_logger(__name__)
         self._build_model()
+        self.verbose = 1 if verbose is True else 0
 
     def _build_model(self):
         """
@@ -72,7 +75,7 @@ class CNN:
         image_pp = np.array(image_pp)[np.newaxis, :]
         return self.model.predict(image_pp)
 
-    def _get_cnn_features_batch(self, image_dir: PosixPath) -> Dict[str, np.ndarray]:
+    def _get_cnn_features_batch(self, image_dir: PurePath) -> Dict[str, np.ndarray]:
         """
         Generate CNN encodings for all images in a given directory of images.
         Args:
@@ -90,18 +93,18 @@ class CNN:
         )
 
         feat_vec = self.model.predict_generator(
-            self.data_generator, len(self.data_generator), verbose=1
+            self.data_generator, len(self.data_generator), verbose=self.verbose
         )
         self.logger.info('End: Image encoding generation')
 
         filenames = [i.name for i in self.data_generator.valid_image_files]
 
-        self.encoding_map = {j: feat_vec[i] for i, j in enumerate(filenames)}
+        self.encoding_map = {j: feat_vec[i, :] for i, j in enumerate(filenames)}
         return self.encoding_map
 
     def encode_image(
         self,
-        image_file: Optional[Union[PosixPath, str]] = None,
+        image_file: Optional[Union[PurePath, str]] = None,
         image_array: Optional[np.ndarray] = None,
     ) -> np.ndarray:
         """
@@ -126,7 +129,7 @@ class CNN:
         if isinstance(image_file, str):
             image_file = Path(image_file)
 
-        if isinstance(image_file, PosixPath):
+        if isinstance(image_file, PurePath):
             if not image_file.is_file():
                 raise ValueError(
                     'Please provide either image file path or image array!'
@@ -149,7 +152,7 @@ class CNN:
             else None
         )
 
-    def encode_images(self, image_dir: Union[PosixPath, str]) -> Dict:
+    def encode_images(self, image_dir: Union[PurePath, str]) -> Dict:
         """Generate CNN encodings for all images in a given directory of images.
 
         Args:
@@ -222,8 +225,7 @@ class CNN:
 
         self.logger.info('Start: Calculating cosine similarities...')
 
-        self.cosine_scores = get_cosine_similarity(features)
-        # print(self.cosine_scores)
+        self.cosine_scores = get_cosine_similarity(features, self.verbose)
 
         np.fill_diagonal(
             self.cosine_scores, 2.0
@@ -244,14 +246,15 @@ class CNN:
 
             self.results[image_ids[i]] = duplicates
 
-        if outfile:
-            save_json(self.results, outfile)
-
+        if outfile and scores:
+            save_json(results=self.results, filename=outfile, float_scores=True)
+        elif outfile:
+            save_json(results=self.results, filename=outfile)
         return self.results
 
     def _find_duplicates_dir(
         self,
-        image_dir: Union[PosixPath, str],
+        image_dir: Union[PurePath, str],
         min_similarity_threshold: float,
         scores: bool,
         outfile: Optional[str] = None,
@@ -285,7 +288,7 @@ class CNN:
 
     def find_duplicates(
         self,
-        image_dir: Union[PosixPath, str] = None,
+        image_dir: Union[PurePath, str] = None,
         encoding_map: Dict[str, list] = None,
         min_similarity_threshold: float = 0.9,
         scores: bool = False,
@@ -305,7 +308,7 @@ class CNN:
             min_similarity_threshold: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9
             scores: Optional, boolean indicating whether similarity scores are to be returned along with retrieved
                     duplicates.
-            outfile: Optional, name of the file to save the results. Default is None.
+            outfile: Optional, name of the file to save the results, must be a json. Default is None.
 
         Returns:
             dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -352,7 +355,7 @@ class CNN:
 
     def find_duplicates_to_remove(
         self,
-        image_dir: PosixPath = None,
+        image_dir: PurePath = None,
         encoding_map: Dict[str, np.ndarray] = None,
         min_similarity_threshold: float = 0.9,
         outfile: Optional[str] = None,
@@ -367,7 +370,7 @@ class CNN:
             encoding_map: Optional, used instead of image_dir, a dictionary containing mapping of filenames and
                           corresponding CNN encodings.
             min_similarity_threshold: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9
-            outfile: Optional, name of the file to save the results. Default is None.
+            outfile: Optional, name of the file to save the results, must be a json. Default is None.
 
         Returns:
             duplicates: List of image file names that should be removed.

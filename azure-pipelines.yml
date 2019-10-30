@@ -1,0 +1,56 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - '*'
+  paths:
+    exclude:
+      - '*.md'
+
+pr:
+  paths:
+    exclude:
+      - '*.md'
+
+jobs:
+  - job: 'Test'
+    strategy:
+      matrix:
+        Python36Linux:
+          imageName: 'ubuntu-16.04'
+          python.version: '3.6'
+        Python36Windows:
+          imageName: 'vs2017-win2016'
+          python.version: '3.6'
+        Python36Mac:
+          imageName: 'macos-10.13'
+          python.version: '3.6'
+        Python37Linux:
+          imageName: 'ubuntu-16.04'
+          python.version: '3.7'
+        Python37Windows:
+          imageName: 'vs2017-win2016'
+          python.version: '3.7'
+        Python37Mac:
+          imageName: 'macos-10.13'
+          python.version: '3.7'
+      maxParallel: 2
+    pool:
+      vmImage: $(imageName)
+
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '$(python.version)'
+      displayName: 'Use Python $(python.version)'
+
+    - script: |
+        python -m pip install --upgrade pip
+        pip install "cython>=0.29"
+        pip install -e ".[tests, docs]"
+      displayName: 'Install dependencies'
+
+    - script: |
+        pip install pytest pytest-azurepipelines
+        pytest -vs --show-capture=no tests
+      displayName: 'pytest'

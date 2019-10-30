@@ -1,3 +1,4 @@
+import sys
 from typing import Callable, Dict, Union, Tuple
 
 import numpy as np
@@ -5,7 +6,11 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from imagededup.handlers.search.bktree import BKTree
 from imagededup.handlers.search.brute_force import BruteForce
+from imagededup.handlers.search.brute_force_cython import BruteForceCython
 from imagededup.utils.general_utils import parallelise
+from imagededup.utils.logger import return_logger
+
+logger = return_logger(__name__)
 
 
 def cosine_similarity_chunk(t: Tuple) -> np.ndarray:
@@ -13,7 +18,7 @@ def cosine_similarity_chunk(t: Tuple) -> np.ndarray:
 
 
 def get_cosine_similarity(
-    X: np.ndarray, chunk_size: int = 1000, threshold: int = 10000
+    X: np.ndarray, verbose: bool = True, chunk_size: int = 1000, threshold: int = 10000
 ) -> np.ndarray:
     n_rows = X.shape[0]
 
@@ -21,12 +26,15 @@ def get_cosine_similarity(
         return cosine_similarity(X)
 
     else:
-        print('Large feature matrix thus calculating cosine similarities in chunks...')
+        logger.info(
+            'Large feature matrix thus calculating cosine similarities in chunks...'
+        )
         start_idxs = list(range(0, n_rows, chunk_size))
         end_idxs = start_idxs[1:] + [n_rows]
         cos_sim = parallelise(
             cosine_similarity_chunk,
             [(X, idxs) for i, idxs in enumerate(zip(start_idxs, end_idxs))],
+            verbose,
         )
 
         return np.vstack(cos_sim)
@@ -38,8 +46,9 @@ class HashEval:
         test: Dict,
         queries: Dict,
         distance_function: Callable,
+        verbose: bool = True,
         threshold: int = 5,
-        search_method: str = 'bktree',
+        search_method: str = 'brute_force_cython' if not sys.platform == 'win32' else 'bktree',
     ) -> None:
         """
         Initialize a HashEval object which offers an interface to control hashing and search methods for desired
@@ -48,13 +57,16 @@ class HashEval:
         self.test = test  # database
         self.queries = queries
         self.distance_invoker = distance_function
+        self.verbose = verbose
         self.threshold = threshold
         self.query_results_map = None
 
         if search_method == 'bktree':
-            self._fetch_nearest_neighbors_bktree()  # bktree is the default search method
-        else:
+            self._fetch_nearest_neighbors_bktree()
+        elif search_method == 'brute_force':
             self._fetch_nearest_neighbors_brute_force()
+        else:
+            self._fetch_nearest_neighbors_brute_force_cython()
 
     def _searcher(self, data_tuple) -> None:
         """
@@ -88,7 +100,7 @@ class HashEval:
                 [self.threshold] * len(self.queries),
             )
         )
-        result_map_list = parallelise(self._searcher, args)
+        result_map_list = parallelise(self._searcher, args, self.verbose)
         result_map = dict(zip(list(self.queries.keys()), result_map_list))
 
         self.query_results_map = {
@@ -100,19 +112,28 @@ class HashEval:
         """
         Wrapper function to retrieve results for all queries in dataset using brute-force search.
         """
-        print('Start: Retrieving duplicates using Brute force algorithm')
-        bruteforce = BruteForce(self.test, self.distance_invoker)
-        self._get_query_results(bruteforce)
-        print('End: Retrieving duplicates using Brute force algorithm')
+        logger.info('Start: Retrieving duplicates using Brute force algorithm')
+        brute_force = BruteForce(self.test, self.distance_invoker)
+        self._get_query_results(brute_force)
+        logger.info('End: Retrieving duplicates using Brute force algorithm')
+
+    def _fetch_nearest_neighbors_brute_force_cython(self) -> None:
+        """
+        Wrapper function to retrieve results for all queries in dataset using brute-force search.
+        """
+        logger.info('Start: Retrieving duplicates using Cython Brute force algorithm')
+        brute_force_cython = BruteForceCython(self.test, self.distance_invoker)
+        self._get_query_results(brute_force_cython)
+        logger.info('End: Retrieving duplicates using Cython Brute force algorithm')
 
     def _fetch_nearest_neighbors_bktree(self) -> None:
         """
         Wrapper function to retrieve results for all queries in dataset using a BKTree search.
         """
-        print('Start: Retrieving duplicates using BKTree algorithm')
+        logger.info('Start: Retrieving duplicates using BKTree algorithm')
         built_tree = BKTree(self.test, self.distance_invoker)  # construct bktree
         self._get_query_results(built_tree)
-        print('End: Retrieving duplicates using BKTree algorithm')
+        logger.info('End: Retrieving duplicates using BKTree algorithm')
 
     def retrieve_results(self, scores: bool = False) -> Dict:
         """

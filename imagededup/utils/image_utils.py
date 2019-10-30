@@ -1,5 +1,4 @@
-import os
-from pathlib import PosixPath
+from pathlib import PurePath
 from typing import List, Union, Tuple
 
 import numpy as np
@@ -8,12 +7,8 @@ from PIL import Image
 from imagededup.utils.logger import return_logger
 
 
-"""
-Todo: Parallelize files validation/ hash generation
-"""
-
-IMG_FORMATS = ['JPEG', 'PNG', 'BMP']
-logger = return_logger(__name__, os.getcwd())
+IMG_FORMATS = ['JPEG', 'PNG', 'BMP', 'MPO', 'PPM', 'TIFF', 'GIF']
+logger = return_logger(__name__)
 
 
 def preprocess_image(
@@ -50,7 +45,7 @@ def preprocess_image(
 
 
 def load_image(
-    image_file: Union[PosixPath, str],
+    image_file: Union[PurePath, str],
     target_size: Tuple[int, int] = None,
     grayscale: bool = False,
     img_formats: List[str] = IMG_FORMATS,

@@ -1,5 +1,6 @@
 import os
-from pathlib import PosixPath, Path
+import sys
+from pathlib import PurePath, Path
 from typing import Dict, List, Optional
 
 import pywt
@@ -9,7 +10,9 @@ from scipy.fftpack import dct
 from imagededup.handlers.search.retrieval import HashEval
 from imagededup.utils.general_utils import get_files_to_remove, save_json, parallelise
 from imagededup.utils.image_utils import load_image, preprocess_image
+from imagededup.utils.logger import return_logger
 
+logger = return_logger(__name__)
 
 """
 TODO:
@@ -35,8 +38,16 @@ class Hashing:
     directory that contains the images that need to be deduplicated. 'find_duplciates' and 'find_duplicates_to_remove'
     methods are provided to accomplish these tasks.
     """
-    def __init__(self) -> None:
+
+    def __init__(self, verbose: bool = True) -> None:
+        """
+        Initialize hashing class.
+
+        Args:
+            verbose: Display progress bar if True else disable it. Default value is True.
+        """
         self.target_size = (8, 8)  # resizing to dims
+        self.verbose = verbose
 
     @staticmethod
     def hamming_distance(hash1: str, hash2: str) -> float:
@@ -137,15 +148,15 @@ class Hashing:
             i.absolute() for i in image_dir.glob('*') if not i.name.startswith('.')
         ]  # ignore hidden files
 
-        print(f'Start: Calculating hashes...')
+        logger.info(f'Start: Calculating hashes...')
 
-        hashes = parallelise(self.encode_image, files)
+        hashes = parallelise(self.encode_image, files, self.verbose)
         hash_initial_dict = dict(zip([f.name for f in files], hashes))
         hash_dict = {
             k: v for k, v in hash_initial_dict.items() if v
         }  # To ignore None (returned if some probelm with image file)
 
-        print(f'End: Calculating hashes!')
+        logger.info(f'End: Calculating hashes!')
         return hash_dict
 
     def _hash_algo(self, image_array: np.ndarray):
@@ -183,6 +194,7 @@ class Hashing:
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
+        search_method: str = 'brute_force_cython' if not sys.platform == 'win32' else 'bktree',
     ) -> Dict:
         """
         Take in dictionary {filename: encoded image}, detects duplicates below the given hamming distance threshold
@@ -194,6 +206,8 @@ class Hashing:
             max_distance_threshold: Hamming distance between two images below which retrieved duplicates are valid.
             scores: Boolean indicating whether hamming distance scores are to be returned along with retrieved
             duplicates.
+            outfile: Optional, name of the file to save the results. Default is None.
+            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython for Unix else bktree.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -201,17 +215,18 @@ class Hashing:
             if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
             'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
         """
-        print('Start: Evaluating hamming distances for getting duplicates')
+        logger.info('Start: Evaluating hamming distances for getting duplicates')
 
         result_set = HashEval(
             test=encoding_map,
             queries=encoding_map,
             distance_function=self.hamming_distance,
+            verbose=self.verbose,
             threshold=max_distance_threshold,
-            search_method='bktree',
+            search_method=search_method,
         )
 
-        print('End: Evaluating hamming distances for getting duplicates')
+        logger.info('End: Evaluating hamming distances for getting duplicates')
 
         self.results = result_set.retrieve_results(scores=scores)
         if outfile:
@@ -220,10 +235,11 @@ class Hashing:
 
     def _find_duplicates_dir(
         self,
-        image_dir: PosixPath,
+        image_dir: PurePath,
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
+        search_method: str = 'brute_force_cython' if not sys.platform == 'win32' else 'bktree',
     ) -> Dict:
         """
         Take in path of the directory in which duplicates are to be detected below the given hamming distance
@@ -235,6 +251,7 @@ class Hashing:
             max_distance_threshold: Hamming distance between two images below which retrieved duplicates are valid.
             scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
             outfile: Name of the file the results should be written to.
+            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython for Unix else bktree.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -248,16 +265,18 @@ class Hashing:
             max_distance_threshold=max_distance_threshold,
             scores=scores,
             outfile=outfile,
+            search_method=search_method,
         )
         return results
 
     def find_duplicates(
         self,
-        image_dir: PosixPath = None,
+        image_dir: PurePath = None,
         encoding_map: Dict[str, str] = None,
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
+        search_method: str = 'brute_force_cython' if not sys.platform == 'win32' else 'bktree',
     ) -> Dict:
         """
         Find duplicates for each file. Takes in path of the directory or encoding dictionary in which duplicates are to
@@ -274,7 +293,8 @@ class Hashing:
             max_distance_threshold: Optional, hamming distance between two images below which retrieved duplicates are
                                     valid. (must be an int between 0 and 64). Default is 10.
             scores: Optional, boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
-            outfile: Optional, name of the file to save the results. Default is None.
+            outfile: Optional, name of the file to save the results, must be a json. Default is None.
+            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython for Unix else bktree.
 
         Returns:
             duplicates dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -304,6 +324,7 @@ class Hashing:
                 max_distance_threshold=max_distance_threshold,
                 scores=scores,
                 outfile=outfile,
+                search_method=search_method,
             )
         elif encoding_map:
             result = self._find_duplicates_dict(
@@ -311,6 +332,7 @@ class Hashing:
                 max_distance_threshold=max_distance_threshold,
                 scores=scores,
                 outfile=outfile,
+                search_method=search_method,
             )
         else:
             raise ValueError('Provide either an image directory or encodings!')
@@ -318,7 +340,7 @@ class Hashing:
 
     def find_duplicates_to_remove(
         self,
-        image_dir: PosixPath = None,
+        image_dir: PurePath = None,
         encoding_map: Dict[str, str] = None,
         max_distance_threshold: int = 10,
         outfile: Optional[str] = None,
@@ -334,7 +356,7 @@ class Hashing:
                           corresponding hashes.
             max_distance_threshold: Optional, hamming distance between two images below which retrieved duplicates are
                                     valid. (must be an int between 0 and 64). Default is 10.
-            outfile: Optional, name of the file to save the results.
+            outfile: Optional, name of the file to save the results, must be a json. Default is None.
 
         Returns:
             duplicates: List of image file names that are found to be duplicate of me other file in the directory.
@@ -401,8 +423,14 @@ class PHash(Hashing):
     ```
     """
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, verbose: bool = True) -> None:
+        """
+        Initialize perceptual hashing class.
+
+        Args:
+            verbose: Display progress bar if True else disable it. Default value is True.
+        """
+        super().__init__(verbose)
         self.__coefficient_extract = (8, 8)
         self.target_size = (32, 32)
 
@@ -467,8 +495,14 @@ class AHash(Hashing):
     ```
     """
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, verbose: bool = True) -> None:
+        """
+        Initialize average hashing class.
+
+        Args:
+            verbose: Display progress bar if True else disable it. Default value is True.
+        """
+        super().__init__(verbose)
         self.target_size = (8, 8)
 
     def _hash_algo(self, image_array: np.ndarray):
@@ -521,8 +555,14 @@ class DHash(Hashing):
     ```
     """
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, verbose: bool = True) -> None:
+        """
+        Initialize difference hashing class.
+
+        Args:
+            verbose: Display progress bar if True else disable it. Default value is True.
+        """
+        super().__init__(verbose)
         self.target_size = (9, 8)
 
     def _hash_algo(self, image_array):
@@ -575,8 +615,14 @@ class WHash(Hashing):
     ```
     """
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, verbose: bool = True) -> None:
+        """
+        Initialize wavelet hashing class.
+
+        Args:
+            verbose: Display progress bar if True else disable it. Default value is True.
+        """
+        super().__init__(verbose)
         self.target_size = (256, 256)
         self.__wavelet_func = 'haar'
 

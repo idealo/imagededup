@@ -2,6 +2,9 @@ import json
 import tqdm
 from multiprocessing import cpu_count, Pool
 from typing import Callable, Dict, List
+from imagededup.utils.logger import return_logger
+
+logger = return_logger(__name__)
 
 
 def get_files_to_remove(duplicates: Dict[str, List]) -> List:
@@ -28,23 +31,37 @@ def get_files_to_remove(duplicates: Dict[str, List]) -> List:
     return list(files_to_remove)
 
 
-def save_json(results: Dict, filename: str) -> None:
+def save_json(results: Dict, filename: str, float_scores: bool = False) -> None:
     """
     Save results with a filename.
 
     Args:
         results: Dictionary of results to be saved.
         filename: Name of the file to be saved.
+        float_scores: boolean to indicate if scores are floats.
     """
-    print('Start: Saving duplicates as json!')
+    logger.info('Start: Saving duplicates as json!')
+
+    if float_scores:
+        for _file, dup_list in results.items():
+            if dup_list:
+                typecasted_dup_list = []
+                for dup in dup_list:
+                    typecasted_dup_list.append((dup[0], float(dup[1])))
+
+                results[_file] = typecasted_dup_list
+
     with open(filename, 'w') as f:
         json.dump(results, f, indent=2, sort_keys=True)
-    print('End: Saving duplicates as json!')
+
+    logger.info('End: Saving duplicates as json!')
 
 
-def parallelise(function: Callable, data: List) -> List:
+def parallelise(function: Callable, data: List, verbose: bool) -> List:
     pool = Pool(processes=cpu_count())
-    results = list(tqdm.tqdm(pool.imap(function, data), total=len(data)))
+    results = list(
+        tqdm.tqdm(pool.imap(function, data, 100), total=len(data), disable=not verbose)
+    )
     pool.close()
     pool.join()
     return results

@@ -1,0 +1,10 @@
+numpy<1.17
+Pillow<7.0.0
+PyWavelets~=1.0.3
+scipy
+tensorflow>1.0
+tqdm
+scikit-learn
+matplotlib
+# Development dependencies
+cython>=0.29

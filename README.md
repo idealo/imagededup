@@ -1,5 +1,6 @@
 # Image Deduplicator (imagededup)
 
+[![Build Status](https://dev.azure.com/axelspringerai/Public/_apis/build/status/idealo.imagededup?branchName=master)](https://dev.azure.com/axelspringerai/Public/_build/latest?definitionId=1&branchName=master)
 [![Build Status](https://travis-ci.org/idealo/imagededup.svg?branch=master)](https://travis-ci.org/idealo/imagededup)
 [![Docs](https://img.shields.io/badge/docs-online-brightgreen)](https://idealo.github.io/imagededup/)
 [![codecov](https://codecov.io/gh/idealo/imagededup/branch/master/graph/badge.svg)](https://codecov.io/gh/idealo/imagededup)
@@ -30,15 +31,16 @@ Following details the functionality provided by the package:
 
 Detailed documentation for the package can be found at: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
 
-imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0 license.
+imagededup is compatible with Python 3.6+ and runs on Linux, MacOS X and Windows. 
+It is distributed under the Apache 2.0 license.
 
 ## 📖 Contents
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Contribute](#contribute)
-- [Citation](#citation)
-- [Maintainers](#maintainers)
-- [License](#copyright)
+- [Installation](#%EF%B8%8F-installation)
+- [Quick Start](#-quick-start)
+- [Contribute](#-contribute)
+- [Citation](#-citation)
+- [Maintainers](#-maintainers)
+- [License](#-copyright)
 
 ## ⚙️ Installation
 There are two ways to install imagededup:
@@ -55,9 +57,10 @@ pip install imagededup
 
 * Install imagededup from the GitHub source:
 
-```
+```bash
 git clone https://github.com/idealo/imagededup.git
-cd imagededup  
+cd imagededup
+pip install "cython>=0.29"
 python setup.py install
 ```  
 
@@ -127,7 +130,7 @@ See the [Contribution](CONTRIBUTING.md) guide for more details.
 
 ## 📝 Citation
 Please cite Imagededup in your publications if this is useful for your research. Here is an example BibTeX entry:
-```
+```BibTeX
 @misc{idealods2019imagededup,
   title={Imagededup},
   author={Tanuj Jain and Christopher Lennan and Zubin John and Dat Tran},
