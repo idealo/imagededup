@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import PurePath, Path
 from typing import Dict, List, Optional
 
@@ -193,7 +194,7 @@ class Hashing:
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
-        search_method: str = 'brute_force_cython' if not os.name == 'nt' else 'bktree',
+        search_method: str = 'brute_force_cython' if not sys.platform == 'win32' else 'bktree',
     ) -> Dict:
         """
         Take in dictionary {filename: encoded image}, detects duplicates below the given hamming distance threshold
@@ -238,7 +239,7 @@ class Hashing:
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
-        search_method: str = 'brute_force_cython' if not os.name == 'nt' else 'bktree',
+        search_method: str = 'brute_force_cython' if not sys.platform == 'win32' else 'bktree',
     ) -> Dict:
         """
         Take in path of the directory in which duplicates are to be detected below the given hamming distance
@@ -275,7 +276,7 @@ class Hashing:
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
-        search_method: str = 'brute_force_cython' if not os.name == 'nt' else 'bktree',
+        search_method: str = 'brute_force_cython' if not sys.platform == 'win32' else 'bktree',
     ) -> Dict:
         """
         Find duplicates for each file. Takes in path of the directory or encoding dictionary in which duplicates are to

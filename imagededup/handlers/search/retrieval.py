@@ -1,4 +1,4 @@
-import os
+import sys
 from typing import Callable, Dict, Union, Tuple
 
 import numpy as np
@@ -48,7 +48,7 @@ class HashEval:
         distance_function: Callable,
         verbose: bool = True,
         threshold: int = 5,
-        search_method: str = 'brute_force_cython' if not os.name == 'nt' else 'bktree',
+        search_method: str = 'brute_force_cython' if not sys.platform == 'win32' else 'bktree',
     ) -> None:
         """
         Initialize a HashEval object which offers an interface to control hashing and search methods for desired
