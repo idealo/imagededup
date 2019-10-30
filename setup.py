@@ -18,7 +18,8 @@ functionality provided by the package:
 
 Read the documentation at: https://idealo.github.io/imagededup/
 
-imagededup is compatible with Python 3.6 and is distributed under the Apache 2.0 license.
+imagededup is compatible with Python 3.6+ and runs on Linux, MacOS X and Windows. 
+It is distributed under the Apache 2.0 license.
 '''
 
 # Cython compilation is not enabled by default
@@ -112,12 +113,15 @@ setup(
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
-        'Intended Audience :: Education',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: Apache Software License',
+        'Operating System :: POSIX :: Linux',
+        'Operating System :: MacOS :: MacOS X',
+        'Operating System :: Microsoft :: Windows',
         'Programming Language :: Cython',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Software Development :: Libraries',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],

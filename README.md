@@ -1,5 +1,6 @@
 # Image Deduplicator (imagededup)
 
+[![Build Status](https://dev.azure.com/axelspringerai/Public/_apis/build/status/idealo.imagededup?branchName=master)](https://dev.azure.com/axelspringerai/Public/_build/latest?definitionId=1&branchName=master)
 [![Build Status](https://travis-ci.org/idealo/imagededup.svg?branch=master)](https://travis-ci.org/idealo/imagededup)
 [![Docs](https://img.shields.io/badge/docs-online-brightgreen)](https://idealo.github.io/imagededup/)
 [![codecov](https://codecov.io/gh/idealo/imagededup/branch/master/graph/badge.svg)](https://codecov.io/gh/idealo/imagededup)
@@ -30,7 +31,8 @@ Following details the functionality provided by the package:
 
 Detailed documentation for the package can be found at: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
 
-imagededup is compatible with Python 3.6+ and is distributed under the Apache 2.0 license.
+imagededup is compatible with Python 3.6+ and runs on Linux, MacOS X and Windows. 
+It is distributed under the Apache 2.0 license.
 
 ## 📖 Contents
 - [Installation](#%EF%B8%8F-installation)
