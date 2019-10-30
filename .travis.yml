@@ -6,7 +6,7 @@ os:
   - osx
   - windows
 install:
-  - pip install cython>=0.29
+  - pip install "cython>=0.29"
   - pip install -e ".[tests, docs]"
 script:
   - pytest -vs --cov=imagededup --cov-report xml --show-capture=no tests

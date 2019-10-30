@@ -1,5 +1,5 @@
 import os
-from pathlib import PosixPath, Path
+from pathlib import PurePath, Path
 from typing import Dict, List, Optional
 
 import pywt
@@ -40,6 +40,8 @@ class Hashing:
 
     def __init__(self, verbose: bool = True) -> None:
         """
+        Initialize hashing class.
+
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
@@ -191,7 +193,7 @@ class Hashing:
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
-        search_method: str = 'brute_force_cython',
+        search_method: str = 'brute_force_cython' if not os.name == 'nt' else 'bktree',
     ) -> Dict:
         """
         Take in dictionary {filename: encoded image}, detects duplicates below the given hamming distance threshold
@@ -204,7 +206,7 @@ class Hashing:
             scores: Boolean indicating whether hamming distance scores are to be returned along with retrieved
             duplicates.
             outfile: Optional, name of the file to save the results. Default is None.
-            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython.
+            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython for Unix else bktree.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -232,11 +234,11 @@ class Hashing:
 
     def _find_duplicates_dir(
         self,
-        image_dir: PosixPath,
+        image_dir: PurePath,
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
-        search_method: str = 'brute_force_cython',
+        search_method: str = 'brute_force_cython' if not os.name == 'nt' else 'bktree',
     ) -> Dict:
         """
         Take in path of the directory in which duplicates are to be detected below the given hamming distance
@@ -248,7 +250,7 @@ class Hashing:
             max_distance_threshold: Hamming distance between two images below which retrieved duplicates are valid.
             scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
             outfile: Name of the file the results should be written to.
-            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython.
+            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython for Unix else bktree.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -268,12 +270,12 @@ class Hashing:
 
     def find_duplicates(
         self,
-        image_dir: PosixPath = None,
+        image_dir: PurePath = None,
         encoding_map: Dict[str, str] = None,
         max_distance_threshold: int = 10,
         scores: bool = False,
         outfile: Optional[str] = None,
-        search_method: str = 'brute_force_cython',
+        search_method: str = 'brute_force_cython' if not os.name == 'nt' else 'bktree',
     ) -> Dict:
         """
         Find duplicates for each file. Takes in path of the directory or encoding dictionary in which duplicates are to
@@ -290,8 +292,8 @@ class Hashing:
             max_distance_threshold: Optional, hamming distance between two images below which retrieved duplicates are
                                     valid. (must be an int between 0 and 64). Default is 10.
             scores: Optional, boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
-            outfile: Optional, name of the file to save the results. Default is None.
-            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython.
+            outfile: Optional, name of the file to save the results, must be a json. Default is None.
+            search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython for Unix else bktree.
 
         Returns:
             duplicates dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -337,7 +339,7 @@ class Hashing:
 
     def find_duplicates_to_remove(
         self,
-        image_dir: PosixPath = None,
+        image_dir: PurePath = None,
         encoding_map: Dict[str, str] = None,
         max_distance_threshold: int = 10,
         outfile: Optional[str] = None,
@@ -353,7 +355,7 @@ class Hashing:
                           corresponding hashes.
             max_distance_threshold: Optional, hamming distance between two images below which retrieved duplicates are
                                     valid. (must be an int between 0 and 64). Default is 10.
-            outfile: Optional, name of the file to save the results.
+            outfile: Optional, name of the file to save the results, must be a json. Default is None.
 
         Returns:
             duplicates: List of image file names that are found to be duplicate of me other file in the directory.
@@ -422,6 +424,8 @@ class PHash(Hashing):
 
     def __init__(self, verbose: bool = True) -> None:
         """
+        Initialize perceptual hashing class.
+
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
@@ -492,6 +496,8 @@ class AHash(Hashing):
 
     def __init__(self, verbose: bool = True) -> None:
         """
+        Initialize average hashing class.
+
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
@@ -550,6 +556,8 @@ class DHash(Hashing):
 
     def __init__(self, verbose: bool = True) -> None:
         """
+        Initialize difference hashing class.
+
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
@@ -608,6 +616,8 @@ class WHash(Hashing):
 
     def __init__(self, verbose: bool = True) -> None:
         """
+        Initialize wavelet hashing class.
+
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
