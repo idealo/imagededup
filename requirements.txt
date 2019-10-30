@@ -8,4 +8,3 @@ scikit-learn
 matplotlib
 # Development dependencies
 cython>=0.29
-pytest
