@@ -12,14 +12,14 @@ Please read this guide before making any contributions.
 The feedback should be submitted by creating an issue on [GitHub issues](https://github.com/idealo/image-dedup/issues).
 Select the related template (bug report, feature request, or custom) and add the corresponding labels.
 
-#### Fix Bugs:
+#### Fix Bugs
 You may look through the [GitHub issues](https://github.com/idealo/image-dedup/issues) for bugs.
 
 #### Implement Features
 You may look through the [GitHub issues](https://github.com/idealo/image-dedup/issues) for feature requests.
 
 ## Pull Requests (PR)
-1. Fork the repository and create a new branch from the master branch.
+1. Fork the repository and create a new branch from the `dev` branch.
 2. For bug fixes, add new tests and for new features, please add changes to the documentation.
 3. Do a PR from your new branch to our `dev` branch of the original Imagededup repo.
 

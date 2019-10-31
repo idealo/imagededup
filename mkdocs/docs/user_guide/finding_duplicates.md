@@ -149,9 +149,7 @@ The 'method-name' corresponds to one of the deduplication methods available and 
 
 - *encoding_map*: Optional, used instead of image_dir attribute. Set it equal to the dictionary of file names and 
 corresponding encodings (hashes/cnn encodings). The mentioned dictionary can be generated using the corresponding 
-[*encode_images*](encoding_generation.md) method. Each key in the 'duplicates' dictionary corresponds to a file in the image directory passed to 
-the image_dir parameter of the find_duplicates function. The value is a list of all tuples representing the file names 
-and corresponding scores in the image directory that were found to be duplicates for the key file.
+[*encode_images*](encoding_generation.md) method.
 
 - *outfile*: Name of file to which the returned duplicates dictionary is to be written, must be a json. *None* by default.
 
