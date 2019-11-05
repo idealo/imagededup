@@ -43,7 +43,7 @@ def save_json(results: Dict, filename: str) -> None:
     print('End: Saving duplicates as json!')
 
 
-def parallelise(function: Callable, data: List) -> List:
+def parallelise(function: Callable, data: List, verbose: ) -> List:
     """
     Get a function to execute and a list, the function is
     executed in parallel (the number of workers is depends on the number
