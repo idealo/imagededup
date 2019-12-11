@@ -17,12 +17,8 @@ logger = return_logger(__name__)
 def _get_unique_ordered_tuples(unique_tuples: List[Tuple]) -> List[Tuple]:
     """Sort each tuple given a list of tuples and retain only unique pairs regardless of order within the tuple.
     Eg: [(2, 1), (1, 2), (3, 4)]  becomes [(1, 2), (3, 4)]"""
-    ordered_tuples = []
 
-    for i in unique_tuples:
-        ordered_tuples.append(tuple(sorted(i)))
-
-    return list(set(ordered_tuples))
+    return list(set([tuple(sorted(i)) for i in unique_tuples]))
 
 
 def _make_all_unique_possible_pairs(ground_truth_dict: Dict) -> List[Tuple]:
@@ -33,12 +29,7 @@ def _make_all_unique_possible_pairs(ground_truth_dict: Dict) -> List[Tuple]:
     all_files = list(ground_truth_dict.keys())
 
     # make all possible pairs (remove pairs with same elements)
-    all_tuples = []
-
-    for i in itertools.product(all_files, all_files):
-        if not i[0] == i[1]:
-            all_tuples.append(i)
-
+    all_tuples = [i for i in itertools.product(all_files, all_files) if i[0] != i[1]]
     return _get_unique_ordered_tuples(all_tuples)
 
 
@@ -52,8 +43,7 @@ def _make_positive_duplicate_pairs(ground_truth: Dict, retrieved: Dict) -> List[
         valid_pairs = []
 
         for k, v in mapping.items():
-            for j in v:
-                valid_pairs.append((k, j))
+            valid_pairs.extend(list(zip([k]*len(v), v)))
         pairs.append(_get_unique_ordered_tuples(valid_pairs))
 
     return pairs[0], pairs[1]
@@ -68,6 +58,9 @@ def _prepare_labels(
     Given all possible unique pairs, ground truth positive pairs and retrieved positive pairs, generate true and
     predicted labels to feed into classification metrics functions.
     """
+    ground_truth_pairs = set(ground_truth_pairs)
+    retrieved_pairs = set(retrieved_pairs)
+
     y_true = [1 if i in ground_truth_pairs else 0 for i in complete_pairs]
     y_pred = [1 if i in retrieved_pairs else 0 for i in complete_pairs]
     return y_true, y_pred
