@@ -8,6 +8,7 @@ nav:
         - Encoding generation: user_guide/encoding_generation.md
         - Evaluating performance: user_guide/evaluating_performance.md
         - Plotting duplicates: user_guide/plotting_duplicates.md
+        - Benchmarks: user_guide/benchmarks.md
     - API reference:
         - Methods:
             - CNN: methods/cnn.md
