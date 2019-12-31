@@ -8,19 +8,23 @@ some variations derived from it.
 ## Datasets
 
 3 datasets that have been used:
+
 1. Near duplicate dataset ([UKBench dataset](https://archive.org/details/ukbench)): This dataset has near-duplicates
  that are arranged in groups of 4. There are a total of 2550 such groups amounting to a total
-  of 10200 RGB images. The size of each image is 640 by 480 with 'jpg' extension.
+  of 10200 RGB images. The size of each image is 640 x 480 with `jpg` extension.
+
 2. Transformed dataset derived from UKBench dataset: An image from different groups of the UKBench
  dataset was taken and the following 5 transformations were applied to the original image:
-    - Random crop preserving the original aspect ratio (new size- 560 by 420)
+ 
+    - Random crop preserving the original aspect ratio (new size - 560 x 420)
     - Horizontal flip
     - Vertical flip
     - 25 degree rotation
     - Resizing with change in aspect ratio (new aspect ratio - 1:1)
+    
+    Thus, each group has a total of 6 images (original +  transformed). A total of 1800 such groups
+    were created totalling 10800 images in the dataset.
 
-   Thus, each group has a total of 6 images (original +  transformed). A total of 1800 such groups
-were created totalling 10800 images in the dataset.
 3. Exact duplicate dataset: An image from each of the 2550 image groups of the UKBench dataset was
  taken and an exact duplicate was created. The number of images totalled 5100.
  
