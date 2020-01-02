@@ -14,9 +14,9 @@ having size ~1.5G) and some variations derived from it.
   of 10200 RGB images. The size of each image is 640 x 480 with `jpg` extension. The image below depicts 3 example groups
   from the UKBench dataset. Each row represents a group with the corresponding 4 images from the group.
 
-   <p align="center">
-     <img src="../../img/collage_ukbench.png" width="600" />
-   </p>  
+    <p align="center">
+      <img src="../../img/collage_ukbench.png" width="600" />
+    </p>  
 
 2. Transformed dataset derived from UKBench dataset: An image from different groups of the UKBench
  dataset was taken and the following 5 transformations were applied to the original image:
