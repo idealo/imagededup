@@ -1,7 +1,7 @@
 # Benchmarks
 
 To gauge an idea of the speed and accuracy of the implemented algorithms, a benchmark
-has been provided on the [UKBench dataset](https://archive.org/details/ukbench) (zip file titled 'UKBench image collection' 
+has been provided on the [UKBench dataset](https://archive.org/details/ukbench) (zip file titled 'UKBench image collection'
 having size ~1.5G) and some variations derived from it.
 
 
@@ -11,11 +11,11 @@ having size ~1.5G) and some variations derived from it.
 
 1. Near duplicate dataset ([UKBench dataset](https://archive.org/details/ukbench)): This dataset has near duplicates
  that are arranged in groups of 4. There are a total of 2550 such groups amounting to a total
-  of 10200 RGB images. The size of each image is 640 x 480 with `jpg` extension. The image below depicts 3 example groups 
+  of 10200 RGB images. The size of each image is 640 x 480 with `jpg` extension. The image below depicts 3 example groups
   from the UKBench dataset. Each row represents a group with the corresponding 4 images from the group.
 
    <p align="center">
-     <img src="../img/collage_ukbench.png" width="600" />
+     <img src="/img/collage_ukbench.png" width="600" />
    </p>  
 
 2. Transformed dataset derived from UKBench dataset: An image from different groups of the UKBench
@@ -55,11 +55,13 @@ The time taken to perform the evaluation task is *NOT* reported.
 For each method, 3 different thresholds have been selected.
 
 For hashing methods, following `max_distance_threshold` values are used:
+
 - 0: Indicates that exactly the same hash should be generated for the image pairs to be considered duplicates.
 - 10: Default.
 - 32: Halfway between the maximum and minimum values (0 and 64).
 
 For cnn method, following `min_similarity_threshold` values are used:
+
 - 1.0: Indicates that exactly the same cnn embeddings should be generated for the image pairs to be considered duplicates.
 - 0.9: Default.
 - 0.5: A threshold that allows large deviation between image pairs.
@@ -68,7 +70,7 @@ For cnn method, following `min_similarity_threshold` values are used:
 ### Near Duplicate dataset
 | *Method* | *Threshold* | *Time (s)* | *class-0 precision* |*class-1 precision*  |  *class-0 recall*| *class-1 recall*|
 |--------|-----------|----------|-------------------|-------------------|----------------|----------------|
-| dhash  | 0         | 35.570    | 0.999        | 0.0                 | 1.0              | 0              |
+| dhash  | 0         | 35.570    | 0.999        | 0.0                 | 1.0              | 0.0              |
 | dhash  | 10        | 35.810    | 0.999        | 0.018        | 0.999      | 0.0461     |
 | dhash  | 32        | 106.670   | 0.998             | 0.0           | 0.326     | 0.884     |
 | phash  | 0         | 40.073   | 0.999        | 1.0                 | 1.0              | 0.0        |
@@ -100,7 +102,7 @@ For cnn method, following `min_similarity_threshold` values are used:
 | phash  | 32        | 107.079  | 0.990              | 0.003             | 0.328        | 0.847        |
 | ahash  | 0         | 25.270    | 0.999           | 0.961             | 0.999        | 0.058     |
 | ahash  | 10        | 25.389   | 0.999        | 0.035           | 0.997        | 0.216       |
-| ahash  | 32        | 93.084   | 0.990              | 0                 | 0.441         | 0.849         |
+| ahash  | 32        | 93.084   | 0.990              | 0.0                 | 0.441         | 0.849         |
 | whash  | 0         | 40.390    | 0.999        | 0.917           | 0.999         | 0.061        |
 | whash  | 10        | 41.260    | 0.999           | 0.023           | 0.996       | 0.203         |
 | whash  | 32        | 109.630   | 0.990              | 0.0                 | 0.410         | 0.853          |
@@ -111,7 +113,7 @@ For cnn method, following `min_similarity_threshold` values are used:
 #### Observations
 - The cnn method with threshold 0.9 seems to work best for finding transformed duplicates. A slightly lower
 `min_similarity_threshold` value could lead to a higher class-1 recall.
-- Hashing methods do not perform well for finding transformed duplicates. In reality, resized images get found easily, 
+- Hashing methods do not perform well for finding transformed duplicates. In reality, resized images get found easily,
 but all other transformations lead to a bad performance for hashing methods.
 
 ### Exact duplicates dataset
@@ -150,4 +152,4 @@ A slightly higher value can also be used.
  the `min_similarity_threshold` (though a lower value would add a few seconds to the execution time as can be seen in all the
  runs above.)
  - Generally speaking, the cnn method takes longer to run as compared to hashing methods for all datasets. If a GPU is
-available, cnn method could be much faster.
+available, cnn method should be much faster.
