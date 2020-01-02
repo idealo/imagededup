@@ -15,7 +15,7 @@ having size ~1.5G) and some variations derived from it.
   from the UKBench dataset. Each row represents a group with the corresponding 4 images from the group.
 
    <p align="center">
-     <img src="/img/collage_ukbench.png" width="600" />
+     <img src="../../img/collage_ukbench.png" width="600" />
    </p>  
 
 2. Transformed dataset derived from UKBench dataset: An image from different groups of the UKBench
