@@ -125,7 +125,7 @@ repository.
 
 For more detailed usage of the package functionality, refer: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
 
-## 🧪 Benchmarks
+## ⏳ Benchmarks
 Detailed benchmarks on speed and classification metrics for different methods have been provided in the [documentation](https://idealo.github.io/imagededup/user_guide/benchmarks/).
 Generally speaking, following conclusions can be made:
 
