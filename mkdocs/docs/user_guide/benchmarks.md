@@ -134,7 +134,10 @@ but all other transformations lead to a bad performance for hashing methods.
 | whash  | 32        | 39.408   | 1.0                 | 0.0                 | 0.417         | 1.0              |
 | cnn    | 0.5       | 192.050   | 1.0                 | 0.001            | 0.860           | 1.0              |
 | cnn    | 0.9       | 191.024  | 1.0                 | 1.0                 | 1.0              | 1.0              |
-| cnn    | 1.0       | 194.270   | 0.999          | 1.0                 | 1.0              | 0.580           |
+| cnn    | 1.0       | 194.270   | 0.999          | 1.0                 | 1.0              | 0.580\*           |
+
+\* The value is low as opposed to the expected 1.0 because of the [`cosine_similarity`](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.cosine_similarity.html)
+ function from scikit-learn (used within the package) which sometimes calculates the similarity to be slightly less than 1.0 even when the vectors are same.
 
 #### Observations
 - Difference hashing is the fastest (`max_distance_threshold` 0).
