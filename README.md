@@ -37,6 +37,7 @@ It is distributed under the Apache 2.0 license.
 ## 📖 Contents
 - [Installation](#%EF%B8%8F-installation)
 - [Quick Start](#-quick-start)
+- [Benchmarks](#-benchmarks)
 - [Contribute](#-contribute)
 - [Citation](#-citation)
 - [Maintainers](#-maintainers)
@@ -125,6 +126,13 @@ For more examples, refer [this](https://github.com/idealo/imagededup/tree/master
 repository.
 
 For more detailed usage of the package functionality, refer: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
+
+## ⏳ Benchmarks
+Detailed benchmarks on speed and classification metrics for different methods have been provided in the [documentation](https://idealo.github.io/imagededup/user_guide/benchmarks/).
+Generally speaking, following conclusions can be made:
+
+- CNN works best for near duplicates and datasets containing transformations.
+- All deduplication methods fare well on datasets containing exact duplicates, but Difference hashing is the fastest.
 
 ## 🤝 Contribute
 We welcome all kinds of contributions.
