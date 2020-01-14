@@ -415,8 +415,6 @@ def test_find_duplicates_to_remove_encoding_map(cnn, mocker, mocker_save_json):
 
 # test find_duplicates with directory path
 def test_find_duplicates_dir_integration(cnn):
-    import pkg_resources
-    print('TF version', pkg_resources.get_distribution("tensorflow").version)
     expected_duplicates = {
         'ukbench00120.jpg': [
             ('ukbench00120_hflip.jpg', 0.9672552),
