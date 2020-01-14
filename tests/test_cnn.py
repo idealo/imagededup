@@ -415,6 +415,8 @@ def test_find_duplicates_to_remove_encoding_map(cnn, mocker, mocker_save_json):
 
 # test find_duplicates with directory path
 def test_find_duplicates_dir_integration(cnn):
+    import pkg_resources
+    print('TF version', pkg_resources.get_distribution("tensorflow").version)
     expected_duplicates = {
         'ukbench00120.jpg': [
             ('ukbench00120_hflip.jpg', 0.9672552),
@@ -525,7 +527,6 @@ def test_encode_images_verbose_false(capsys):
     cnn = CNN(verbose=False)
     cnn.encode_images(image_dir=TEST_IMAGE_DIR)
     out, err = capsys.readouterr()
-
     assert '' == out
     assert '' == err
 
@@ -560,7 +561,6 @@ def test_find_duplicates_verbose_false(capsys):
 
 def test_scores_saving(cnn):
     save_file = 'myduplicates.json'
-    cnn = CNN(verbose=False)
     cnn.find_duplicates(
         image_dir=TEST_IMAGE_DIR_MIXED,
         min_similarity_threshold=0.6,

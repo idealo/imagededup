@@ -11,7 +11,7 @@ def return_logger(name: str) -> logging.Logger:
         # set logging level
         logger.setLevel(logging.DEBUG)
 
-        # Direct logs to stdout
+        # Direct logs to stderr
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(log_formatter)
         logger.addHandler(console_handler)
