@@ -30,27 +30,18 @@ class DataGenerator(Sequence):
         self.batch_size = batch_size
         self.basenet_preprocess = basenet_preprocess
         self.target_size = target_size
-        self.counter = 0
 
         self._get_image_files()
-        self.on_epoch_end()
+        self.indexes = np.arange(len(self.image_files))
+        self.valid_image_files = self.image_files
 
     def _get_image_files(self) -> None:
-        self.invalid_image_idx = []
         self.image_files = sorted(
             [
                 i.absolute()
                 for i in self.image_dir.glob('*')
                 if not i.name.startswith('.')]
         )  # ignore hidden files
-
-    def on_epoch_end(self) -> None:
-        """Method called at the end of every epoch.
-        """
-        self.indexes = np.arange(len(self.image_files))
-        self.valid_image_files = [
-            j for i, j in enumerate(self.image_files) if i not in self.invalid_image_idx
-        ]
 
     def __len__(self) -> int:
         """Number of batches in the Sequence."""
@@ -60,14 +51,14 @@ class DataGenerator(Sequence):
         """Get batch at position `index`.
         """
         batch_indexes = self.indexes[
-            index * self.batch_size : (index + 1) * self.batch_size
-        ]
+                        index * self.batch_size: (index + 1) * self.batch_size
+                        ]
         batch_samples = [self.image_files[i] for i in batch_indexes]
         X = self._data_generator(batch_samples)
         return X
 
     def _data_generator(
-        self, image_files: List[PurePath]
+            self, image_files: List[PurePath]
     ) -> Tuple[np.array, np.array]:
         """Generate data from samples in specified batch."""
         #  initialize images and labels tensors for faster processing
@@ -85,9 +76,7 @@ class DataGenerator(Sequence):
 
             else:
                 invalid_image_idx.append(i)
-                self.invalid_image_idx.append(self.counter)
-
-            self.counter += 1
+                self.valid_image_files = [_file for _file in self.valid_image_files if _file != image_file]
 
         if invalid_image_idx:
             X = np.delete(X, invalid_image_idx, axis=0)
