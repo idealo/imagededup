@@ -55,7 +55,7 @@ class CNN:
         self.model = self.MobileNet(
             input_shape=(224, 224, 3), include_top=False, pooling='avg'
         )
-
+	self.model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
         self.logger.info(
             'Initialized: MobileNet pretrained on ImageNet dataset sliced at last conv layer and added '
             'GlobalAveragePooling'
