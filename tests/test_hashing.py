@@ -11,6 +11,7 @@ from imagededup.methods.hashing import Hashing, PHash, DHash, AHash, WHash
 p = Path(__file__)
 
 PATH_IMAGE_DIR = p.parent / 'data/mixed_images'
+PATH_IMAGE_DIR_MIXED_NESTED = p.parent / 'data/mixed_nested_images'
 PATH_IMAGE_DIR_STRING = os.path.join(os.getcwd(), 'tests/data/mixed_images')
 PATH_SINGLE_IMAGE = p.parent / 'data/mixed_images/ukbench00120.jpg'
 PATH_SINGLE_IMAGE_STRING = p.parent / 'data/mixed_images/ukbench00120.jpg'
@@ -177,6 +178,14 @@ def test_encode_images_accepts_non_posixpath(hasher, mocker_encode_image):
     assert len(hasher.encode_images(PATH_IMAGE_DIR_STRING)) == 6
 
 
+def test_encode_images_finds_recursive(hasher, mocker_encode_image):
+    assert len(hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED, True)) == 6  # 6 files in total
+
+
+def test_encode_images_finds_non_recursive(hasher, mocker_encode_image):
+    assert len(hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED)) == 2  # 2 files in the directory
+
+
 def test_encode_images_rejects_non_directory_paths(hasher):
     with pytest.raises(ValueError):
         hasher.encode_images(PATH_SINGLE_IMAGE)
@@ -188,6 +197,20 @@ def test_encode_images_return_vals(hasher, mocker_encode_image):
     assert isinstance(hashes, dict)
     assert list(hashes.values())[0] == encoded_val[0]
     assert PATH_SINGLE_IMAGE.name in hashes.keys()
+
+
+def test_recursive_on_flat_directory():
+    hasher = PHash()
+    hashes_recursive = hasher.encode_images(PATH_IMAGE_DIR, recursive=True)
+    hashes_non_recursive = hasher.encode_images(PATH_IMAGE_DIR, recursive=False)
+    assert hashes_non_recursive == hashes_recursive
+
+
+def test_recursive_disabled_by_default():
+    hasher = PHash()
+    hashes = hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED)
+    hashes_non_recursive = hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED, recursive=False)
+    assert hashes_non_recursive == hashes
 
 
 def test_hash_func(hasher, mocker):
@@ -665,23 +688,58 @@ def test_find_duplicates_encoding_map_input():
         'ukbench09268.jpg': 'c73c36c2da2f29c9',
     }
     phasher = PHash()
-    duplicate_dict = phasher.find_duplicates(
-        encoding_map=encoding, max_distance_threshold=10
-    )
-    assert isinstance(duplicate_dict, dict)
-    assert isinstance(list(duplicate_dict.values())[0], list)
-    assert len(duplicate_dict['ukbench09268.jpg']) == 0
-    assert duplicate_dict['ukbench00120.jpg'] == ['ukbench00120_resize.jpg']
+    with pytest.warns(None):
+        duplicate_dict = phasher.find_duplicates(
+            encoding_map=encoding, max_distance_threshold=10
+        )
+        assert isinstance(duplicate_dict, dict)
+        assert isinstance(list(duplicate_dict.values())[0], list)
+        assert len(duplicate_dict['ukbench09268.jpg']) == 0
+        assert duplicate_dict['ukbench00120.jpg'] == ['ukbench00120_resize.jpg']
+
+
+def test_find_duplicates_encoding_map_recursive_warning():
+    encoding = {
+        'ukbench00120_resize.jpg': '9fee256239984d71',
+        'ukbench00120_rotation.jpg': '850d513c4fdcbb72',
+        'ukbench00120.jpg': '9fee256239984d71',
+        'ukbench00120_hflip.jpg': 'cabb7237e8cd3824',
+        'ukbench09268.jpg': 'c73c36c2da2f29c9',
+    }
+    phasher = PHash()
+    with pytest.warns(SyntaxWarning):
+        duplicate_dict = phasher.find_duplicates(
+                encoding_map=encoding,
+                max_distance_threshold=10,
+                recursive=True
+        )
+        assert isinstance(duplicate_dict, dict)
+        assert isinstance(list(duplicate_dict.values())[0], list)
+        assert len(duplicate_dict['ukbench09268.jpg']) == 0
+        assert duplicate_dict['ukbench00120.jpg'] == ['ukbench00120_resize.jpg']
 
 
 def test_find_duplicates_to_remove_dir():
     phasher = PHash()
+
     removal_list = phasher.find_duplicates_to_remove(
         image_dir=PATH_IMAGE_DIR, max_distance_threshold=10
     )
     assert isinstance(removal_list, list)
     assert removal_list == ['ukbench00120.jpg'] or removal_list == [
         'ukbench00120_resize.jpg'
+    ]
+
+def test_find_duplicates_to_remove_nested_dir():
+    phasher = PHash()
+    removal_list = phasher.find_duplicates_to_remove(
+        image_dir=PATH_IMAGE_DIR_MIXED_NESTED,
+        max_distance_threshold=10,
+        recursive=True,
+    )
+    assert isinstance(removal_list, list)
+    assert removal_list == [str(Path('lvl1/ukbench00120.jpg'))] or removal_list == [
+        str(Path('lvl1/lvl2b/ukbench00120_resize.jpg'))
     ]
 
 
