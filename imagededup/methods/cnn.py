@@ -1,14 +1,19 @@
 from pathlib import Path, PurePath
 from typing import Dict, List, Optional, Union
+import warnings
 
 import numpy as np
 
 from imagededup.handlers.search.retrieval import get_cosine_similarity
-from imagededup.utils.general_utils import save_json, get_files_to_remove
+from imagededup.utils.general_utils import (
+    generate_relative_names,
+    get_files_to_remove,
+    save_json,
+)
 from imagededup.utils.image_utils import (
+    expand_image_array_cnn,
     load_image,
     preprocess_image,
-    expand_image_array_cnn,
 )
 from imagededup.utils.logger import return_logger
 
@@ -39,7 +44,11 @@ class CNN:
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
-        from tensorflow.keras.applications.mobilenet import MobileNet, preprocess_input
+        from tensorflow.keras.applications.mobilenet import (
+            MobileNet,
+            preprocess_input,
+        )
+
         from imagededup.utils.data_generator import DataGenerator
 
         self.MobileNet = MobileNet
@@ -82,11 +91,12 @@ class CNN:
         image_pp = np.array(image_pp)[np.newaxis, :]
         return self.model.predict(image_pp)
 
-    def _get_cnn_features_batch(self, image_dir: PurePath) -> Dict[str, np.ndarray]:
+    def _get_cnn_features_batch(self, image_dir: PurePath, recursive: Optional[bool] = False) -> Dict[str, np.ndarray]:
         """
         Generate CNN encodings for all images in a given directory of images.
         Args:
             image_dir: Path to the image directory.
+            recursive: Optional, find images recursively in the image directory.
 
         Returns:
             A dictionary that contains a mapping of filenames and corresponding numpy array of CNN encodings.
@@ -97,6 +107,7 @@ class CNN:
             batch_size=self.batch_size,
             target_size=self.target_size,
             basenet_preprocess=self.preprocess_input,
+            recursive=recursive,
         )
 
         feat_vec = self.model.predict_generator(
@@ -104,7 +115,7 @@ class CNN:
         )
         self.logger.info('End: Image encoding generation')
 
-        filenames = [i.name for i in self.data_generator.valid_image_files]
+        filenames = generate_relative_names(image_dir, self.data_generator.valid_image_files)
 
         self.encoding_map = {j: feat_vec[i, :] for i, j in enumerate(filenames)}
         return self.encoding_map
@@ -162,11 +173,12 @@ class CNN:
             else None
         )
 
-    def encode_images(self, image_dir: Union[PurePath, str]) -> Dict:
+    def encode_images(self, image_dir: Union[PurePath, str], recursive: Optional[bool] = False) -> Dict:
         """Generate CNN encodings for all images in a given directory of images.
 
         Args:
             image_dir: Path to the image directory.
+            recursive: Optional, find images recursively in the image directory.
         Returns:
             dictionary: Contains a mapping of filenames and corresponding numpy array of CNN encodings.
         Example:
@@ -182,7 +194,7 @@ class CNN:
         if not image_dir.is_dir():
             raise ValueError('Please provide a valid directory path!')
 
-        return self._get_cnn_features_batch(image_dir)
+        return self._get_cnn_features_batch(image_dir, recursive)
 
     @staticmethod
     def _check_threshold_bounds(thresh: float) -> None:
@@ -268,6 +280,7 @@ class CNN:
         min_similarity_threshold: float,
         scores: bool,
         outfile: Optional[str] = None,
+        recursive: Optional[bool] = False,
     ) -> Dict:
         """
         Take in path of the directory in which duplicates are to be detected above the given threshold.
@@ -280,6 +293,7 @@ class CNN:
             scores: Optional, boolean indicating whether Hamming distances are to be returned along with retrieved
                     duplicates.
             outfile: Optional, name of the file the results should be written to.
+            recursive: Optional, find images recursively in the image directory.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -287,7 +301,7 @@ class CNN:
             if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
             'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
         """
-        self.encode_images(image_dir=image_dir)
+        self.encode_images(image_dir=image_dir, recursive=recursive)
 
         return self._find_duplicates_dict(
             encoding_map=self.encoding_map,
@@ -303,6 +317,7 @@ class CNN:
         min_similarity_threshold: float = 0.9,
         scores: bool = False,
         outfile: Optional[str] = None,
+        recursive: Optional[bool] = False,
     ) -> Dict:
         """
         Find duplicates for each file. Take in path of the directory or encoding dictionary in which duplicates are to
@@ -319,6 +334,7 @@ class CNN:
             scores: Optional, boolean indicating whether similarity scores are to be returned along with retrieved
                     duplicates.
             outfile: Optional, name of the file to save the results, must be a json. Default is None.
+            recursive: Optional, find images recursively in the image directory.
 
         Returns:
             dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -349,8 +365,11 @@ class CNN:
                 min_similarity_threshold=min_similarity_threshold,
                 scores=scores,
                 outfile=outfile,
+                recursive=recursive,
             )
         elif encoding_map:
+            if recursive:
+                warnings.warn('recursive parameter is irrelevant when using encodings.', SyntaxWarning)
             result = self._find_duplicates_dict(
                 encoding_map=encoding_map,
                 min_similarity_threshold=min_similarity_threshold,
@@ -369,6 +388,7 @@ class CNN:
         encoding_map: Dict[str, np.ndarray] = None,
         min_similarity_threshold: float = 0.9,
         outfile: Optional[str] = None,
+        recursive: Optional[bool] = False,
     ) -> List:
         """
         Give out a list of image file names to remove based on the similarity threshold. Does not remove the mentioned
@@ -381,6 +401,7 @@ class CNN:
                           corresponding CNN encodings.
             min_similarity_threshold: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9
             outfile: Optional, name of the file to save the results, must be a json. Default is None.
+            recursive: Optional, find images recursively in the image directory.
 
         Returns:
             duplicates: List of image file names that should be removed.
@@ -406,6 +427,7 @@ class CNN:
                 encoding_map=encoding_map,
                 min_similarity_threshold=min_similarity_threshold,
                 scores=False,
+                recursive=recursive
             )
 
         files_to_remove = get_files_to_remove(duplicates)

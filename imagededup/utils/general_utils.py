@@ -1,7 +1,10 @@
 import json
+from multiprocessing import Pool, cpu_count
+from pathlib import Path, PurePath
+from typing import Callable, Dict, List, Union
+
 import tqdm
-from multiprocessing import cpu_count, Pool
-from typing import Callable, Dict, List
+
 from imagededup.utils.logger import return_logger
 
 logger = return_logger(__name__)
@@ -65,3 +68,20 @@ def parallelise(function: Callable, data: List, verbose: bool) -> List:
     pool.close()
     pool.join()
     return results
+
+
+def generate_files(image_dir: Union[PurePath, str], recursive: bool) -> List:
+    if recursive:
+        glob_pattern = '**/*'
+    else:
+        glob_pattern = '*'
+
+    return [
+        i.absolute()
+        for i in Path(image_dir).glob(glob_pattern)
+        if not (i.name.startswith('.') or i.is_dir())
+    ]
+
+
+def generate_relative_names(image_dir: Union[PurePath, str], files: List) -> List:
+    return [str(f.relative_to(Path(image_dir).absolute())) for f in files]
