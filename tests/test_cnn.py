@@ -297,7 +297,7 @@ def test__find_duplicates_dir(cnn, mocker):
         scores=scores,
         outfile=outfile,
     )
-    encode_images_mocker.assert_called_once_with(image_dir=TEST_IMAGE_DIR)
+    encode_images_mocker.assert_called_once_with(image_dir=TEST_IMAGE_DIR, recursive=False)
     find_dup_dict_mocker.assert_called_once_with(
         encoding_map=cnn.encoding_map,
         min_similarity_threshold=threshold,
@@ -327,6 +327,7 @@ def test_find_duplicates_dir(cnn, mocker):
         min_similarity_threshold=threshold,
         scores=scores,
         outfile=outfile,
+        recursive=False,
     )
 
 
@@ -386,6 +387,7 @@ def test_find_duplicates_to_remove_outfile_false(cnn, mocker, mocker_save_json):
         encoding_map=None,
         min_similarity_threshold=threshold,
         scores=False,
+        recursive=False,
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     mocker_save_json.assert_not_called()
@@ -415,6 +417,7 @@ def test_find_duplicates_to_remove_outfile_true(cnn, mocker, mocker_save_json):
         encoding_map=None,
         min_similarity_threshold=threshold,
         scores=False,
+        recursive=False,
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     mocker_save_json.assert_called_once_with(ret_val_get_files_to_remove, outfile)
@@ -444,6 +447,7 @@ def test_find_duplicates_to_remove_encoding_map(cnn, mocker, mocker_save_json):
         image_dir=None,
         min_similarity_threshold=threshold,
         scores=False,
+        recursive=False,
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     mocker_save_json.assert_called_once_with(ret_val_get_files_to_remove, outfile)

@@ -319,7 +319,7 @@ def test__find_duplicates_dir(hasher, mocker):
         outfile=outfile,
         search_method='brute_force_cython',
     )
-    encode_images_mocker.assert_called_once_with(PATH_IMAGE_DIR)
+    encode_images_mocker.assert_called_once_with(PATH_IMAGE_DIR, recursive=False)
     find_dup_dict_mocker.assert_called_once_with(
         encoding_map=encoding_map,
         max_distance_threshold=threshold,
@@ -361,6 +361,7 @@ def test_find_duplicates_dir(hasher, mocker, mocker_hamming_distance):
         scores=scores,
         outfile=outfile,
         search_method='brute_force_cython',
+        recursive=False,
     )
 
 
@@ -421,6 +422,7 @@ def test_find_duplicates_to_remove_outfile_false(hasher, mocker):
         encoding_map=None,
         max_distance_threshold=threshold,
         scores=False,
+        recursive=False,
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     save_json_mocker.assert_not_called()
@@ -451,6 +453,7 @@ def test_find_duplicates_to_remove_outfile_true(hasher, mocker):
         encoding_map=None,
         max_distance_threshold=threshold,
         scores=False,
+        recursive=False,
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     save_json_mocker.assert_called_once_with(ret_val_get_files_to_remove, outfile)
@@ -480,6 +483,7 @@ def test_find_duplicates_to_remove_encoding_map(hasher, mocker):
         image_dir=None,
         max_distance_threshold=threshold,
         scores=False,
+        recursive=False,
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     save_json_mocker.assert_not_called()
