@@ -52,9 +52,11 @@ There are two ways to install imagededup:
 pip install imagededup
 ```
 
-> ⚠️ **Note**: imagededup comes with TensorFlow CPU-only support by default. If you have GPUs, you should rather
-> install the TensorFlow version with GPU support especially when you use CNN to find duplicates. It's way faster. See the
-> [TensorFlow guide](https://www.tensorflow.org/install/gpu) for more details on how to install it.
+> ⚠️ **Note**: The TensorFlow >=2.1 and TensorFlow 1.15 release now include GPU support by default.
+> Before that CPU and GPU packages are separate. If you have GPUs, you should rather
+> install the TensorFlow version with GPU support especially when you use CNN to find duplicates.
+> It's way faster. See the [TensorFlow guide](https://www.tensorflow.org/install/gpu) for more
+> details on how to install it for older versions of TensorFlow.
 
 * Install imagededup from the GitHub source:
 
