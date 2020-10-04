@@ -96,7 +96,7 @@ setup(
     long_description=long_description,
     license='Apache 2.0',
     install_requires=[
-        'numpy<1.17',
+        'numpy<1.19',
         'Pillow<7.0.0',
         'PyWavelets~=1.0.3',
         'tqdm',
