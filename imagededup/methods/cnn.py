@@ -72,8 +72,11 @@ class CNN:
         Returns:
             Encodings for the image in the form of numpy array.
         """
+        print(f'_get_cnn_features_single shape:{image_array.shape}')
         image_pp = self.preprocess_input(image_array)
+        print(f'image_pp shape:{image_pp.shape}')
         image_pp = np.array(image_pp)[np.newaxis, :]
+        print(f'image_pp 2 shape:{image_pp.shape}')
         return self.model.predict(image_pp)
 
     def _get_cnn_features_batch(self, image_dir: PurePath) -> Dict[str, np.ndarray]:

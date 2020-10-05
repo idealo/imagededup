@@ -11,6 +11,16 @@ IMG_FORMATS = ['JPEG', 'PNG', 'BMP', 'MPO', 'PPM', 'TIFF', 'GIF']
 logger = return_logger(__name__)
 
 
+def _image_array_reshaper(image_arr):
+    if len(image_arr.shape) == 3:
+        return image_arr
+    elif len(image_arr.shape) == 2:
+        image_arr = np.tile(image_arr[..., np.newaxis], (1, 1, 3))
+        return image_arr
+    else:
+        raise ValueError('Expected number of image array dimensions are 3 for rgb image and 2 for grayscale image!')
+
+
 def preprocess_image(
     image, target_size: Tuple[int, int] = None, grayscale: bool = False
 ) -> np.ndarray:
@@ -26,8 +36,10 @@ def preprocess_image(
     Returns:
         A numpy array of the processed image.
     """
+    print(f'inside preprocess_image, image shape: {image.size}')
     if isinstance(image, np.ndarray):
         image = image.astype('uint8')
+        image = _image_array_reshaper(image)
         image_pil = Image.fromarray(image)
 
     elif isinstance(image, Image.Image):
@@ -37,9 +49,11 @@ def preprocess_image(
 
     if target_size:
         image_pil = image_pil.resize(target_size, Image.ANTIALIAS)
+        print(f'inside preprocess_image, after resizing shape: {image_pil.size}')
 
     if grayscale:
         image_pil = image_pil.convert('L')
+        print(f'inside preprocess_image, after grayscale shape: {image_pil.size}')
 
     return np.array(image_pil).astype('uint8')
 
@@ -62,6 +76,7 @@ def load_image(
     """
     try:
         img = Image.open(image_file)
+        print(f'inside load_image, image shape: {img.size}')
 
         # validate image format
         if img.format not in img_formats:
@@ -70,9 +85,11 @@ def load_image(
 
         else:
             if img.mode != 'RGB':
+                print(f'inside load_image, not rgb image shape: {img.size}')
                 # convert to RGBA first to avoid warning
                 # we ignore alpha channel if available
                 img = img.convert('RGBA').convert('RGB')
+                print(f'converted load_image, image shape: {img.size}')
 
             img = preprocess_image(img, target_size=target_size, grayscale=grayscale)
 
