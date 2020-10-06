@@ -4,10 +4,27 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-from imagededup.utils.image_utils import preprocess_image, load_image
+from imagededup.utils.image_utils import preprocess_image, load_image, _check_3_dim
 
 p = Path(__file__)
 PATH_SINGLE_IMAGE = p.parent / 'data/mixed_images/ukbench00120.jpg'
+
+
+# Array sanity
+
+def test___check_3_dim_raises_assertionerror_wrong_input_shape():
+    arr_shape = (3, 224, 224)
+
+    with pytest.raises(AssertionError):
+        _check_3_dim(arr_shape)
+
+
+def test___check_3_dim_not_raises_assertionerror_right_input_shape():
+    arr_shape = (224, 224, 3)
+    _check_3_dim(arr_shape)
+
+
+# Preprocess image
 
 
 def test_preprocess_image_accepts_array_input():
