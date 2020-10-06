@@ -11,14 +11,45 @@ IMG_FORMATS = ['JPEG', 'PNG', 'BMP', 'MPO', 'PPM', 'TIFF', 'GIF']
 logger = return_logger(__name__)
 
 
-def _image_array_reshaper(image_arr):
-    if len(image_arr.shape) == 3:
+def _check_3_dim(image_arr_shape):
+    assert image_arr_shape[2] == 3, (
+        f'Received image array with shape: {image_arr_shape}, expected image array shape is '
+        f'(x, y, 3)'
+    )
+
+
+def _reshape_2_dim(image_arr_2dim):
+    image_arr_3dim = np.tile(
+        image_arr_2dim[..., np.newaxis], (1, 1, 3)
+    )  # convert (x, y) to (x, y, 3) (grayscale to rgb)
+    return image_arr_3dim
+
+
+def raise_wrong_dim_value_error(image_arr_shape):
+    raise ValueError(
+        f'Received image array with shape: {image_arr_shape}, expected number of image array dimensions are 3 for '
+        f'rgb image and 2 for grayscale image!'
+    )
+
+
+def check_image_array_hash(image_arr):
+    image_arr_shape = image_arr.shape
+    if len(image_arr_shape) == 3:
+        _check_3_dim(image_arr_shape)
+    elif len(image_arr_shape) > 3 or len(image_arr_shape) < 2:
+        raise_wrong_dim_value_error(image_arr_shape)
+
+
+def expand_image_array_cnn(image_arr):
+    image_arr_shape = image_arr.shape
+    if len(image_arr_shape) == 3:
+        _check_3_dim(image_arr_shape)
         return image_arr
-    elif len(image_arr.shape) == 2:
-        image_arr = np.tile(image_arr[..., np.newaxis], (1, 1, 3))
-        return image_arr
+    elif len(image_arr_shape) == 2:
+        image_arr_3dim = _reshape_2_dim(image_arr)
+        return image_arr_3dim
     else:
-        raise ValueError('Expected number of image array dimensions are 3 for rgb image and 2 for grayscale image!')
+        raise_wrong_dim_value_error(image_arr_shape)
 
 
 def preprocess_image(
@@ -36,10 +67,9 @@ def preprocess_image(
     Returns:
         A numpy array of the processed image.
     """
-    print(f'inside preprocess_image, image shape: {image.size}')
     if isinstance(image, np.ndarray):
         image = image.astype('uint8')
-        image = _image_array_reshaper(image)
+        # image = _image_array_reshaper(image)
         image_pil = Image.fromarray(image)
 
     elif isinstance(image, Image.Image):
@@ -49,11 +79,9 @@ def preprocess_image(
 
     if target_size:
         image_pil = image_pil.resize(target_size, Image.ANTIALIAS)
-        print(f'inside preprocess_image, after resizing shape: {image_pil.size}')
 
     if grayscale:
         image_pil = image_pil.convert('L')
-        print(f'inside preprocess_image, after grayscale shape: {image_pil.size}')
 
     return np.array(image_pil).astype('uint8')
 
@@ -76,7 +104,6 @@ def load_image(
     """
     try:
         img = Image.open(image_file)
-        print(f'inside load_image, image shape: {img.size}')
 
         # validate image format
         if img.format not in img_formats:
@@ -85,11 +112,9 @@ def load_image(
 
         else:
             if img.mode != 'RGB':
-                print(f'inside load_image, not rgb image shape: {img.size}')
                 # convert to RGBA first to avoid warning
                 # we ignore alpha channel if available
                 img = img.convert('RGBA').convert('RGB')
-                print(f'converted load_image, image shape: {img.size}')
 
             img = preprocess_image(img, target_size=target_size, grayscale=grayscale)
 
