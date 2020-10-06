@@ -147,9 +147,9 @@ class CNN:
             )
 
         elif isinstance(image_array, np.ndarray):
-            # image_array = expand_image_array_cnn(
-            #     image_array
-            # )  # Add 3rd dimension if array is grayscale, do sanity checks
+            image_array = expand_image_array_cnn(
+                image_array
+            )  # Add 3rd dimension if array is grayscale, do sanity checks
             image_pp = preprocess_image(
                 image=image_array, target_size=self.target_size, grayscale=False
             )
