@@ -40,7 +40,7 @@ def _reshape_2_dim(image_arr_2dim: np.ndarray) -> np.ndarray:
     return image_arr_3dim
 
 
-def raise_wrong_dim_value_error(image_arr_shape: Tuple[int, int]) -> None:
+def _raise_wrong_dim_value_error(image_arr_shape: Tuple) -> None:
     """
     Raises ValueError when image array shape is wrong.
 
@@ -64,7 +64,7 @@ def check_image_array_hash(image_arr: np.ndarray) -> None:
     if len(image_arr_shape) == 3:
         _check_3_dim(image_arr_shape)
     elif len(image_arr_shape) > 3 or len(image_arr_shape) < 2:
-        raise_wrong_dim_value_error(image_arr_shape)
+        _raise_wrong_dim_value_error(image_arr_shape)
 
 
 def expand_image_array_cnn(image_arr: np.ndarray) -> np.ndarray:
@@ -86,7 +86,7 @@ def expand_image_array_cnn(image_arr: np.ndarray) -> np.ndarray:
         image_arr_3dim = _reshape_2_dim(image_arr)
         return image_arr_3dim
     else:
-        raise_wrong_dim_value_error(image_arr_shape)
+        _raise_wrong_dim_value_error(image_arr_shape)
 
 
 def preprocess_image(
