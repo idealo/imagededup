@@ -133,20 +133,6 @@ def test_encode_image_wrong_dim_input_array(hasher, mocker):
     check_image_array_hash_mocker.assert_called_once_with(image_arr_4d)
 
 
-def test_encode_image_2_dim_input_array(hasher, mocker, mocker_hash_func):
-    image_arr_2d = np.random.random((3, 3))
-    check_image_array_hash_mocker = mocker.patch('imagededup.methods.hashing.check_image_array_hash')
-    hasher.encode_image(image_array=image_arr_2d)
-    check_image_array_hash_mocker.assert_called_once_with(image_arr_2d)
-
-
-def test_encode_image_3_dim_input_array(hasher, mocker, mocker_hash_func):
-    image_arr_3d = np.random.random((3, 3, 4))
-    check_image_array_hash_mocker = mocker.patch('imagededup.methods.hashing.check_image_array_hash')
-    hasher.encode_image(image_array=image_arr_3d)
-    check_image_array_hash_mocker.assert_called_once_with(image_arr_3d)
-
-
 def test_encode_image_returns_none_image_pp_not_array(hasher, mocker):
     mocker.patch('imagededup.methods.hashing.load_image', return_value=None)
     assert hasher.encode_image(PATH_SINGLE_IMAGE) is None

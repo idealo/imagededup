@@ -33,7 +33,7 @@ def test___check_3_dim_not_raises_assertionerror_right_input_shape():
     _check_3_dim(arr_shape)
 
 
-def test__reshape_2_dim_converts2_to_3_dims():
+def test__add_third_dim_converts2_to_3_dims():
     two_d_arr = np.array([[1, 2], [3, 4]])
     three_d_arr = _add_third_dim(two_d_arr)
     assert len(three_d_arr.shape) == 3
@@ -94,7 +94,7 @@ def test_expand_image_array_cnn_checks_3_dims_and_returns_input_array(chk_3_dim_
 
 def test_expand_image_array_cnn_2d_adds_dim_unit(mocker, chk_3_dim_mocker, raise_wrong_dim_value_error_mocker):
     image_arr_2d = np.random.random((3, 3))
-    reshape_2_dim_mocker = mocker.patch('imagededup.utils.image_utils._reshape_2_dim')
+    reshape_2_dim_mocker = mocker.patch('imagededup.utils.image_utils._add_third_dim')
     expand_image_array_cnn(image_arr_2d)
     chk_3_dim_mocker.assert_not_called()
     raise_wrong_dim_value_error_mocker.assert_not_called()

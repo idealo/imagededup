@@ -3,11 +3,12 @@ from pathlib import Path
 import os
 import json
 import numpy as np
+from PIL import Image
 import pytest
 from tensorflow.keras.models import Model
 
 from imagededup.methods.cnn import CNN
-from imagededup.utils.image_utils import load_image
+from imagededup.utils.image_utils import load_image, expand_image_array_cnn
 
 
 p = Path(__file__)
@@ -15,6 +16,7 @@ TEST_IMAGE = p.parent / 'data' / 'base_images' / 'ukbench00120.jpg'
 TEST_IMAGE_DIR = p.parent / 'data' / 'base_images'
 TEST_IMAGE_FORMATS_DIR = p.parent / 'data' / 'formats_images'
 TEST_IMAGE_DIR_MIXED = p.parent / 'data' / 'mixed_images'
+TEST_IMAGE_GRAY = p.parent / 'data/ukbench00120_gray.jpg'
 
 TEST_BATCH_SIZE = 64
 TEST_TARGET_SIZE = (224, 224)
@@ -96,6 +98,35 @@ def test__get_cnn_features_batch(cnn):
     for i in result.values():
         assert isinstance(i, np.ndarray)
         assert i.shape == (1024,)
+
+
+# encode_image
+
+def test_encode_image_expand_image_array_cnn_gets_called(cnn, mocker):
+    image_arr_2d = np.random.random((3, 3))
+    expand_image_array_cnn_mocker = mocker.patch('imagededup.methods.cnn.expand_image_array_cnn',
+                                                 return_value=np.random.random((3, 3, 3)))
+    cnn.encode_image(image_array=image_arr_2d)
+    expand_image_array_cnn_mocker.assert_called_once_with(image_arr_2d)
+
+
+def test_encode_image_wrong_dim_input_array(cnn):
+    image_arr_4d = np.random.random((3, 3, 2, 5))
+    with pytest.raises(ValueError):
+        cnn.encode_image(image_array=image_arr_4d)
+
+
+def test_encode_image_2_dim_array_encoded(cnn):
+    arr_inp = np.array(Image.open(TEST_IMAGE_GRAY))
+    encoding = cnn.encode_image(image_array=arr_inp)
+    assert encoding.shape == (1, 1024)
+
+
+def test_encode_image_2_dim_file_equals_array(cnn):
+    encoding_image_file = cnn.encode_image(image_file=TEST_IMAGE_GRAY)
+    arr_inp = np.array(Image.open(TEST_IMAGE_GRAY))
+    encoding_image_array = cnn.encode_image(image_array=arr_inp)
+    np.testing.assert_array_equal(encoding_image_file, encoding_image_array)
 
 
 def test_encode_image(cnn):
@@ -282,7 +313,9 @@ def test_find_duplicates_dir(cnn, mocker):
     threshold = 0.9
     scores = True
     outfile = True
-    find_dup_dir_mocker = mocker.patch('imagededup.methods.cnn.CNN._find_duplicates_dir')
+    find_dup_dir_mocker = mocker.patch(
+        'imagededup.methods.cnn.CNN._find_duplicates_dir'
+    )
     cnn.find_duplicates(
         image_dir=TEST_IMAGE_DIR,
         min_similarity_threshold=threshold,
@@ -361,7 +394,10 @@ def test_find_duplicates_to_remove_outfile_false(cnn, mocker, mocker_save_json):
 def test_find_duplicates_to_remove_outfile_true(cnn, mocker, mocker_save_json):
     threshold = 0.9
     outfile = True
-    ret_val_find_dup_dict = {'filename.jpg': ['dup1.jpg'], 'filename2.jpg': ['dup2.jpg']}
+    ret_val_find_dup_dict = {
+        'filename.jpg': ['dup1.jpg'],
+        'filename2.jpg': ['dup2.jpg'],
+    }
     ret_val_get_files_to_remove = ['1.jpg', '2.jpg']
 
     find_duplicates_mocker = mocker.patch(
@@ -387,7 +423,10 @@ def test_find_duplicates_to_remove_outfile_true(cnn, mocker, mocker_save_json):
 def test_find_duplicates_to_remove_encoding_map(cnn, mocker, mocker_save_json):
     threshold = 0.9
     outfile = True
-    ret_val_find_dup_dict = {'filename.jpg': ['dup1.jpg'], 'filename2.jpg': ['dup2.jpg']}
+    ret_val_find_dup_dict = {
+        'filename.jpg': ['dup1.jpg'],
+        'filename2.jpg': ['dup2.jpg'],
+    }
     ret_val_get_files_to_remove = ['1.jpg', '2.jpg']
     encoding_map = data_encoding_map()
     find_duplicates_mocker = mocker.patch(
@@ -575,7 +614,9 @@ def test_scores_saving(cnn):
     assert (
         len(saved_json['ukbench09268.jpg']) == 0
     )  # file with no duplicates have no entries
-    assert isinstance(saved_json['ukbench00120.jpg'], list)  # a list of files is returned
+    assert isinstance(
+        saved_json['ukbench00120.jpg'], list
+    )  # a list of files is returned
     assert isinstance(
         saved_json['ukbench00120.jpg'][0], list
     )  # each entry in the duplicate list is a list (not a tuple, since json can't save tuples)
