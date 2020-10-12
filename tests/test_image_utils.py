@@ -11,7 +11,7 @@ from imagededup.utils.image_utils import (
     _add_third_dim,
     _raise_wrong_dim_value_error,
     check_image_array_hash,
-    expand_image_array_cnn
+    expand_image_array_cnn,
 )
 
 p = Path(__file__)
@@ -44,6 +44,7 @@ def test__add_third_dim_converts2_to_3_dims():
 
 def test__raise_wrong_dim_value_error_raises_error():
     import re
+
     arr_shape = (3, 3)
     with pytest.raises(
         ValueError,
@@ -71,14 +72,18 @@ def test_check_image_array_hash_checks_3_dims(chk_3_dim_mocker):
     chk_3_dim_mocker.assert_called_once_with(image_arr_3d.shape)
 
 
-def test_check_image_array_wrong_dims_raises_error(chk_3_dim_mocker, raise_wrong_dim_value_error_mocker):
+def test_check_image_array_wrong_dims_raises_error(
+    chk_3_dim_mocker, raise_wrong_dim_value_error_mocker
+):
     image_arr_4d = np.random.random((3, 3, 2, 5))
     check_image_array_hash(image_arr_4d)
     chk_3_dim_mocker.assert_not_called()
     raise_wrong_dim_value_error_mocker.assert_called_once_with(image_arr_4d.shape)
 
 
-def test_check_image_array_2_dims_nothing_happens(chk_3_dim_mocker, raise_wrong_dim_value_error_mocker):
+def test_check_image_array_2_dims_nothing_happens(
+    chk_3_dim_mocker, raise_wrong_dim_value_error_mocker
+):
     image_arr_2d = np.random.random((3, 3))
     check_image_array_hash(image_arr_2d)
     chk_3_dim_mocker.assert_not_called()
@@ -92,7 +97,9 @@ def test_expand_image_array_cnn_checks_3_dims_and_returns_input_array(chk_3_dim_
     np.testing.assert_array_equal(ret_arr, image_arr_3d)
 
 
-def test_expand_image_array_cnn_2d_adds_dim_unit(mocker, chk_3_dim_mocker, raise_wrong_dim_value_error_mocker):
+def test_expand_image_array_cnn_2d_adds_dim_unit(
+    mocker, chk_3_dim_mocker, raise_wrong_dim_value_error_mocker
+):
     image_arr_2d = np.random.random((3, 3))
     reshape_2_dim_mocker = mocker.patch('imagededup.utils.image_utils._add_third_dim')
     expand_image_array_cnn(image_arr_2d)
@@ -109,7 +116,9 @@ def test_expand_image_array_cnn_2d_adds_dim_int():
     np.testing.assert_array_equal(ret_arr[..., 1], ret_arr[..., 2])
 
 
-def test_expand_image_array_cnn_wrong_dims_raises_error(chk_3_dim_mocker, raise_wrong_dim_value_error_mocker):
+def test_expand_image_array_cnn_wrong_dims_raises_error(
+    chk_3_dim_mocker, raise_wrong_dim_value_error_mocker
+):
     image_arr_4d = np.random.random((3, 3, 2, 5))
     expand_image_array_cnn(image_arr_4d)
     chk_3_dim_mocker.assert_not_called()

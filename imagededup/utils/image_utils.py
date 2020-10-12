@@ -106,7 +106,6 @@ def preprocess_image(
     """
     if isinstance(image, np.ndarray):
         image = image.astype('uint8')
-        # image = _image_array_reshaper(image)
         image_pil = Image.fromarray(image)
 
     elif isinstance(image, Image.Image):

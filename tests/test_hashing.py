@@ -127,7 +127,9 @@ def test_encode_image_valerror_wrong_input_array(hasher):
 
 def test_encode_image_wrong_dim_input_array(hasher, mocker):
     image_arr_4d = np.random.random((3, 3, 2, 5))
-    check_image_array_hash_mocker = mocker.patch('imagededup.methods.hashing.check_image_array_hash')
+    check_image_array_hash_mocker = mocker.patch(
+        'imagededup.methods.hashing.check_image_array_hash'
+    )
     with pytest.raises(ValueError):
         hasher.encode_image(image_array=image_arr_4d)
     check_image_array_hash_mocker.assert_called_once_with(image_arr_4d)
@@ -533,7 +535,9 @@ class TestCommon:
 
     def test_same_hashes_with_different_inputs_gray_scale(self, hash_function):
         arr_inp = np.array(Image.open(PATH_SINGLE_GRAY_IMAGE))
-        assert hash_function(image_array=arr_inp) == hash_function(PATH_SINGLE_GRAY_IMAGE)
+        assert hash_function(image_array=arr_inp) == hash_function(
+            PATH_SINGLE_GRAY_IMAGE
+        )
 
 
 def test_wrong_arr_dims_returns_valueerror():
