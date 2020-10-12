@@ -24,7 +24,7 @@ def _check_3_dim(image_arr_shape: Tuple) -> None:
     )
 
 
-def _reshape_2_dim(image_arr_2dim: np.ndarray) -> np.ndarray:
+def _add_third_dim(image_arr_2dim: np.ndarray) -> np.ndarray:
     """
     Converts a 2-d image array to 3-d by repeating the array thrice along the 3rd dimension.
 
@@ -83,7 +83,7 @@ def expand_image_array_cnn(image_arr: np.ndarray) -> np.ndarray:
         _check_3_dim(image_arr_shape)
         return image_arr
     elif len(image_arr_shape) == 2:
-        image_arr_3dim = _reshape_2_dim(image_arr)
+        image_arr_3dim = _add_third_dim(image_arr)
         return image_arr_3dim
     else:
         _raise_wrong_dim_value_error(image_arr_shape)

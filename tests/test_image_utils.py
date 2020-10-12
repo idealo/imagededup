@@ -8,7 +8,7 @@ from imagededup.utils.image_utils import (
     preprocess_image,
     load_image,
     _check_3_dim,
-    _reshape_2_dim,
+    _add_third_dim,
     _raise_wrong_dim_value_error,
     check_image_array_hash,
     expand_image_array_cnn
@@ -35,7 +35,7 @@ def test___check_3_dim_not_raises_assertionerror_right_input_shape():
 
 def test__reshape_2_dim_converts2_to_3_dims():
     two_d_arr = np.array([[1, 2], [3, 4]])
-    three_d_arr = _reshape_2_dim(two_d_arr)
+    three_d_arr = _add_third_dim(two_d_arr)
     assert len(three_d_arr.shape) == 3
     np.testing.assert_array_equal(two_d_arr, three_d_arr[..., 0])
     np.testing.assert_array_equal(three_d_arr[..., 0], three_d_arr[..., 1])
