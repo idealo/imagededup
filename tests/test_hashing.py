@@ -582,7 +582,6 @@ def test_find_duplicates_correctness_score():
     assert isinstance(duplicate_dict, dict)
     duplicates = list(duplicate_dict.values())
     assert isinstance(duplicates[0], list)
-    assert isinstance(duplicates[0][0], tuple)
     assert duplicate_dict['ukbench09268.jpg'] == []
     assert duplicate_dict['ukbench00120.jpg'] == [('ukbench00120_resize.jpg', 0)]
 
@@ -607,7 +606,6 @@ def test_find_duplicates_clearing():
     assert isinstance(duplicate_dict, dict)
     duplicates = list(duplicate_dict.values())
     assert isinstance(duplicates[0], list)
-    assert isinstance(duplicates[0][0], tuple)
     assert duplicate_dict['ukbench09268.jpg'] == []
     assert duplicate_dict['ukbench00120.jpg'] == [('ukbench00120_resize.jpg', 0)]
 

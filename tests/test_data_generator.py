@@ -61,15 +61,13 @@ def test__data_generator():
     assert result.shape == tuple([TEST_BATCH_SIZE, *TEST_TARGET_SIZE, 3])
 
 
-def test_on_epoch_end_1():
-    generator.on_epoch_end()
-
+def test_valid_image_files_1():
     assert generator.valid_image_files == sorted(
         [x for x in IMAGE_DIR.glob('*') if x.is_file()]
     )
 
 
-def test_on_epoch_end_2():
+def test_valid_image_files_2():
     expected = [
         FORMATS_IMAGE_DIR / 'baboon.pgm',
         FORMATS_IMAGE_DIR / 'copyleft.tiff',
@@ -94,5 +92,5 @@ def test_on_epoch_end_2():
     generator.__getitem__(1)
     generator.__getitem__(2)
 
-    generator.on_epoch_end()
+    # generator._update_valid_files()
     assert sorted(generator.valid_image_files, key=lambda x: str(x).lower()) == expected

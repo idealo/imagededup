@@ -237,7 +237,9 @@ def test__find_duplicates_dict_outfile_true(cnn, mocker_save_json):
         scores=scores,
         outfile=outfile,
     )
-    mocker_save_json.assert_called_once_with(results=cnn.results, filename=outfile, float_scores=True)
+    mocker_save_json.assert_called_once_with(
+        results=cnn.results, filename=outfile, float_scores=True
+    )
 
 
 # _find_duplicates_dir
@@ -280,9 +282,7 @@ def test_find_duplicates_dir(cnn, mocker):
     threshold = 0.9
     scores = True
     outfile = True
-    find_dup_dir_mocker = mocker.patch(
-        'imagededup.methods.cnn.CNN._find_duplicates_dir'
-    )
+    find_dup_dir_mocker = mocker.patch('imagededup.methods.cnn.CNN._find_duplicates_dir')
     cnn.find_duplicates(
         image_dir=TEST_IMAGE_DIR,
         min_similarity_threshold=threshold,
@@ -361,10 +361,7 @@ def test_find_duplicates_to_remove_outfile_false(cnn, mocker, mocker_save_json):
 def test_find_duplicates_to_remove_outfile_true(cnn, mocker, mocker_save_json):
     threshold = 0.9
     outfile = True
-    ret_val_find_dup_dict = {
-        'filename.jpg': ['dup1.jpg'],
-        'filename2.jpg': ['dup2.jpg'],
-    }
+    ret_val_find_dup_dict = {'filename.jpg': ['dup1.jpg'], 'filename2.jpg': ['dup2.jpg']}
     ret_val_get_files_to_remove = ['1.jpg', '2.jpg']
 
     find_duplicates_mocker = mocker.patch(
@@ -390,10 +387,7 @@ def test_find_duplicates_to_remove_outfile_true(cnn, mocker, mocker_save_json):
 def test_find_duplicates_to_remove_encoding_map(cnn, mocker, mocker_save_json):
     threshold = 0.9
     outfile = True
-    ret_val_find_dup_dict = {
-        'filename.jpg': ['dup1.jpg'],
-        'filename2.jpg': ['dup2.jpg'],
-    }
+    ret_val_find_dup_dict = {'filename.jpg': ['dup1.jpg'], 'filename2.jpg': ['dup2.jpg']}
     ret_val_get_files_to_remove = ['1.jpg', '2.jpg']
     encoding_map = data_encoding_map()
     find_duplicates_mocker = mocker.patch(
@@ -531,7 +525,6 @@ def test_encode_images_verbose_false(capsys):
     cnn = CNN(verbose=False)
     cnn.encode_images(image_dir=TEST_IMAGE_DIR)
     out, err = capsys.readouterr()
-
     assert '' == out
     assert '' == err
 
@@ -576,11 +569,18 @@ def test_scores_saving(cnn):
         saved_json = json.load(f)
 
     assert len(saved_json) == 5  # all valid files present as keys
-    assert len(saved_json['ukbench00120.jpg']) == 3  # file with duplicates have all entries
-    assert len(saved_json['ukbench09268.jpg']) == 0  # file with no duplicates have no entries
+    assert (
+        len(saved_json['ukbench00120.jpg']) == 3
+    )  # file with duplicates have all entries
+    assert (
+        len(saved_json['ukbench09268.jpg']) == 0
+    )  # file with no duplicates have no entries
     assert isinstance(saved_json['ukbench00120.jpg'], list)  # a list of files is returned
-    assert isinstance(saved_json['ukbench00120.jpg'][0], list) # each entry in the duplicate list is a list (not a tuple, since json can't save tuples)
-    assert isinstance(saved_json['ukbench00120.jpg'][0][1], float) # saved score is of type 'float'
+    assert isinstance(
+        saved_json['ukbench00120.jpg'][0], list
+    )  # each entry in the duplicate list is a list (not a tuple, since json can't save tuples)
+    assert isinstance(
+        saved_json['ukbench00120.jpg'][0][1], float
+    )  # saved score is of type 'float'
 
     os.remove(save_file)  # clean up
-

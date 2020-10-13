@@ -44,7 +44,8 @@ class CNN:
 
         self.target_size = (224, 224)
         self.batch_size = 64
-        self.logger = return_logger(__name__)
+        self.logger = return_logger(__name__)  # The logger needs to be bound to the class, otherwise stderr also gets
+        # directed to stdout (Don't know why that is the case)
         self._build_model()
         self.verbose = 1 if verbose is True else 0
 
