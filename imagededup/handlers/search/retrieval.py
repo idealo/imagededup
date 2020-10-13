@@ -3,6 +3,7 @@ from typing import Callable, Dict, Union, Tuple
 
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+from tqdm import tqdm
 
 from imagededup.handlers.search.bktree import BKTree
 from imagededup.handlers.search.brute_force import BruteForce
@@ -14,28 +15,38 @@ logger = return_logger(__name__)
 
 
 def cosine_similarity_chunk(t: Tuple) -> np.ndarray:
-    return cosine_similarity(t[0][t[1][0] : t[1][1]], t[0]).astype('float16')
+    return cosine_similarity(t[0][t[1][0]: t[1][1]], t[0]).astype('float16')
 
 
 def get_cosine_similarity(
-    X: np.ndarray, verbose: bool = True, chunk_size: int = 1000, threshold: int = 10000
+    X: np.ndarray,
+    verbose: bool = True,
+    chunk_size: int = 1000,
+    threshold: int = 10000,
+    parallel_cosine_similarity: bool = True,
 ) -> np.ndarray:
     n_rows = X.shape[0]
 
     if n_rows <= threshold:
         return cosine_similarity(X)
-
     else:
         logger.info(
             'Large feature matrix thus calculating cosine similarities in chunks...'
         )
-        start_idxs = list(range(0, n_rows, chunk_size))
-        end_idxs = start_idxs[1:] + [n_rows]
-        cos_sim = parallelise(
-            cosine_similarity_chunk,
-            [(X, idxs) for i, idxs in enumerate(zip(start_idxs, end_idxs))],
-            verbose,
-        )
+        start_indexes = list(range(0, n_rows, chunk_size))
+        end_indexes = start_indexes[1:] + [n_rows]
+        logger.info(f'Parallel cosine similarity computation: {parallel_cosine_similarity}')
+        if parallel_cosine_similarity:
+            cos_sim = parallelise(
+                cosine_similarity_chunk,
+                [(X, indexes) for i, indexes in enumerate(zip(start_indexes, end_indexes))],
+                verbose,
+            )
+        else:
+            cos_sim = tuple(
+                cosine_similarity_chunk((X, indexes))
+                for indexes in zip(tqdm(start_indexes), end_indexes)
+            )
 
         return np.vstack(cos_sim)
 
