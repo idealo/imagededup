@@ -23,7 +23,7 @@ jobs:
           imageName: 'vs2017-win2016'
           python.version: '3.6'
         Python36Mac:
-          imageName: 'macos-10.13'
+          imageName: 'macos-10.14'
           python.version: '3.6'
         Python37Linux:
           imageName: 'ubuntu-16.04'
@@ -32,7 +32,7 @@ jobs:
           imageName: 'vs2017-win2016'
           python.version: '3.7'
         Python37Mac:
-          imageName: 'macos-10.13'
+          imageName: 'macos-10.14'
           python.version: '3.7'
       maxParallel: 2
     pool:
