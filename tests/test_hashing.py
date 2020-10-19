@@ -16,6 +16,7 @@ PATH_SINGLE_IMAGE = p.parent / 'data/mixed_images/ukbench00120.jpg'
 PATH_SINGLE_IMAGE_STRING = p.parent / 'data/mixed_images/ukbench00120.jpg'
 PATH_SINGLE_IMAGE_CORRUPT = p.parent / 'data/mixed_images/ukbench09268_corrupt.jpg'
 PATH_SINGLE_IMAGE_RESIZED = p.parent / 'data/mixed_images/ukbench00120_resize.jpg'
+PATH_SINGLE_GRAY_IMAGE = p.parent / 'data/ukbench00120_gray.jpg'
 
 
 # Test parent class (static methods/class attributes initialization)
@@ -122,6 +123,16 @@ def test_encode_image_valerror_wrong_input_array(hasher):
     pil_im = Image.open(PATH_SINGLE_IMAGE)
     with pytest.raises(ValueError):
         hasher.encode_image(image_array=pil_im)
+
+
+def test_encode_image_wrong_dim_input_array(hasher, mocker):
+    image_arr_4d = np.random.random((3, 3, 2, 5))
+    check_image_array_hash_mocker = mocker.patch(
+        'imagededup.methods.hashing.check_image_array_hash'
+    )
+    with pytest.raises(ValueError):
+        hasher.encode_image(image_array=image_arr_4d)
+    check_image_array_hash_mocker.assert_called_once_with(image_arr_4d)
 
 
 def test_encode_image_returns_none_image_pp_not_array(hasher, mocker):
@@ -521,6 +532,20 @@ class TestCommon:
     def test_same_hashes_with_different_inputs(self, hash_function):
         arr_inp = np.array(Image.open(PATH_SINGLE_IMAGE))
         assert hash_function(image_array=arr_inp) == hash_function(PATH_SINGLE_IMAGE)
+
+    def test_same_hashes_with_different_inputs_gray_scale(self, hash_function):
+        arr_inp = np.array(Image.open(PATH_SINGLE_GRAY_IMAGE))
+        assert hash_function(image_array=arr_inp) == hash_function(
+            PATH_SINGLE_GRAY_IMAGE
+        )
+
+
+def test_wrong_arr_dims_returns_valueerror():
+    phasher = PHash()
+    arr_inp = np.array(Image.open(PATH_SINGLE_GRAY_IMAGE))
+    arr_inp = arr_inp[:, 0]
+    with pytest.raises(ValueError):
+        phasher.encode_image(image_array=arr_inp)
 
 
 def test_encode_images_returns_dict():

@@ -9,7 +9,7 @@ from scipy.fftpack import dct
 
 from imagededup.handlers.search.retrieval import HashEval
 from imagededup.utils.general_utils import get_files_to_remove, save_json, parallelise
-from imagededup.utils.image_utils import load_image, preprocess_image
+from imagededup.utils.image_utils import load_image, preprocess_image, check_image_array_hash
 from imagededup.utils.logger import return_logger
 
 logger = return_logger(__name__)
@@ -35,7 +35,7 @@ class Hashing:
 
     - Duplicate detection:
     Find duplicates either using the encoding mapping generated previously using 'encode_images' or using a Path to the
-    directory that contains the images that need to be deduplicated. 'find_duplciates' and 'find_duplicates_to_remove'
+    directory that contains the images that need to be deduplicated. 'find_duplicates' and 'find_duplicates_to_remove'
     methods are provided to accomplish these tasks.
     """
 
@@ -111,6 +111,7 @@ class Hashing:
                 )
 
             elif isinstance(image_array, np.ndarray):
+                check_image_array_hash(image_array)  # Do sanity checks on array
                 image_pp = preprocess_image(
                     image=image_array, target_size=self.target_size, grayscale=True
                 )
