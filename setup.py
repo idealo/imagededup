@@ -98,7 +98,7 @@ setup(
     install_requires=[
         'numpy<1.17',
         'Pillow<7.0.0',
-        'PyWavelets~=1.0.3',
+        'PyWavelets~=1.1.1',
         'tqdm',
         'scikit-learn',
         'matplotlib',
