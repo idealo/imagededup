@@ -9,16 +9,10 @@ ctypedef unsigned long long ull
 cdef extern from 'builtin/builtin.h':
     int psnip_builtin_popcountll(unsigned long long) nogil
 
-cdef vector[string] all_filenames
-cdef vector[ull] all_hashes
-
-
-def add(ull hash_val, string filename):
-    all_hashes.push_back(hash_val)
-    all_filenames.push_back(filename)
-
-
-def query(ull query_hash_val, unsigned int maxdist):
+def query(vector[string] all_filenames,
+          vector[ull] all_hashes,
+          ull query_hash_val,
+          unsigned int maxdist):
     matches = []
     cdef unsigned int dist
     cdef string filename
@@ -34,12 +28,3 @@ def query(ull query_hash_val, unsigned int maxdist):
             matches.append((filename.decode('utf-8'), dist))
 
     return matches
-
-
-def clear():
-    all_hashes.clear()
-    all_filenames.clear()
-
-
-def size():
-    return all_hashes.size()
