@@ -89,7 +89,7 @@ else:
 
 setup(
     name='imagededup',
-    version='0.2.2',
+    version='0.2.3',
     author='Tanuj Jain, Christopher Lennan, Zubin John, Dat Tran',
     author_email='tanuj.jain.10@gmail.com, christopherlennan@gmail.com, zrjohn@yahoo.com, datitran@gmail.com',
     description='Package for image deduplication',
