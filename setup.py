@@ -89,16 +89,16 @@ else:
 
 setup(
     name='imagededup',
-    version='0.2.2',
+    version='0.2.3',
     author='Tanuj Jain, Christopher Lennan, Zubin John, Dat Tran',
     author_email='tanuj.jain.10@gmail.com, christopherlennan@gmail.com, zrjohn@yahoo.com, datitran@gmail.com',
     description='Package for image deduplication',
     long_description=long_description,
     license='Apache 2.0',
     install_requires=[
-        'numpy<1.17',
+        'numpy~=1.19.2',
         'Pillow<7.0.0',
-        'PyWavelets~=1.0.3',
+        'PyWavelets~=1.1.1',
         'tqdm',
         'scikit-learn',
         'matplotlib',

@@ -20,13 +20,6 @@ class BruteForceCython:
         self.distance_function = distance_function
         self.hash_dict = hash_dict  # database
 
-        brute_force_cython_ext.clear()
-
-        for filename, hash_val in self.hash_dict.items():
-            brute_force_cython_ext.add(
-                int(hash_val, 16), filename.encode('utf-8')
-            )  # cast hex hash_val to decimals for __builtin_popcountll function
-
     def search(self, query: str, tol: int = 10) -> Dict[str, int]:
         """
         Function for searching using brute force.
@@ -39,6 +32,12 @@ class BruteForceCython:
             List of tuples of the form [(valid_retrieval_filename1: distance), (valid_retrieval_filename2: distance)]
         """
 
+        filenames = []
+        hash_vals = []
+        for filename, hash_val in self.hash_dict.items():
+            filenames.append(filename.encode('utf-8'))
+            hash_vals.append(int(hash_val, 16))
+
         return brute_force_cython_ext.query(
-            int(query, 16), tol
+            filenames, hash_vals, int(query, 16), tol
         )  # cast hex hash_val to decimals for __builtin_popcountll function
