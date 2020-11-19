@@ -5,7 +5,11 @@ import numpy as np
 
 from imagededup.handlers.search.retrieval import get_cosine_similarity
 from imagededup.utils.general_utils import save_json, get_files_to_remove
-from imagededup.utils.image_utils import load_image, preprocess_image
+from imagededup.utils.image_utils import (
+    load_image,
+    preprocess_image,
+    expand_image_array_cnn,
+)
 from imagededup.utils.logger import return_logger
 
 
@@ -44,7 +48,9 @@ class CNN:
 
         self.target_size = (224, 224)
         self.batch_size = 64
-        self.logger = return_logger(__name__)  # The logger needs to be bound to the class, otherwise stderr also gets
+        self.logger = return_logger(
+            __name__
+        )  # The logger needs to be bound to the class, otherwise stderr also gets
         # directed to stdout (Don't know why that is the case)
         self._build_model()
         self.verbose = 1 if verbose is True else 0
@@ -141,6 +147,9 @@ class CNN:
             )
 
         elif isinstance(image_array, np.ndarray):
+            image_array = expand_image_array_cnn(
+                image_array
+            )  # Add 3rd dimension if array is grayscale, do sanity checks
             image_pp = preprocess_image(
                 image=image_array, target_size=self.target_size, grayscale=False
             )

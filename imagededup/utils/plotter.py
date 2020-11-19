@@ -69,6 +69,7 @@ def _plot_images(
         plt.savefig(outfile)
 
     plt.show()
+    plt.close()
 
 
 def _validate_args(
