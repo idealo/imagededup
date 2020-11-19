@@ -1,4 +1,4 @@
-numpy<1.17
+numpy<1.19
 Pillow<7.0.0
 PyWavelets~=1.1.1
 tqdm
