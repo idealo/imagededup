@@ -96,7 +96,6 @@ setup(
     long_description=long_description,
     license='Apache 2.0',
     install_requires=[
-        'numpy~=1.19.2',
         'Pillow<7.0.0',
         'PyWavelets~=1.1.1',
         'tqdm',
@@ -121,6 +120,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Topic :: Software Development :: Libraries',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
