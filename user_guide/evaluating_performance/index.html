@@ -1,0 +1,838 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <meta name="author" content="idealo Data Science Team">
+      
+      <link rel="shortcut icon" href="../../img/favicon.ico">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.1.6">
+    
+    
+      
+        <title>Evaluating performance - Imagededup</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6910b76c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.196e0c26.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#4051b5">
+        
+      
+    
+    
+    
+      
+        
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+        
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-137434942-4","auto"),ga("set","anonymizeIp",!0),ga("send","pageview"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})}),document.addEventListener("DOMContentSwitch",function(){ga("send","pageview",document.location.pathname)})</script>
+<script async src="https://www.google-analytics.com/analytics.js"></script>
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="indigo" data-md-color-accent="indigo">
+      
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#evaluation-of-deduplication-quality" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Imagededup" class="md-header-nav__button md-logo" aria-label="Imagededup">
+      
+  <img src="../../img/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Imagededup
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Evaluating performance
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/idealo/imagededup/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    idealo/imagededup
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Imagededup" class="md-nav__button md-logo" aria-label="Imagededup">
+      
+  <img src="../../img/logo.svg" alt="logo">
+
+    </a>
+    Imagededup
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/idealo/imagededup/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    idealo/imagededup
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    <label class="md-nav__link" for="nav-2">
+      User Guide
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="User Guide" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon"></span>
+        User Guide
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../finding_duplicates/" class="md-nav__link">
+      Finding duplicates
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../encoding_generation/" class="md-nav__link">
+      Encoding generation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Evaluating performance
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" class="md-nav__link md-nav__link--active">
+      Evaluating performance
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    Options
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#considerations" class="md-nav__link">
+    Considerations
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../plotting_duplicates/" class="md-nav__link">
+      Plotting duplicates
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../benchmarks/" class="md-nav__link">
+      Benchmarks
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" >
+    <label class="md-nav__link" for="nav-3">
+      API reference
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="API reference" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon"></span>
+        API reference
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-1" type="checkbox" id="nav-3-1" >
+    <label class="md-nav__link" for="nav-3-1">
+      Methods
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Methods" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-1">
+        <span class="md-nav__icon md-icon"></span>
+        Methods
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../methods/cnn/" class="md-nav__link">
+      CNN
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../methods/hashing/" class="md-nav__link">
+      Hashing
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2" >
+    <label class="md-nav__link" for="nav-3-2">
+      Evaluation
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Evaluation" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-2">
+        <span class="md-nav__icon md-icon"></span>
+        Evaluation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../evaluation/evaluation/" class="md-nav__link">
+      Evaluation
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-3" type="checkbox" id="nav-3-3" >
+    <label class="md-nav__link" for="nav-3-3">
+      Utils
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Utils" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-3">
+        <span class="md-nav__icon md-icon"></span>
+        Utils
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../utils/plotter/" class="md-nav__link">
+      Plot duplicates
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" >
+    <label class="md-nav__link" for="nav-4">
+      Example
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Example" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon"></span>
+        Example
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../examples/CIFAR10_deduplication/" class="md-nav__link">
+      CIFAR10 deduplication
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../CONTRIBUTING/" class="md-nav__link">
+      Contribution
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../LICENSE/" class="md-nav__link">
+      License
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    Options
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#considerations" class="md-nav__link">
+    Considerations
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/idealo/imagededup/edit/master/docs/user_guide/evaluating_performance.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="evaluation-of-deduplication-quality">Evaluation of deduplication quality</h1>
+<p>To determine the quality of deduplication algorithm and the corresponding threshold, an evaluation framework is provided.</p>
+<p>Given a ground truth mapping consisting of file names and a list of duplicates for each file along with a retrieved 
+mapping from the deduplication algorithm for the same files, the following metrics can be obtained using the framework:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Evaluation_measures_(information_retrieval)#Mean_average_precision">Mean Average Precision</a> (MAP)</li>
+<li><a href="https://en.wikipedia.org/wiki/Discounted_cumulative_gain">Mean Normalized Discounted Cumulative Gain</a> (NDCG)</li>
+<li><a href="https://en.wikipedia.org/wiki/Jaccard_index">Jaccard Index</a></li>
+<li>Per class <a href="https://en.wikipedia.org/wiki/Precision_and_recall">Precision</a> (class 0 = non-duplicate image pairs, class 1 = duplicate image pairs)</li>
+<li>Per class <a href="https://en.wikipedia.org/wiki/Precision_and_recall">Recall</a> (class 0 = non-duplicate image pairs, class 1 = duplicate image pairs)</li>
+<li>Per class <a href="https://en.wikipedia.org/wiki/F1_score">f1-score</a> (class 0 = non-duplicate image pairs, class 1 = duplicate image pairs)</li>
+</ul>
+<p>The api for obtaining these metrics  is as below:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.evaluation</span> <span class="kn">import</span> <span class="n">evaluate</span>
+<span class="n">metrics</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span><span class="n">ground_truth_map</span><span class="p">,</span> <span class="n">retrieved_map</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;&lt;metric-name&gt;&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>where the returned variable <em>metrics</em> is a dictionary containing the following content:</p>
+<div class="codehilite"><pre><span></span><code><span class="err">{</span>
+<span class="err">  &#39;map&#39;: &lt;map&gt;,</span>
+<span class="err">  &#39;ndcg&#39;: &lt;mean ndcg&gt;,</span>
+<span class="err">  &#39;jaccard&#39;: &lt;mean jaccard index&gt;,</span>
+<span class="err">  &#39;precision&#39;: &lt;numpy array having per class precision&gt;,</span>
+<span class="err">  &#39;recall&#39;: &lt;numpy array having per class recall&gt;,</span>
+<span class="err">  &#39;f1-score&#39;: &lt;numpy array having per class f1-score&gt;,</span>
+<span class="err">  &#39;support&#39;: &lt;numpy array having per class support&gt;</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<h4 id="options">Options</h4>
+<ul>
+<li>ground_truth_map:  A dictionary representing ground truth with filenames as key and a list of duplicate filenames as 
+value.</li>
+<li>retrieved_map: A dictionary representing retrieved duplicates with filenames as key and a list of retrieved duplicate 
+filenames as value.</li>
+<li>metric: Can take one of the following values:<ul>
+<li>'map'</li>
+<li>'ndcg'</li>
+<li>'jaccard'</li>
+<li>'classification': Returns per class precision, recall, f1-score, support</li>
+<li>'all' (default, returns all the above metrics)</li>
+</ul>
+</li>
+</ul>
+<h4 id="considerations">Considerations</h4>
+<ul>
+<li>
+<p>Presently, the ground truth map should be prepared manually by the user. Symmetric relations between duplicates must 
+be represented in the ground truth map. If an image <em>i</em> is a duplicate of image <em>j</em>, then <em>j</em> must also be represented 
+as a duplicate of <em>i</em>. Absence of symmetric relations will lead to an exception.</p>
+</li>
+<li>
+<p>Both the ground_truth_map and retrieved_map must have the same keys.</p>
+</li>
+<li>
+<p>There is a difference between the way information retrieval metrics(map, ndcg, jaccard index) and classification 
+metrics(precision, recall, f1-score) treat the symmetric relationships in duplicates. Consider the following 
+ground_truth_map and retrieved_map:</p>
+</li>
+</ul>
+<p>ground_truth_map:</p>
+<div class="codehilite"><pre><span></span><code><span class="err">{</span>
+<span class="err">  &#39;1.jpg&#39;: [&#39;2.jpg&#39;, &#39;4.jpg&#39;],</span>
+<span class="err">  &#39;2.jpg&#39;: [&#39;1.jpg&#39;],</span>
+<span class="err">  &#39;3.jpg&#39;: [],</span>
+<span class="err">  &#39;4.jpg&#39;: [&#39;1.jpg&#39;]</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<p>retrieved_map:</p>
+<div class="codehilite"><pre><span></span><code><span class="err">{</span>
+<span class="err">  &#39;1.jpg&#39;: [&#39;2.jpg&#39;],</span>
+<span class="err">  &#39;2.jpg&#39;: [&#39;1.jpg&#39;],</span>
+<span class="err">  &#39;3.jpg&#39;: [],</span>
+<span class="err">  &#39;4.jpg&#39;: []</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<p>From the above, it can be seen that images <em>'1.jpg'</em> and <em>'4.jpg'</em> are not found to be duplicates of each other by the 
+deduplication algorithm.</p>
+<p>For calculating information retrieval metrics, each key in the maps is considered as an independent 'query'. 
+In the ground truth, <em>'4.jpg'</em> is a duplicate of the key <em>'1.jpg'</em>. When it is not retrieved, it is considered a miss for 
+query <em>'1.jpg'</em>.  Similarly, <em>'1.jpg'</em> is a duplicate of the key <em>'4.jpg'</em> in the ground truth. When this is not retrieved, 
+it is considered a miss for query <em>'4.jpg'</em>.  Thus, the missing relationship is accounted for twice instead of just once.</p>
+<p>Classification metrics, on the other hand, consider the relationships only once by forming unique pairs of images and 
+labelling each pair as a 0 (non-duplicate image pair) and 1 (duplicate image pair). </p>
+<p>Using the ground_truth_map, the ground truth pairs with the corresponding labels are:</p>
+<table>
+<thead>
+<tr>
+<th>Image Pair</th>
+<th align="center">Label</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>('1.jpg', '2.jpg')</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td>('1.jpg', '3.jpg')</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td>('1.jpg', '4.jpg')</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td>('2.jpg', '3.jpg')</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td>('2.jpg', '4.jpg')</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td>('3.jpg', '4.jpg')</td>
+<td align="center">0</td>
+</tr>
+</tbody>
+</table>
+<p>Similarly, using retrieved_map, the retrieved pairs are generated:</p>
+<table>
+<thead>
+<tr>
+<th>Image Pair</th>
+<th align="center">Label</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>('1.jpg', '2.jpg')</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td>('1.jpg', '3.jpg')</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td>('1.jpg', '4.jpg')</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td>('2.jpg', '3.jpg')</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td>('2.jpg', '4.jpg')</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td>('3.jpg', '4.jpg')</td>
+<td align="center">0</td>
+</tr>
+</tbody>
+</table>
+<p>These two sets of pairs are then used to calculate metrics such as precision/recall/f1-score. It can be seen that the 
+missing relationship between pair <em>('1jpg', '4.jpg')</em> is accounted for only once.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../encoding_generation/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Encoding generation
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../plotting_duplicates/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Plotting duplicates
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.fd16492e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.7836ba4d.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.4ac00218.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>

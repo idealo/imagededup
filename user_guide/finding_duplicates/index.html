@@ -1,0 +1,1018 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <meta name="author" content="idealo Data Science Team">
+      
+      <link rel="shortcut icon" href="../../img/favicon.ico">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.1.6">
+    
+    
+      
+        <title>Finding duplicates - Imagededup</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6910b76c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.196e0c26.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#4051b5">
+        
+      
+    
+    
+    
+      
+        
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+        
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-137434942-4","auto"),ga("set","anonymizeIp",!0),ga("send","pageview"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})}),document.addEventListener("DOMContentSwitch",function(){ga("send","pageview",document.location.pathname)})</script>
+<script async src="https://www.google-analytics.com/analytics.js"></script>
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="indigo" data-md-color-accent="indigo">
+      
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#finding-duplicates" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Imagededup" class="md-header-nav__button md-logo" aria-label="Imagededup">
+      
+  <img src="../../img/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Imagededup
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Finding duplicates
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/idealo/imagededup/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    idealo/imagededup
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Imagededup" class="md-nav__button md-logo" aria-label="Imagededup">
+      
+  <img src="../../img/logo.svg" alt="logo">
+
+    </a>
+    Imagededup
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/idealo/imagededup/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    idealo/imagededup
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    <label class="md-nav__link" for="nav-2">
+      User Guide
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="User Guide" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon"></span>
+        User Guide
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Finding duplicates
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" class="md-nav__link md-nav__link--active">
+      Finding duplicates
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#find_duplicates" class="md-nav__link">
+    find_duplicates()
+  </a>
+  
+    <nav class="md-nav" aria-label="find_duplicates()">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    Options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#considerations" class="md-nav__link">
+    Considerations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#find_duplicates_to_remove" class="md-nav__link">
+    find_duplicates_to_remove()
+  </a>
+  
+    <nav class="md-nav" aria-label="find_duplicates_to_remove()">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#options_1" class="md-nav__link">
+    Options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#considerations_1" class="md-nav__link">
+    Considerations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../encoding_generation/" class="md-nav__link">
+      Encoding generation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../evaluating_performance/" class="md-nav__link">
+      Evaluating performance
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../plotting_duplicates/" class="md-nav__link">
+      Plotting duplicates
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../benchmarks/" class="md-nav__link">
+      Benchmarks
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" >
+    <label class="md-nav__link" for="nav-3">
+      API reference
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="API reference" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon"></span>
+        API reference
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-1" type="checkbox" id="nav-3-1" >
+    <label class="md-nav__link" for="nav-3-1">
+      Methods
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Methods" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-1">
+        <span class="md-nav__icon md-icon"></span>
+        Methods
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../methods/cnn/" class="md-nav__link">
+      CNN
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../methods/hashing/" class="md-nav__link">
+      Hashing
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2" >
+    <label class="md-nav__link" for="nav-3-2">
+      Evaluation
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Evaluation" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-2">
+        <span class="md-nav__icon md-icon"></span>
+        Evaluation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../evaluation/evaluation/" class="md-nav__link">
+      Evaluation
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-3" type="checkbox" id="nav-3-3" >
+    <label class="md-nav__link" for="nav-3-3">
+      Utils
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Utils" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-3">
+        <span class="md-nav__icon md-icon"></span>
+        Utils
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../utils/plotter/" class="md-nav__link">
+      Plot duplicates
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" >
+    <label class="md-nav__link" for="nav-4">
+      Example
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Example" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon"></span>
+        Example
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../examples/CIFAR10_deduplication/" class="md-nav__link">
+      CIFAR10 deduplication
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../CONTRIBUTING/" class="md-nav__link">
+      Contribution
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../LICENSE/" class="md-nav__link">
+      License
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#find_duplicates" class="md-nav__link">
+    find_duplicates()
+  </a>
+  
+    <nav class="md-nav" aria-label="find_duplicates()">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    Options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#considerations" class="md-nav__link">
+    Considerations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#find_duplicates_to_remove" class="md-nav__link">
+    find_duplicates_to_remove()
+  </a>
+  
+    <nav class="md-nav" aria-label="find_duplicates_to_remove()">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#options_1" class="md-nav__link">
+    Options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#considerations_1" class="md-nav__link">
+    Considerations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/idealo/imagededup/edit/master/docs/user_guide/finding_duplicates.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="finding-duplicates">Finding duplicates</h1>
+<p>There are two methods available to find duplicates:</p>
+<ul>
+<li><a href="#find_duplicates">find_duplicates()</a></li>
+<li><a href="#find_duplicates_to_remove">find_duplicates_to_remove()</a></li>
+</ul>
+<h2 id="find_duplicates">find_duplicates()</h2>
+<p>To find duplicates in an image directory, the general api is:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="o">&lt;</span><span class="n">method</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+<span class="n">method_object</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">method</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">method_object</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/image/directory&#39;</span><span class="p">,</span>
+                                           <span class="o">&lt;</span><span class="n">threshold</span><span class="o">-</span><span class="n">parameter</span><span class="o">-</span><span class="n">value</span><span class="o">&gt;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Duplicates can also be found if encodings of the images are available:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="o">&lt;</span><span class="n">method</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+<span class="n">method_object</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">method</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">method_object</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">encoding_map</span><span class="p">,</span>
+                                           <span class="o">&lt;</span><span class="n">threshold</span><span class="o">-</span><span class="n">parameter</span><span class="o">-</span><span class="n">value</span><span class="o">&gt;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>where the returned variable <em>duplicates</em> is a dictionary with the following content:</p>
+<div class="codehilite"><pre><span></span><code><span class="err">{</span>
+<span class="err">  &#39;image1.jpg&#39;: [&#39;image1_duplicate1.jpg&#39;,</span>
+<span class="err">                &#39;image1_duplicate2.jpg&#39;],</span>
+<span class="err">  &#39;image2.jpg&#39;: [..],</span>
+<span class="err">  ..</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<p>Each key in the <em>duplicates</em> dictionary corresponds to a file in the image directory passed to the <em>image_dir</em> parameter
+of the <em>find_duplicates</em> function. The value is a list of all file names in the image directory that were found to be 
+duplicates for the key file.
+The 'method-name' corresponds to one of the deduplication methods available and can be set to:</p>
+<ul>
+<li>PHash</li>
+<li>AHash</li>
+<li>DHash</li>
+<li>WHash</li>
+<li>CNN</li>
+</ul>
+<h4 id="options">Options</h4>
+<ul>
+<li>
+<p><em>image_dir</em>: Optional, directory where all image files are present.</p>
+</li>
+<li>
+<p><em>encoding_map</em>: Optional, used instead of <em>image_dir</em> attribute. Set it equal to the dictionary of file names and 
+corresponding encodings (hashes/cnn encodings). The mentioned dictionary can be generated using the corresponding 
+<a href="../encoding_generation/"><em>encode_images</em></a> method.</p>
+</li>
+<li><em>scores</em>: Setting it to <em>True</em> returns the scores representing the hamming distance (for hashing) or cosine similarity
+ (for cnn) of each of the duplicate file names from the key file. In this case, the returned 'duplicates' dictionary has
+  the following content:</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="err">{</span>
+<span class="err">  &#39;image1.jpg&#39;: [(&#39;image1_duplicate1.jpg&#39;, score),</span>
+<span class="err">                 (&#39;image1_duplicate2.jpg&#39;, score)],</span>
+<span class="err">  &#39;image2.jpg&#39;: [..],</span>
+<span class="err">  ..</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<p>Each key in the <em>duplicates</em> dictionary corresponds to a file in the image directory passed to the image_dir parameter 
+of the find_duplicates function. The value is a list of tuples representing the file names and corresponding scores 
+in the image directory that were found to be duplicates of the key file.</p>
+<ul>
+<li>
+<p><em>outfile</em>: Name of file to which the returned duplicates dictionary is to be written, must be a json. <em>None</em> by default.</p>
+</li>
+<li>
+<p>threshold parameter:</p>
+<ul>
+<li>
+<p><em>min_similarity_threshold</em> for cnn method indicating the minimum amount of cosine similarity that should exist 
+  between the key image and a candidate image so that the candidate image can be considered as a duplicate of the key 
+  image. Should be a float between -1.0 and 1.0. Default value is 0.9.</p>
+</li>
+<li>
+<p><em>max_distance_threshold</em> for hashing methods indicating the maximum amount of hamming distance that can exist 
+  between the key image and a candidate image so that the candidate image can be considered as a duplicate of the key 
+  image. Should be an int between 0 and 64. Default value is 10.</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="considerations">Considerations</h4>
+<ul>
+<li>The returned duplicates dictionary contains symmetric relationships i.e., if an image <em>i</em> is a duplicate of image <em>j</em>,
+ then image <em>j</em> must also be a duplicate of image <em>i</em>. Let's say that the image directory only consists of images <em>i</em> 
+ and <em>j</em>, then the duplicates dictionary would have the following content:</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="err">{</span>
+<span class="err">  &#39;i&#39;: [&#39;j&#39;],</span>
+<span class="err">  &#39;j&#39;: [&#39;i&#39;]</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<ul>
+<li>If an image in the image directory can't be loaded, no encodings are generated for the image. Hence, the image is 
+disregarded for deduplication and has no entry in the returned <em>duplicates</em> dictionary.</li>
+</ul>
+<h4 id="examples">Examples</h4>
+<p>To deduplicate an image directory using perceptual hashing, with a maximum allowed hamming distance of 12, scores 
+returned along with duplicate filenames and the returned dictionary saved to file 'my_duplicates.json', use the 
+following:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">PHash</span>
+<span class="n">phasher</span> <span class="o">=</span> <span class="n">PHash</span><span class="p">()</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">phasher</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/image/directory&#39;</span><span class="p">,</span>
+                                     <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> 
+                                     <span class="n">scores</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+                                     <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;my_duplicates.json&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>To deduplicate an image directory using cnn, with a minimum cosine similarity of 0.85, no scores returned and the 
+returned dictionary saved to file 'my_duplicates.json', use the following:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">CNN</span>
+<span class="n">cnn_encoder</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">()</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">cnn_encoder</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/image/directory&#39;</span><span class="p">,</span> 
+                                         <span class="n">min_similarity_threshold</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> 
+                                         <span class="n">scores</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+                                         <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;my_duplicates.json&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="find_duplicates_to_remove">find_duplicates_to_remove()</h2>
+<p>Returns a list of files in the image directory that are considered as duplicates. Does <strong>NOT</strong> remove the said files.</p>
+<p>The api is similar to <em>find_duplicates</em> function (except the <em>score</em> attribute in <em>find_duplicates</em>). This function 
+allows the return of a single list of file names in directory that are found to be duplicates.
+The general api for the method is as below:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="o">&lt;</span><span class="n">method</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+<span class="n">method_object</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">method</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">method_object</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/image/directory&#39;</span><span class="p">,</span> 
+                                                     <span class="o">&lt;</span><span class="n">threshold</span><span class="o">-</span><span class="n">parameter</span><span class="o">-</span><span class="n">value</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="n">OR</span>
+
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">method_object</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">encoding_map</span><span class="o">=</span><span class="n">encoding_map</span><span class="p">,</span> 
+                                                     <span class="o">&lt;</span><span class="n">threshold</span><span class="o">-</span><span class="n">parameter</span><span class="o">-</span><span class="n">value</span><span class="o">&gt;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>In this case, the returned variable <em>duplicates</em> is a list containing the name of image files that are found to be 
+duplicates of some file in the directory:</p>
+<div class="codehilite"><pre><span></span><code><span class="err">[</span>
+<span class="err">  &#39;image1_duplicate1.jpg&#39;,</span>
+<span class="err">  &#39;image1_duplicate2.jpg&#39;</span>
+<span class="err">  ,..</span>
+<span class="err">]</span>
+</code></pre></div>
+
+<p>The 'method-name' corresponds to one of the deduplication methods available and can be set to:</p>
+<ul>
+<li>PHash</li>
+<li>AHash</li>
+<li>DHash</li>
+<li>WHash</li>
+<li>CNN</li>
+</ul>
+<h4 id="options_1">Options</h4>
+<ul>
+<li>
+<p><em>image_dir</em>: Optional, directory where all image files are present.</p>
+</li>
+<li>
+<p><em>encoding_map</em>: Optional, used instead of image_dir attribute. Set it equal to the dictionary of file names and 
+corresponding encodings (hashes/cnn encodings). The mentioned dictionary can be generated using the corresponding 
+<a href="../encoding_generation/"><em>encode_images</em></a> method.</p>
+</li>
+<li>
+<p><em>outfile</em>: Name of file to which the returned duplicates dictionary is to be written, must be a json. <em>None</em> by default.</p>
+</li>
+<li>
+<p>threshold parameter:</p>
+<ul>
+<li>
+<p><em>min_similarity_threshold</em> for cnn method indicating the minimum amount of cosine similarity that should exist 
+  between the key image and a candidate image so that the candidate image can be considered as a duplicate for the key 
+  image. Should be a float between -1.0 and 1.0. Default value is 0.9.</p>
+</li>
+<li>
+<p><em>max_distance_threshold</em> for hashing methods indicating the maximum amount of hamming distance that can exist 
+  between the key image and a candidate image so that the candidate image can be considered as a duplicate for the key 
+  image. Should be an int between 0 and 64. Default value is 10.</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="considerations_1">Considerations</h4>
+<ul>
+<li>This method must be used with caution. The symmetric nature of duplicates imposes an issue of marking one image as 
+duplicate and the other as original. Consider the following <em>duplicates</em> dictionary:</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="err">{</span>
+<span class="err">  &#39;1.jpg&#39;: [&#39;2.jpg&#39;],</span>
+<span class="err">  &#39;2.jpg&#39;: [&#39;1.jpg&#39;, &#39;3.jpg&#39;],</span>
+<span class="err">  &#39;3.jpg&#39;: [&#39;2.jpg&#39;]</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<p>In this case, it is possible to remove only <em>2.jpg</em> which leaves <em>1.jpg</em> and <em>3.jpg</em> as non-duplicates of each other. 
+However, it is also possible to remove both <em>1.jpg</em> and <em>3.jpg</em> leaving only <em>2.jpg</em>. The <em>find_duplicates_to_remove</em> 
+method can thus, return either of the outputs. In the above example, let's say that <em>1.jpg</em> is retained, while its 
+duplicate, <em>2.jpg</em>, is marked as a duplicate. Once <em>2.jpg</em> is marked as duplicate, its own found duplicates would be 
+disregarded.  Thus, <em>1.jpg</em> and <em>3.jpg</em> would not be considered as duplicates. So, the final return would be:</p>
+<div class="codehilite"><pre><span></span><code><span class="err">[&#39;2.jpg&#39;]</span>
+</code></pre></div>
+
+<p>This leaves <em>1.jpg</em> and <em>3.jpg</em> as non-duplicates in the directory.
+If the user does not wish to impose this heuristic, it is advised to use <a href="#find_duplicates"><em>find_duplicates</em></a> function 
+and use a custom heuristic to mark a file as duplicate.</p>
+<ul>
+<li>If an image in the image directory can't be loaded, no encodings are generated for the image. Hence, the image is 
+disregarded for deduplication and has no entry in the returned <em>duplicates</em> dictionary.</li>
+</ul>
+<h4 id="examples_1">Examples</h4>
+<p>To deduplicate an image directory using perceptual hashing, with a maximum allowed hamming distance of 12, and the 
+returned list saved to file 'my_duplicates.json', use the following:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">PHash</span>
+<span class="n">phasher</span> <span class="o">=</span> <span class="n">PHash</span><span class="p">()</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">phasher</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/image/directory&#39;</span><span class="p">,</span> 
+                                               <span class="n">max_distance_threshold</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> 
+                                               <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;my_duplicates.json&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>To deduplicate an image directory using cnn, with a minimum cosine similarity of 0.85 and the returned list saved to 
+file 'my_duplicates.json', use the following:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">CNN</span>
+<span class="n">cnn_encoder</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">()</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">cnn_encoder</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/image/directory&#39;</span><span class="p">,</span> 
+                                                   <span class="n">min_similarity_threshold</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> 
+                                                   <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;my_duplicates.json&#39;</span><span class="p">)</span>
+</code></pre></div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../.." class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Home
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../encoding_generation/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Encoding generation
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.fd16492e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.7836ba4d.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.4ac00218.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>

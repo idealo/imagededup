@@ -1,0 +1,1138 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <meta name="author" content="idealo Data Science Team">
+      
+      <link rel="shortcut icon" href="../../img/favicon.ico">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.1.6">
+    
+    
+      
+        <title>CNN - Imagededup</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6910b76c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.196e0c26.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#4051b5">
+        
+      
+    
+    
+    
+      
+        
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+        
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-137434942-4","auto"),ga("set","anonymizeIp",!0),ga("send","pageview"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})}),document.addEventListener("DOMContentSwitch",function(){ga("send","pageview",document.location.pathname)})</script>
+<script async src="https://www.google-analytics.com/analytics.js"></script>
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="indigo" data-md-color-accent="indigo">
+      
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#class-cnn" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Imagededup" class="md-header-nav__button md-logo" aria-label="Imagededup">
+      
+  <img src="../../img/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Imagededup
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              CNN
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/idealo/imagededup/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    idealo/imagededup
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Imagededup" class="md-nav__button md-logo" aria-label="Imagededup">
+      
+  <img src="../../img/logo.svg" alt="logo">
+
+    </a>
+    Imagededup
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/idealo/imagededup/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    idealo/imagededup
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" >
+    <label class="md-nav__link" for="nav-2">
+      User Guide
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="User Guide" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon"></span>
+        User Guide
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../user_guide/finding_duplicates/" class="md-nav__link">
+      Finding duplicates
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../user_guide/encoding_generation/" class="md-nav__link">
+      Encoding generation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../user_guide/evaluating_performance/" class="md-nav__link">
+      Evaluating performance
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../user_guide/plotting_duplicates/" class="md-nav__link">
+      Plotting duplicates
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../user_guide/benchmarks/" class="md-nav__link">
+      Benchmarks
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+    <label class="md-nav__link" for="nav-3">
+      API reference
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="API reference" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon"></span>
+        API reference
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-1" type="checkbox" id="nav-3-1" checked>
+    <label class="md-nav__link" for="nav-3-1">
+      Methods
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Methods" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-1">
+        <span class="md-nav__icon md-icon"></span>
+        Methods
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        CNN
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" class="md-nav__link md-nav__link--active">
+      CNN
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#class-cnn" class="md-nav__link">
+    class CNN
+  </a>
+  
+    <nav class="md-nav" aria-label="class CNN">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__" class="md-nav__link">
+    __init__
+  </a>
+  
+    <nav class="md-nav" aria-label="__init__">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#args" class="md-nav__link">
+    Args
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encode_image" class="md-nav__link">
+    encode_image
+  </a>
+  
+    <nav class="md-nav" aria-label="encode_image">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#args_1" class="md-nav__link">
+    Args
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage" class="md-nav__link">
+    Example usage
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encode_images" class="md-nav__link">
+    encode_images
+  </a>
+  
+    <nav class="md-nav" aria-label="encode_images">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#args_2" class="md-nav__link">
+    Args
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_1" class="md-nav__link">
+    Example usage
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#find_duplicates" class="md-nav__link">
+    find_duplicates
+  </a>
+  
+    <nav class="md-nav" aria-label="find_duplicates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#args_3" class="md-nav__link">
+    Args
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_2" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_2" class="md-nav__link">
+    Example usage
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#find_duplicates_to_remove" class="md-nav__link">
+    find_duplicates_to_remove
+  </a>
+  
+    <nav class="md-nav" aria-label="find_duplicates_to_remove">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#args_4" class="md-nav__link">
+    Args
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_3" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_3" class="md-nav__link">
+    Example usage
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../hashing/" class="md-nav__link">
+      Hashing
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2" >
+    <label class="md-nav__link" for="nav-3-2">
+      Evaluation
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Evaluation" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-2">
+        <span class="md-nav__icon md-icon"></span>
+        Evaluation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../evaluation/evaluation/" class="md-nav__link">
+      Evaluation
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-3" type="checkbox" id="nav-3-3" >
+    <label class="md-nav__link" for="nav-3-3">
+      Utils
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Utils" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-3">
+        <span class="md-nav__icon md-icon"></span>
+        Utils
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../utils/plotter/" class="md-nav__link">
+      Plot duplicates
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" >
+    <label class="md-nav__link" for="nav-4">
+      Example
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Example" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon"></span>
+        Example
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../examples/CIFAR10_deduplication/" class="md-nav__link">
+      CIFAR10 deduplication
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../CONTRIBUTING/" class="md-nav__link">
+      Contribution
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../LICENSE/" class="md-nav__link">
+      License
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#class-cnn" class="md-nav__link">
+    class CNN
+  </a>
+  
+    <nav class="md-nav" aria-label="class CNN">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__" class="md-nav__link">
+    __init__
+  </a>
+  
+    <nav class="md-nav" aria-label="__init__">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#args" class="md-nav__link">
+    Args
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encode_image" class="md-nav__link">
+    encode_image
+  </a>
+  
+    <nav class="md-nav" aria-label="encode_image">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#args_1" class="md-nav__link">
+    Args
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage" class="md-nav__link">
+    Example usage
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encode_images" class="md-nav__link">
+    encode_images
+  </a>
+  
+    <nav class="md-nav" aria-label="encode_images">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#args_2" class="md-nav__link">
+    Args
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_1" class="md-nav__link">
+    Example usage
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#find_duplicates" class="md-nav__link">
+    find_duplicates
+  </a>
+  
+    <nav class="md-nav" aria-label="find_duplicates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#args_3" class="md-nav__link">
+    Args
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_2" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_2" class="md-nav__link">
+    Example usage
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#find_duplicates_to_remove" class="md-nav__link">
+    find_duplicates_to_remove
+  </a>
+  
+    <nav class="md-nav" aria-label="find_duplicates_to_remove">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#args_4" class="md-nav__link">
+    Args
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_3" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage_3" class="md-nav__link">
+    Example usage
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/idealo/imagededup/edit/master/docs/methods/cnn.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  <h1>CNN</h1>
+                
+                <h2 id="class-cnn">class CNN</h2>
+<p>Find duplicates using CNN and/or generate CNN encodings given a single image or a directory of images.</p>
+<p>The module can be used for 2 purposes: Encoding generation and duplicate detection.</p>
+<ul>
+<li>
+<p>Encodings generation: To propagate an image through a Convolutional Neural Network architecture and generate encodings. The generated encodings can be used at a later time for deduplication. Using the method 'encode_image', the CNN encodings for a single image can be obtained while the 'encode_images' method can be used to get encodings for all images in a directory.</p>
+</li>
+<li>
+<p>Duplicate detection: Find duplicates either using the encoding mapping generated previously using 'encode_images' or using a Path to the directory that contains the images that need to be deduplicated. 'find_duplciates' and 'find_duplicates_to_remove' methods are provided to accomplish these tasks.</p>
+</li>
+</ul>
+<h3 id="__init__">__init__</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Initialize a keras MobileNet model that is sliced at the last convolutional layer. Set the batch size for keras generators to be 64 samples. Set the input image size to (224, 224) for providing as input to MobileNet model.</p>
+<h5 id="args">Args</h5>
+<ul>
+<li><strong>verbose</strong>: Display progress bar if True else disable it. Default value is True.</li>
+</ul>
+<h3 id="encode_image">encode_image</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">encode_image</span><span class="p">(</span><span class="n">image_file</span><span class="p">,</span> <span class="n">image_array</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Generate CNN encoding for a single image.</p>
+<h5 id="args_1">Args</h5>
+<ul>
+<li>
+<p><strong>image_file</strong>: Path to the image file.</p>
+</li>
+<li>
+<p><strong>image_array</strong>: Optional, used instead of image_file. Image typecast to numpy array.</p>
+</li>
+</ul>
+<h5 id="returns">Returns</h5>
+<ul>
+<li><strong>encoding</strong>: Encodings for the image in the form of numpy array.</li>
+</ul>
+<h5 id="example-usage">Example usage</h5>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">CNN</span>
+<span class="n">myencoder</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">()</span>
+<span class="n">encoding</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_file</span><span class="o">=</span><span class="s1">&#39;path/to/image.jpg&#39;</span><span class="p">)</span>
+<span class="n">OR</span>
+<span class="n">encoding</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_image</span><span class="p">(</span><span class="n">image_array</span><span class="o">=&lt;</span><span class="n">numpy</span> <span class="n">array</span> <span class="n">of</span> <span class="n">image</span><span class="o">&gt;</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="encode_images">encode_images</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">encode_images</span><span class="p">(</span><span class="n">image_dir</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Generate CNN encodings for all images in a given directory of images.</p>
+<h5 id="args_2">Args</h5>
+<ul>
+<li><strong>image_dir</strong>: Path to the image directory.</li>
+</ul>
+<h5 id="returns_1">Returns</h5>
+<ul>
+<li><strong>dictionary</strong>: Contains a mapping of filenames and corresponding numpy array of CNN encodings.</li>
+</ul>
+<h5 id="example-usage_1">Example usage</h5>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">CNN</span>
+<span class="n">myencoder</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">()</span>
+<span class="n">encoding_map</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">encode_images</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/image/directory&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="find_duplicates">find_duplicates</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">find_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="p">,</span> <span class="n">encoding_map</span><span class="p">,</span> <span class="n">min_similarity_threshold</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Find duplicates for each file. Take in path of the directory or encoding dictionary in which duplicates are to be detected above the given threshold. Return dictionary containing key as filename and value as a list of duplicate file names. Optionally, the cosine distances could be returned instead of just duplicate filenames for each query file.</p>
+<h5 id="args_3">Args</h5>
+<ul>
+<li>
+<p><strong>image_dir</strong>: Path to the directory containing all the images or dictionary with keys as file names</p>
+</li>
+<li>
+<p><strong>encoding_map</strong>: Optional, used instead of image_dir, a dictionary containing mapping of filenames and
+              corresponding CNN encodings.</p>
+</li>
+<li>
+<p><strong>min_similarity_threshold</strong>: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9</p>
+</li>
+<li>
+<p><strong>scores</strong>: Optional, boolean indicating whether similarity scores are to be returned along with retrieved
+        duplicates.</p>
+</li>
+<li>
+<p><strong>outfile</strong>: Optional, name of the file to save the results, must be a json. Default is None.</p>
+</li>
+</ul>
+<h5 id="returns_2">Returns</h5>
+<ul>
+<li><strong>dictionary</strong>:  if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
+            score), ('image1_duplicate2.jpg', score)], 'image2.jpg': [] ..}. if scores is False, then a
+            dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg', 'image1_duplicate2.jpg'],
+            'image2.jpg':['image1_duplicate1.jpg',..], ..}</li>
+</ul>
+<h5 id="example-usage_2">Example usage</h5>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">CNN</span>
+<span class="n">myencoder</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">()</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/directory&#39;</span><span class="p">,</span> <span class="n">min_similarity_threshold</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;results.json&#39;</span><span class="p">)</span>
+
+<span class="n">OR</span>
+
+<span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">CNN</span>
+<span class="n">myencoder</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">()</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">encoding_map</span><span class="o">=&lt;</span><span class="n">mapping</span> <span class="n">filename</span> <span class="n">to</span> <span class="n">cnn</span> <span class="n">encodings</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="n">min_similarity_threshold</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">scores</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;results.json&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="find_duplicates_to_remove">find_duplicates_to_remove</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="p">,</span> <span class="n">encoding_map</span><span class="p">,</span> <span class="n">min_similarity_threshold</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Give out a list of image file names to remove based on the similarity threshold. Does not remove the mentioned files.</p>
+<h5 id="args_4">Args</h5>
+<ul>
+<li>
+<p><strong>image_dir</strong>: Path to the directory containing all the images or dictionary with keys as file names
+           and values as numpy arrays which represent the CNN encoding for the key image file.</p>
+</li>
+<li>
+<p><strong>encoding_map</strong>: Optional, used instead of image_dir, a dictionary containing mapping of filenames and
+              corresponding CNN encodings.</p>
+</li>
+<li>
+<p><strong>min_similarity_threshold</strong>: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9</p>
+</li>
+<li>
+<p><strong>outfile</strong>: Optional, name of the file to save the results, must be a json. Default is None.</p>
+</li>
+</ul>
+<h5 id="returns_3">Returns</h5>
+<ul>
+<li><strong>duplicates</strong>: List of image file names that should be removed.</li>
+</ul>
+<h5 id="example-usage_3">Example usage</h5>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">CNN</span>
+<span class="n">myencoder</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">()</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/images/directory&#39;</span><span class="p">),</span>
+<span class="n">min_similarity_threshold</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>
+
+<span class="n">OR</span>
+
+<span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">CNN</span>
+<span class="n">myencoder</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">()</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">myencoder</span><span class="o">.</span><span class="n">find_duplicates_to_remove</span><span class="p">(</span><span class="n">encoding_map</span><span class="o">=&lt;</span><span class="n">mapping</span> <span class="n">filename</span> <span class="n">to</span> <span class="n">cnn</span> <span class="n">encodings</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="n">min_similarity_threshold</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;results.json&#39;</span><span class="p">)</span>
+</code></pre></div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../../user_guide/benchmarks/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Benchmarks
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../hashing/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Hashing
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.fd16492e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.7836ba4d.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.4ac00218.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>

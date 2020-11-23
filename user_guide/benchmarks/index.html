@@ -1,0 +1,1430 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <meta name="author" content="idealo Data Science Team">
+      
+      <link rel="shortcut icon" href="../../img/favicon.ico">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.1.6">
+    
+    
+      
+        <title>Benchmarks - Imagededup</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6910b76c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.196e0c26.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#4051b5">
+        
+      
+    
+    
+    
+      
+        
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+        
+<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-137434942-4","auto"),ga("set","anonymizeIp",!0),ga("send","pageview"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){if(this.value){var e=document.location.pathname;ga("send","pageview",e+"?q="+this.value)}})}),document.addEventListener("DOMContentSwitch",function(){ga("send","pageview",document.location.pathname)})</script>
+<script async src="https://www.google-analytics.com/analytics.js"></script>
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="indigo" data-md-color-accent="indigo">
+      
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#benchmarks" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Imagededup" class="md-header-nav__button md-logo" aria-label="Imagededup">
+      
+  <img src="../../img/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Imagededup
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Benchmarks
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/idealo/imagededup/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    idealo/imagededup
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Imagededup" class="md-nav__button md-logo" aria-label="Imagededup">
+      
+  <img src="../../img/logo.svg" alt="logo">
+
+    </a>
+    Imagededup
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/idealo/imagededup/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    idealo/imagededup
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    <label class="md-nav__link" for="nav-2">
+      User Guide
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="User Guide" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon"></span>
+        User Guide
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../finding_duplicates/" class="md-nav__link">
+      Finding duplicates
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../encoding_generation/" class="md-nav__link">
+      Encoding generation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../evaluating_performance/" class="md-nav__link">
+      Evaluating performance
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../plotting_duplicates/" class="md-nav__link">
+      Plotting duplicates
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Benchmarks
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" class="md-nav__link md-nav__link--active">
+      Benchmarks
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#datasets" class="md-nav__link">
+    Datasets
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environment" class="md-nav__link">
+    Environment
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
+    Metrics
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#timings" class="md-nav__link">
+    Timings
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#threshold-selection" class="md-nav__link">
+    Threshold selection
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#results" class="md-nav__link">
+    Results
+  </a>
+  
+    <nav class="md-nav" aria-label="Results">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#near-duplicate-dataset" class="md-nav__link">
+    Near Duplicate dataset
+  </a>
+  
+    <nav class="md-nav" aria-label="Near Duplicate dataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#observations" class="md-nav__link">
+    Observations
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transformed-dataset" class="md-nav__link">
+    Transformed dataset
+  </a>
+  
+    <nav class="md-nav" aria-label="Transformed dataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#observations_1" class="md-nav__link">
+    Observations
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exact-duplicates-dataset" class="md-nav__link">
+    Exact duplicates dataset
+  </a>
+  
+    <nav class="md-nav" aria-label="Exact duplicates dataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#observations_2" class="md-nav__link">
+    Observations
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" >
+    <label class="md-nav__link" for="nav-3">
+      API reference
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="API reference" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon"></span>
+        API reference
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-1" type="checkbox" id="nav-3-1" >
+    <label class="md-nav__link" for="nav-3-1">
+      Methods
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Methods" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-1">
+        <span class="md-nav__icon md-icon"></span>
+        Methods
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../methods/cnn/" class="md-nav__link">
+      CNN
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../methods/hashing/" class="md-nav__link">
+      Hashing
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-2" type="checkbox" id="nav-3-2" >
+    <label class="md-nav__link" for="nav-3-2">
+      Evaluation
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Evaluation" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-2">
+        <span class="md-nav__icon md-icon"></span>
+        Evaluation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../evaluation/evaluation/" class="md-nav__link">
+      Evaluation
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-3" type="checkbox" id="nav-3-3" >
+    <label class="md-nav__link" for="nav-3-3">
+      Utils
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Utils" data-md-level="2">
+      <label class="md-nav__title" for="nav-3-3">
+        <span class="md-nav__icon md-icon"></span>
+        Utils
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../utils/plotter/" class="md-nav__link">
+      Plot duplicates
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" >
+    <label class="md-nav__link" for="nav-4">
+      Example
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Example" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon"></span>
+        Example
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../examples/CIFAR10_deduplication/" class="md-nav__link">
+      CIFAR10 deduplication
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../CONTRIBUTING/" class="md-nav__link">
+      Contribution
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../LICENSE/" class="md-nav__link">
+      License
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#datasets" class="md-nav__link">
+    Datasets
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environment" class="md-nav__link">
+    Environment
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
+    Metrics
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#timings" class="md-nav__link">
+    Timings
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#threshold-selection" class="md-nav__link">
+    Threshold selection
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#results" class="md-nav__link">
+    Results
+  </a>
+  
+    <nav class="md-nav" aria-label="Results">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#near-duplicate-dataset" class="md-nav__link">
+    Near Duplicate dataset
+  </a>
+  
+    <nav class="md-nav" aria-label="Near Duplicate dataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#observations" class="md-nav__link">
+    Observations
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transformed-dataset" class="md-nav__link">
+    Transformed dataset
+  </a>
+  
+    <nav class="md-nav" aria-label="Transformed dataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#observations_1" class="md-nav__link">
+    Observations
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exact-duplicates-dataset" class="md-nav__link">
+    Exact duplicates dataset
+  </a>
+  
+    <nav class="md-nav" aria-label="Exact duplicates dataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#observations_2" class="md-nav__link">
+    Observations
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    Summary
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/idealo/imagededup/edit/master/docs/user_guide/benchmarks.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="benchmarks">Benchmarks</h1>
+<p>To gauge an idea of the speed and accuracy of the implemented algorithms, a benchmark
+has been provided on the <a href="https://archive.org/details/ukbench">UKBench dataset</a> (zip file titled 'UKBench image collection'
+having size ~1.5G) and some variations derived from it.</p>
+<h2 id="datasets">Datasets</h2>
+<p>3 datasets that have been used:</p>
+<ol>
+<li>
+<p>Near duplicate dataset (<a href="https://archive.org/details/ukbench">UKBench dataset</a>): This dataset has near duplicates
+ that are arranged in groups of 4. There are a total of 2550 such groups amounting to a total
+  of 10200 RGB images. The size of each image is 640 x 480 with <code>jpg</code> extension. The image below depicts 3 example groups
+  from the UKBench dataset. Each row represents a group with the corresponding 4 images from the group.</p>
+<p><p align="center">
+  <img src="../../img/collage_ukbench.png" width="600" />
+</p>  </p>
+</li>
+<li>
+<p>Transformed dataset derived from UKBench dataset: An image from different groups of the UKBench
+ dataset was taken and the following 5 transformations were applied to the original image:</p>
+<ul>
+<li>Random crop preserving the original aspect ratio (new size - 560 x 420)</li>
+<li>Horizontal flip</li>
+<li>Vertical flip</li>
+<li>25 degree rotation</li>
+<li>Resizing with change in aspect ratio (new aspect ratio - 1:1)</li>
+</ul>
+<p>Thus, each group has a total of 6 images (original +  transformed). A total of 1800 such groups
+were created totalling 10800 images in the dataset.</p>
+</li>
+<li>
+<p>Exact duplicate dataset: An image from each of the 2550 image groups of the UKBench dataset was
+ taken and an exact duplicate was created. The number of images totalled 5100.</p>
+</li>
+</ol>
+<h2 id="environment">Environment</h2>
+<p>The benchmarks were performed on an AWS ec2 <a href="https://aws.amazon.com/ec2/instance-types/r5/">r5.xlarge</a> instance having 4
+ vCPUs and 32 GB memory. The instance does not have a GPU, so all the runs are done on CPUs.</p>
+<h2 id="metrics">Metrics</h2>
+<p>The metrics used here are classification metrics as explained in the
+<a href="https://idealo.github.io/imagededup/user_guide/evaluating_performance/">documentation</a>.</p>
+<p>class-0 refers to non-duplicate image pairs.</p>
+<p>class-1 refers to duplicate image pairs.</p>
+<p>The reported numbers are rounded off to nearest 3 digits.</p>
+<h2 id="timings">Timings</h2>
+<p>The times are reported in seconds and comprise the time taken to generate encodings and find duplicates.
+The time taken to perform the evaluation task is <em>NOT</em> reported.</p>
+<h2 id="threshold-selection">Threshold selection</h2>
+<p>For each method, 3 different thresholds have been selected.</p>
+<p>For hashing methods, following <code>max_distance_threshold</code> values are used:</p>
+<ul>
+<li>0: Indicates that exactly the same hash should be generated for the image pairs to be considered duplicates.</li>
+<li>10: Default.</li>
+<li>32: Halfway between the maximum and minimum values (0 and 64).</li>
+</ul>
+<p>For cnn method, following <code>min_similarity_threshold</code> values are used:</p>
+<ul>
+<li>1.0: Indicates that exactly the same cnn embeddings should be generated for the image pairs to be considered duplicates.</li>
+<li>0.9: Default.</li>
+<li>0.5: A threshold that allows large deviation between image pairs.</li>
+</ul>
+<h2 id="results">Results</h2>
+<h3 id="near-duplicate-dataset">Near Duplicate dataset</h3>
+<table>
+<thead>
+<tr>
+<th><em>Method</em></th>
+<th><em>Threshold</em></th>
+<th><em>Time (s)</em></th>
+<th><em>class-0 precision</em></th>
+<th><em>class-1 precision</em></th>
+<th><em>class-0 recall</em></th>
+<th><em>class-1 recall</em></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dhash</td>
+<td>0</td>
+<td>35.570</td>
+<td>0.999</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td>dhash</td>
+<td>10</td>
+<td>35.810</td>
+<td>0.999</td>
+<td>0.018</td>
+<td>0.999</td>
+<td>0.0461</td>
+</tr>
+<tr>
+<td>dhash</td>
+<td>32</td>
+<td>106.670</td>
+<td>0.998</td>
+<td>0.0</td>
+<td>0.326</td>
+<td>0.884</td>
+</tr>
+<tr>
+<td>phash</td>
+<td>0</td>
+<td>40.073</td>
+<td>0.999</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td>phash</td>
+<td>10</td>
+<td>39.056</td>
+<td>0.999</td>
+<td>0.498</td>
+<td>0.999</td>
+<td>0.016</td>
+</tr>
+<tr>
+<td>phash</td>
+<td>32</td>
+<td>98.835</td>
+<td>0.998</td>
+<td>0.0</td>
+<td>0.343</td>
+<td>0.856</td>
+</tr>
+<tr>
+<td>ahash</td>
+<td>0</td>
+<td>36.171</td>
+<td>0.999</td>
+<td>0.282</td>
+<td>0.999</td>
+<td>0.002</td>
+</tr>
+<tr>
+<td>ahash</td>
+<td>10</td>
+<td>36.560</td>
+<td>0.999</td>
+<td>0.012</td>
+<td>0.996</td>
+<td>0.193</td>
+</tr>
+<tr>
+<td>ahash</td>
+<td>32</td>
+<td>97.170</td>
+<td>0.999</td>
+<td>0.000</td>
+<td>0.448</td>
+<td>0.932</td>
+</tr>
+<tr>
+<td>whash</td>
+<td>0</td>
+<td>51.710</td>
+<td>0.999</td>
+<td>0.112</td>
+<td>0.999</td>
+<td>0.002</td>
+</tr>
+<tr>
+<td>whash</td>
+<td>10</td>
+<td>51.940</td>
+<td>0.999</td>
+<td>0.008</td>
+<td>0.993</td>
+<td>0.199</td>
+</tr>
+<tr>
+<td>whash</td>
+<td>32</td>
+<td>112.560</td>
+<td>0.999</td>
+<td>0.0</td>
+<td>0.416</td>
+<td>0.933</td>
+</tr>
+<tr>
+<td>cnn</td>
+<td>0.5</td>
+<td>379.680</td>
+<td>0.999</td>
+<td>0.0</td>
+<td>0.856</td>
+<td>0.999</td>
+</tr>
+<tr>
+<td>cnn</td>
+<td>0.9</td>
+<td>377.157</td>
+<td>0.999</td>
+<td>0.995</td>
+<td>0.999</td>
+<td>0.127</td>
+</tr>
+<tr>
+<td>cnn</td>
+<td>1.0</td>
+<td>379.570</td>
+<td>0.999</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+</tr>
+</tbody>
+</table>
+<h4 id="observations">Observations</h4>
+<ul>
+<li>The cnn method with a threshold between 0.5 and 0.9 would work best for finding near duplicates. This is indicated by
+ the extreme values class-1 precision and recall takes for the two thresholds.</li>
+<li>Hashing methods do not perform well for finding near duplicates.</li>
+</ul>
+<h3 id="transformed-dataset">Transformed dataset</h3>
+<table>
+<thead>
+<tr>
+<th><em>Method</em></th>
+<th><em>Threshold</em></th>
+<th><em>Time (s)</em></th>
+<th><em>class-0 precision</em></th>
+<th><em>class-1 precision</em></th>
+<th><em>class-0 recall</em></th>
+<th><em>class-1 recall</em></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dhash</td>
+<td>0</td>
+<td>25.360</td>
+<td>0.999</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>0.040</td>
+</tr>
+<tr>
+<td>dhash</td>
+<td>10</td>
+<td>25.309</td>
+<td>0.999</td>
+<td>0.138</td>
+<td>0.999</td>
+<td>0.117</td>
+</tr>
+<tr>
+<td>dhash</td>
+<td>32</td>
+<td>108.960</td>
+<td>0.990</td>
+<td>0.0</td>
+<td>0.336</td>
+<td>0.872</td>
+</tr>
+<tr>
+<td>phash</td>
+<td>0</td>
+<td>28.069</td>
+<td>0.999</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>0.050</td>
+</tr>
+<tr>
+<td>phash</td>
+<td>10</td>
+<td>28.075</td>
+<td>0.999</td>
+<td>0.341</td>
+<td>0.999</td>
+<td>0.079</td>
+</tr>
+<tr>
+<td>phash</td>
+<td>32</td>
+<td>107.079</td>
+<td>0.990</td>
+<td>0.003</td>
+<td>0.328</td>
+<td>0.847</td>
+</tr>
+<tr>
+<td>ahash</td>
+<td>0</td>
+<td>25.270</td>
+<td>0.999</td>
+<td>0.961</td>
+<td>0.999</td>
+<td>0.058</td>
+</tr>
+<tr>
+<td>ahash</td>
+<td>10</td>
+<td>25.389</td>
+<td>0.999</td>
+<td>0.035</td>
+<td>0.997</td>
+<td>0.216</td>
+</tr>
+<tr>
+<td>ahash</td>
+<td>32</td>
+<td>93.084</td>
+<td>0.990</td>
+<td>0.0</td>
+<td>0.441</td>
+<td>0.849</td>
+</tr>
+<tr>
+<td>whash</td>
+<td>0</td>
+<td>40.390</td>
+<td>0.999</td>
+<td>0.917</td>
+<td>0.999</td>
+<td>0.061</td>
+</tr>
+<tr>
+<td>whash</td>
+<td>10</td>
+<td>41.260</td>
+<td>0.999</td>
+<td>0.023</td>
+<td>0.996</td>
+<td>0.203</td>
+</tr>
+<tr>
+<td>whash</td>
+<td>32</td>
+<td>109.630</td>
+<td>0.990</td>
+<td>0.0</td>
+<td>0.410</td>
+<td>0.853</td>
+</tr>
+<tr>
+<td>cnn</td>
+<td>0.5</td>
+<td>397.380</td>
+<td>0.999</td>
+<td>0.003</td>
+<td>0.852</td>
+<td>0.999</td>
+</tr>
+<tr>
+<td>cnn</td>
+<td>0.9</td>
+<td>392.090</td>
+<td>0.999</td>
+<td>0.999</td>
+<td>0.990</td>
+<td>0.384</td>
+</tr>
+<tr>
+<td>cnn</td>
+<td>1.0</td>
+<td>396.250</td>
+<td>0.990</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>0.0</td>
+</tr>
+</tbody>
+</table>
+<h4 id="observations_1">Observations</h4>
+<ul>
+<li>The cnn method with threshold 0.9 seems to work best for finding transformed duplicates. A slightly lower
+<code>min_similarity_threshold</code> value could lead to a higher class-1 recall.</li>
+<li>Hashing methods do not perform well for finding transformed duplicates. In reality, resized images get found easily,
+but all other transformations lead to a bad performance for hashing methods.</li>
+</ul>
+<h3 id="exact-duplicates-dataset">Exact duplicates dataset</h3>
+<table>
+<thead>
+<tr>
+<th><em>Method</em></th>
+<th><em>Threshold</em></th>
+<th><em>Time (s)</em></th>
+<th><em>class-0 precision</em></th>
+<th><em>class-1 precision</em></th>
+<th><em>class-0 recall</em></th>
+<th><em>class-1 recall</em></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dhash</td>
+<td>0</td>
+<td>18.380</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>dhash</td>
+<td>10</td>
+<td>18.410</td>
+<td>1.0</td>
+<td>0.223</td>
+<td>0.999</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>dhash</td>
+<td>32</td>
+<td>34.602</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.327</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>phash</td>
+<td>0</td>
+<td>19.780</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>phash</td>
+<td>10</td>
+<td>20.012</td>
+<td>1.0</td>
+<td>0.980</td>
+<td>0.999</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>phash</td>
+<td>32</td>
+<td>34.054</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.344</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>ahash</td>
+<td>0</td>
+<td>18.180</td>
+<td>1.0</td>
+<td>0.998</td>
+<td>0.999</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>ahash</td>
+<td>10</td>
+<td>18.228</td>
+<td>1.0</td>
+<td>0.044</td>
+<td>0.995</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>ahash</td>
+<td>32</td>
+<td>31.961</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.448</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>whash</td>
+<td>0</td>
+<td>26.097</td>
+<td>1.0</td>
+<td>0.980</td>
+<td>0.999</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>whash</td>
+<td>10</td>
+<td>26.056</td>
+<td>1.0</td>
+<td>0.029</td>
+<td>0.993</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>whash</td>
+<td>32</td>
+<td>39.408</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.417</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>cnn</td>
+<td>0.5</td>
+<td>192.050</td>
+<td>1.0</td>
+<td>0.001</td>
+<td>0.860</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>cnn</td>
+<td>0.9</td>
+<td>191.024</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>cnn</td>
+<td>1.0</td>
+<td>194.270</td>
+<td>0.999</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>0.580*</td>
+</tr>
+</tbody>
+</table>
+<p>* The value is low as opposed to the expected 1.0 because of the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.cosine_similarity.html"><code>cosine_similarity</code></a>
+ function from scikit-learn (used within the package) which sometimes calculates the similarity to be slightly less than 1.0 even when the vectors are same.</p>
+<h4 id="observations_2">Observations</h4>
+<ul>
+<li>Difference hashing is the fastest (<code>max_distance_threshold</code> 0).</li>
+<li>When using hashing methods for exact duplicates, keep <code>max_distance_threshold</code> to a low value. The value of 0 is
+ good, but a slightly higher value should also work fine.</li>
+<li>When using cnn method, keep <code>min_similarity_threshold</code> to a high value. The default value of 0.9 seems to work well.
+A slightly higher value can also be used.</li>
+</ul>
+<h2 id="summary">Summary</h2>
+<ul>
+<li>Near duplicate dataset: use cnn with an appropriate <code>min_similarity_threshold</code>.</li>
+<li>Transformed dataset: use cnn with <code>min_similarity_threshold</code> of around 0.9 (default).</li>
+<li>Exact duplicates dataset: use Difference hashing with 0 <code>max_distance_threshold</code>.</li>
+<li>A higher <code>max_distance_threshold</code> (i.e., hashing) leads to a higher execution time. cnn method doesn't seem much affected by
+ the <code>min_similarity_threshold</code> (though a lower value would add a few seconds to the execution time as can be seen in all the
+ runs above.)</li>
+<li>Generally speaking, the cnn method takes longer to run as compared to hashing methods for all datasets. If a GPU is
+available, cnn method should be much faster.</li>
+</ul>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../plotting_duplicates/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Plotting duplicates
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../../methods/cnn/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                CNN
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.fd16492e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.7836ba4d.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.4ac00218.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>
