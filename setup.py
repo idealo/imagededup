@@ -96,12 +96,12 @@ setup(
     long_description=long_description,
     license='Apache 2.0',
     install_requires=[
+        'tensorflow>1.0',
         'Pillow<7.0.0',
-        'PyWavelets~=1.1.1',
         'tqdm',
         'scikit-learn',
-        'matplotlib',
-        'tensorflow>1.0'
+        'PyWavelets~=1.1.1',
+        'matplotlib'
     ],
     extras_require={
         'tests': ['pytest', 'pytest-cov', 'pytest-mock', 'codecov'],
