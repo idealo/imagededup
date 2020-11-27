@@ -208,6 +208,7 @@ class CNN:
         min_similarity_threshold: float,
         scores: bool,
         outfile: Optional[str] = None,
+        parallel_cosine_similarity: bool = True,
     ) -> Dict:
         """
         Take in dictionary {filename: encoded image}, detects duplicates above the given cosine similarity threshold
@@ -235,7 +236,11 @@ class CNN:
 
         self.logger.info('Start: Calculating cosine similarities...')
 
-        self.cosine_scores = get_cosine_similarity(features, self.verbose)
+        self.cosine_scores = get_cosine_similarity(
+            features,
+            bool(self.verbose),
+            parallel_cosine_similarity=parallel_cosine_similarity,
+        )
 
         np.fill_diagonal(
             self.cosine_scores, 2.0
@@ -268,6 +273,7 @@ class CNN:
         min_similarity_threshold: float,
         scores: bool,
         outfile: Optional[str] = None,
+        parallel_cosine_similarity: bool = True,
     ) -> Dict:
         """
         Take in path of the directory in which duplicates are to be detected above the given threshold.
@@ -294,6 +300,7 @@ class CNN:
             min_similarity_threshold=min_similarity_threshold,
             scores=scores,
             outfile=outfile,
+            parallel_cosine_similarity=parallel_cosine_similarity,
         )
 
     def find_duplicates(
@@ -303,6 +310,7 @@ class CNN:
         min_similarity_threshold: float = 0.9,
         scores: bool = False,
         outfile: Optional[str] = None,
+        parallel_cosine_similarity: bool = True,
     ) -> Dict:
         """
         Find duplicates for each file. Take in path of the directory or encoding dictionary in which duplicates are to
@@ -319,6 +327,7 @@ class CNN:
             scores: Optional, boolean indicating whether similarity scores are to be returned along with retrieved
                     duplicates.
             outfile: Optional, name of the file to save the results, must be a json. Default is None.
+            parallel_cosine_similarity: whether to parallelize computation of cosine similarity
 
         Returns:
             dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -349,6 +358,7 @@ class CNN:
                 min_similarity_threshold=min_similarity_threshold,
                 scores=scores,
                 outfile=outfile,
+                parallel_cosine_similarity=parallel_cosine_similarity,
             )
         elif encoding_map:
             result = self._find_duplicates_dict(
@@ -356,6 +366,7 @@ class CNN:
                 min_similarity_threshold=min_similarity_threshold,
                 scores=scores,
                 outfile=outfile,
+                parallel_cosine_similarity=parallel_cosine_similarity,
             )
 
         else:
