@@ -1,15 +1,14 @@
+import json
+import os
 from pathlib import Path
 
-import os
-import json
-import numpy as np
 from PIL import Image
+import numpy as np
 import pytest
 from tensorflow.keras.models import Model
 
 from imagededup.methods.cnn import CNN
-from imagededup.utils.image_utils import load_image, expand_image_array_cnn
-
+from imagededup.utils.image_utils import expand_image_array_cnn, load_image
 
 p = Path(__file__)
 TEST_IMAGE = p.parent / 'data' / 'base_images' / 'ukbench00120.jpg'

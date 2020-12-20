@@ -1,6 +1,7 @@
 import sys
-import pytest
+
 import numpy as np
+import pytest
 from sklearn.metrics.pairwise import cosine_similarity
 
 from imagededup.handlers.search.retrieval import (

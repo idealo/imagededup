@@ -1,11 +1,10 @@
 from pathlib import PurePath
-from typing import List, Union, Tuple
+from typing import List, Tuple, Union
 
-import numpy as np
 from PIL import Image
+import numpy as np
 
 from imagededup.utils.logger import return_logger
-
 
 IMG_FORMATS = ['JPEG', 'PNG', 'BMP', 'MPO', 'PPM', 'TIFF', 'GIF']
 logger = return_logger(__name__)

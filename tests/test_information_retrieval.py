@@ -1,6 +1,7 @@
-import pickle
-import pytest
 from pathlib import Path
+import pickle
+
+import pytest
 
 from imagededup.handlers.metrics.information_retrieval import *
 

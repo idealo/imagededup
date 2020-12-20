@@ -20,8 +20,9 @@ You may look through the [GitHub issues](https://github.com/idealo/image-dedup/i
 
 ## Pull Requests (PR)
 1. Fork the repository and create a new branch from the `dev` branch.
-2. For bug fixes, add new tests and for new features, please add changes to the documentation.
-3. Do a PR from your new branch to our `dev` branch of the original Imagededup repo.
+2. Install the pre-commit hooks with `pre-commit install`.
+3. For bug fixes, add new tests and for new features, please add changes to the documentation.
+4. Do a PR from your new branch to our `dev` branch of the original Imagededup repo.
 
 ## Documentation
 - Make sure any new function or class you introduce has proper docstrings.

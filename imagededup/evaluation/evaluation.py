@@ -3,8 +3,8 @@ from typing import Dict
 
 from imagededup.handlers.metrics.classification import classification_metrics
 from imagededup.handlers.metrics.information_retrieval import (
-    mean_metric,
     get_all_metrics,
+    mean_metric,
 )
 from imagededup.utils.logger import return_logger
 

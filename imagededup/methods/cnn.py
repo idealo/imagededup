@@ -4,11 +4,11 @@ from typing import Dict, List, Optional, Union
 import numpy as np
 
 from imagededup.handlers.search.retrieval import get_cosine_similarity
-from imagededup.utils.general_utils import save_json, get_files_to_remove
+from imagededup.utils.general_utils import get_files_to_remove, save_json
 from imagededup.utils.image_utils import (
+    expand_image_array_cnn,
     load_image,
     preprocess_image,
-    expand_image_array_cnn,
 )
 from imagededup.utils.logger import return_logger
 
@@ -39,7 +39,11 @@ class CNN:
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
-        from tensorflow.keras.applications.mobilenet import MobileNet, preprocess_input
+        from tensorflow.keras.applications.mobilenet import (
+            MobileNet,
+            preprocess_input,
+        )
+
         from imagededup.utils.data_generator import DataGenerator
 
         self.MobileNet = MobileNet

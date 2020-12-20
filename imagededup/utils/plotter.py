@@ -1,11 +1,11 @@
+from pathlib import Path, PurePath
+from typing import Dict, List, Union
+
+from PIL import Image
+from matplotlib import figure
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
-from matplotlib import figure
-from pathlib import Path, PurePath
-from typing import Dict, Union, List
-
 import numpy as np
-from PIL import Image
 
 
 def _formatter(val: Union[int, np.float32]):
