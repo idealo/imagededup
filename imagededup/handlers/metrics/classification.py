@@ -2,13 +2,13 @@ import itertools
 from typing import Dict, List, Tuple
 
 import numpy as np
-
 from sklearn.metrics import (
     classification_report,
+    precision_recall_fscore_support,
     precision_score,
     recall_score,
-    precision_recall_fscore_support,
 )
+
 from imagededup.utils.logger import return_logger
 
 logger = return_logger(__name__)

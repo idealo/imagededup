@@ -1,15 +1,23 @@
 import os
+from pathlib import Path, PurePath
 import sys
-from pathlib import PurePath, Path
 from typing import Dict, List, Optional
 
-import pywt
 import numpy as np
+import pywt
 from scipy.fftpack import dct
 
 from imagededup.handlers.search.retrieval import HashEval
-from imagededup.utils.general_utils import get_files_to_remove, save_json, parallelise
-from imagededup.utils.image_utils import load_image, preprocess_image, check_image_array_hash
+from imagededup.utils.general_utils import (
+    get_files_to_remove,
+    parallelise,
+    save_json,
+)
+from imagededup.utils.image_utils import (
+    check_image_array_hash,
+    load_image,
+    preprocess_image,
+)
 from imagededup.utils.logger import return_logger
 
 logger = return_logger(__name__)

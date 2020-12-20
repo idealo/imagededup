@@ -1,7 +1,9 @@
 import json
-import tqdm
-from multiprocessing import cpu_count, Pool
+from multiprocessing import Pool, cpu_count
 from typing import Callable, Dict, List
+
+import tqdm
+
 from imagededup.utils.logger import return_logger
 
 logger = return_logger(__name__)

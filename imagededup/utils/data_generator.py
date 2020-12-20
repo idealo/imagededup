@@ -1,5 +1,5 @@
 from pathlib import PurePath
-from typing import Tuple, List, Callable
+from typing import Callable, List, Tuple
 
 import numpy as np
 from tensorflow.keras.utils import Sequence

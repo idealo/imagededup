@@ -1,17 +1,17 @@
-import pytest
 from pathlib import Path
 
-import numpy as np
 from PIL import Image
+import numpy as np
+import pytest
 
 from imagededup.utils.image_utils import (
-    preprocess_image,
-    load_image,
-    _check_3_dim,
     _add_third_dim,
+    _check_3_dim,
     _raise_wrong_dim_value_error,
     check_image_array_hash,
     expand_image_array_cnn,
+    load_image,
+    preprocess_image,
 )
 
 p = Path(__file__)

@@ -1,5 +1,6 @@
 import sys
-from setuptools import setup, find_packages, Extension
+
+from setuptools import Extension, find_packages, setup
 
 long_description = '''
 imagededup is a python package that provides functionality to find duplicates in a collection of images using a variety
@@ -106,7 +107,7 @@ setup(
     extras_require={
         'tests': ['pytest', 'pytest-cov', 'pytest-mock', 'codecov'],
         'docs': ['mkdocs', 'mkdocs-material'],
-        'dev': ['bumpversion', 'twine'],
+        'dev': ['bumpversion', 'pre-commit', 'twine'],
     },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
