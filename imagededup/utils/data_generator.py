@@ -1,10 +1,11 @@
 from pathlib import PurePath
-from typing import Tuple, List, Callable
+from typing import Tuple, List, Callable, Optional
 
 import numpy as np
 from tensorflow.keras.utils import Sequence
 
 from imagededup.utils.image_utils import load_image
+from imagededup.utils.general_utils import generate_files
 
 
 class DataGenerator(Sequence):
@@ -15,6 +16,7 @@ class DataGenerator(Sequence):
         batch_size: Number of images per batch.
         basenet_preprocess: Basenet specific preprocessing function.
         target_size: Dimensions that images get resized into when loaded.
+        recursive: Optional, find images recursively in the image directory.
     """
 
     def __init__(
@@ -23,6 +25,7 @@ class DataGenerator(Sequence):
         batch_size: int,
         basenet_preprocess: Callable,
         target_size: Tuple[int, int],
+        recursive: Optional[bool] = False,
     ) -> None:
         """Init DataGenerator object.
         """
@@ -30,6 +33,7 @@ class DataGenerator(Sequence):
         self.batch_size = batch_size
         self.basenet_preprocess = basenet_preprocess
         self.target_size = target_size
+        self.recursive = recursive
 
         self._get_image_files()
         self.indexes = np.arange(len(self.image_files))
@@ -37,10 +41,7 @@ class DataGenerator(Sequence):
 
     def _get_image_files(self) -> None:
         self.image_files = sorted(
-            [
-                i.absolute()
-                for i in self.image_dir.glob('*')
-                if not i.name.startswith('.')]
+            generate_files(self.image_dir, self.recursive)
         )  # ignore hidden files
 
     def __len__(self) -> int:

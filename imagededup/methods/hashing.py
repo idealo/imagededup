@@ -1,5 +1,7 @@
 import os
 import sys
+import warnings
+
 from pathlib import PurePath, Path
 from typing import Dict, List, Optional
 
@@ -8,7 +10,13 @@ import numpy as np
 from scipy.fftpack import dct
 
 from imagededup.handlers.search.retrieval import HashEval
-from imagededup.utils.general_utils import get_files_to_remove, save_json, parallelise
+from imagededup.utils.general_utils import (
+    get_files_to_remove,
+    save_json,
+    parallelise,
+    generate_files,
+    generate_relative_names
+)
 from imagededup.utils.image_utils import load_image, preprocess_image, check_image_array_hash
 from imagededup.utils.logger import return_logger
 
@@ -122,12 +130,13 @@ class Hashing:
 
         return self._hash_func(image_pp) if isinstance(image_pp, np.ndarray) else None
 
-    def encode_images(self, image_dir=None):
+    def encode_images(self, image_dir=None, recursive=False):
         """
         Generate hashes for all images in a given directory of images.
 
         Args:
             image_dir: Path to the image directory.
+            recursive: Optional, find images recursively in the image directory.
 
         Returns:
             dictionary: A dictionary that contains a mapping of filenames and corresponding 64 character hash string
@@ -143,16 +152,12 @@ class Hashing:
         if not os.path.isdir(image_dir):
             raise ValueError('Please provide a valid directory path!')
 
-        image_dir = Path(image_dir)
-
-        files = [
-            i.absolute() for i in image_dir.glob('*') if not i.name.startswith('.')
-        ]  # ignore hidden files
+        files = generate_files(image_dir, recursive)
 
         logger.info(f'Start: Calculating hashes...')
 
         hashes = parallelise(self.encode_image, files, self.verbose)
-        hash_initial_dict = dict(zip([f.name for f in files], hashes))
+        hash_initial_dict = dict(zip(generate_relative_names(image_dir, files), hashes))
         hash_dict = {
             k: v for k, v in hash_initial_dict.items() if v
         }  # To ignore None (returned if some probelm with image file)
@@ -241,6 +246,7 @@ class Hashing:
         scores: bool = False,
         outfile: Optional[str] = None,
         search_method: str = 'brute_force_cython' if not sys.platform == 'win32' else 'bktree',
+        recursive: Optional[bool] = False,
     ) -> Dict:
         """
         Take in path of the directory in which duplicates are to be detected below the given hamming distance
@@ -253,6 +259,7 @@ class Hashing:
             scores: Boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
             outfile: Name of the file the results should be written to.
             search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython for Unix else bktree.
+            recursive: Optional, find images recursively in the image directory.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -260,7 +267,7 @@ class Hashing:
             if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
             'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
         """
-        encoding_map = self.encode_images(image_dir)
+        encoding_map = self.encode_images(image_dir, recursive=recursive)
         results = self._find_duplicates_dict(
             encoding_map=encoding_map,
             max_distance_threshold=max_distance_threshold,
@@ -278,6 +285,7 @@ class Hashing:
         scores: bool = False,
         outfile: Optional[str] = None,
         search_method: str = 'brute_force_cython' if not sys.platform == 'win32' else 'bktree',
+        recursive: Optional[bool] = False,
     ) -> Dict:
         """
         Find duplicates for each file. Takes in path of the directory or encoding dictionary in which duplicates are to
@@ -296,6 +304,7 @@ class Hashing:
             scores: Optional, boolean indicating whether Hamming distances are to be returned along with retrieved duplicates.
             outfile: Optional, name of the file to save the results, must be a json. Default is None.
             search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython for Unix else bktree.
+            recursive: Optional, find images recursively in the image directory.
 
         Returns:
             duplicates dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -326,8 +335,11 @@ class Hashing:
                 scores=scores,
                 outfile=outfile,
                 search_method=search_method,
+                recursive=recursive,
             )
         elif encoding_map:
+            if recursive:
+                warnings.warn('recursive parameter is irrelevant when using encodings.', SyntaxWarning)
             result = self._find_duplicates_dict(
                 encoding_map=encoding_map,
                 max_distance_threshold=max_distance_threshold,
@@ -345,6 +357,7 @@ class Hashing:
         encoding_map: Dict[str, str] = None,
         max_distance_threshold: int = 10,
         outfile: Optional[str] = None,
+        recursive: Optional[bool] = False,
     ) -> List:
         """
         Give out a list of image file names to remove based on the hamming distance threshold threshold. Does not
@@ -358,6 +371,7 @@ class Hashing:
             max_distance_threshold: Optional, hamming distance between two images below which retrieved duplicates are
                                     valid. (must be an int between 0 and 64). Default is 10.
             outfile: Optional, name of the file to save the results, must be a json. Default is None.
+            recursive: Optional, find images recursively in the image directory.
 
         Returns:
             duplicates: List of image file names that are found to be duplicate of me other file in the directory.
@@ -382,6 +396,7 @@ class Hashing:
             encoding_map=encoding_map,
             max_distance_threshold=max_distance_threshold,
             scores=False,
+            recursive=recursive,
         )
         files_to_remove = get_files_to_remove(result)
         if outfile:
