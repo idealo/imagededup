@@ -109,7 +109,7 @@ def test_recursive_image_files():
     assert len(generator2.valid_image_files) == 6
 
     assert generator2.valid_image_files == sorted(
-        [x for x in NESTED_IMAGE_DIR.glob('**/*') if x.is_file()]
+        [x for x in NESTED_IMAGE_DIR.glob('**/*') if x.is_file() and not x.name.startswith('.')]
     )
 
 
@@ -124,5 +124,5 @@ def test_recursive_disabled_by_default():
     assert len(generator.valid_image_files) == 2
 
     assert generator.valid_image_files == sorted(
-        [x for x in NESTED_IMAGE_DIR.glob('*') if x.is_file()]
+        [x for x in NESTED_IMAGE_DIR.glob('*') if x.is_file() and not x.name.startswith('.')]
     )
