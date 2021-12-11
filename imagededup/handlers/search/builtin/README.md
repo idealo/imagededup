@@ -118,10 +118,10 @@ without compiler support.
 ## Alternatives & Supplements
 
 For overflow-safe integer operations (i.e., `__builtin_*_overflow`),
-use [safe-math.h](../safe-math).
+use [safe-math.h](../safe-math.h).
 
 For bswap/byteswap functions, you should really use
-[endian.h](../endian), which depends on this module and handles
+[endian.h](../endian.h), which depends on this module and handles
 endianness detection as well as providing easier to use APIs which
 integrate endianness detection logic.
 
