@@ -21,4 +21,4 @@ function with scores attribute set to True).
 
 The output looks as below:
 
-![figs](../readme_figures/plot_dups.png)
+![figs](../../../readme_figures/plot_dups.png)
