@@ -5,6 +5,7 @@ import warnings
 import numpy as np
 
 from imagededup.handlers.search.retrieval import get_cosine_similarity
+from imagededup.utils.data_generator import img_dataloader, MobilenetV3, generate_features
 from imagededup.utils.general_utils import (
     generate_relative_names,
     get_files_to_remove,
@@ -44,16 +45,16 @@ class CNN:
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
-        from tensorflow.keras.applications.mobilenet import (
-            MobileNet,
-            preprocess_input,
-        )
+        # from tensorflow.keras.applications.mobilenet import (
+        #     MobileNet,
+        #     preprocess_input,
+        # )
 
-        from imagededup.utils.data_generator import DataGenerator
+        # from imagededup.utils.data_generator import DataGenerator
 
-        self.MobileNet = MobileNet
-        self.preprocess_input = preprocess_input
-        self.DataGenerator = DataGenerator
+        # self.MobileNet = MobileNet
+        # self.preprocess_input = preprocess_input
+        # self.DataGenerator = DataGenerator
 
         self.target_size = (224, 224)
         self.batch_size = 64
@@ -68,13 +69,13 @@ class CNN:
         """
         Build MobileNet model sliced at the last convolutional layer with global average pooling added.
         """
-        self.model = self.MobileNet(
-            input_shape=(224, 224, 3), include_top=False, pooling='avg'
-        )
+        # self.model = self.MobileNet(
+        #     input_shape=(224, 224, 3), include_top=False, pooling='avg'
+        # )
+        self.model = MobilenetV3()
 
         self.logger.info(
-            'Initialized: MobileNet pretrained on ImageNet dataset sliced at last conv layer and added '
-            'GlobalAveragePooling'
+            'Initialized: MobileNet v3 pretrained on ImageNet dataset sliced at GAP layer'
         )
 
     def _get_cnn_features_single(self, image_array: np.ndarray) -> np.ndarray:
@@ -102,21 +103,24 @@ class CNN:
             A dictionary that contains a mapping of filenames and corresponding numpy array of CNN encodings.
         """
         self.logger.info('Start: Image encoding generation')
-        self.data_generator = self.DataGenerator(
-            image_dir=image_dir,
-            batch_size=self.batch_size,
-            target_size=self.target_size,
-            basenet_preprocess=self.preprocess_input,
-            recursive=recursive,
-        )
+        # self.data_generator = self.DataGenerator(
+        #     image_dir=image_dir,
+        #     batch_size=self.batch_size,
+        #     target_size=self.target_size,
+        #     basenet_preprocess=self.preprocess_input,
+        #     recursive=recursive,
+        # )
+        #
+        # feat_vec = self.model.predict_generator(
+        #     self.data_generator, len(self.data_generator), verbose=self.verbose
+        # )
 
-        feat_vec = self.model.predict_generator(
-            self.data_generator, len(self.data_generator), verbose=self.verbose
-        )
+        self.dataloder = img_dataloader(image_dir=image_dir, batch_size=self.batch_size, target_size=self.target_size, recursive=recursive)
+        feat_vec, valid_image_files = generate_features(dataloader=self.dataloder, model=self.model)
         self.logger.info('End: Image encoding generation')
 
-        filenames = generate_relative_names(image_dir, self.data_generator.valid_image_files)
-
+        # filenames = generate_relative_names(image_dir, self.data_generator.valid_image_files)
+        filenames = generate_relative_names(image_dir, valid_image_files)
         self.encoding_map = {j: feat_vec[i, :] for i, j in enumerate(filenames)}
         return self.encoding_map
 
