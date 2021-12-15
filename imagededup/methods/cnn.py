@@ -3,9 +3,10 @@ from typing import Dict, List, Optional, Union
 import warnings
 
 import numpy as np
+import torch
 
 from imagededup.handlers.search.retrieval import get_cosine_similarity
-from imagededup.utils.data_generator import img_dataloader, MobilenetV3, generate_features
+from imagededup.utils.data_generator import img_dataloader, MobilenetV3
 from imagededup.utils.general_utils import (
     generate_relative_names,
     get_files_to_remove,
@@ -56,7 +57,7 @@ class CNN:
         # self.preprocess_input = preprocess_input
         # self.DataGenerator = DataGenerator
 
-        self.target_size = (224, 224)
+        self.target_size = (256, 256)
         self.batch_size = 64
         self.logger = return_logger(
             __name__
@@ -73,7 +74,6 @@ class CNN:
         #     input_shape=(224, 224, 3), include_top=False, pooling='avg'
         # )
         self.model = MobilenetV3()
-
         self.logger.info(
             'Initialized: MobileNet v3 pretrained on ImageNet dataset sliced at GAP layer'
         )
@@ -92,7 +92,9 @@ class CNN:
         image_pp = np.array(image_pp)[np.newaxis, :]
         return self.model.predict(image_pp)
 
-    def _get_cnn_features_batch(self, image_dir: PurePath, recursive: Optional[bool] = False) -> Dict[str, np.ndarray]:
+    def _get_cnn_features_batch(
+        self, image_dir: PurePath, recursive: Optional[bool] = False
+    ) -> Dict[str, np.ndarray]:
         """
         Generate CNN encodings for all images in a given directory of images.
         Args:
@@ -115,11 +117,32 @@ class CNN:
         #     self.data_generator, len(self.data_generator), verbose=self.verbose
         # )
 
-        self.dataloder = img_dataloader(image_dir=image_dir, batch_size=self.batch_size, target_size=self.target_size, recursive=recursive)
-        feat_vec, valid_image_files = generate_features(dataloader=self.dataloder, model=self.model)
+        self.dataloader = img_dataloader(
+            image_dir=image_dir,
+            batch_size=self.batch_size,
+            target_size=self.target_size,
+            recursive=recursive,
+        )
+
+        feat_arr, all_filenames = [], []
+        bad_im_count = 0
+
+        for ims, filenames, bad_images in self.dataloader:
+            arr = self.model(ims)
+            feat_arr.extend(arr)
+            all_filenames.extend(filenames)
+            if bad_images:
+                bad_im_count += 1
+
+        if bad_im_count:
+            self.logger.info(
+                f'Found {bad_im_count} bad images, ignoring for encoding generation ..'
+            )
+
+        feat_vec = torch.stack(feat_arr).squeeze().detach().numpy()
+        valid_image_files = [filename for filename in all_filenames if filename]
         self.logger.info('End: Image encoding generation')
 
-        # filenames = generate_relative_names(image_dir, self.data_generator.valid_image_files)
         filenames = generate_relative_names(image_dir, valid_image_files)
         self.encoding_map = {j: feat_vec[i, :] for i, j in enumerate(filenames)}
         return self.encoding_map
@@ -177,7 +200,9 @@ class CNN:
             else None
         )
 
-    def encode_images(self, image_dir: Union[PurePath, str], recursive: Optional[bool] = False) -> Dict:
+    def encode_images(
+        self, image_dir: Union[PurePath, str], recursive: Optional[bool] = False
+    ) -> Dict:
         """Generate CNN encodings for all images in a given directory of images.
 
         Args:
@@ -373,7 +398,10 @@ class CNN:
             )
         elif encoding_map:
             if recursive:
-                warnings.warn('recursive parameter is irrelevant when using encodings.', SyntaxWarning)
+                warnings.warn(
+                    'recursive parameter is irrelevant when using encodings.',
+                    SyntaxWarning,
+                )
             result = self._find_duplicates_dict(
                 encoding_map=encoding_map,
                 min_similarity_threshold=min_similarity_threshold,
@@ -431,7 +459,7 @@ class CNN:
                 encoding_map=encoding_map,
                 min_similarity_threshold=min_similarity_threshold,
                 scores=False,
-                recursive=recursive
+                recursive=recursive,
             )
 
         files_to_remove = get_files_to_remove(duplicates)
