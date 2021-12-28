@@ -2,6 +2,7 @@ import os
 import sys
 import warnings
 
+from multiprocessing import cpu_count
 from pathlib import PurePath, Path
 from typing import Dict, List, Optional
 
@@ -130,7 +131,7 @@ class Hashing:
 
         return self._hash_func(image_pp) if isinstance(image_pp, np.ndarray) else None
 
-    def encode_images(self, image_dir=None, recursive=False):
+    def encode_images(self, image_dir=None, recursive=False, processes=cpu_count()):
         """
         Generate hashes for all images in a given directory of images.
 
@@ -156,7 +157,7 @@ class Hashing:
 
         logger.info(f'Start: Calculating hashes...')
 
-        hashes = parallelise(self.encode_image, files, self.verbose)
+        hashes = parallelise(self.encode_image, files, self.verbose, processes)
         hash_initial_dict = dict(zip(generate_relative_names(image_dir, files), hashes))
         hash_dict = {
             k: v for k, v in hash_initial_dict.items() if v
