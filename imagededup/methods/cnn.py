@@ -4,6 +4,7 @@ import warnings
 
 import numpy as np
 import torch
+from torchvision.transforms import transforms
 
 from imagededup.handlers.search.retrieval import get_cosine_similarity
 from imagededup.utils.data_generator import img_dataloader, MobilenetV3
@@ -88,9 +89,24 @@ class CNN:
         Returns:
             Encodings for the image in the form of numpy array.
         """
-        image_pp = self.preprocess_input(image_array)
-        image_pp = np.array(image_pp)[np.newaxis, :]
-        return self.model.predict(image_pp)
+        #image_pp = self.preprocess_input(image_array)
+        from PIL import Image
+        image_pil = Image.fromarray(image_array)
+        image_pp = transforms.Compose(
+            [
+                transforms.Resize(self.target_size),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406],
+                    std=[0.229, 0.224, 0.225]
+                ),
+            ]
+        )(image_pil)
+        #image_pp = np.array(image_pp)[np.newaxis, :]
+        image_pp = torch.tensor(image_pp).unsqueeze(0)#[np.newaxis, :]
+        img_features_tensor = self.model(image_pp)
+        return img_features_tensor.detach().numpy()[..., 0, 0]
 
     def _get_cnn_features_batch(
         self, image_dir: PurePath, recursive: Optional[bool] = False
@@ -144,7 +160,10 @@ class CNN:
         self.logger.info('End: Image encoding generation')
 
         filenames = generate_relative_names(image_dir, valid_image_files)
-        self.encoding_map = {j: feat_vec[i, :] for i, j in enumerate(filenames)}
+        if len(feat_vec.shape) == 1:# can happen when encode_images is called on a directory containing a single image
+            self.encoding_map = {filenames[0]: feat_vec}
+        else:
+            self.encoding_map = {j: feat_vec[i, :] for i, j in enumerate(filenames)}
         return self.encoding_map
 
     def encode_image(

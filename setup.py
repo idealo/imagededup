@@ -96,11 +96,12 @@ setup(
     long_description=long_description,
     license='Apache 2.0',
     install_requires=[
-        'torch>1.0',
-        'Pillow<7.0.0',
+        'torch',
+        'torchvision',
+        'Pillow',
         'tqdm',
         'scikit-learn',
-        'PyWavelets~=1.1.1',
+        'PyWavelets',
         'matplotlib'
     ],
     extras_require={
@@ -121,6 +122,8 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Topic :: Software Development :: Libraries',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
