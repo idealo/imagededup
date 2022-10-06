@@ -636,7 +636,7 @@ def test_find_duplicates_correctness_score():
     duplicates = list(duplicate_dict.values())
     assert isinstance(duplicates[0], list)
     assert duplicate_dict['ukbench09268.jpg'] == []
-    assert duplicate_dict['ukbench00120.jpg'] == [('ukbench00120_resize.jpg', 0)]  # todo:
+    assert duplicate_dict['ukbench00120.jpg'] == [('ukbench00120_resize.jpg', 2)]
 
 
 @pytest.mark.skipif(sys.platform == 'win32', reason='Does not run on Windows.')
@@ -660,7 +660,7 @@ def test_find_duplicates_clearing():
     duplicates = list(duplicate_dict.values())
     assert isinstance(duplicates[0], list)
     assert duplicate_dict['ukbench09268.jpg'] == []
-    assert duplicate_dict['ukbench00120.jpg'] == [('ukbench00120_resize.jpg', 0)]
+    assert duplicate_dict['ukbench00120.jpg'] == [('ukbench00120_resize.jpg', 2)]
 
 
 def test_find_duplicates_outfile():

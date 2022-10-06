@@ -518,26 +518,25 @@ def test_find_duplicates_to_remove_encoding_map(cnn, mocker, mocker_save_json):
 
 # test find_duplicates with directory path
 def test_find_duplicates_dir_integration(cnn):
-    # todo: replace the value of 0.98 with actual similarities
     expected_duplicates = {
         'ukbench00120.jpg': [
             ('ukbench00120_hflip.jpg', 0.9672552),
             ('ukbench00120_resize.jpg', 0.98120844),
-            ('ukbench00120_rotation.jpg', 0.98)
+            ('ukbench00120_rotation.jpg',  0.90708774)
         ],
         'ukbench00120_hflip.jpg': [
             ('ukbench00120.jpg', 0.9672552),
             ('ukbench00120_resize.jpg', 0.95676106),
-            ('ukbench00120_rotation.jpg', 0.98)
+            ('ukbench00120_rotation.jpg',  0.9030868)
         ],
         'ukbench00120_resize.jpg': [
             ('ukbench00120.jpg', 0.98120844),
             ('ukbench00120_hflip.jpg', 0.95676106),
-            ('ukbench00120_rotation.jpg', 0.98),
+            ('ukbench00120_rotation.jpg',  0.9102372),
         ],
-        'ukbench00120_rotation.jpg': [('ukbench00120.jpg', 0.98),
-                                      ('ukbench00120_hflip.jpg', 0.98),
-                                      ('ukbench00120_resize.jpg', 0.98)],
+        'ukbench00120_rotation.jpg': [('ukbench00120.jpg', 0.90708774),
+                                      ('ukbench00120_hflip.jpg', 0.9030868),
+                                      ('ukbench00120_resize.jpg',  0.9102372)],
         'ukbench09268.jpg': [],
     }
     duplicates = cnn.find_duplicates(
@@ -564,26 +563,25 @@ def test_find_duplicates_dir_integration(cnn):
 
 # test recursive find_duplicates with directory path
 def test_recursive_find_duplicates_dir_integration(cnn):
-    # todo: fix scores
     expected_duplicates = {
         str(Path('lvl1/ukbench00120.jpg')): [
-            ('ukbench00120_hflip.jpg', 0.9672552),
-            (str(Path('lvl1/lvl2b/ukbench00120_resize.jpg')), 0.98120844),
-            (str(Path('lvl1/lvl2a/ukbench00120_rotation.jpg')), 0.98120844),
+            ('ukbench00120_hflip.jpg',  0.9891392),
+            (str(Path('lvl1/lvl2b/ukbench00120_resize.jpg')), 0.99194086),
+            (str(Path('lvl1/lvl2a/ukbench00120_rotation.jpg')),  0.90708774),
         ],
         'ukbench00120_hflip.jpg': [
-            (str(Path('lvl1/lvl2a/ukbench00120_rotation.jpg')), 0.98120844),
-            (str(Path('lvl1/ukbench00120.jpg')), 0.9672552),
-            (str(Path('lvl1/lvl2b/ukbench00120_resize.jpg')), 0.95676106),
+            (str(Path('lvl1/lvl2a/ukbench00120_rotation.jpg')), 0.9030868),
+            (str(Path('lvl1/ukbench00120.jpg')), 0.9891392),
+            (str(Path('lvl1/lvl2b/ukbench00120_resize.jpg')),  0.9793916),
         ],
         str(Path('lvl1/lvl2b/ukbench00120_resize.jpg')): [
-            (str(Path('lvl1/lvl2a/ukbench00120_rotation.jpg')), 0.98120844),
-            (str(Path('lvl1/ukbench00120.jpg')), 0.98120844),
-            ('ukbench00120_hflip.jpg', 0.95676106),
+            (str(Path('lvl1/lvl2a/ukbench00120_rotation.jpg')), 0.9102372),
+            (str(Path('lvl1/ukbench00120.jpg')), 0.99194086),
+            ('ukbench00120_hflip.jpg',  0.9793916),
         ],
-        str(Path('lvl1/lvl2a/ukbench00120_rotation.jpg')): [('ukbench00120_hflip.jpg', 0.95676106),
-                                                            (str(Path('lvl1/ukbench00120.jpg')), 0.98120844),
-                                                            (str(Path('lvl1/lvl2b/ukbench00120_resize.jpg')), 0.98120844)],
+        str(Path('lvl1/lvl2a/ukbench00120_rotation.jpg')): [('ukbench00120_hflip.jpg',  0.9030868),
+                                                            (str(Path('lvl1/ukbench00120.jpg')), 0.90708774),
+                                                            (str(Path('lvl1/lvl2b/ukbench00120_resize.jpg')), 0.9102372)],
         str(Path('lvl1/lvl2b/ukbench09268.jpg')): [],
     }
     duplicates = cnn.find_duplicates(
