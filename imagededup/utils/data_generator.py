@@ -1,11 +1,10 @@
 from pathlib import PurePath
-from typing import Tuple, List, Callable, Optional
+from typing import Dict, Callable, Optional, List, Tuple
 
+import numpy as np
 import torch
-from PIL import Image
 from torch.utils.data import Dataset, DataLoader
 from torchvision import models
-from torchvision.transforms import transforms
 
 from imagededup.utils.image_utils import load_image
 from imagededup.utils.general_utils import generate_files
@@ -15,25 +14,12 @@ class ImgDataset(Dataset):
     def __init__(
         self,
         image_dir: PurePath,
-        target_size: Tuple[int, int],
+        basenet_preprocess: Callable[[np.array], torch.tensor],
         recursive: Optional[bool],
     ) -> None:
         self.image_dir = image_dir
-        self.target_size = target_size
+        self.basenet_preprocess = basenet_preprocess
         self.recursive = recursive
-
-        self.transform = transforms.Compose(
-            [
-                transforms.Resize(target_size),
-                transforms.CenterCrop(224),
-                transforms.ToTensor(),
-                transforms.Normalize(
-                    mean=[0.485, 0.456, 0.406],
-                    std=[0.229, 0.224, 0.225]
-                ),
-            ]
-        )
-
         self.image_files = sorted(
             generate_files(self.image_dir, self.recursive)
         )  # ignore hidden files
@@ -42,23 +28,17 @@ class ImgDataset(Dataset):
         """Number of images."""
         return len(self.image_files)
 
-    def __getitem__(self, item):
-        try:
-            img = Image.open(self.image_files[item])
-            if img.mode != 'RGB':
-                # convert to RGBA first to avoid warning
-                # we ignore alpha channel if available
-                img = img.convert('RGBA').convert('RGB')
-            img = self.transform(img)
-        except:
+    def __getitem__(self, item) -> Dict:
+        im_arr = load_image(self.image_files[item], target_size=None, grayscale=None)
+        if im_arr is not None:
+            img = self.basenet_preprocess(im_arr)
+            return {'image': img, 'filename': self.image_files[item]}
+        else:
             return {'image': None, 'filename': self.image_files[item]}
-        return {'image': img, 'filename': self.image_files[item]}
 
 
-def _collate_fn(batch):
-    ims = []
-    filenames = []
-    bad_images = []
+def _collate_fn(batch: List[Dict]) -> Tuple[torch.tensor, str, str]:
+    ims, filenames, bad_images = [], [], []
 
     for b in batch:
         im = b['image']
@@ -73,11 +53,11 @@ def _collate_fn(batch):
 def img_dataloader(
     image_dir: PurePath,
     batch_size: int,
-    target_size: Tuple[int, int],
+    basenet_preprocess: Callable[[np.array], torch.tensor],
     recursive: Optional[bool],
-):
+) -> DataLoader:
     img_dataset = ImgDataset(
-        image_dir=image_dir, target_size=target_size, recursive=recursive
+        image_dir=image_dir, basenet_preprocess=basenet_preprocess, recursive=recursive
     )
     return DataLoader(
         dataset=img_dataset, batch_size=batch_size, collate_fn=_collate_fn
@@ -85,13 +65,13 @@ def img_dataloader(
 
 
 class MobilenetV3(torch.nn.Module):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         mobilenet = models.mobilenet_v3_small(pretrained=True).eval()
         self.mobilenet_gap_op = torch.nn.Sequential(
             mobilenet.features, mobilenet.avgpool
         )
 
-    def forward(self, x):
+    def forward(self, x) -> torch.tensor:
         return self.mobilenet_gap_op(x)
 

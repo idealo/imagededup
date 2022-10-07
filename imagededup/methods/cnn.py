@@ -3,6 +3,7 @@ from typing import Dict, List, Optional, Union
 import warnings
 
 import numpy as np
+from PIL import Image
 import torch
 from torchvision.transforms import transforms
 
@@ -47,17 +48,6 @@ class CNN:
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
-        # from tensorflow.keras.applications.mobilenet import (
-        #     MobileNet,
-        #     preprocess_input,
-        # )
-
-        # from imagededup.utils.data_generator import DataGenerator
-
-        # self.MobileNet = MobileNet
-        # self.preprocess_input = preprocess_input
-        # self.DataGenerator = DataGenerator
-
         self.target_size = (256, 256)
         self.batch_size = 64
         self.logger = return_logger(
@@ -71,13 +61,25 @@ class CNN:
         """
         Build MobileNet model sliced at the last convolutional layer with global average pooling added.
         """
-        # self.model = self.MobileNet(
-        #     input_shape=(224, 224, 3), include_top=False, pooling='avg'
-        # )
         self.model = MobilenetV3()
         self.logger.info(
             'Initialized: MobileNet v3 pretrained on ImageNet dataset sliced at GAP layer'
         )
+        self.transform = transforms.Compose(
+            [
+                transforms.Resize(self.target_size),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406],
+                    std=[0.229, 0.224, 0.225]
+                ),
+            ]
+        )
+
+    def apply_mobilenetnet_preprocess(self, im_arr: np.array) -> torch.tensor:
+        image_pil = Image.fromarray(im_arr)
+        return self.transform(image_pil)
 
     def _get_cnn_features_single(self, image_array: np.ndarray) -> np.ndarray:
         """
@@ -89,22 +91,8 @@ class CNN:
         Returns:
             Encodings for the image in the form of numpy array.
         """
-        #image_pp = self.preprocess_input(image_array)
-        from PIL import Image
-        image_pil = Image.fromarray(image_array)
-        image_pp = transforms.Compose(
-            [
-                transforms.Resize(self.target_size),
-                transforms.CenterCrop(224),
-                transforms.ToTensor(),
-                transforms.Normalize(
-                    mean=[0.485, 0.456, 0.406],
-                    std=[0.229, 0.224, 0.225]
-                ),
-            ]
-        )(image_pil)
-        #image_pp = np.array(image_pp)[np.newaxis, :]
-        image_pp = torch.tensor(image_pp).unsqueeze(0)#[np.newaxis, :]
+        image_pp = self.apply_mobilenetnet_preprocess(image_array)
+        image_pp = image_pp.unsqueeze(0)
         img_features_tensor = self.model(image_pp)
         return img_features_tensor.detach().numpy()[..., 0, 0]
 
@@ -121,22 +109,10 @@ class CNN:
             A dictionary that contains a mapping of filenames and corresponding numpy array of CNN encodings.
         """
         self.logger.info('Start: Image encoding generation')
-        # self.data_generator = self.DataGenerator(
-        #     image_dir=image_dir,
-        #     batch_size=self.batch_size,
-        #     target_size=self.target_size,
-        #     basenet_preprocess=self.preprocess_input,
-        #     recursive=recursive,
-        # )
-        #
-        # feat_vec = self.model.predict_generator(
-        #     self.data_generator, len(self.data_generator), verbose=self.verbose
-        # )
-
         self.dataloader = img_dataloader(
             image_dir=image_dir,
             batch_size=self.batch_size,
-            target_size=self.target_size,
+            basenet_preprocess=self.apply_mobilenetnet_preprocess,
             recursive=recursive,
         )
 
@@ -160,7 +136,7 @@ class CNN:
         self.logger.info('End: Image encoding generation')
 
         filenames = generate_relative_names(image_dir, valid_image_files)
-        if len(feat_vec.shape) == 1:# can happen when encode_images is called on a directory containing a single image
+        if len(feat_vec.shape) == 1:  # can happen when encode_images is called on a directory containing a single image
             self.encoding_map = {filenames[0]: feat_vec}
         else:
             self.encoding_map = {j: feat_vec[i, :] for i, j in enumerate(filenames)}
@@ -200,7 +176,7 @@ class CNN:
                 )
 
             image_pp = load_image(
-                image_file=image_file, target_size=self.target_size, grayscale=False
+                image_file=image_file, target_size=None, grayscale=False
             )
 
         elif isinstance(image_array, np.ndarray):
@@ -208,7 +184,7 @@ class CNN:
                 image_array
             )  # Add 3rd dimension if array is grayscale, do sanity checks
             image_pp = preprocess_image(
-                image=image_array, target_size=self.target_size, grayscale=False
+                image=image_array, target_size=None, grayscale=False
             )
         else:
             raise ValueError('Please provide either image file path or image array!')
