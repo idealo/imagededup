@@ -25,7 +25,7 @@ where the returned variable *encodings* is a dictionary mapping image file names
 ```
 For hashing algorithms, the encodings are 64 bit hashes represented as 16 character hexadecimal strings.
 
-For cnn, the encodings are numpy array with shape (1, 1024).
+For cnn, the encodings are numpy array with shape (576,).
 
 The 'method-name' corresponds to one of the deduplication methods available and can be set to:
 
@@ -62,7 +62,7 @@ from imagededup.methods import <method-name>
 method_object = <method-name>()
 encoding = method_object.encode_image(image_file='path/to/image/file')
 ```
-where the returned variable *encoding* is either a hexadecimal string if a hashing method is used or a (1, 1024) numpy 
+where the returned variable *encoding* is either a hexadecimal string if a hashing method is used or a (576,) numpy 
 array if cnn is used.
 
 #### Options

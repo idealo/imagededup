@@ -41,9 +41,8 @@ class CNN:
 
     def __init__(self, verbose: bool = True) -> None:
         """
-        Initialize a keras MobileNet model that is sliced at the last convolutional layer.
-        Set the batch size for keras generators to be 64 samples. Set the input image size to (224, 224) for providing
-        as input to MobileNet model.
+        Initialize a pytorch MobileNet model v3 that is sliced at the last convolutional layer.
+        Set the batch size for pytorch dataloader to be 64 samples.
 
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
@@ -59,7 +58,7 @@ class CNN:
 
     def _build_model(self):
         """
-        Build MobileNet model sliced at the last convolutional layer with global average pooling added.
+        Build MobileNet v3 model sliced at the last convolutional layer with global average pooling added. Also initialize the corresponding preprocessing transform.
         """
         self.model = MobilenetV3()
         self.logger.info(
