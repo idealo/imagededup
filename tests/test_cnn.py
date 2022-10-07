@@ -684,51 +684,6 @@ def test_find_duplicates_to_remove_encoding_integration(cnn):
     )
 
 
-# test verbose
-# def test_encode_images_verbose_true(capsys):
-#     cnn = CNN(verbose=True)
-#     cnn.encode_images(image_dir=TEST_IMAGE_DIR)
-#     out, err = capsys.readouterr()
-#     assert '[==============================]' in out
-#     assert '' == err
-
-
-# def test_encode_images_verbose_false(capsys):
-#     cnn = CNN(verbose=False)
-#     cnn.encode_images(image_dir=TEST_IMAGE_DIR)
-#     out, err = capsys.readouterr()
-#     assert '' == out
-#     assert '' == err
-
-
-# def test_find_duplicates_verbose_true(capsys):
-#     cnn = CNN(verbose=True)
-#     cnn.find_duplicates(
-#         image_dir=TEST_IMAGE_DIR,
-#         min_similarity_threshold=0.8,
-#         scores=False,
-#         outfile=False,
-#     )
-#     out, err = capsys.readouterr()
-#
-#     assert '[==============================]' in out
-#     assert '' == err
-#
-#
-# def test_find_duplicates_verbose_false(capsys):
-#     cnn = CNN(verbose=False)
-#     cnn.find_duplicates(
-#         image_dir=TEST_IMAGE_DIR,
-#         min_similarity_threshold=0.8,
-#         scores=False,
-#         outfile=False,
-#     )
-#     out, err = capsys.readouterr()
-#
-#     assert '' == out
-#     assert '' == err
-
-
 def test_scores_saving(cnn):
     save_file = 'myduplicates.json'
     cnn.find_duplicates(

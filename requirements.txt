@@ -1,8 +1,9 @@
-torch>1.0
-Pillow<7.0.0
+torch
+torchvision
+Pillow>=9.0
 tqdm
 scikit-learn
-PyWavelets~=1.1.1
+PyWavelets
 matplotlib
 # Development dependencies
 cython>=0.29
