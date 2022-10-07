@@ -77,7 +77,7 @@ class CNN:
             ]
         )
 
-    def apply_mobilenetnet_preprocess(self, im_arr: np.array) -> torch.tensor:
+    def apply_mobilenet_preprocess(self, im_arr: np.array) -> torch.tensor:
         image_pil = Image.fromarray(im_arr)
         return self.transform(image_pil)
 
@@ -91,7 +91,7 @@ class CNN:
         Returns:
             Encodings for the image in the form of numpy array.
         """
-        image_pp = self.apply_mobilenetnet_preprocess(image_array)
+        image_pp = self.apply_mobilenet_preprocess(image_array)
         image_pp = image_pp.unsqueeze(0)
         img_features_tensor = self.model(image_pp)
         return img_features_tensor.detach().numpy()[..., 0, 0]
@@ -112,7 +112,7 @@ class CNN:
         self.dataloader = img_dataloader(
             image_dir=image_dir,
             batch_size=self.batch_size,
-            basenet_preprocess=self.apply_mobilenetnet_preprocess,
+            basenet_preprocess=self.apply_mobilenet_preprocess,
             recursive=recursive,
         )
 
