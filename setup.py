@@ -89,7 +89,7 @@ else:
 
 setup(
     name='imagededup',
-    version='0.2.4',
+    version='0.3.0',
     author='Tanuj Jain, Christopher Lennan, Zubin John, Dat Tran',
     author_email='tanuj.jain.10@gmail.com, christopherlennan@gmail.com, zrjohn@yahoo.com, datitran@gmail.com',
     description='Package for image deduplication',
@@ -98,7 +98,7 @@ setup(
     install_requires=[
         'torch',
         'torchvision',
-        'Pillow',
+        'Pillow>=9.0',
         'tqdm',
         'scikit-learn',
         'PyWavelets',
@@ -119,8 +119,6 @@ setup(
         'Operating System :: Microsoft :: Windows',
         'Programming Language :: Cython',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
