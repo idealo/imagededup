@@ -16,33 +16,33 @@ jobs:
   - job: 'Test'
     strategy:
       matrix:
-        Python36Linux:
-          imageName: 'ubuntu-16.04'
-          python.version: '3.6'
-        Python36Windows:
-          imageName: 'vs2017-win2016'
-          python.version: '3.6'
-        Python36Mac:
-          imageName: 'macos-10.14'
-          python.version: '3.6'
-        Python37Linux:
-          imageName: 'ubuntu-16.04'
-          python.version: '3.7'
-        Python37Windows:
-          imageName: 'vs2017-win2016'
-          python.version: '3.7'
-        Python37Mac:
-          imageName: 'macos-10.14'
-          python.version: '3.7'
         Python38Linux:
-          imageName: 'ubuntu-16.04'
+          imageName: 'ubuntu-latest'
           python.version: '3.8'
         Python38Windows:
-          imageName: 'vs2017-win2016'
+          imageName: 'windows-latest'
           python.version: '3.8'
         Python38Mac:
-          imageName: 'macos-10.14'
+          imageName: 'macOS-latest'
           python.version: '3.8'
+        Python39Linux:
+          imageName: 'ubuntu-latest'
+          python.version: '3.9'
+        Python39Windows:
+          imageName: 'windows-latest'
+          python.version: '3.9'
+        Python39Mac:
+          imageName: 'macOS-latest'
+          python.version: '3.9'
+        Python310Linux:
+          imageName: 'ubuntu-latest'
+          python.version: '3.10'
+        Python310Windows:
+          imageName: 'windows-latest'
+          python.version: '3.10'
+        Python310Mac:
+          imageName: 'macOS-latest'
+          python.version: '3.10'
       maxParallel: 2
     pool:
       vmImage: $(imageName)
