@@ -175,6 +175,7 @@ def test_encode_images_accepts_valid_posixpath(hasher, mocker_encode_image):
 
 
 def test_encode_images_accepts_non_posixpath(hasher, mocker_encode_image):
+    print(PATH_IMAGE_DIR_STRING)
     assert len(hasher.encode_images(PATH_IMAGE_DIR_STRING)) == 6
 
 
@@ -595,7 +596,7 @@ def test_encode_images_return_non_none_hashes():
     [
         (phasher, '9fee256239984d71'),
         (dhasher, '2b69707551f1b87a'),
-        (ahasher, '81b8bc3c3c3c1e0a'),
+        (ahasher, '81b83c3c3c3c1e0a'),
         (whasher, '89b8bc3c3c3c5e0e'),
     ],
 )
@@ -635,7 +636,7 @@ def test_find_duplicates_correctness_score():
     duplicates = list(duplicate_dict.values())
     assert isinstance(duplicates[0], list)
     assert duplicate_dict['ukbench09268.jpg'] == []
-    assert duplicate_dict['ukbench00120.jpg'] == [('ukbench00120_resize.jpg', 0)]
+    assert duplicate_dict['ukbench00120.jpg'] == [('ukbench00120_resize.jpg', 2)]
 
 
 @pytest.mark.skipif(sys.platform == 'win32', reason='Does not run on Windows.')
@@ -659,7 +660,7 @@ def test_find_duplicates_clearing():
     duplicates = list(duplicate_dict.values())
     assert isinstance(duplicates[0], list)
     assert duplicate_dict['ukbench09268.jpg'] == []
-    assert duplicate_dict['ukbench00120.jpg'] == [('ukbench00120_resize.jpg', 0)]
+    assert duplicate_dict['ukbench00120.jpg'] == [('ukbench00120_resize.jpg', 2)]
 
 
 def test_find_duplicates_outfile():

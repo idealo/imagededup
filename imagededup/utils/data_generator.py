@@ -1,89 +1,77 @@
 from pathlib import PurePath
-from typing import Tuple, List, Callable, Optional
+from typing import Dict, Callable, Optional, List, Tuple
 
 import numpy as np
-from tensorflow.keras.utils import Sequence
+import torch
+from torch.utils.data import Dataset, DataLoader
+from torchvision import models
 
 from imagededup.utils.image_utils import load_image
 from imagededup.utils.general_utils import generate_files
 
 
-class DataGenerator(Sequence):
-    """Class inherits from Keras Sequence base object, allows to use multiprocessing in .fit_generator.
-
-    Attributes:
-        image_dir: Path of image directory.
-        batch_size: Number of images per batch.
-        basenet_preprocess: Basenet specific preprocessing function.
-        target_size: Dimensions that images get resized into when loaded.
-        recursive: Optional, find images recursively in the image directory.
-    """
-
+class ImgDataset(Dataset):
     def __init__(
         self,
         image_dir: PurePath,
-        batch_size: int,
-        basenet_preprocess: Callable,
-        target_size: Tuple[int, int],
-        recursive: Optional[bool] = False,
+        basenet_preprocess: Callable[[np.array], torch.tensor],
+        recursive: Optional[bool],
     ) -> None:
-        """Init DataGenerator object.
-        """
         self.image_dir = image_dir
-        self.batch_size = batch_size
         self.basenet_preprocess = basenet_preprocess
-        self.target_size = target_size
         self.recursive = recursive
-
-        self._get_image_files()
-        self.indexes = np.arange(len(self.image_files))
-        self.valid_image_files = self.image_files
-
-    def _get_image_files(self) -> None:
         self.image_files = sorted(
             generate_files(self.image_dir, self.recursive)
         )  # ignore hidden files
 
     def __len__(self) -> int:
-        """Number of batches in the Sequence."""
-        return int(np.ceil(len(self.image_files) / self.batch_size))
+        """Number of images."""
+        return len(self.image_files)
 
-    def __getitem__(self, index: int) -> Tuple[np.array, np.array]:
-        """Get batch at position `index`.
-        """
-        batch_indexes = self.indexes[
-                        index * self.batch_size: (index + 1) * self.batch_size
-                        ]
-        batch_samples = [self.image_files[i] for i in batch_indexes]
-        X = self._data_generator(batch_samples)
-        return X
+    def __getitem__(self, item) -> Dict:
+        im_arr = load_image(self.image_files[item], target_size=None, grayscale=None)
+        if im_arr is not None:
+            img = self.basenet_preprocess(im_arr)
+            return {'image': img, 'filename': self.image_files[item]}
+        else:
+            return {'image': None, 'filename': self.image_files[item]}
 
-    def _data_generator(
-            self, image_files: List[PurePath]
-    ) -> Tuple[np.array, np.array]:
-        """Generate data from samples in specified batch."""
-        #  initialize images and labels tensors for faster processing
-        X = np.empty((len(image_files), *self.target_size, 3))
 
-        invalid_image_idx = []
-        for i, image_file in enumerate(image_files):
-            # load and randomly augment image
-            img = load_image(
-                image_file=image_file, target_size=self.target_size, grayscale=False
-            )
+def _collate_fn(batch: List[Dict]) -> Tuple[torch.tensor, str, str]:
+    ims, filenames, bad_images = [], [], []
 
-            if img is not None:
-                X[i, :] = img
+    for b in batch:
+        im = b['image']
+        if im is not None:
+            ims.append(im)
+            filenames.append(b['filename'])
+        else:
+            bad_images.append(b['filename'])
+    return torch.stack(ims), filenames, bad_images
 
-            else:
-                invalid_image_idx.append(i)
-                self.valid_image_files = [_file for _file in self.valid_image_files if _file != image_file]
 
-        if invalid_image_idx:
-            X = np.delete(X, invalid_image_idx, axis=0)
+def img_dataloader(
+    image_dir: PurePath,
+    batch_size: int,
+    basenet_preprocess: Callable[[np.array], torch.tensor],
+    recursive: Optional[bool],
+) -> DataLoader:
+    img_dataset = ImgDataset(
+        image_dir=image_dir, basenet_preprocess=basenet_preprocess, recursive=recursive
+    )
+    return DataLoader(
+        dataset=img_dataset, batch_size=batch_size, collate_fn=_collate_fn
+    )
 
-        # apply basenet specific preprocessing
-        # input is 4D numpy array of RGB values within [0, 255]
-        X = self.basenet_preprocess(X)
 
-        return X
+class MobilenetV3(torch.nn.Module):
+    def __init__(self) -> None:
+        super().__init__()
+        mobilenet = models.mobilenet_v3_small(pretrained=True).eval()
+        self.mobilenet_gap_op = torch.nn.Sequential(
+            mobilenet.features, mobilenet.avgpool
+        )
+
+    def forward(self, x) -> torch.tensor:
+        return self.mobilenet_gap_op(x)
+

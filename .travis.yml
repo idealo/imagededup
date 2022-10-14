@@ -1,6 +1,10 @@
 language: python
+os:
+  - linux
+  - osx
+  - windows
 python:
-  - 3.6
+  - 3.10
 install:
   - pip install "cython>=0.29"
   - pip install -e ".[tests, docs]"

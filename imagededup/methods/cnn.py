@@ -3,8 +3,12 @@ from typing import Dict, List, Optional, Union
 import warnings
 
 import numpy as np
+from PIL import Image
+import torch
+from torchvision.transforms import transforms
 
 from imagededup.handlers.search.retrieval import get_cosine_similarity
+from imagededup.utils.data_generator import img_dataloader, MobilenetV3
 from imagededup.utils.general_utils import (
     generate_relative_names,
     get_files_to_remove,
@@ -37,25 +41,13 @@ class CNN:
 
     def __init__(self, verbose: bool = True) -> None:
         """
-        Initialize a keras MobileNet model that is sliced at the last convolutional layer.
-        Set the batch size for keras generators to be 64 samples. Set the input image size to (224, 224) for providing
-        as input to MobileNet model.
+        Initialize a pytorch MobileNet model v3 that is sliced at the last convolutional layer.
+        Set the batch size for pytorch dataloader to be 64 samples.
 
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
-        from tensorflow.keras.applications.mobilenet import (
-            MobileNet,
-            preprocess_input,
-        )
-
-        from imagededup.utils.data_generator import DataGenerator
-
-        self.MobileNet = MobileNet
-        self.preprocess_input = preprocess_input
-        self.DataGenerator = DataGenerator
-
-        self.target_size = (224, 224)
+        self.target_size = (256, 256)
         self.batch_size = 64
         self.logger = return_logger(
             __name__
@@ -66,16 +58,27 @@ class CNN:
 
     def _build_model(self):
         """
-        Build MobileNet model sliced at the last convolutional layer with global average pooling added.
+        Build MobileNet v3 model sliced at the last convolutional layer with global average pooling added. Also initialize the corresponding preprocessing transform.
         """
-        self.model = self.MobileNet(
-            input_shape=(224, 224, 3), include_top=False, pooling='avg'
+        self.model = MobilenetV3()
+        self.logger.info(
+            'Initialized: MobileNet v3 pretrained on ImageNet dataset sliced at GAP layer'
+        )
+        self.transform = transforms.Compose(
+            [
+                transforms.Resize(self.target_size),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406],
+                    std=[0.229, 0.224, 0.225]
+                ),
+            ]
         )
 
-        self.logger.info(
-            'Initialized: MobileNet pretrained on ImageNet dataset sliced at last conv layer and added '
-            'GlobalAveragePooling'
-        )
+    def apply_mobilenet_preprocess(self, im_arr: np.array) -> torch.tensor:
+        image_pil = Image.fromarray(im_arr)
+        return self.transform(image_pil)
 
     def _get_cnn_features_single(self, image_array: np.ndarray) -> np.ndarray:
         """
@@ -87,11 +90,14 @@ class CNN:
         Returns:
             Encodings for the image in the form of numpy array.
         """
-        image_pp = self.preprocess_input(image_array)
-        image_pp = np.array(image_pp)[np.newaxis, :]
-        return self.model.predict(image_pp)
+        image_pp = self.apply_mobilenet_preprocess(image_array)
+        image_pp = image_pp.unsqueeze(0)
+        img_features_tensor = self.model(image_pp)
+        return img_features_tensor.detach().numpy()[..., 0, 0]
 
-    def _get_cnn_features_batch(self, image_dir: PurePath, recursive: Optional[bool] = False) -> Dict[str, np.ndarray]:
+    def _get_cnn_features_batch(
+        self, image_dir: PurePath, recursive: Optional[bool] = False
+    ) -> Dict[str, np.ndarray]:
         """
         Generate CNN encodings for all images in a given directory of images.
         Args:
@@ -102,22 +108,37 @@ class CNN:
             A dictionary that contains a mapping of filenames and corresponding numpy array of CNN encodings.
         """
         self.logger.info('Start: Image encoding generation')
-        self.data_generator = self.DataGenerator(
+        self.dataloader = img_dataloader(
             image_dir=image_dir,
             batch_size=self.batch_size,
-            target_size=self.target_size,
-            basenet_preprocess=self.preprocess_input,
+            basenet_preprocess=self.apply_mobilenet_preprocess,
             recursive=recursive,
         )
 
-        feat_vec = self.model.predict_generator(
-            self.data_generator, len(self.data_generator), verbose=self.verbose
-        )
+        feat_arr, all_filenames = [], []
+        bad_im_count = 0
+
+        for ims, filenames, bad_images in self.dataloader:
+            arr = self.model(ims)
+            feat_arr.extend(arr)
+            all_filenames.extend(filenames)
+            if bad_images:
+                bad_im_count += 1
+
+        if bad_im_count:
+            self.logger.info(
+                f'Found {bad_im_count} bad images, ignoring for encoding generation ..'
+            )
+
+        feat_vec = torch.stack(feat_arr).squeeze().detach().numpy()
+        valid_image_files = [filename for filename in all_filenames if filename]
         self.logger.info('End: Image encoding generation')
 
-        filenames = generate_relative_names(image_dir, self.data_generator.valid_image_files)
-
-        self.encoding_map = {j: feat_vec[i, :] for i, j in enumerate(filenames)}
+        filenames = generate_relative_names(image_dir, valid_image_files)
+        if len(feat_vec.shape) == 1:  # can happen when encode_images is called on a directory containing a single image
+            self.encoding_map = {filenames[0]: feat_vec}
+        else:
+            self.encoding_map = {j: feat_vec[i, :] for i, j in enumerate(filenames)}
         return self.encoding_map
 
     def encode_image(
@@ -154,7 +175,7 @@ class CNN:
                 )
 
             image_pp = load_image(
-                image_file=image_file, target_size=self.target_size, grayscale=False
+                image_file=image_file, target_size=None, grayscale=False
             )
 
         elif isinstance(image_array, np.ndarray):
@@ -162,7 +183,7 @@ class CNN:
                 image_array
             )  # Add 3rd dimension if array is grayscale, do sanity checks
             image_pp = preprocess_image(
-                image=image_array, target_size=self.target_size, grayscale=False
+                image=image_array, target_size=None, grayscale=False
             )
         else:
             raise ValueError('Please provide either image file path or image array!')
@@ -173,7 +194,9 @@ class CNN:
             else None
         )
 
-    def encode_images(self, image_dir: Union[PurePath, str], recursive: Optional[bool] = False) -> Dict:
+    def encode_images(
+        self, image_dir: Union[PurePath, str], recursive: Optional[bool] = False
+    ) -> Dict:
         """Generate CNN encodings for all images in a given directory of images.
 
         Args:
@@ -369,7 +392,10 @@ class CNN:
             )
         elif encoding_map:
             if recursive:
-                warnings.warn('recursive parameter is irrelevant when using encodings.', SyntaxWarning)
+                warnings.warn(
+                    'recursive parameter is irrelevant when using encodings.',
+                    SyntaxWarning,
+                )
             result = self._find_duplicates_dict(
                 encoding_map=encoding_map,
                 min_similarity_threshold=min_similarity_threshold,
@@ -427,7 +453,7 @@ class CNN:
                 encoding_map=encoding_map,
                 min_similarity_threshold=min_similarity_threshold,
                 scores=False,
-                recursive=recursive
+                recursive=recursive,
             )
 
         files_to_remove = get_files_to_remove(duplicates)
