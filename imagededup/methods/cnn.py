@@ -95,6 +95,12 @@ class CNN:
         image_pp = self.apply_mobilenet_preprocess(image_array)
         image_pp = image_pp.unsqueeze(0)
         img_features_tensor = self.model(image_pp.to(self.device))
+
+        if self.device.type == 'cuda':
+            unpacked_img_features_tensor = img_features_tensor.cpu().detach().numpy()[..., 0, 0]
+        else:
+            unpacked_img_features_tensor = img_features_tensor.detach().numpy()[..., 0, 0]
+
         return img_features_tensor.detach().numpy()[..., 0, 0]
 
     def _get_cnn_features_batch(
