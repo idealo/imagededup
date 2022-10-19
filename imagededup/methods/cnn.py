@@ -97,9 +97,9 @@ class CNN:
         img_features_tensor = self.model(image_pp.to(self.device))
 
         if self.device.type == 'cuda':
-            unpacked_img_features_tensor = img_features_tensor.cpu().detach().numpy()[..., 0, 0]
+            unpacked_img_features_tensor = img_features_tensor.cpu().detach().numpy()[0, ..., 0, 0]
         else:
-            unpacked_img_features_tensor = img_features_tensor.detach().numpy()[..., 0, 0]
+            unpacked_img_features_tensor = img_features_tensor.detach().numpy()[0, ..., 0, 0]
 
         return unpacked_img_features_tensor
 
