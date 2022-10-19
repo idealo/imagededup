@@ -101,7 +101,7 @@ class CNN:
         else:
             unpacked_img_features_tensor = img_features_tensor.detach().numpy()[..., 0, 0]
 
-        return img_features_tensor.detach().numpy()[..., 0, 0]
+        return unpacked_img_features_tensor
 
     def _get_cnn_features_batch(
         self, image_dir: PurePath, recursive: Optional[bool] = False
