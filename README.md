@@ -31,7 +31,7 @@ Following details the functionality provided by the package:
 
 Detailed documentation for the package can be found at: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
 
-imagededup is compatible with Python 3.6+ and runs on Linux, MacOS X and Windows. 
+imagededup is compatible with Python 3.8+ and runs on Linux, MacOS X and Windows. 
 It is distributed under the Apache 2.0 license.
 
 ## 📖 Contents
