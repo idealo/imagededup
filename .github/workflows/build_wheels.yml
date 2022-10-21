@@ -16,7 +16,8 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.11.1
         env:
-           CIBW_SKIP: cp36-* cp37-*
+          CIBW_BEFORE_BUILD: python setup.py install
+          CIBW_SKIP: cp36-* cp37-*
         #    ...
         # with:
         #   package-dir: .
