@@ -1,0 +1,29 @@
+name: Build wheels
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, macos-11, windows-2019]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.11.1
+        env:
+          CIBW_BEFORE_BUILD: pip install "cython>=0.29"
+          CIBW_SKIP: cp36-* cp37-* cp311-* pp37-* pp38-* pp39-* cp38-manylinux_i686 cp39-manylinux_i686 cp310-manylinux_i686 cp38-musllinux* cp39-musllinux* cp310-musllinux*
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./wheelhouse/*.whl
