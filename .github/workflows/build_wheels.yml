@@ -1,11 +1,11 @@
-name: Build
+name: Build wheels
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 jobs:
@@ -18,7 +18,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.11.1
         env:

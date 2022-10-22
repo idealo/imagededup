@@ -1,6 +1,6 @@
 # Image Deduplicator (imagededup)
 
-[![Build Status](https://travis-ci.org/idealo/imagededup.svg?branch=master)](https://travis-ci.org/idealo/imagededup)
+[![Build](https://github.com/idealo/imagededup/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/idealo/imagededup/actions/workflows/test.yml)
 [![Docs](https://img.shields.io/badge/docs-online-brightgreen)](https://idealo.github.io/imagededup/)
 [![codecov](https://codecov.io/gh/idealo/imagededup/branch/master/graph/badge.svg)](https://codecov.io/gh/idealo/imagededup)
 [![PyPI Version](https://img.shields.io/pypi/v/imagededup)](https://pypi.org/project/imagededup/)
@@ -154,7 +154,8 @@ Please cite Imagededup in your publications if this is useful for your research.
 
 ## 🏗 Maintainers
 
-* Tanuj Jain, github: [tanujjain](https://github.com/tanujjain)
+- Tanuj Jain, github: [tanujjain](https://github.com/tanujjain)
+
 - Christopher Lennan, github: [clennan](https://github.com/clennan)
 - Dat Tran, github: [datitran](https://github.com/datitran)
 
