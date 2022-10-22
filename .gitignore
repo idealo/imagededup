@@ -250,4 +250,4 @@ mkdocs/docs/LICENSE.md
 mkdocs/docs/index.md
 
 # ignore cpp files from cython setup
-#*.cpp
+*.cpp
