@@ -1,6 +1,5 @@
 # Image Deduplicator (imagededup)
 
-[![Build Status](https://dev.azure.com/axelspringerai/Public/_apis/build/status/idealo.imagededup?branchName=master)](https://dev.azure.com/axelspringerai/Public/_build/latest?definitionId=1&branchName=master)
 [![Build Status](https://travis-ci.org/idealo/imagededup.svg?branch=master)](https://travis-ci.org/idealo/imagededup)
 [![Docs](https://img.shields.io/badge/docs-online-brightgreen)](https://idealo.github.io/imagededup/)
 [![codecov](https://codecov.io/gh/idealo/imagededup/branch/master/graph/badge.svg)](https://codecov.io/gh/idealo/imagededup)
@@ -20,21 +19,22 @@ framework is also provided to judge the quality of deduplication for a given dat
 Following details the functionality provided by the package:
 
 - Finding duplicates in a directory using one of the following algorithms:
-    - [Convolutional Neural Network](https://arxiv.org/abs/1704.04861) (CNN)
-    - [Perceptual hashing](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html) (PHash)
-    - [Difference hashing](http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html) (DHash)
-    - [Wavelet hashing](https://fullstackml.com/wavelet-image-hash-in-python-3504fdd282b5) (WHash)
-    - [Average hashing](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html) (AHash)
+  - [Convolutional Neural Network](https://arxiv.org/abs/1704.04861) (CNN)
+  - [Perceptual hashing](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html) (PHash)
+  - [Difference hashing](http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html) (DHash)
+  - [Wavelet hashing](https://fullstackml.com/wavelet-image-hash-in-python-3504fdd282b5) (WHash)
+  - [Average hashing](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html) (AHash)
 - Generation of encodings for images using one of the above stated algorithms.
 - Framework to evaluate effectiveness of deduplication  given a ground truth mapping.
 - Plotting duplicates found for a given image file.
 
 Detailed documentation for the package can be found at: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
 
-imagededup is compatible with Python 3.8+ and runs on Linux, MacOS X and Windows. 
+imagededup is compatible with Python 3.8+ and runs on Linux, MacOS X and Windows.
 It is distributed under the Apache 2.0 license.
 
 ## 📖 Contents
+
 - [Installation](#%EF%B8%8F-installation)
 - [Quick Start](#-quick-start)
 - [Benchmarks](#-benchmarks)
@@ -44,15 +44,16 @@ It is distributed under the Apache 2.0 license.
 - [License](#-copyright)
 
 ## ⚙️ Installation
+
 There are two ways to install imagededup:
 
-* Install imagededup from PyPI (recommended):
+- Install imagededup from PyPI (recommended):
 
 ```
 pip install imagededup
 ```
 
-* Install imagededup from the GitHub source:
+- Install imagededup from the GitHub source:
 
 ```bash
 git clone https://github.com/idealo/imagededup.git
@@ -92,14 +93,15 @@ plot_duplicates(image_dir='path/to/image/directory',
                 duplicate_map=duplicates,
                 filename='ukbench00120.jpg')
 ```
+
 The output looks as below:
 
 <p align="center">
   <img src="readme_figures/plot_dups.png" width="600" />
 </p>
 
-
 The complete code for the workflow is:
+
 ```python
 from imagededup.methods import PHash
 phasher = PHash()
@@ -116,12 +118,14 @@ plot_duplicates(image_dir='path/to/image/directory',
                 duplicate_map=duplicates,
                 filename='ukbench00120.jpg')
 ```
+
 For more examples, refer [this](https://github.com/idealo/imagededup/tree/master/examples) part of the
 repository.
 
 For more detailed usage of the package functionality, refer: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
 
 ## ⏳ Benchmarks
+
 **Update**: Provided benchmarks are only valid upto `imagededup v0.2.2`. The next releases have significant changes to all methods, so the current benchmarks may not hold.
 
 Detailed benchmarks on speed and classification metrics for different methods have been provided in the [documentation](https://idealo.github.io/imagededup/user_guide/benchmarks/).
@@ -131,11 +135,14 @@ Generally speaking, following conclusions can be made:
 - All deduplication methods fare well on datasets containing exact duplicates, but Difference hashing is the fastest.
 
 ## 🤝 Contribute
+
 We welcome all kinds of contributions.
 See the [Contribution](CONTRIBUTING.md) guide for more details.
 
 ## 📝 Citation
+
 Please cite Imagededup in your publications if this is useful for your research. Here is an example BibTeX entry:
+
 ```BibTeX
 @misc{idealods2019imagededup,
   title={Imagededup},
@@ -146,9 +153,11 @@ Please cite Imagededup in your publications if this is useful for your research.
 ```
 
 ## 🏗 Maintainers
+
 * Tanuj Jain, github: [tanujjain](https://github.com/tanujjain)
-* Christopher Lennan, github: [clennan](https://github.com/clennan)
-* Dat Tran, github: [datitran](https://github.com/datitran)
+- Christopher Lennan, github: [clennan](https://github.com/clennan)
+- Dat Tran, github: [datitran](https://github.com/datitran)
 
 ## © Copyright
+
 See [LICENSE](LICENSE) for details.

@@ -1,5 +1,12 @@
 name: Build and Deploy
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -11,7 +18,7 @@ jobs:
     - name: Build and Deploy
       uses: JacksonMaxfield/github-pages-deploy-action-python@master
       env:
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BASE_BRANCH: master
         BRANCH: gh-pages
         FOLDER: docs/
