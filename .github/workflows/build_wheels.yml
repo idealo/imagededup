@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-11]
+        os: [ubuntu-20.04, macos-11, windows-2019]
 
     steps:
       - uses: actions/checkout@v3
@@ -18,11 +18,6 @@ jobs:
         env:
           CIBW_BEFORE_BUILD: pip install "cython>=0.29"
           CIBW_SKIP: cp36-* cp37-* cp311-* pp37-* pp38-* pp39-* cp38-manylinux_i686 cp39-manylinux_i686 cp310-manylinux_i686 cp38-musllinux* cp39-musllinux* cp310-musllinux*
-        #    ...
-        # with:
-        #   package-dir: .
-        #   output-dir: wheelhouse
-        #   config-file: "{package}/pyproject.toml"
 
       - uses: actions/upload-artifact@v3
         with:
