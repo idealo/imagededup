@@ -53,14 +53,19 @@ class CNN:
             __name__
         )  # The logger needs to be bound to the class, otherwise stderr also gets
         # directed to stdout (Don't know why that is the case)
-        self._build_model()
         self.verbose = 1 if verbose is True else 0
+        self.device = ('cuda' if torch.cuda.is_available() else 'cpu')
+        if self.device == 'cuda':
+            self.logger.info('Device set to cuda ..')
+        else:
+            self.logger.info('Device set to cpu ..')
+        self._build_model()
 
     def _build_model(self):
         """
         Build MobileNet v3 model sliced at the last convolutional layer with global average pooling added. Also initialize the corresponding preprocessing transform.
         """
-        self.model = MobilenetV3()
+        self.model = MobilenetV3().to(self.device)
         self.logger.info(
             'Initialized: MobileNet v3 pretrained on ImageNet dataset sliced at GAP layer'
         )
@@ -99,10 +104,10 @@ class CNN:
         Returns:
             Encodings for the image in the form of numpy array.
         """
-        image_pp = self.apply_mobilenet_preprocess(image_array)
+        image_pp = self.apply_mobilenet_preprocess(image_array).to(self.device)
         image_pp = image_pp.unsqueeze(0)
         img_features_tensor = self.model(image_pp)
-        return img_features_tensor.detach().numpy()[..., 0, 0]
+        return img_features_tensor.detach().numpy()[..., 0, 0] if self.device == 'cpu' else img_features_tensor.detach().cpu().numpy()[..., 0, 0]
 
     def _get_cnn_features_batch(
         self, image_dir: PurePath, recursive: Optional[bool] = False
@@ -128,7 +133,7 @@ class CNN:
         bad_im_count = 0
 
         for ims, filenames, bad_images in self.dataloader:
-            arr = self.model(ims)
+            arr = self.model(ims.to(self.device))
             feat_arr.extend(arr)
             all_filenames.extend(filenames)
             if bad_images:
@@ -139,7 +144,9 @@ class CNN:
                 f'Found {bad_im_count} bad images, ignoring for encoding generation ..'
             )
 
-        feat_vec = torch.stack(feat_arr).squeeze().detach().numpy()
+        feat_vec = torch.stack(feat_arr).squeeze()
+        feat_vec = feat_vec.detach().numpy() if self.device == 'cpu' else feat_vec.detach().cpu().numpy()
+
         valid_image_files = [filename for filename in all_filenames if filename]
         self.logger.info('End: Image encoding generation')
 
