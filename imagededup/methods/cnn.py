@@ -2,6 +2,7 @@ from pathlib import Path, PurePath
 from typing import Dict, List, Optional, Union
 import warnings
 
+from multiprocessing import cpu_count
 import numpy as np
 from PIL import Image
 import torch
@@ -39,13 +40,14 @@ class CNN:
     methods are provided to accomplish these tasks.
     """
 
-    def __init__(self, verbose: bool = True) -> None:
+    def __init__(self, verbose: bool = True, num_workers: int = cpu_count()) -> None:
         """
         Initialize a pytorch MobileNet model v3 that is sliced at the last convolutional layer.
         Set the batch size for pytorch dataloader to be 64 samples.
 
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
+            num_workers: Number of cpu cores to use for multiprocessing functionality, set to number of number of logical cores in the system by default. Set to 0 to disable multiprocessing.
         """
         self.target_size = (256, 256)
         self.batch_size = 64
@@ -55,6 +57,7 @@ class CNN:
         # directed to stdout (Don't know why that is the case)
         self._build_model()
         self.verbose = 1 if verbose is True else 0
+        self.num_workers = num_workers
 
     def _build_model(self):
         """
@@ -121,7 +124,7 @@ class CNN:
             image_dir=image_dir,
             batch_size=self.batch_size,
             basenet_preprocess=self.apply_mobilenet_preprocess,
-            recursive=recursive,
+            recursive=recursive
         )
 
         feat_arr, all_filenames = [], []
@@ -279,7 +282,7 @@ class CNN:
 
         self.logger.info('Start: Calculating cosine similarities...')
 
-        self.cosine_scores = get_cosine_similarity(features, self.verbose)
+        self.cosine_scores = get_cosine_similarity(features, self.verbose, num_workers=self.num_workers)
 
         np.fill_diagonal(
             self.cosine_scores, 2.0

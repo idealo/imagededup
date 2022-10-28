@@ -1,5 +1,5 @@
 import json
-from multiprocessing import Pool, cpu_count
+from multiprocessing import Pool
 from pathlib import Path, PurePath
 from typing import Callable, Dict, List, Union
 
@@ -60,8 +60,9 @@ def save_json(results: Dict, filename: str, float_scores: bool = False) -> None:
     logger.info('End: Saving duplicates as json!')
 
 
-def parallelise(function: Callable, data: List, verbose: bool) -> List:
-    pool = Pool(processes=cpu_count())
+def parallelise(function: Callable, data: List, verbose: bool, num_workers: int) -> List:
+    num_workers = 1 if num_workers < 1 else num_workers  # Pool needs to have at least 1 worker.
+    pool = Pool(processes=num_workers)
     results = list(
         tqdm.tqdm(pool.imap(function, data, 100), total=len(data), disable=not verbose)
     )

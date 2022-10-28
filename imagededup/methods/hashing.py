@@ -5,8 +5,9 @@ import warnings
 from pathlib import PurePath, Path
 from typing import Dict, List, Optional
 
-import pywt
+from multiprocessing import cpu_count
 import numpy as np
+import pywt
 from scipy.fftpack import dct
 
 from imagededup.handlers.search.retrieval import HashEval
@@ -47,7 +48,7 @@ class Hashing:
     methods are provided to accomplish these tasks.
     """
 
-    def __init__(self, verbose: bool = True) -> None:
+    def __init__(self, verbose: bool = True, num_workers: int = cpu_count()) -> None:
         """
         Initialize hashing class.
 
@@ -56,6 +57,7 @@ class Hashing:
         """
         self.target_size = (8, 8)  # resizing to dims
         self.verbose = verbose
+        self.num_workers = num_workers
 
     @staticmethod
     def hamming_distance(hash1: str, hash2: str) -> float:
@@ -156,7 +158,7 @@ class Hashing:
 
         logger.info(f'Start: Calculating hashes...')
 
-        hashes = parallelise(self.encode_image, files, self.verbose)
+        hashes = parallelise(self.encode_image, files, self.verbose, self.num_workers)
         hash_initial_dict = dict(zip(generate_relative_names(image_dir, files), hashes))
         hash_dict = {
             k: v for k, v in hash_initial_dict.items() if v
