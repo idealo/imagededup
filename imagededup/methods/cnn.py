@@ -42,7 +42,7 @@ class CNN:
     def __init__(self, verbose: bool = True) -> None:
         """
         Initialize a pytorch MobileNet model v3 that is sliced at the last convolutional layer.
-        Set the batch size for pytorch dataloader to be 64 samples.
+        Set the batch size for pytorch dataloader to be 64 samples. Also select gpu for encoding generation if it's available on the machine.
 
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
