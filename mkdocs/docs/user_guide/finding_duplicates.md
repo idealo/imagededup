@@ -73,6 +73,7 @@ in the image directory that were found to be duplicates of the key file.
   between the key image and a candidate image so that the candidate image can be considered as a duplicate of the key 
   image. Should be an int between 0 and 64. Default value is 10.
 
+- *recursive*: finding images recursively in a nested directory structure, set to *False* by default.
 #### Considerations
 
 - The returned duplicates dictionary contains symmetric relationships i.e., if an image *i* is a duplicate of image *j*,
@@ -162,6 +163,7 @@ corresponding encodings (hashes/cnn encodings). The mentioned dictionary can be 
   between the key image and a candidate image so that the candidate image can be considered as a duplicate for the key 
   image. Should be an int between 0 and 64. Default value is 10.
 
+- *recursive*: finding images recursively in a nested directory structure, set to *False* by default.
 #### Considerations
 - This method must be used with caution. The symmetric nature of duplicates imposes an issue of marking one image as 
 duplicate and the other as original. Consider the following *duplicates* dictionary:

@@ -77,6 +77,15 @@ class CNN:
         )
 
     def apply_mobilenet_preprocess(self, im_arr: np.array) -> torch.tensor:
+        """
+        Apply preprocessing function for mobilenet to images.
+
+        Args:
+            im_arr: Image typecast to numpy array.
+
+        Returns:
+            transformed_image_tensor: Transformed images returned as a pytorch tensor.
+        """
         image_pil = Image.fromarray(im_arr)
         return self.transform(image_pil)
 
@@ -102,7 +111,7 @@ class CNN:
         Generate CNN encodings for all images in a given directory of images.
         Args:
             image_dir: Path to the image directory.
-            recursive: Optional, find images recursively in the image directory.
+            recursive: Optional, find images recursively in a nested image directory structure.
 
         Returns:
             A dictionary that contains a mapping of filenames and corresponding numpy array of CNN encodings.
@@ -201,7 +210,7 @@ class CNN:
 
         Args:
             image_dir: Path to the image directory.
-            recursive: Optional, find images recursively in the image directory.
+            recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
         Returns:
             dictionary: Contains a mapping of filenames and corresponding numpy array of CNN encodings.
         Example:
@@ -316,7 +325,7 @@ class CNN:
             scores: Optional, boolean indicating whether Hamming distances are to be returned along with retrieved
                     duplicates.
             outfile: Optional, name of the file the results should be written to.
-            recursive: Optional, find images recursively in the image directory.
+            recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -357,7 +366,7 @@ class CNN:
             scores: Optional, boolean indicating whether similarity scores are to be returned along with retrieved
                     duplicates.
             outfile: Optional, name of the file to save the results, must be a json. Default is None.
-            recursive: Optional, find images recursively in the image directory.
+            recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
 
         Returns:
             dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -427,7 +436,7 @@ class CNN:
                           corresponding CNN encodings.
             min_similarity_threshold: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9
             outfile: Optional, name of the file to save the results, must be a json. Default is None.
-            recursive: Optional, find images recursively in the image directory.
+            recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
 
         Returns:
             duplicates: List of image file names that should be removed.
