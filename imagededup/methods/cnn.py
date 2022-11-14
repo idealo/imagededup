@@ -61,6 +61,8 @@ class CNN:
         Build MobileNet v3 model sliced at the last convolutional layer with global average pooling added. Also initialize the corresponding preprocessing transform.
         """
         self.model = MobilenetV3()
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.model.to(self.device)
         self.logger.info(
             'Initialized: MobileNet v3 pretrained on ImageNet dataset sliced at GAP layer'
         )
@@ -101,8 +103,14 @@ class CNN:
         """
         image_pp = self.apply_mobilenet_preprocess(image_array)
         image_pp = image_pp.unsqueeze(0)
-        img_features_tensor = self.model(image_pp)
-        return img_features_tensor.detach().numpy()[..., 0, 0]
+        img_features_tensor = self.model(image_pp.to(self.device))
+
+        if self.device.type == 'cuda':
+            unpacked_img_features_tensor = img_features_tensor.cpu().detach().numpy()[..., 0, 0]
+        else:
+            unpacked_img_features_tensor = img_features_tensor.detach().numpy()[..., 0, 0]
+
+        return unpacked_img_features_tensor
 
     def _get_cnn_features_batch(
         self, image_dir: PurePath, recursive: Optional[bool] = False
@@ -128,7 +136,7 @@ class CNN:
         bad_im_count = 0
 
         for ims, filenames, bad_images in self.dataloader:
-            arr = self.model(ims)
+            arr = self.model(ims.to(self.device))
             feat_arr.extend(arr)
             all_filenames.extend(filenames)
             if bad_images:
