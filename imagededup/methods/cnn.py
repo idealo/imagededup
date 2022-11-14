@@ -58,14 +58,19 @@ class CNN:
 
     def _build_model(self):
         """
-        Build MobileNet v3 model sliced at the last convolutional layer with global average pooling added. Also initialize the corresponding preprocessing transform.
+        Build MobileNet v3 model sliced at the last convolutional layer with global average pooling added and initialize the corresponding preprocessing transform. Also select gpu for encoding generation if it's available on the machine.
         """
         self.model = MobilenetV3()
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.model.to(self.device)
         self.logger.info(
             'Initialized: MobileNet v3 pretrained on ImageNet dataset sliced at GAP layer'
         )
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        if self.device == 'cuda':
+            self.logger.info('Device set to cuda ..')
+        else:
+            self.logger.info('Device set to cpu ..')
+        self.model.to(self.device)
+
         self.transform = transforms.Compose(
             [
                 transforms.Resize(self.target_size),
