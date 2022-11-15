@@ -22,4 +22,4 @@ jobs:
         BASE_BRANCH: master
         BRANCH: gh-pages
         FOLDER: docs/
-        BUILD_SCRIPT: pip install mkdocs mkdocs-material & cd mkdocs && sh build_docs.sh
+        BUILD_SCRIPT: pip install mkdocs mkdocs-material && cd mkdocs && sh build_docs.sh
