@@ -65,7 +65,7 @@ class CNN:
             'Initialized: MobileNet v3 pretrained on ImageNet dataset sliced at GAP layer'
         )
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        if self.device == 'cuda':
+        if self.device.type == 'cuda':
             self.logger.info('Device set to cuda ..')
         else:
             self.logger.info('Device set to cpu ..')
@@ -151,8 +151,9 @@ class CNN:
             self.logger.info(
                 f'Found {bad_im_count} bad images, ignoring for encoding generation ..'
             )
-
-        feat_vec = torch.stack(feat_arr).squeeze().detach().numpy()
+            
+        feat_vec = torch.stack(feat_arr).squeeze()
+        feat_vec = feat_vec.detach().numpy() if self.device.type == 'cpu' else feat_vec.detach().cpu().numpy()
         valid_image_files = [filename for filename in all_filenames if filename]
         self.logger.info('End: Image encoding generation')
 
