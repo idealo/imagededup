@@ -255,6 +255,7 @@ def extract_comments(directory):
         for file_name in file_names:
             if os.path.splitext(file_name)[1] == '.py' and file_name != '__init__.py':
                 # with open
+                print(f'Processing {file_name=}')
                 doc = get_comments_str(os.path.join(parent, file_name))
                 directory = os.path.join('docs', parent.replace('../imagededup/', ''))
                 if not os.path.exists(directory):
