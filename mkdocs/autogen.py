@@ -251,6 +251,8 @@ def get_comments_str(file_name):
 
 
 def extract_comments(directory):
+    import sys
+    print('python version:', sys.version)
     for parent, dir_names, file_names in os.walk(directory):
         for file_name in file_names:
             if os.path.splitext(file_name)[1] == '.py' and file_name != '__init__.py':
