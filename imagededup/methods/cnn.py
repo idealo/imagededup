@@ -197,7 +197,7 @@ class CNN:
     def encode_images(
         self, image_dir: Union[PurePath, str], recursive: Optional[bool] = False
     ) -> Dict:
-        """Generate CNN encodings for all images in a given directory of images.
+        """Generate CNN encodings for all images in a given directory of images. Test.
 
         Args:
             image_dir: Path to the image directory.
