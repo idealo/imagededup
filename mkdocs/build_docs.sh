@@ -5,5 +5,4 @@ cp ../CONTRIBUTING.md docs/CONTRIBUTING.md
 cp ../LICENSE docs/LICENSE.md
 cp -R ../readme_figures docs/
 python autogen.py
-mkdir ../docs
 mkdocs build -c -d ../docs/
