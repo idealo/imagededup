@@ -259,6 +259,8 @@ def extract_comments(directory):
                 # with open
                 print(f'Processing file_name= {file_name}')
                 doc = get_comments_str(os.path.join(parent, file_name))
+                if file_name=='cnn.py':
+                    print(doc)
                 directory = os.path.join('docs', parent.replace('../imagededup/', ''))
                 if not os.path.exists(directory):
                     os.makedirs(directory)
