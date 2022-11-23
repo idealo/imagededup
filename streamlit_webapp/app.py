@@ -8,10 +8,10 @@ from imagededup.methods import PHash
 from imagededup.utils import plot_duplicates
 
 st.set_page_config(
-    page_title="Imagededup Webapp",
-    page_icon="🖼",
-    layout="centered",
-    initial_sidebar_state="auto",
+    page_title='Imagededup Webapp',
+    page_icon='🖼',
+    layout='centered',
+    initial_sidebar_state='auto',
 )
 
 
@@ -45,18 +45,18 @@ def find_duplicate_imgs():
 
 
 if __name__ == '__main__':
-    clean_directory("uploads/")
+    clean_directory('uploads/')
 
     main_image = Image.open('static/main_banner.png')
     st.image(main_image,use_column_width='auto')
-    st.title("✨ Image Deduplicator 🏜")
+    st.title('✨ Image Deduplicator 🏜')
     st.info(' Let me help you find exact and near duplicates in an image collection 😉')
 
-    uploaded_files = st.file_uploader("Upload Images 🚀", type=["png","jpg","bmp","jpeg"], accept_multiple_files=True)
-    with st.spinner(f"Finding duplicates... This may take several minutes depending on the number of images uploaded 💫"):
+    uploaded_files = st.file_uploader('Upload Images 🚀', type=['png', 'jpg', 'bmp', 'jpeg'], accept_multiple_files=True)
+    with st.spinner(f'Finding duplicates... This may take several minutes depending on the number of images uploaded 💫'):
         if uploaded_files:
             for uploaded_file in uploaded_files:
-                with open(os.path.join("uploads/",uploaded_file.name),"wb") as f:
+                with open(os.path.join('uploads/', uploaded_file.name), 'wb') as f:
                     f.write((uploaded_file).getbuffer())
 
             final_dup_imgs = find_duplicate_imgs()
@@ -68,10 +68,10 @@ if __name__ == '__main__':
             st.dataframe(df)
 
             st.download_button(
-               "Download as CSV 📝",
+               'Download as CSV 📝',
                downloadable_csv,
-               "list of duplicate images.csv",
-               "text/csv",
+               'list of duplicate images.csv',
+               'text/csv',
                key='download-csv'
             )
         else:
