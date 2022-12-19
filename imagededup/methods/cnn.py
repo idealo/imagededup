@@ -40,7 +40,7 @@ class CNN:
     methods are provided to accomplish these tasks.
     """
 
-    def __init__(self, verbose: bool = True, num_workers: int = cpu_count()) -> None:
+    def __init__(self, verbose: bool = True) -> None:
         """
         Initialize a pytorch MobileNet model v3 that is sliced at the last convolutional layer.
         Set the batch size for pytorch dataloader to be 64 samples.
@@ -57,7 +57,6 @@ class CNN:
         # directed to stdout (Don't know why that is the case)
         self._build_model()
         self.verbose = 1 if verbose is True else 0
-        self.num_workers = num_workers
 
     def _build_model(self):
         """
@@ -207,7 +206,7 @@ class CNN:
         )
 
     def encode_images(
-        self, image_dir: Union[PurePath, str], recursive: Optional[bool] = False
+        self, image_dir: Union[PurePath, str], recursive: Optional[bool] = False,
     ) -> Dict:
         """Generate CNN encodings for all images in a given directory of images.
 
@@ -255,6 +254,7 @@ class CNN:
         min_similarity_threshold: float,
         scores: bool,
         outfile: Optional[str] = None,
+        num_sim_workers: int = cpu_count()
     ) -> Dict:
         """
         Take in dictionary {filename: encoded image}, detects duplicates above the given cosine similarity threshold
@@ -282,7 +282,7 @@ class CNN:
 
         self.logger.info('Start: Calculating cosine similarities...')
 
-        self.cosine_scores = get_cosine_similarity(features, self.verbose, num_workers=self.num_workers)
+        self.cosine_scores = get_cosine_similarity(features, self.verbose, num_workers=num_sim_workers)
 
         np.fill_diagonal(
             self.cosine_scores, 2.0
@@ -316,6 +316,7 @@ class CNN:
         scores: bool,
         outfile: Optional[str] = None,
         recursive: Optional[bool] = False,
+        num_sim_workers: int = cpu_count()
     ) -> Dict:
         """
         Take in path of the directory in which duplicates are to be detected above the given threshold.
@@ -343,6 +344,7 @@ class CNN:
             min_similarity_threshold=min_similarity_threshold,
             scores=scores,
             outfile=outfile,
+            num_sim_workers=num_sim_workers
         )
 
     def find_duplicates(
@@ -353,6 +355,7 @@ class CNN:
         scores: bool = False,
         outfile: Optional[str] = None,
         recursive: Optional[bool] = False,
+        num_sim_workers: int = cpu_count()
     ) -> Dict:
         """
         Find duplicates for each file. Take in path of the directory or encoding dictionary in which duplicates are to
@@ -401,6 +404,7 @@ class CNN:
                 scores=scores,
                 outfile=outfile,
                 recursive=recursive,
+                num_sim_workers=num_sim_workers
             )
         elif encoding_map:
             if recursive:
@@ -413,6 +417,7 @@ class CNN:
                 min_similarity_threshold=min_similarity_threshold,
                 scores=scores,
                 outfile=outfile,
+                num_sim_workers=num_sim_workers
             )
 
         else:
@@ -427,6 +432,7 @@ class CNN:
         min_similarity_threshold: float = 0.9,
         outfile: Optional[str] = None,
         recursive: Optional[bool] = False,
+        num_sim_workers: int = cpu_count()
     ) -> List:
         """
         Give out a list of image file names to remove based on the similarity threshold. Does not remove the mentioned
@@ -466,6 +472,7 @@ class CNN:
                 min_similarity_threshold=min_similarity_threshold,
                 scores=False,
                 recursive=recursive,
+                num_sim_workers=num_sim_workers
             )
 
         files_to_remove = get_files_to_remove(duplicates)

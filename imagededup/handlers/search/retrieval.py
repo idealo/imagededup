@@ -1,3 +1,4 @@
+from multiprocessing import cpu_count
 import sys
 from typing import Callable, Dict, Union, Tuple
 
@@ -55,6 +56,7 @@ class HashEval:
         verbose: bool = True,
         threshold: int = 5,
         search_method: str = 'brute_force_cython' if not sys.platform == 'win32' else 'bktree',
+        num_dist_workers: int = cpu_count()
     ) -> None:
         """
         Initialize a HashEval object which offers an interface to control hashing and search methods for desired
@@ -66,6 +68,7 @@ class HashEval:
         self.verbose = verbose
         self.threshold = threshold
         self.query_results_map = None
+        self.num_dist_workers = num_dist_workers
 
         if search_method == 'bktree':
             self._fetch_nearest_neighbors_bktree()
@@ -106,7 +109,7 @@ class HashEval:
                 [self.threshold] * len(self.queries),
             )
         )
-        result_map_list = parallelise(self._searcher, args, self.verbose)
+        result_map_list = parallelise(self._searcher, args, self.verbose, num_workers=self.num_dist_workers)
         result_map = dict(zip(list(self.queries.keys()), result_map_list))
 
         self.query_results_map = {

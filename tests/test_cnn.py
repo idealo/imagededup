@@ -1,3 +1,4 @@
+from multiprocessing import cpu_count
 from pathlib import Path
 
 import os
@@ -317,6 +318,7 @@ def test__find_duplicates_dir(cnn, mocker):
     threshold = 0.8
     scores = True
     outfile = True
+    num_sim_workers = 2
     ret_val_find_dup_dict = {
         'filename1.jpg': [('dup1.jpg', 0.82)],
         'filename2.jpg': [('dup2.jpg', 0.90)],
@@ -332,6 +334,7 @@ def test__find_duplicates_dir(cnn, mocker):
         min_similarity_threshold=threshold,
         scores=scores,
         outfile=outfile,
+        num_sim_workers=num_sim_workers
     )
     encode_images_mocker.assert_called_once_with(image_dir=TEST_IMAGE_DIR, recursive=False)
     find_dup_dict_mocker.assert_called_once_with(
@@ -339,6 +342,7 @@ def test__find_duplicates_dir(cnn, mocker):
         min_similarity_threshold=threshold,
         scores=scores,
         outfile=outfile,
+        num_sim_workers=num_sim_workers
     )
 
 
@@ -349,6 +353,7 @@ def test_find_duplicates_dir(cnn, mocker):
     threshold = 0.9
     scores = True
     outfile = True
+    num_sim_workers = 2
     find_dup_dir_mocker = mocker.patch(
         'imagededup.methods.cnn.CNN._find_duplicates_dir'
     )
@@ -357,6 +362,7 @@ def test_find_duplicates_dir(cnn, mocker):
         min_similarity_threshold=threshold,
         outfile=outfile,
         scores=scores,
+        num_sim_workers=num_sim_workers
     )
     find_dup_dir_mocker.assert_called_once_with(
         image_dir=TEST_IMAGE_DIR,
@@ -364,6 +370,7 @@ def test_find_duplicates_dir(cnn, mocker):
         scores=scores,
         outfile=outfile,
         recursive=False,
+        num_sim_workers=num_sim_workers
     )
 
 
@@ -380,12 +387,38 @@ def test_find_duplicates_dict(cnn, mocker):
         min_similarity_threshold=threshold,
         outfile=outfile,
         scores=scores,
+        num_sim_workers=cpu_count()
     )
     find_dup_dict_mocker.assert_called_once_with(
         encoding_map=encoding_map,
         min_similarity_threshold=threshold,
         scores=scores,
         outfile=outfile,
+        num_sim_workers=cpu_count()
+    )
+
+
+def test_find_duplicates_dict_num_worker_has_impact(cnn, mocker):
+    encoding_map = data_encoding_map()
+    threshold = 0.9
+    scores = True
+    outfile = True
+    find_dup_dict_mocker = mocker.patch(
+        'imagededup.methods.cnn.CNN._find_duplicates_dict'
+    )
+    cnn.find_duplicates(
+        encoding_map=encoding_map,
+        min_similarity_threshold=threshold,
+        outfile=outfile,
+        scores=scores,
+        num_sim_workers=2
+    )
+    find_dup_dict_mocker.assert_called_once_with(
+        encoding_map=encoding_map,
+        min_similarity_threshold=threshold,
+        scores=scores,
+        outfile=outfile,
+        num_sim_workers=2
     )
 
 
@@ -410,6 +443,7 @@ def test_find_duplicates_dict_recursive_warning(cnn, mocker):
         min_similarity_threshold=threshold,
         scores=scores,
         outfile=outfile,
+        num_sim_workers=cpu_count()
     )
 
 
@@ -448,6 +482,7 @@ def test_find_duplicates_to_remove_outfile_false(cnn, mocker, mocker_save_json):
         min_similarity_threshold=threshold,
         scores=False,
         recursive=False,
+        num_sim_workers=cpu_count()
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     mocker_save_json.assert_not_called()
@@ -478,6 +513,7 @@ def test_find_duplicates_to_remove_outfile_true(cnn, mocker, mocker_save_json):
         min_similarity_threshold=threshold,
         scores=False,
         recursive=False,
+        num_sim_workers=cpu_count()
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     mocker_save_json.assert_called_once_with(ret_val_get_files_to_remove, outfile)
@@ -508,6 +544,7 @@ def test_find_duplicates_to_remove_encoding_map(cnn, mocker, mocker_save_json):
         min_similarity_threshold=threshold,
         scores=False,
         recursive=False,
+        num_sim_workers=cpu_count()
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     mocker_save_json.assert_called_once_with(ret_val_get_files_to_remove, outfile)
