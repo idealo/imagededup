@@ -181,11 +181,15 @@ def test_encode_images_accepts_non_posixpath(hasher, mocker_encode_image):
 
 
 def test_encode_images_finds_recursive(hasher, mocker_encode_image):
-    assert len(hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED, True)) == 6  # 6 files in total
+    assert (
+        len(hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED, True)) == 6
+    )  # 6 files in total
 
 
 def test_encode_images_finds_non_recursive(hasher, mocker_encode_image):
-    assert len(hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED)) == 2  # 2 files in the directory
+    assert (
+        len(hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED)) == 2
+    )  # 2 files in the directory
 
 
 def test_encode_images_rejects_non_directory_paths(hasher):
@@ -211,20 +215,30 @@ def test_recursive_on_flat_directory():
 def test_recursive_disabled_by_default():
     hasher = PHash()
     hashes = hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED)
-    hashes_non_recursive = hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED, recursive=False)
+    hashes_non_recursive = hasher.encode_images(
+        PATH_IMAGE_DIR_MIXED_NESTED, recursive=False
+    )
     assert hashes_non_recursive == hashes
 
 
-# from imagededup.utils.general_utils import parallelise
-# import unittest.mock as mock
-# parallelise = mock.create_autospec(parallelise)
-
-def test_encode_images_parallelise_with_num_workers(mocker):
+def test_encode_images_parallelise_with_num_workers(hasher, mocker):
     num_enc_workers = 8
     par_mock = mocker.patch('imagededup.methods.hashing.parallelise')
-    hasher = PHash()
-    hash = hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED, num_enc_workers=num_enc_workers)
-    par_mock.assert_called_once_with(function=Hashing.encode_image, data=[], verbose=True, num_workers=num_enc_workers)
+    generate_files_mock = mocker.patch(
+        'imagededup.methods.hashing.generate_files', return_value=['1.jpg', '2.jpg']
+    )
+    generate_rel_names_mock = mocker.patch(
+        'imagededup.methods.hashing.generate_relative_names'
+    )
+    hash = hasher.encode_images(
+        PATH_IMAGE_DIR_MIXED_NESTED, num_enc_workers=num_enc_workers
+    )
+    par_mock.assert_called_once_with(
+        function=hasher.encode_image,
+        data=['1.jpg', '2.jpg'],
+        verbose=True,
+        num_workers=num_enc_workers,
+    )
 
 
 def test_hash_func(hasher, mocker):
@@ -265,7 +279,7 @@ def test__find_duplicates_dict_outfile_none(mocker):
         verbose=verbose,
         threshold=threshold,
         search_method='brute_force_cython',
-        num_dist_workers=cpu_count()
+        num_dist_workers=cpu_count(),
     )
     hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
     save_json_mocker.assert_not_called()
@@ -279,8 +293,7 @@ def test__find_duplicates_dict_num_dist_workers_has_impact(mocker):
     hasheval_mocker = mocker.patch('imagededup.methods.hashing.HashEval')
 
     myhasher._find_duplicates_dict(
-        encoding_map=encoding_map,
-        num_dist_workers=num_dist_workers
+        encoding_map=encoding_map, num_dist_workers=num_dist_workers
     )
     hasheval_mocker.assert_called_with(
         test=encoding_map,
@@ -289,7 +302,7 @@ def test__find_duplicates_dict_num_dist_workers_has_impact(mocker):
         verbose=True,
         threshold=10,
         search_method='brute_force_cython',
-        num_dist_workers=num_dist_workers
+        num_dist_workers=num_dist_workers,
     )
 
 
@@ -314,7 +327,7 @@ def test__find_duplicates_dict_outfile_none_verbose(hasher, mocker):
         verbose=True,
         threshold=threshold,
         search_method='brute_force_cython',
-        num_dist_workers=cpu_count()
+        num_dist_workers=cpu_count(),
     )
     hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
     save_json_mocker.assert_not_called()
@@ -346,7 +359,7 @@ def test__find_duplicates_dict_outfile_true(hasher, mocker):
         verbose=verbose,
         threshold=threshold,
         search_method='brute_force_cython',
-        num_dist_workers=cpu_count()
+        num_dist_workers=cpu_count(),
     )
     hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
     save_json_mocker.assert_called_once_with(
@@ -381,14 +394,16 @@ def test__find_duplicates_dir(hasher, mocker):
         outfile=outfile,
         search_method='brute_force_cython',
     )
-    encode_images_mocker.assert_called_once_with(PATH_IMAGE_DIR, recursive=False, num_enc_workers=cpu_count())
+    encode_images_mocker.assert_called_once_with(
+        PATH_IMAGE_DIR, recursive=False, num_enc_workers=cpu_count()
+    )
     find_dup_dict_mocker.assert_called_once_with(
         encoding_map=encoding_map,
         max_distance_threshold=threshold,
         scores=scores,
         outfile=outfile,
         search_method='brute_force_cython',
-        num_dist_workers=cpu_count()
+        num_dist_workers=cpu_count(),
     )
 
 
@@ -426,7 +441,7 @@ def test_find_duplicates_dir(hasher, mocker, mocker_hamming_distance):
         search_method='brute_force_cython',
         recursive=False,
         num_enc_workers=cpu_count(),
-        num_dist_workers=cpu_count()
+        num_dist_workers=cpu_count(),
     )
 
 
@@ -441,7 +456,7 @@ def test_find_duplicates_dir_multiprocessing_has_impact(hasher, mocker):
     hasher.find_duplicates(
         image_dir=PATH_IMAGE_DIR,
         num_enc_workers=num_enc_workers,
-        num_dist_workers=num_dist_workers
+        num_dist_workers=num_dist_workers,
     )
     find_dup_dir_mocker.assert_called_once_with(
         image_dir=PATH_IMAGE_DIR,
@@ -451,7 +466,7 @@ def test_find_duplicates_dir_multiprocessing_has_impact(hasher, mocker):
         search_method='brute_force_cython',
         recursive=False,
         num_enc_workers=num_enc_workers,
-        num_dist_workers=num_dist_workers
+        num_dist_workers=num_dist_workers,
     )
 
 
@@ -478,7 +493,7 @@ def test_find_duplicates_dict(hasher, mocker, mocker_hamming_distance):
         scores=scores,
         outfile=outfile,
         search_method='brute_force_cython',
-        num_dist_workers=cpu_count()
+        num_dist_workers=cpu_count(),
     )
 
 
@@ -515,7 +530,7 @@ def test_find_duplicates_to_remove_outfile_false(hasher, mocker):
         scores=False,
         recursive=False,
         num_enc_workers=cpu_count(),
-        num_dist_workers=cpu_count()
+        num_dist_workers=cpu_count(),
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     save_json_mocker.assert_not_called()
@@ -548,7 +563,7 @@ def test_find_duplicates_to_remove_outfile_true(hasher, mocker):
         scores=False,
         recursive=False,
         num_enc_workers=cpu_count(),
-        num_dist_workers=cpu_count()
+        num_dist_workers=cpu_count(),
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     save_json_mocker.assert_called_once_with(ret_val_get_files_to_remove, outfile)
@@ -580,7 +595,7 @@ def test_find_duplicates_to_remove_encoding_map(hasher, mocker):
         scores=False,
         recursive=False,
         num_enc_workers=cpu_count(),
-        num_dist_workers=cpu_count()
+        num_dist_workers=cpu_count(),
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     save_json_mocker.assert_not_called()
@@ -591,13 +606,11 @@ def test_find_duplicates_to_remove_multiprocessing_has_impact(hasher, mocker):
     num_enc_workers = 2
     num_dist_workers = 8
 
-    find_dup_mocker = mocker.patch(
-        'imagededup.methods.hashing.Hashing.find_duplicates'
-    )
+    find_dup_mocker = mocker.patch('imagededup.methods.hashing.Hashing.find_duplicates')
     hasher.find_duplicates_to_remove(
         image_dir=PATH_IMAGE_DIR,
         num_enc_workers=num_enc_workers,
-        num_dist_workers=num_dist_workers
+        num_dist_workers=num_dist_workers,
     )
     find_dup_mocker.assert_called_once_with(
         image_dir=PATH_IMAGE_DIR,
@@ -606,8 +619,9 @@ def test_find_duplicates_to_remove_multiprocessing_has_impact(hasher, mocker):
         scores=False,
         recursive=False,
         num_enc_workers=num_enc_workers,
-        num_dist_workers=num_dist_workers
+        num_dist_workers=num_dist_workers,
     )
+
 
 # Integration tests
 
@@ -806,9 +820,7 @@ def test_find_duplicates_encoding_map_recursive_warning():
     phasher = PHash()
     with pytest.warns(SyntaxWarning):
         duplicate_dict = phasher.find_duplicates(
-                encoding_map=encoding,
-                max_distance_threshold=10,
-                recursive=True
+            encoding_map=encoding, max_distance_threshold=10, recursive=True
         )
         assert isinstance(duplicate_dict, dict)
         assert isinstance(list(duplicate_dict.values())[0], list)
@@ -826,6 +838,7 @@ def test_find_duplicates_to_remove_dir():
     assert removal_list == ['ukbench00120.jpg'] or removal_list == [
         'ukbench00120_resize.jpg'
     ]
+
 
 def test_find_duplicates_to_remove_nested_dir():
     phasher = PHash()

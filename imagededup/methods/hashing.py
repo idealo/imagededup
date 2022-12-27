@@ -157,7 +157,7 @@ class Hashing:
 
         logger.info(f'Start: Calculating hashes...')
 
-        hashes = parallelise(self.encode_image, files, self.verbose, num_workers=num_enc_workers)
+        hashes = parallelise(function=self.encode_image, data=files, verbose=self.verbose, num_workers=num_enc_workers)
         hash_initial_dict = dict(zip(generate_relative_names(image_dir, files), hashes))
         hash_dict = {
             k: v for k, v in hash_initial_dict.items() if v
