@@ -42,8 +42,7 @@ def get_cosine_similarity(
                 num_workers
             )
         else:
-            cos_sim = tuple(cosine_similarity_chunk((X, idxs)) for idxs in zip(tqdm(start_idxs, end_idxs)))
-
+            cos_sim = tuple(cosine_similarity_chunk((X, idxs)) for idxs in tqdm(zip(start_idxs, end_idxs), total=len(start_idxs)))
         return np.vstack(cos_sim)
 
 

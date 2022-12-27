@@ -54,13 +54,14 @@ def img_dataloader(
     image_dir: PurePath,
     batch_size: int,
     basenet_preprocess: Callable[[np.array], torch.tensor],
-    recursive: Optional[bool]
+    recursive: Optional[bool],
+    num_workers: int
 ) -> DataLoader:
     img_dataset = ImgDataset(
         image_dir=image_dir, basenet_preprocess=basenet_preprocess, recursive=recursive
     )
     return DataLoader(
-        dataset=img_dataset, batch_size=batch_size, collate_fn=_collate_fn
+        dataset=img_dataset, batch_size=batch_size, collate_fn=_collate_fn, num_workers=num_workers
     )
 
 

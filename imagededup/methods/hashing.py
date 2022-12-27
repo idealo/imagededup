@@ -309,6 +309,9 @@ class Hashing:
         elif encoding_map:
             if recursive:
                 warnings.warn('recursive parameter is irrelevant when using encodings.', SyntaxWarning)
+            
+            warnings.warn('Parameter num_enc_workers has no effect since encodings are already provided', RuntimeWarning)
+            
             result = self._find_duplicates_dict(
                 encoding_map=encoding_map,
                 max_distance_threshold=max_distance_threshold,
@@ -329,8 +332,8 @@ class Hashing:
         outfile: Optional[str] = None,
         search_method: str = 'brute_force_cython' if not sys.platform == 'win32' else 'bktree',
         recursive: Optional[bool] = False,
-        num_dist_workers: int = cpu_count(),
-        num_enc_workers: int = cpu_count()
+        num_enc_workers: int = cpu_count(),
+        num_dist_workers: int = cpu_count()
     ) -> Dict:
         """
         Take in path of the directory in which duplicates are to be detected below the given hamming distance

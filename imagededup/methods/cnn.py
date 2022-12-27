@@ -1,4 +1,5 @@
 from pathlib import Path, PurePath
+import sys
 from typing import Dict, List, Optional, Union
 import warnings
 
@@ -107,7 +108,7 @@ class CNN:
         return img_features_tensor.detach().numpy()[..., 0, 0]
 
     def _get_cnn_features_batch(
-        self, image_dir: PurePath, recursive: Optional[bool] = False
+        self, image_dir: PurePath, recursive: Optional[bool] = False, num_workers: int = 0
     ) -> Dict[str, np.ndarray]:
         """
         Generate CNN encodings for all images in a given directory of images.
@@ -123,7 +124,8 @@ class CNN:
             image_dir=image_dir,
             batch_size=self.batch_size,
             basenet_preprocess=self.apply_mobilenet_preprocess,
-            recursive=recursive
+            recursive=recursive,
+            num_workers=num_workers
         )
 
         feat_arr, all_filenames = [], []
@@ -206,7 +208,7 @@ class CNN:
         )
 
     def encode_images(
-        self, image_dir: Union[PurePath, str], recursive: Optional[bool] = False,
+        self, image_dir: Union[PurePath, str], recursive: Optional[bool] = False, num_enc_workers: int = 0
     ) -> Dict:
         """Generate CNN encodings for all images in a given directory of images.
 
@@ -227,8 +229,12 @@ class CNN:
 
         if not image_dir.is_dir():
             raise ValueError('Please provide a valid directory path!')
+        
+        if num_enc_workers!=0 and sys.platform!='linux':
+            num_enc_workers = 0
+            self.logger.info(f'Setting num_enc_workers to 0, CNN encoding generation can only be parallelized on linux platform ..')
 
-        return self._get_cnn_features_batch(image_dir, recursive)
+        return self._get_cnn_features_batch(image_dir=image_dir, recursive=recursive, num_workers=num_enc_workers)
 
     @staticmethod
     def _check_threshold_bounds(thresh: float) -> None:
@@ -316,6 +322,7 @@ class CNN:
         scores: bool,
         outfile: Optional[str] = None,
         recursive: Optional[bool] = False,
+        num_enc_workers: int = 0,
         num_sim_workers: int = cpu_count()
     ) -> Dict:
         """
@@ -337,7 +344,7 @@ class CNN:
             if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
             'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
         """
-        self.encode_images(image_dir=image_dir, recursive=recursive)
+        self.encode_images(image_dir=image_dir, recursive=recursive, num_enc_workers=num_enc_workers)
 
         return self._find_duplicates_dict(
             encoding_map=self.encoding_map,
@@ -355,6 +362,7 @@ class CNN:
         scores: bool = False,
         outfile: Optional[str] = None,
         recursive: Optional[bool] = False,
+        num_enc_workers: int = 0,
         num_sim_workers: int = cpu_count()
     ) -> Dict:
         """
@@ -404,6 +412,7 @@ class CNN:
                 scores=scores,
                 outfile=outfile,
                 recursive=recursive,
+                num_enc_workers=num_enc_workers,
                 num_sim_workers=num_sim_workers
             )
         elif encoding_map:
@@ -412,6 +421,7 @@ class CNN:
                     'recursive parameter is irrelevant when using encodings.',
                     SyntaxWarning,
                 )
+            warnings.warn('Parameter num_enc_workers has no effect since encodings are already provided', RuntimeWarning)
             result = self._find_duplicates_dict(
                 encoding_map=encoding_map,
                 min_similarity_threshold=min_similarity_threshold,
@@ -432,6 +442,7 @@ class CNN:
         min_similarity_threshold: float = 0.9,
         outfile: Optional[str] = None,
         recursive: Optional[bool] = False,
+        num_enc_workers: int = 0,
         num_sim_workers: int = cpu_count()
     ) -> List:
         """
@@ -472,6 +483,7 @@ class CNN:
                 min_similarity_threshold=min_similarity_threshold,
                 scores=False,
                 recursive=recursive,
+                num_enc_workers=num_enc_workers,
                 num_sim_workers=num_sim_workers
             )
 

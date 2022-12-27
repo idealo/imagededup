@@ -21,6 +21,7 @@ def _init_dataloader(imdir: PurePath, recursive: bool) -> torch.utils.data.DataL
         batch_size=TEST_BATCH_SIZE,
         basenet_preprocess=cnn.apply_mobilenet_preprocess,
         recursive=recursive,
+        num_workers=0
     )
     return dataloader
 
