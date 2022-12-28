@@ -237,6 +237,7 @@ def test_encode_images(cnn):
         cnn.encode_images('abc')
 
 
+@pytest.mark.skipif(sys.platform == 'win32' or sys.platform == 'darwin', reason='CNN encoding parallelization not supported on Windows/mac.')
 def test_encode_images_num_workers(cnn, mocker):
     num_enc_workers = 4
     gen_batches_mocker = mocker.patch('imagededup.methods.cnn.CNN._get_cnn_features_batch')

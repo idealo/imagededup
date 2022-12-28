@@ -285,6 +285,7 @@ def test__find_duplicates_dict_outfile_none(mocker):
     save_json_mocker.assert_not_called()
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason='Does not run on Windows.')
 def test__find_duplicates_dict_num_dist_workers_has_impact(mocker):
     encoding_map = {'1.jpg': '123456'}
     num_dist_workers = 2

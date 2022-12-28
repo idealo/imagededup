@@ -20,7 +20,11 @@ def cosine_similarity_chunk(t: Tuple) -> np.ndarray:
 
 
 def get_cosine_similarity(
-    X: np.ndarray, verbose: bool = True, chunk_size: int = 1000, threshold: int = 10000, num_workers: int = 0
+    X: np.ndarray,
+    verbose: bool = True,
+    chunk_size: int = 1000,
+    threshold: int = 10000,
+    num_workers: int = 0,
 ) -> np.ndarray:
     n_rows = X.shape[0]
 
@@ -39,10 +43,13 @@ def get_cosine_similarity(
                 cosine_similarity_chunk,
                 [(X, idxs) for i, idxs in enumerate(zip(start_idxs, end_idxs))],
                 verbose,
-                num_workers
+                num_workers,
             )
         else:
-            cos_sim = tuple(cosine_similarity_chunk((X, idxs)) for idxs in tqdm(zip(start_idxs, end_idxs), total=len(start_idxs)))
+            cos_sim = tuple(
+                cosine_similarity_chunk((X, idxs))
+                for idxs in tqdm(zip(start_idxs, end_idxs), total=len(start_idxs))
+            )
         return np.vstack(cos_sim)
 
 
@@ -54,8 +61,10 @@ class HashEval:
         distance_function: Callable,
         verbose: bool = True,
         threshold: int = 5,
-        search_method: str = 'brute_force_cython' if not sys.platform == 'win32' else 'bktree',
-        num_dist_workers: int = cpu_count()
+        search_method: str = 'brute_force_cython'
+        if not sys.platform == 'win32'
+        else 'bktree',
+        num_dist_workers: int = cpu_count(),
     ) -> None:
         """
         Initialize a HashEval object which offers an interface to control hashing and search methods for desired
@@ -108,7 +117,9 @@ class HashEval:
                 [self.threshold] * len(self.queries),
             )
         )
-        result_map_list = parallelise(self._searcher, args, self.verbose, num_workers=self.num_dist_workers)
+        result_map_list = parallelise(
+            self._searcher, args, self.verbose, num_workers=self.num_dist_workers
+        )
         result_map = dict(zip(list(self.queries.keys()), result_map_list))
 
         self.query_results_map = {
