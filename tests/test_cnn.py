@@ -530,6 +530,7 @@ def test_find_duplicates_dict_recursive_warning(cnn, mocker):
         num_sim_workers=cpu_count()
     )
 
+
 def test_find_duplicates_dict_num_enc_workers_warning(cnn, mocker):
     encoding_map = data_encoding_map()
     find_dup_dict_mocker = mocker.patch(

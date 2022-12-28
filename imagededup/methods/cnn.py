@@ -230,9 +230,9 @@ class CNN:
         if not image_dir.is_dir():
             raise ValueError('Please provide a valid directory path!')
         
-        if num_enc_workers!=0 and sys.platform!='linux':
+        if num_enc_workers != 0 and sys.platform != 'linux':
             num_enc_workers = 0
-            self.logger.info(f'Setting num_enc_workers to 0, CNN encoding generation can only be parallelized on linux platform ..')
+            self.logger.info(f'Setting num_enc_workers to 0, CNN encoding generation parallelization support available on linux platform ..')
 
         return self._get_cnn_features_batch(image_dir=image_dir, recursive=recursive, num_workers=num_enc_workers)
 

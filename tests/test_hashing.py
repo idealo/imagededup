@@ -829,6 +829,21 @@ def test_find_duplicates_encoding_map_recursive_warning():
         assert duplicate_dict['ukbench00120.jpg'] == ['ukbench00120_resize.jpg']
 
 
+def test_find_duplicates_dict_num_enc_workers_warning():
+    encoding = {
+        'ukbench00120_resize.jpg': '9fee256239984d71',
+        'ukbench00120_rotation.jpg': '850d513c4fdcbb72',
+        'ukbench00120.jpg': '9fee256239984d71',
+        'ukbench00120_hflip.jpg': 'cabb7237e8cd3824',
+        'ukbench09268.jpg': 'c73c36c2da2f29c9',
+    }
+    phasher = PHash()
+    with pytest.warns(RuntimeWarning):
+        duplicate_dict = phasher.find_duplicates(
+            encoding_map=encoding, max_distance_threshold=10, recursive=False, num_enc_workers=4
+        )
+
+
 def test_find_duplicates_to_remove_dir():
     phasher = PHash()
 
