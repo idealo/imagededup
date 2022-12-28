@@ -48,7 +48,6 @@ class CNN:
 
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
-            num_workers: Number of cpu cores to use for multiprocessing functionality, set to number of number of logical cores in the system by default. Set to 0 to disable multiprocessing.
         """
         self.target_size = (256, 256)
         self.batch_size = 64
@@ -115,6 +114,7 @@ class CNN:
         Args:
             image_dir: Path to the image directory.
             recursive: Optional, find images recursively in a nested image directory structure.
+            num_workers: Optional, number of cpu cores to use for multiprocessing encoding generation (supported only on linux platform), set to 0 by default. 0 disables multiprocessing.
 
         Returns:
             A dictionary that contains a mapping of filenames and corresponding numpy array of CNN encodings.
@@ -215,6 +215,8 @@ class CNN:
         Args:
             image_dir: Path to the image directory.
             recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
+            num_enc_workers: Optional, number of cpu cores to use for multiprocessing encoding generation (supported only on linux platform), set to 0 by default. 0 disables multiprocessing.
+
         Returns:
             dictionary: Contains a mapping of filenames and corresponding numpy array of CNN encodings.
         Example:
@@ -271,6 +273,7 @@ class CNN:
             encoding_map: Dictionary with keys as file names and values as encoded images.
             min_similarity_threshold: Cosine similarity above which retrieved duplicates are valid.
             scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
+            num_sim_workers: Optional, number of cpu cores to use for multiprocessing similarity computation, set to number of CPUs in the system by default. 0 disables multiprocessing.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -337,6 +340,8 @@ class CNN:
                     duplicates.
             outfile: Optional, name of the file the results should be written to.
             recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
+            num_enc_workers: Optional, number of cpu cores to use for multiprocessing encoding generation (supported only on linux platform), set to 0 by default. 0 disables multiprocessing.
+            num_sim_workers: Optional, number of cpu cores to use for multiprocessing similarity computation, set to number of CPUs in the system by default. 0 disables multiprocessing.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -381,6 +386,8 @@ class CNN:
                     duplicates.
             outfile: Optional, name of the file to save the results, must be a json. Default is None.
             recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
+            num_enc_workers: Optional, number of cpu cores to use for multiprocessing encoding generation (supported only on linux platform), set to 0 by default. 0 disables multiprocessing.
+            num_sim_workers: Optional, number of cpu cores to use for multiprocessing similarity computation, set to number of CPUs in the system by default. 0 disables multiprocessing.
 
         Returns:
             dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -457,6 +464,8 @@ class CNN:
             min_similarity_threshold: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9
             outfile: Optional, name of the file to save the results, must be a json. Default is None.
             recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
+            num_enc_workers: Optional, number of cpu cores to use for multiprocessing encoding generation (supported only on linux platform), set to 0 by default. 0 disables multiprocessing.
+            num_sim_workers: Optional, number of cpu cores to use for multiprocessing similarity computation, set to number of CPUs in the system by default. 0 disables multiprocessing.
 
         Returns:
             duplicates: List of image file names that should be removed.

@@ -33,17 +33,18 @@ def test_get_cosine_similarity():
 
     # threshold not triggered
     result = get_cosine_similarity(X)
-
     np.testing.assert_array_almost_equal(result, expected)
 
     # threshold triggered
     result = get_cosine_similarity(X, threshold=20)
-
     np.testing.assert_array_almost_equal(result, expected.astype('float16'))
 
     # multiple chunks
     result = get_cosine_similarity(X, threshold=20, chunk_size=10)
+    np.testing.assert_array_almost_equal(result, expected.astype('float16'))
 
+    # multiple chunks with parallelization enabled
+    result = get_cosine_similarity(X, threshold=20, chunk_size=10, num_workers=4)
     np.testing.assert_array_almost_equal(result, expected.astype('float16'))
 
 
@@ -55,10 +56,12 @@ def test_initialization():
         queries=db,
         distance_function=HAMMING_DISTANCE_FUNCTION,
         threshold=threshold,
+        num_dist_workers=4
     )
     assert hasheval_obj.queries and hasheval_obj.test
     assert hasheval_obj.threshold == threshold
     assert hasheval_obj.distance_invoker('e064ece078d7c96a', 'a064ece078d7c96e') == 2
+    assert hasheval_obj.num_dist_workers == 4
 
 
 def test_retrieve_results_dtypes():
@@ -99,6 +102,22 @@ def test_resultset_correctness():
         'ukbench09268_2.jpg': 'ac9c72f8e1c2c448',
     }
     hasheval_obj = HashEval(db, query, HAMMING_DISTANCE_FUNCTION, threshold=3)
+    results = hasheval_obj.retrieve_results(scores=True)
+    distances = [i[1] for v in results.values() for i in v]
+    assert max(distances) == 3
+
+
+def test_resultset_correctness_with_no_parallelization():
+    query = {
+        'ukbench00120.jpg': '2b69707551f1b87a',
+        'ukbench09268.jpg': 'ac9c72f8e1c2c448',
+    }
+    db = {
+        'ukbench00120_fake.jpg': '2b69707551f1b87d',
+        'ukbench00120_resize.jpg': '2b69707551f1b87a',
+        'ukbench09268_2.jpg': 'ac9c72f8e1c2c448',
+    }
+    hasheval_obj = HashEval(db, query, HAMMING_DISTANCE_FUNCTION, threshold=3, num_dist_workers=0)
     results = hasheval_obj.retrieve_results(scores=True)
     distances = [i[1] for v in results.values() for i in v]
     assert max(distances) == 3

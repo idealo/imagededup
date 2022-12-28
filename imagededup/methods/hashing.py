@@ -131,13 +131,14 @@ class Hashing:
 
         return self._hash_func(image_pp) if isinstance(image_pp, np.ndarray) else None
 
-    def encode_images(self, image_dir=None, recursive=False, num_enc_workers: int = cpu_count()):
+    def encode_images(self, image_dir=None, recursive: bool = False, num_enc_workers: int = cpu_count()):
         """
         Generate hashes for all images in a given directory of images.
 
         Args:
             image_dir: Path to the image directory.
             recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
+            num_enc_workers: Optional, number of cpu cores to use for multiprocessing encoding generation, set to number of CPUs in the system by default. 0 disables multiprocessing.
 
         Returns:
             dictionary: A dictionary that contains a mapping of filenames and corresponding 64 character hash string
@@ -216,6 +217,7 @@ class Hashing:
             duplicates.
             outfile: Optional, name of the file to save the results. Default is None.
             search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython for Unix else bktree.
+            num_dist_workers: Optional, number of cpu cores to use for multiprocessing distance computation, set to number of CPUs in the system by default. 0 disables multiprocessing.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -272,6 +274,8 @@ class Hashing:
             outfile: Optional, name of the file to save the results, must be a json. Default is None.
             search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython for Unix else bktree.
             recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
+            num_enc_workers: Optional, number of cpu cores to use for multiprocessing encoding generation, set to number of CPUs in the system by default. 0 disables multiprocessing.
+            num_dist_workers: Optional, number of cpu cores to use for multiprocessing distance computation, set to number of CPUs in the system by default. 0 disables multiprocessing.
 
         Returns:
             duplicates dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -347,6 +351,8 @@ class Hashing:
             outfile: Name of the file the results should be written to.
             search_method: Algorithm used to retrieve duplicates. Default is brute_force_cython for Unix else bktree.
             recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
+            num_enc_workers: Optional, number of cpu cores to use for multiprocessing encoding generation, set to number of CPUs in the system by default. 0 disables multiprocessing.
+            num_dist_workers: Optional, number of cpu cores to use for multiprocessing distance computation, set to number of CPUs in the system by default. 0 disables multiprocessing.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -388,6 +394,8 @@ class Hashing:
                                     valid. (must be an int between 0 and 64). Default is 10.
             outfile: Optional, name of the file to save the results, must be a json. Default is None.
             recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
+            num_enc_workers: Optional, number of cpu cores to use for multiprocessing encoding generation, set to number of CPUs in the system by default. 0 disables multiprocessing.
+            num_dist_workers: Optional, number of cpu cores to use for multiprocessing distance computation, set to number of CPUs in the system by default. 0 disables multiprocessing.
 
         Returns:
             duplicates: List of image file names that are found to be duplicate of me other file in the directory.
