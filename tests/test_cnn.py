@@ -90,6 +90,7 @@ def test__get_cnn_features_batch(cnn):
         'ukbench09380.jpeg',
         'ukbench09380.png',
         'ukbench09380.svg',
+        'ukbench09380.webp',
     ]
 
     assert list(sorted(result.keys(), key=str.lower)) == expected_predicted_files
@@ -182,6 +183,7 @@ def test_encode_images(cnn):
         'ukbench09380.jpeg',
         'ukbench09380.png',
         'ukbench09380.svg',
+        'ukbench09380.webp',
     ]
 
     assert list(sorted(result.keys(), key=str.lower)) == expected_predicted_files
@@ -203,6 +205,7 @@ def test_encode_images(cnn):
         'ukbench09380.jpeg',
         'ukbench09380.png',
         'ukbench09380.svg',
+        'ukbench09380.webp',
     ]
 
     assert list(sorted(result.keys(), key=str.lower)) == expected_predicted_files
