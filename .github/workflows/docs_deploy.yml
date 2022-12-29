@@ -1,0 +1,27 @@
+name: Build and Deploy documentation
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+permissions:
+  contents: write
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Install mkdocs dependencies and Build 🔧
+        run: |
+          pip install mkdocs mkdocs-material
+          cd mkdocs
+          sh build_docs.sh
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs # The folder the action should deploy.

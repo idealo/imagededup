@@ -18,7 +18,7 @@ functionality provided by the package:
 
 Read the documentation at: https://idealo.github.io/imagededup/
 
-imagededup is compatible with Python 3.6+ and runs on Linux, MacOS X and Windows. 
+imagededup is compatible with Python 3.8+ and runs on Linux, MacOS X and Windows. 
 It is distributed under the Apache 2.0 license.
 '''
 
@@ -89,18 +89,19 @@ else:
 
 setup(
     name='imagededup',
-    version='0.2.4',
+    version='0.3.0',
     author='Tanuj Jain, Christopher Lennan, Zubin John, Dat Tran',
     author_email='tanuj.jain.10@gmail.com, christopherlennan@gmail.com, zrjohn@yahoo.com, datitran@gmail.com',
     description='Package for image deduplication',
     long_description=long_description,
     license='Apache 2.0',
     install_requires=[
-        'tensorflow>1.0',
-        'Pillow<7.0.0',
+        'torch',
+        'torchvision',
+        'Pillow>=9.0',
         'tqdm',
         'scikit-learn',
-        'PyWavelets~=1.1.1',
+        'PyWavelets',
         'matplotlib'
     ],
     extras_require={
@@ -118,9 +119,9 @@ setup(
         'Operating System :: Microsoft :: Windows',
         'Programming Language :: Cython',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Topic :: Software Development :: Libraries',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],

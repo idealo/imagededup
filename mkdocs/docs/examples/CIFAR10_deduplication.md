@@ -91,5 +91,3 @@ duplicates_test_train = {k: v for k, v in sorted(duplicates_test_train.items(), 
 # plot duplicates found for some file
 plot_duplicates(image_dir=image_dir, duplicate_map=duplicates_test_train, filename=list(duplicates_test_train.keys())[0])
 ```
-
-For more examples, refer [this](https://github.com/idealo/imagededup/tree/master/examples) part of the repository. 
