@@ -65,10 +65,8 @@ class CNN:
             'Initialized: MobileNet v3 pretrained on ImageNet dataset sliced at GAP layer'
         )
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        if self.device.type == 'cuda':
-            self.logger.info('Device set to cuda ..')
-        else:
-            self.logger.info('Device set to cpu ..')
+        self.logger.info(f'Device set to {self.device} ..')
+        
         self.model.to(self.device)
 
         self.transform = transforms.Compose(
