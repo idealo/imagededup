@@ -1,3 +1,5 @@
+import sys
+from multiprocessing import cpu_count
 from pathlib import Path
 
 import os
@@ -98,6 +100,26 @@ def test__get_cnn_features_batch(cnn):
         assert isinstance(i, np.ndarray)
         assert i.shape == (576,)
 
+
+@pytest.mark.skipif(sys.platform == 'win32' or sys.platform == 'darwin', reason='runs only on linux.')
+def test__get_cnn_features_batch_num_workers_do_not_change_final_result(cnn):
+
+    result = cnn._get_cnn_features_batch(TEST_IMAGE_DIR, num_workers=4)
+
+    expected_predicted_files = [
+        'ukbench00120.jpg',
+        'ukbench01380.jpg',
+        'ukbench08976.jpg',
+        'ukbench08996.jpg',
+        'ukbench09012.jpg',
+        'ukbench09040.jpg',
+        'ukbench09060.jpg',
+        'ukbench09268.jpg',
+        'ukbench09348.jpg',
+        'ukbench09380.jpg',
+    ]
+
+    assert list(sorted(result.keys(), key=str.lower)) == expected_predicted_files
 
 # encode_image
 
@@ -215,6 +237,22 @@ def test_encode_images(cnn):
         cnn.encode_images('abc')
 
 
+@pytest.mark.skipif(sys.platform == 'win32' or sys.platform == 'darwin', reason='CNN encoding parallelization not supported on Windows/mac.')
+def test_encode_images_num_workers(cnn, mocker):
+    num_enc_workers = 4
+    gen_batches_mocker = mocker.patch('imagededup.methods.cnn.CNN._get_cnn_features_batch')
+    result = cnn.encode_images(TEST_IMAGE_DIR, num_enc_workers=num_enc_workers)
+    gen_batches_mocker.assert_called_once_with(image_dir=TEST_IMAGE_DIR, recursive=False, num_workers=num_enc_workers)
+    
+
+@pytest.mark.skipif(sys.platform =='linux', reason='This test checks multiprocessing override on non-linux platforms.')
+def test_encode_images_num_workers_default_override_on_nonlinux(cnn, mocker):
+    num_enc_workers = 4
+    gen_batches_mocker = mocker.patch('imagededup.methods.cnn.CNN._get_cnn_features_batch')
+    result = cnn.encode_images(TEST_IMAGE_DIR, num_enc_workers=num_enc_workers)
+    gen_batches_mocker.assert_called_once_with(image_dir=TEST_IMAGE_DIR, recursive=False, num_workers=0)
+
+
 def test_recursive_on_flat_directory(cnn):
     result = cnn.encode_images(TEST_IMAGE_DIR, recursive=True)
 
@@ -312,11 +350,12 @@ def test__find_duplicates_dict_outfile_true(cnn, mocker_save_json):
 # _find_duplicates_dir
 
 
-def test__find_duplicates_dir(cnn, mocker):
+def test_find_duplicates_dir(cnn, mocker):
     encoding_map = data_encoding_map()
     threshold = 0.8
     scores = True
     outfile = True
+    num_sim_workers = 2
     ret_val_find_dup_dict = {
         'filename1.jpg': [('dup1.jpg', 0.82)],
         'filename2.jpg': [('dup2.jpg', 0.90)],
@@ -332,23 +371,72 @@ def test__find_duplicates_dir(cnn, mocker):
         min_similarity_threshold=threshold,
         scores=scores,
         outfile=outfile,
+        num_enc_workers=0,
+        num_sim_workers=num_sim_workers
     )
-    encode_images_mocker.assert_called_once_with(image_dir=TEST_IMAGE_DIR, recursive=False)
+    encode_images_mocker.assert_called_once_with(image_dir=TEST_IMAGE_DIR, recursive=False, num_enc_workers=0)
     find_dup_dict_mocker.assert_called_once_with(
         encoding_map=cnn.encoding_map,
         min_similarity_threshold=threshold,
         scores=scores,
         outfile=outfile,
+        num_sim_workers=num_sim_workers
     )
 
-
+def test_find_duplicates_dir_num_enc_workers(cnn, mocker):
+    num_enc_workers = 2
+    
+    cnn.encoding_map = data_encoding_map()
+    ret_val_find_dup_dict = {
+        'filename1.jpg': [('dup1.jpg', 0.82)],
+        'filename2.jpg': [('dup2.jpg', 0.90)],
+    }
+    encode_images_mocker = mocker.patch('imagededup.methods.cnn.CNN.encode_images')
+    find_dup_dict_mocker = mocker.patch(
+        'imagededup.methods.cnn.CNN._find_duplicates_dict',
+        return_value=ret_val_find_dup_dict,
+    )
+    cnn._find_duplicates_dir(
+        image_dir=TEST_IMAGE_DIR,
+        min_similarity_threshold=0.9,
+        scores=False,
+        num_enc_workers=num_enc_workers,
+        num_sim_workers=cpu_count()
+    )
+    encode_images_mocker.assert_called_once_with(image_dir=TEST_IMAGE_DIR, recursive=False, num_enc_workers=num_enc_workers)
+    
+def test_find_duplicates_mp(cnn, mocker):
+    num_enc_workers = 2
+    num_sim_workers= 8
+    
+    find_dup_dir_mocker = mocker.patch(
+        'imagededup.methods.cnn.CNN._find_duplicates_dir',
+        return_value={'1.jpg': '2.jpg',
+                      '2.jpg': '1.jpg'},
+    )
+    cnn.find_duplicates(
+        image_dir=TEST_IMAGE_DIR,
+        min_similarity_threshold=0.9,
+        scores=False,
+        num_enc_workers=num_enc_workers,
+        num_sim_workers=num_sim_workers
+    )
+    find_dup_dir_mocker.assert_called_once_with(image_dir=TEST_IMAGE_DIR,
+        min_similarity_threshold=0.9,
+        scores=False,
+        outfile= None,
+        recursive=False,
+        num_enc_workers=num_enc_workers,
+        num_sim_workers=num_sim_workers)
+    
 # find_duplicates
 
 
-def test_find_duplicates_dir(cnn, mocker):
+def test_find_duplicates_with_dir(cnn, mocker):
     threshold = 0.9
     scores = True
     outfile = True
+    num_sim_workers = 2
     find_dup_dir_mocker = mocker.patch(
         'imagededup.methods.cnn.CNN._find_duplicates_dir'
     )
@@ -357,6 +445,7 @@ def test_find_duplicates_dir(cnn, mocker):
         min_similarity_threshold=threshold,
         outfile=outfile,
         scores=scores,
+        num_sim_workers=num_sim_workers
     )
     find_dup_dir_mocker.assert_called_once_with(
         image_dir=TEST_IMAGE_DIR,
@@ -364,6 +453,8 @@ def test_find_duplicates_dir(cnn, mocker):
         scores=scores,
         outfile=outfile,
         recursive=False,
+        num_enc_workers=0,
+        num_sim_workers=num_sim_workers
     )
 
 
@@ -380,12 +471,38 @@ def test_find_duplicates_dict(cnn, mocker):
         min_similarity_threshold=threshold,
         outfile=outfile,
         scores=scores,
+        num_sim_workers=cpu_count()
     )
     find_dup_dict_mocker.assert_called_once_with(
         encoding_map=encoding_map,
         min_similarity_threshold=threshold,
         scores=scores,
         outfile=outfile,
+        num_sim_workers=cpu_count()
+    )
+
+
+def test_find_duplicates_dict_num_worker_has_impact(cnn, mocker):
+    encoding_map = data_encoding_map()
+    threshold = 0.9
+    scores = True
+    outfile = True
+    find_dup_dict_mocker = mocker.patch(
+        'imagededup.methods.cnn.CNN._find_duplicates_dict'
+    )
+    cnn.find_duplicates(
+        encoding_map=encoding_map,
+        min_similarity_threshold=threshold,
+        outfile=outfile,
+        scores=scores,
+        num_sim_workers=2
+    )
+    find_dup_dict_mocker.assert_called_once_with(
+        encoding_map=encoding_map,
+        min_similarity_threshold=threshold,
+        scores=scores,
+        outfile=outfile,
+        num_sim_workers=2
     )
 
 
@@ -410,6 +527,26 @@ def test_find_duplicates_dict_recursive_warning(cnn, mocker):
         min_similarity_threshold=threshold,
         scores=scores,
         outfile=outfile,
+        num_sim_workers=cpu_count()
+    )
+
+
+def test_find_duplicates_dict_num_enc_workers_warning(cnn, mocker):
+    encoding_map = data_encoding_map()
+    find_dup_dict_mocker = mocker.patch(
+        'imagededup.methods.cnn.CNN._find_duplicates_dict'
+    )
+    with pytest.warns(RuntimeWarning):
+        cnn.find_duplicates(
+            encoding_map=encoding_map,
+            num_enc_workers=2
+        )
+    find_dup_dict_mocker.assert_called_once_with(
+        encoding_map=encoding_map,
+        min_similarity_threshold=0.9,
+        scores=False,
+        outfile=None,
+        num_sim_workers=cpu_count()
     )
 
 
@@ -448,6 +585,8 @@ def test_find_duplicates_to_remove_outfile_false(cnn, mocker, mocker_save_json):
         min_similarity_threshold=threshold,
         scores=False,
         recursive=False,
+        num_enc_workers=0,
+        num_sim_workers=cpu_count()
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     mocker_save_json.assert_not_called()
@@ -478,6 +617,8 @@ def test_find_duplicates_to_remove_outfile_true(cnn, mocker, mocker_save_json):
         min_similarity_threshold=threshold,
         scores=False,
         recursive=False,
+        num_enc_workers=0,
+        num_sim_workers=cpu_count()
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     mocker_save_json.assert_called_once_with(ret_val_get_files_to_remove, outfile)
@@ -508,6 +649,8 @@ def test_find_duplicates_to_remove_encoding_map(cnn, mocker, mocker_save_json):
         min_similarity_threshold=threshold,
         scores=False,
         recursive=False,
+        num_enc_workers=0,
+        num_sim_workers=cpu_count()
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     mocker_save_json.assert_called_once_with(ret_val_get_files_to_remove, outfile)

@@ -1,8 +1,10 @@
+from multiprocessing import cpu_count
 import sys
 from typing import Callable, Dict, Union, Tuple
 
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+from tqdm import tqdm
 
 from imagededup.handlers.search.bktree import BKTree
 from imagededup.handlers.search.brute_force import BruteForce
@@ -14,11 +16,15 @@ logger = return_logger(__name__)
 
 
 def cosine_similarity_chunk(t: Tuple) -> np.ndarray:
-    return cosine_similarity(t[0][t[1][0] : t[1][1]], t[0]).astype('float16')
+    return cosine_similarity(t[0][t[1][0]: t[1][1]], t[0]).astype('float16')
 
 
 def get_cosine_similarity(
-    X: np.ndarray, verbose: bool = True, chunk_size: int = 1000, threshold: int = 10000
+    X: np.ndarray,
+    verbose: bool = True,
+    chunk_size: int = 1000,
+    threshold: int = 10000,
+    num_workers: int = 0,
 ) -> np.ndarray:
     n_rows = X.shape[0]
 
@@ -31,12 +37,19 @@ def get_cosine_similarity(
         )
         start_idxs = list(range(0, n_rows, chunk_size))
         end_idxs = start_idxs[1:] + [n_rows]
-        cos_sim = parallelise(
-            cosine_similarity_chunk,
-            [(X, idxs) for i, idxs in enumerate(zip(start_idxs, end_idxs))],
-            verbose,
-        )
 
+        if num_workers > 0:
+            cos_sim = parallelise(
+                cosine_similarity_chunk,
+                [(X, idxs) for i, idxs in enumerate(zip(start_idxs, end_idxs))],
+                verbose,
+                num_workers,
+            )
+        else:
+            cos_sim = tuple(
+                cosine_similarity_chunk((X, idxs))
+                for idxs in tqdm(zip(start_idxs, end_idxs), total=len(start_idxs))
+            )
         return np.vstack(cos_sim)
 
 
@@ -48,7 +61,10 @@ class HashEval:
         distance_function: Callable,
         verbose: bool = True,
         threshold: int = 5,
-        search_method: str = 'brute_force_cython' if not sys.platform == 'win32' else 'bktree',
+        search_method: str = 'brute_force_cython'
+        if not sys.platform == 'win32'
+        else 'bktree',
+        num_dist_workers: int = cpu_count(),
     ) -> None:
         """
         Initialize a HashEval object which offers an interface to control hashing and search methods for desired
@@ -60,6 +76,7 @@ class HashEval:
         self.verbose = verbose
         self.threshold = threshold
         self.query_results_map = None
+        self.num_dist_workers = num_dist_workers
 
         if search_method == 'bktree':
             self._fetch_nearest_neighbors_bktree()
@@ -100,7 +117,9 @@ class HashEval:
                 [self.threshold] * len(self.queries),
             )
         )
-        result_map_list = parallelise(self._searcher, args, self.verbose)
+        result_map_list = parallelise(
+            self._searcher, args, self.verbose, num_workers=self.num_dist_workers
+        )
         result_map = dict(zip(list(self.queries.keys()), result_map_list))
 
         self.query_results_map = {

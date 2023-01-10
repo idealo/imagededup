@@ -1,7 +1,9 @@
 from pathlib import Path, PurePath
+import sys
 from typing import Dict, List, Optional, Union
 import warnings
 
+from multiprocessing import cpu_count
 import numpy as np
 from PIL import Image
 import torch
@@ -116,13 +118,14 @@ class CNN:
         return unpacked_img_features_tensor
 
     def _get_cnn_features_batch(
-        self, image_dir: PurePath, recursive: Optional[bool] = False
+        self, image_dir: PurePath, recursive: Optional[bool] = False, num_workers: int = 0
     ) -> Dict[str, np.ndarray]:
         """
         Generate CNN encodings for all images in a given directory of images.
         Args:
             image_dir: Path to the image directory.
             recursive: Optional, find images recursively in a nested image directory structure.
+            num_workers: Optional, number of cpu cores to use for multiprocessing encoding generation (supported only on linux platform), set to 0 by default. 0 disables multiprocessing.
 
         Returns:
             A dictionary that contains a mapping of filenames and corresponding numpy array of CNN encodings.
@@ -133,6 +136,7 @@ class CNN:
             batch_size=self.batch_size,
             basenet_preprocess=self.apply_mobilenet_preprocess,
             recursive=recursive,
+            num_workers=num_workers
         )
 
         feat_arr, all_filenames = [], []
@@ -216,13 +220,15 @@ class CNN:
         )
 
     def encode_images(
-        self, image_dir: Union[PurePath, str], recursive: Optional[bool] = False
+        self, image_dir: Union[PurePath, str], recursive: Optional[bool] = False, num_enc_workers: int = 0
     ) -> Dict:
         """Generate CNN encodings for all images in a given directory of images. Test.
 
         Args:
             image_dir: Path to the image directory.
             recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
+            num_enc_workers: Optional, number of cpu cores to use for multiprocessing encoding generation (supported only on linux platform), set to 0 by default. 0 disables multiprocessing.
+
         Returns:
             dictionary: Contains a mapping of filenames and corresponding numpy array of CNN encodings.
         Example:
@@ -237,8 +243,12 @@ class CNN:
 
         if not image_dir.is_dir():
             raise ValueError('Please provide a valid directory path!')
+        
+        if num_enc_workers != 0 and sys.platform != 'linux':
+            num_enc_workers = 0
+            self.logger.info(f'Setting num_enc_workers to 0, CNN encoding generation parallelization support available on linux platform ..')
 
-        return self._get_cnn_features_batch(image_dir, recursive)
+        return self._get_cnn_features_batch(image_dir=image_dir, recursive=recursive, num_workers=num_enc_workers)
 
     @staticmethod
     def _check_threshold_bounds(thresh: float) -> None:
@@ -264,6 +274,7 @@ class CNN:
         min_similarity_threshold: float,
         scores: bool,
         outfile: Optional[str] = None,
+        num_sim_workers: int = cpu_count()
     ) -> Dict:
         """
         Take in dictionary {filename: encoded image}, detects duplicates above the given cosine similarity threshold
@@ -274,6 +285,7 @@ class CNN:
             encoding_map: Dictionary with keys as file names and values as encoded images.
             min_similarity_threshold: Cosine similarity above which retrieved duplicates are valid.
             scores: Boolean indicating whether similarity scores are to be returned along with retrieved duplicates.
+            num_sim_workers: Optional, number of cpu cores to use for multiprocessing similarity computation, set to number of CPUs in the system by default. 0 disables multiprocessing.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -291,7 +303,7 @@ class CNN:
 
         self.logger.info('Start: Calculating cosine similarities...')
 
-        self.cosine_scores = get_cosine_similarity(features, self.verbose)
+        self.cosine_scores = get_cosine_similarity(features, self.verbose, num_workers=num_sim_workers)
 
         np.fill_diagonal(
             self.cosine_scores, 2.0
@@ -325,6 +337,8 @@ class CNN:
         scores: bool,
         outfile: Optional[str] = None,
         recursive: Optional[bool] = False,
+        num_enc_workers: int = 0,
+        num_sim_workers: int = cpu_count()
     ) -> Dict:
         """
         Take in path of the directory in which duplicates are to be detected above the given threshold.
@@ -338,6 +352,8 @@ class CNN:
                     duplicates.
             outfile: Optional, name of the file the results should be written to.
             recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
+            num_enc_workers: Optional, number of cpu cores to use for multiprocessing encoding generation (supported only on linux platform), set to 0 by default. 0 disables multiprocessing.
+            num_sim_workers: Optional, number of cpu cores to use for multiprocessing similarity computation, set to number of CPUs in the system by default. 0 disables multiprocessing.
 
         Returns:
             if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -345,13 +361,14 @@ class CNN:
             if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
             'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
         """
-        self.encode_images(image_dir=image_dir, recursive=recursive)
+        self.encode_images(image_dir=image_dir, recursive=recursive, num_enc_workers=num_enc_workers)
 
         return self._find_duplicates_dict(
             encoding_map=self.encoding_map,
             min_similarity_threshold=min_similarity_threshold,
             scores=scores,
             outfile=outfile,
+            num_sim_workers=num_sim_workers
         )
 
     def find_duplicates(
@@ -362,6 +379,8 @@ class CNN:
         scores: bool = False,
         outfile: Optional[str] = None,
         recursive: Optional[bool] = False,
+        num_enc_workers: int = 0,
+        num_sim_workers: int = cpu_count()
     ) -> Dict:
         """
         Find duplicates for each file. Take in path of the directory or encoding dictionary in which duplicates are to
@@ -379,6 +398,8 @@ class CNN:
                     duplicates.
             outfile: Optional, name of the file to save the results, must be a json. Default is None.
             recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
+            num_enc_workers: Optional, number of cpu cores to use for multiprocessing encoding generation (supported only on linux platform), set to 0 by default. 0 disables multiprocessing.
+            num_sim_workers: Optional, number of cpu cores to use for multiprocessing similarity computation, set to number of CPUs in the system by default. 0 disables multiprocessing.
 
         Returns:
             dictionary: if scores is True, then a dictionary of the form {'image1.jpg': [('image1_duplicate1.jpg',
@@ -410,6 +431,8 @@ class CNN:
                 scores=scores,
                 outfile=outfile,
                 recursive=recursive,
+                num_enc_workers=num_enc_workers,
+                num_sim_workers=num_sim_workers
             )
         elif encoding_map:
             if recursive:
@@ -417,11 +440,13 @@ class CNN:
                     'recursive parameter is irrelevant when using encodings.',
                     SyntaxWarning,
                 )
+            warnings.warn('Parameter num_enc_workers has no effect since encodings are already provided', RuntimeWarning)
             result = self._find_duplicates_dict(
                 encoding_map=encoding_map,
                 min_similarity_threshold=min_similarity_threshold,
                 scores=scores,
                 outfile=outfile,
+                num_sim_workers=num_sim_workers
             )
 
         else:
@@ -436,6 +461,8 @@ class CNN:
         min_similarity_threshold: float = 0.9,
         outfile: Optional[str] = None,
         recursive: Optional[bool] = False,
+        num_enc_workers: int = 0,
+        num_sim_workers: int = cpu_count()
     ) -> List:
         """
         Give out a list of image file names to remove based on the similarity threshold. Does not remove the mentioned
@@ -449,6 +476,8 @@ class CNN:
             min_similarity_threshold: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9
             outfile: Optional, name of the file to save the results, must be a json. Default is None.
             recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
+            num_enc_workers: Optional, number of cpu cores to use for multiprocessing encoding generation (supported only on linux platform), set to 0 by default. 0 disables multiprocessing.
+            num_sim_workers: Optional, number of cpu cores to use for multiprocessing similarity computation, set to number of CPUs in the system by default. 0 disables multiprocessing.
 
         Returns:
             duplicates: List of image file names that should be removed.
@@ -475,6 +504,8 @@ class CNN:
                 min_similarity_threshold=min_similarity_threshold,
                 scores=False,
                 recursive=recursive,
+                num_enc_workers=num_enc_workers,
+                num_sim_workers=num_sim_workers
             )
 
         files_to_remove = get_files_to_remove(duplicates)

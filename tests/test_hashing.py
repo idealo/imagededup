@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 from PIL import Image
 
+from multiprocessing import cpu_count
 import pytest
 import numpy as np
 
@@ -180,11 +181,15 @@ def test_encode_images_accepts_non_posixpath(hasher, mocker_encode_image):
 
 
 def test_encode_images_finds_recursive(hasher, mocker_encode_image):
-    assert len(hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED, True)) == 6  # 6 files in total
+    assert (
+        len(hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED, True)) == 6
+    )  # 6 files in total
 
 
 def test_encode_images_finds_non_recursive(hasher, mocker_encode_image):
-    assert len(hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED)) == 2  # 2 files in the directory
+    assert (
+        len(hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED)) == 2
+    )  # 2 files in the directory
 
 
 def test_encode_images_rejects_non_directory_paths(hasher):
@@ -210,8 +215,30 @@ def test_recursive_on_flat_directory():
 def test_recursive_disabled_by_default():
     hasher = PHash()
     hashes = hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED)
-    hashes_non_recursive = hasher.encode_images(PATH_IMAGE_DIR_MIXED_NESTED, recursive=False)
+    hashes_non_recursive = hasher.encode_images(
+        PATH_IMAGE_DIR_MIXED_NESTED, recursive=False
+    )
     assert hashes_non_recursive == hashes
+
+
+def test_encode_images_parallelise_with_num_workers(hasher, mocker):
+    num_enc_workers = 8
+    par_mock = mocker.patch('imagededup.methods.hashing.parallelise')
+    generate_files_mock = mocker.patch(
+        'imagededup.methods.hashing.generate_files', return_value=['1.jpg', '2.jpg']
+    )
+    generate_rel_names_mock = mocker.patch(
+        'imagededup.methods.hashing.generate_relative_names'
+    )
+    hash = hasher.encode_images(
+        PATH_IMAGE_DIR_MIXED_NESTED, num_enc_workers=num_enc_workers
+    )
+    par_mock.assert_called_once_with(
+        function=hasher.encode_image,
+        data=['1.jpg', '2.jpg'],
+        verbose=True,
+        num_workers=num_enc_workers,
+    )
 
 
 def test_hash_func(hasher, mocker):
@@ -252,9 +279,32 @@ def test__find_duplicates_dict_outfile_none(mocker):
         verbose=verbose,
         threshold=threshold,
         search_method='brute_force_cython',
+        num_dist_workers=cpu_count(),
     )
     hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
     save_json_mocker.assert_not_called()
+
+
+@pytest.mark.skipif(sys.platform == 'win32', reason='Does not run on Windows.')
+def test__find_duplicates_dict_num_dist_workers_has_impact(mocker):
+    encoding_map = {'1.jpg': '123456'}
+    num_dist_workers = 2
+
+    myhasher = PHash()
+    hasheval_mocker = mocker.patch('imagededup.methods.hashing.HashEval')
+
+    myhasher._find_duplicates_dict(
+        encoding_map=encoding_map, num_dist_workers=num_dist_workers
+    )
+    hasheval_mocker.assert_called_with(
+        test=encoding_map,
+        queries=encoding_map,
+        distance_function=Hashing.hamming_distance,
+        verbose=True,
+        threshold=10,
+        search_method='brute_force_cython',
+        num_dist_workers=num_dist_workers,
+    )
 
 
 @pytest.mark.skipif(sys.platform == 'win32', reason='Does not run on Windows.')
@@ -278,6 +328,7 @@ def test__find_duplicates_dict_outfile_none_verbose(hasher, mocker):
         verbose=True,
         threshold=threshold,
         search_method='brute_force_cython',
+        num_dist_workers=cpu_count(),
     )
     hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
     save_json_mocker.assert_not_called()
@@ -309,6 +360,7 @@ def test__find_duplicates_dict_outfile_true(hasher, mocker):
         verbose=verbose,
         threshold=threshold,
         search_method='brute_force_cython',
+        num_dist_workers=cpu_count(),
     )
     hasheval_mocker.return_value.retrieve_results.assert_called_once_with(scores=scores)
     save_json_mocker.assert_called_once_with(
@@ -343,13 +395,16 @@ def test__find_duplicates_dir(hasher, mocker):
         outfile=outfile,
         search_method='brute_force_cython',
     )
-    encode_images_mocker.assert_called_once_with(PATH_IMAGE_DIR, recursive=False)
+    encode_images_mocker.assert_called_once_with(
+        PATH_IMAGE_DIR, recursive=False, num_enc_workers=cpu_count()
+    )
     find_dup_dict_mocker.assert_called_once_with(
         encoding_map=encoding_map,
         max_distance_threshold=threshold,
         scores=scores,
         outfile=outfile,
         search_method='brute_force_cython',
+        num_dist_workers=cpu_count(),
     )
 
 
@@ -386,6 +441,33 @@ def test_find_duplicates_dir(hasher, mocker, mocker_hamming_distance):
         outfile=outfile,
         search_method='brute_force_cython',
         recursive=False,
+        num_enc_workers=cpu_count(),
+        num_dist_workers=cpu_count(),
+    )
+
+
+@pytest.mark.skipif(sys.platform == 'win32', reason='Does not run on Windows.')
+def test_find_duplicates_dir_multiprocessing_has_impact(hasher, mocker):
+    num_enc_workers = 2
+    num_dist_workers = 8
+
+    find_dup_dir_mocker = mocker.patch(
+        'imagededup.methods.hashing.Hashing._find_duplicates_dir'
+    )
+    hasher.find_duplicates(
+        image_dir=PATH_IMAGE_DIR,
+        num_enc_workers=num_enc_workers,
+        num_dist_workers=num_dist_workers,
+    )
+    find_dup_dir_mocker.assert_called_once_with(
+        image_dir=PATH_IMAGE_DIR,
+        max_distance_threshold=10,
+        scores=False,
+        outfile=None,
+        search_method='brute_force_cython',
+        recursive=False,
+        num_enc_workers=num_enc_workers,
+        num_dist_workers=num_dist_workers,
     )
 
 
@@ -412,6 +494,7 @@ def test_find_duplicates_dict(hasher, mocker, mocker_hamming_distance):
         scores=scores,
         outfile=outfile,
         search_method='brute_force_cython',
+        num_dist_workers=cpu_count(),
     )
 
 
@@ -447,6 +530,8 @@ def test_find_duplicates_to_remove_outfile_false(hasher, mocker):
         max_distance_threshold=threshold,
         scores=False,
         recursive=False,
+        num_enc_workers=cpu_count(),
+        num_dist_workers=cpu_count(),
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     save_json_mocker.assert_not_called()
@@ -478,6 +563,8 @@ def test_find_duplicates_to_remove_outfile_true(hasher, mocker):
         max_distance_threshold=threshold,
         scores=False,
         recursive=False,
+        num_enc_workers=cpu_count(),
+        num_dist_workers=cpu_count(),
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     save_json_mocker.assert_called_once_with(ret_val_get_files_to_remove, outfile)
@@ -508,9 +595,33 @@ def test_find_duplicates_to_remove_encoding_map(hasher, mocker):
         max_distance_threshold=threshold,
         scores=False,
         recursive=False,
+        num_enc_workers=cpu_count(),
+        num_dist_workers=cpu_count(),
     )
     get_files_to_remove_mocker.assert_called_once_with(ret_val_find_dup_dict)
     save_json_mocker.assert_not_called()
+
+
+@pytest.mark.skipif(sys.platform == 'win32', reason='Does not run on Windows.')
+def test_find_duplicates_to_remove_multiprocessing_has_impact(hasher, mocker):
+    num_enc_workers = 2
+    num_dist_workers = 8
+
+    find_dup_mocker = mocker.patch('imagededup.methods.hashing.Hashing.find_duplicates')
+    hasher.find_duplicates_to_remove(
+        image_dir=PATH_IMAGE_DIR,
+        num_enc_workers=num_enc_workers,
+        num_dist_workers=num_dist_workers,
+    )
+    find_dup_mocker.assert_called_once_with(
+        image_dir=PATH_IMAGE_DIR,
+        encoding_map=None,
+        max_distance_threshold=10,
+        scores=False,
+        recursive=False,
+        num_enc_workers=num_enc_workers,
+        num_dist_workers=num_dist_workers,
+    )
 
 
 # Integration tests
@@ -710,14 +821,27 @@ def test_find_duplicates_encoding_map_recursive_warning():
     phasher = PHash()
     with pytest.warns(SyntaxWarning):
         duplicate_dict = phasher.find_duplicates(
-                encoding_map=encoding,
-                max_distance_threshold=10,
-                recursive=True
+            encoding_map=encoding, max_distance_threshold=10, recursive=True
         )
         assert isinstance(duplicate_dict, dict)
         assert isinstance(list(duplicate_dict.values())[0], list)
         assert len(duplicate_dict['ukbench09268.jpg']) == 0
         assert duplicate_dict['ukbench00120.jpg'] == ['ukbench00120_resize.jpg']
+
+
+def test_find_duplicates_dict_num_enc_workers_warning():
+    encoding = {
+        'ukbench00120_resize.jpg': '9fee256239984d71',
+        'ukbench00120_rotation.jpg': '850d513c4fdcbb72',
+        'ukbench00120.jpg': '9fee256239984d71',
+        'ukbench00120_hflip.jpg': 'cabb7237e8cd3824',
+        'ukbench09268.jpg': 'c73c36c2da2f29c9',
+    }
+    phasher = PHash()
+    with pytest.warns(RuntimeWarning):
+        duplicate_dict = phasher.find_duplicates(
+            encoding_map=encoding, max_distance_threshold=10, recursive=False, num_enc_workers=4
+        )
 
 
 def test_find_duplicates_to_remove_dir():
@@ -730,6 +854,7 @@ def test_find_duplicates_to_remove_dir():
     assert removal_list == ['ukbench00120.jpg'] or removal_list == [
         'ukbench00120_resize.jpg'
     ]
+
 
 def test_find_duplicates_to_remove_nested_dir():
     phasher = PHash()
