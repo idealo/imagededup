@@ -45,7 +45,7 @@ The 'method-name' corresponds to one of the deduplication methods available and 
 
 - If an image in the image directory can't be loaded, no encodings are generated for the image. Hence, there is no entry 
 for the image in the returned encodings dictionary.
-- Supported image formats: 'JPEG', 'PNG', 'BMP', 'MPO', 'PPM', 'TIFF', 'GIF', 'SVG', 'PGM', 'PBM'.
+- Supported image formats: 'JPEG', 'PNG', 'BMP', 'MPO', 'PPM', 'TIFF', 'GIF', 'SVG', 'PGM', 'PBM', 'WEBP'.
 
 #### Examples
 
@@ -74,7 +74,7 @@ array if cnn is used.
 #### Considerations
 
 - If the image can't be loaded, no encodings are generated for the image and *None* is returned.
-- Supported image formats: 'JPEG', 'PNG', 'BMP', 'MPO', 'PPM', 'TIFF', 'GIF', 'SVG', 'PGM', 'PBM'.
+- Supported image formats: 'JPEG', 'PNG', 'BMP', 'MPO', 'PPM', 'TIFF', 'GIF', 'SVG', 'PGM', 'PBM', 'WEBP'.
 
 #### Examples
 

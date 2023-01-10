@@ -7,7 +7,7 @@ from PIL import Image
 from imagededup.utils.logger import return_logger
 
 
-IMG_FORMATS = ['JPEG', 'PNG', 'BMP', 'MPO', 'PPM', 'TIFF', 'GIF']
+IMG_FORMATS = ['JPEG', 'PNG', 'BMP', 'MPO', 'PPM', 'TIFF', 'GIF', 'WEBP']
 logger = return_logger(__name__)
 
 
