@@ -124,6 +124,14 @@ repository.
 
 For more detailed usage of the package functionality, refer: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
 
+## 👨‍💻 Streamlit Web App
+A simple streamlit based web application in order to find duplicates in a corpus of images using perceptual hashing, uploaded by the user. 
+
+GitHub Repo : https://github.com/prateekralhan/Imagededup---Streamlit
+
+![demo](https://user-images.githubusercontent.com/29462447/203412429-ebdcc031-dd6e-4f32-87df-69f1931d75e1.gif)
+
+
 ## ⏳ Benchmarks
 
 **Update**: Provided benchmarks are only valid upto `imagededup v0.2.2`. The next releases have significant changes to all methods, so the current benchmarks may not hold.
