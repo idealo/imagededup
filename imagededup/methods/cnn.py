@@ -10,7 +10,7 @@ import torch
 from torchvision.transforms import transforms
 
 from imagededup.handlers.search.retrieval import get_cosine_similarity
-from imagededup.utils.data_generator import img_dataloader, MobilenetV3
+from imagededup.utils.data_generator import img_dataloader, MobilenetV3, Mynet
 from imagededup.utils.general_utils import (
     generate_relative_names,
     get_files_to_remove,
@@ -41,7 +41,7 @@ class CNN:
     methods are provided to accomplish these tasks.
     """
 
-    def __init__(self, verbose: bool = True) -> None:
+    def __init__(self, verbose: bool = True, model=None, transform=None) -> None:
         """
         Initialize a pytorch MobileNet model v3 that is sliced at the last convolutional layer.
         Set the batch size for pytorch dataloader to be 64 samples.
@@ -49,16 +49,32 @@ class CNN:
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
         """
-        self.target_size = (256, 256)
-        self.batch_size = 64
-        self.logger = return_logger(
-            __name__
-        )  # The logger needs to be bound to the class, otherwise stderr also gets
+        self.logger = return_logger(__name__)  # The logger needs to be bound to the class, otherwise stderr also gets
         # directed to stdout (Don't know why that is the case)
-        self._build_model()
+
+        self.batch_size = 64
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.logger.info(f'Device set to {self.device} ..')
+
+        self._build_model(model=model, transform=transform)
         self.verbose = 1 if verbose is True else 0
 
-    def _build_model(self):
+    @classmethod
+    def from_custom(cls, model, transform):
+        return cls(model=model, transform=transform)
+
+
+    def _build_model(self, model, transform):
+        if model is None or transform is None:
+            self._build_mobilenet()
+        else:
+            self.model = model
+            self.transform = transform
+            self.logger.info('Initialized: Custom model ..')
+
+        self.model.to(self.device)
+
+    def _build_mobilenet(self):
         """
         Build MobileNet v3 model sliced at the last convolutional layer with global average pooling added and initialize the corresponding preprocessing transform. Also select gpu for encoding generation if it's available on the machine.
         """
@@ -66,11 +82,7 @@ class CNN:
         self.logger.info(
             'Initialized: MobileNet v3 pretrained on ImageNet dataset sliced at GAP layer'
         )
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.logger.info(f'Device set to {self.device} ..')
-        
-        self.model.to(self.device)
-
+        self.target_size = (256, 256)
         self.transform = transforms.Compose(
             [
                 transforms.Resize(self.target_size),
