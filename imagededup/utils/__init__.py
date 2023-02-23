@@ -1,2 +1,2 @@
 from .plotter import plot_duplicates
-from .models import model_config
+from .models import custom_model
