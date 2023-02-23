@@ -19,7 +19,7 @@ def _init_dataloader(imdir: PurePath, recursive: bool) -> torch.utils.data.DataL
     dataloader = img_dataloader(
         image_dir=imdir,
         batch_size=TEST_BATCH_SIZE,
-        basenet_preprocess=cnn.apply_mobilenet_preprocess,
+        basenet_preprocess=cnn.apply_preprocess,
         recursive=recursive,
         num_workers=0
     )

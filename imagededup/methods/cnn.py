@@ -1,16 +1,16 @@
 from pathlib import Path, PurePath
 import sys
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, NamedTuple
 import warnings
 
 from multiprocessing import cpu_count
 import numpy as np
 from PIL import Image
 import torch
-from torchvision.transforms import transforms
 
 from imagededup.handlers.search.retrieval import get_cosine_similarity
-from imagededup.utils.data_generator import img_dataloader, MobilenetV3, Mynet
+from imagededup.utils.data_generator import img_dataloader
+from imagededup.utils.models import model_config, MobilenetV3
 from imagededup.utils.general_utils import (
     generate_relative_names,
     get_files_to_remove,
@@ -41,61 +41,39 @@ class CNN:
     methods are provided to accomplish these tasks.
     """
 
-    def __init__(self, verbose: bool = True, model=None, transform=None) -> None:
+    def __init__(
+        self,
+        verbose: bool = True,
+        config: NamedTuple = model_config(
+            model=MobilenetV3(), transform=MobilenetV3.transform, name="MobilenetV3"
+        ),
+    ) -> None:
         """
         Initialize a pytorch MobileNet model v3 that is sliced at the last convolutional layer.
         Set the batch size for pytorch dataloader to be 64 samples.
 
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
+            model: A user-provided feature extraction model.
+            transform: A transform that will be applied to each image before being fed to the model, should correspond to the supplied model.
         """
-        self.logger = return_logger(__name__)  # The logger needs to be bound to the class, otherwise stderr also gets
+        self.logger = return_logger(
+            __name__
+        )  # The logger needs to be bound to the class, otherwise stderr also gets
         # directed to stdout (Don't know why that is the case)
 
         self.batch_size = 64
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.logger.info(f'Device set to {self.device} ..')
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.logger.info(f"Device set to {self.device} ..")
 
-        self._build_model(model=model, transform=transform)
-        self.verbose = 1 if verbose is True else 0
-
-    @classmethod
-    def from_custom(cls, model, transform):
-        return cls(model=model, transform=transform)
-
-
-    def _build_model(self, model, transform):
-        if model is None or transform is None:
-            self._build_mobilenet()
-        else:
-            self.model = model
-            self.transform = transform
-            self.logger.info('Initialized: Custom model ..')
-
+        self.model = config.model
         self.model.to(self.device)
 
-    def _build_mobilenet(self):
-        """
-        Build MobileNet v3 model sliced at the last convolutional layer with global average pooling added and initialize the corresponding preprocessing transform. Also select gpu for encoding generation if it's available on the machine.
-        """
-        self.model = MobilenetV3()
-        self.logger.info(
-            'Initialized: MobileNet v3 pretrained on ImageNet dataset sliced at GAP layer'
-        )
-        self.target_size = (256, 256)
-        self.transform = transforms.Compose(
-            [
-                transforms.Resize(self.target_size),
-                transforms.CenterCrop(224),
-                transforms.ToTensor(),
-                transforms.Normalize(
-                    mean=[0.485, 0.456, 0.406],
-                    std=[0.229, 0.224, 0.225]
-                ),
-            ]
-        )
+        self.transform = config.transform
+        self.logger.info(f"Initialized: {config.name} for feature extraction ..")
+        self.verbose = 1 if verbose is True else 0
 
-    def apply_mobilenet_preprocess(self, im_arr: np.array) -> torch.tensor:
+    def apply_preprocess(self, im_arr: np.array) -> torch.tensor:
         """
         Apply preprocessing function for mobilenet to images.
 
@@ -118,19 +96,26 @@ class CNN:
         Returns:
             Encodings for the image in the form of numpy array.
         """
-        image_pp = self.apply_mobilenet_preprocess(image_array)
+        image_pp = self.apply_preprocess(image_array)
         image_pp = image_pp.unsqueeze(0)
         img_features_tensor = self.model(image_pp.to(self.device))
 
-        if self.device.type == 'cuda':
-            unpacked_img_features_tensor = img_features_tensor.cpu().detach().numpy()[..., 0, 0]
+        if self.device.type == "cuda":
+            unpacked_img_features_tensor = (
+                img_features_tensor.cpu().detach().numpy()[..., 0, 0]
+            )
         else:
-            unpacked_img_features_tensor = img_features_tensor.detach().numpy()[..., 0, 0]
+            unpacked_img_features_tensor = img_features_tensor.detach().numpy()[
+                ..., 0, 0
+            ]
 
         return unpacked_img_features_tensor
 
     def _get_cnn_features_batch(
-        self, image_dir: PurePath, recursive: Optional[bool] = False, num_workers: int = 0
+        self,
+        image_dir: PurePath,
+        recursive: Optional[bool] = False,
+        num_workers: int = 0,
     ) -> Dict[str, np.ndarray]:
         """
         Generate CNN encodings for all images in a given directory of images.
@@ -142,13 +127,13 @@ class CNN:
         Returns:
             A dictionary that contains a mapping of filenames and corresponding numpy array of CNN encodings.
         """
-        self.logger.info('Start: Image encoding generation')
+        self.logger.info("Start: Image encoding generation")
         self.dataloader = img_dataloader(
             image_dir=image_dir,
             batch_size=self.batch_size,
-            basenet_preprocess=self.apply_mobilenet_preprocess,
+            basenet_preprocess=self.apply_preprocess,
             recursive=recursive,
-            num_workers=num_workers
+            num_workers=num_workers,
         )
 
         feat_arr, all_filenames = [], []
@@ -163,16 +148,22 @@ class CNN:
 
         if bad_im_count:
             self.logger.info(
-                f'Found {bad_im_count} bad images, ignoring for encoding generation ..'
+                f"Found {bad_im_count} bad images, ignoring for encoding generation .."
             )
-            
+
         feat_vec = torch.stack(feat_arr).squeeze()
-        feat_vec = feat_vec.detach().numpy() if self.device.type == 'cpu' else feat_vec.detach().cpu().numpy()
+        feat_vec = (
+            feat_vec.detach().numpy()
+            if self.device.type == "cpu"
+            else feat_vec.detach().cpu().numpy()
+        )
         valid_image_files = [filename for filename in all_filenames if filename]
-        self.logger.info('End: Image encoding generation')
+        self.logger.info("End: Image encoding generation")
 
         filenames = generate_relative_names(image_dir, valid_image_files)
-        if len(feat_vec.shape) == 1:  # can happen when encode_images is called on a directory containing a single image
+        if (
+            len(feat_vec.shape) == 1
+        ):  # can happen when encode_images is called on a directory containing a single image
             self.encoding_map = {filenames[0]: feat_vec}
         else:
             self.encoding_map = {j: feat_vec[i, :] for i, j in enumerate(filenames)}
@@ -208,7 +199,7 @@ class CNN:
         if isinstance(image_file, PurePath):
             if not image_file.is_file():
                 raise ValueError(
-                    'Please provide either image file path or image array!'
+                    "Please provide either image file path or image array!"
                 )
 
             image_pp = load_image(
@@ -223,7 +214,7 @@ class CNN:
                 image=image_array, target_size=None, grayscale=False
             )
         else:
-            raise ValueError('Please provide either image file path or image array!')
+            raise ValueError("Please provide either image file path or image array!")
 
         return (
             self._get_cnn_features_single(image_pp)
@@ -232,7 +223,10 @@ class CNN:
         )
 
     def encode_images(
-        self, image_dir: Union[PurePath, str], recursive: Optional[bool] = False, num_enc_workers: int = 0
+        self,
+        image_dir: Union[PurePath, str],
+        recursive: Optional[bool] = False,
+        num_enc_workers: int = 0,
     ) -> Dict:
         """Generate CNN encodings for all images in a given directory of images. Test.
 
@@ -254,13 +248,17 @@ class CNN:
             image_dir = Path(image_dir)
 
         if not image_dir.is_dir():
-            raise ValueError('Please provide a valid directory path!')
-        
-        if num_enc_workers != 0 and sys.platform != 'linux':
-            num_enc_workers = 0
-            self.logger.info(f'Setting num_enc_workers to 0, CNN encoding generation parallelization support available on linux platform ..')
+            raise ValueError("Please provide a valid directory path!")
 
-        return self._get_cnn_features_batch(image_dir=image_dir, recursive=recursive, num_workers=num_enc_workers)
+        if num_enc_workers != 0 and sys.platform != "linux":
+            num_enc_workers = 0
+            self.logger.info(
+                f"Setting num_enc_workers to 0, CNN encoding generation parallelization support available on linux platform .."
+            )
+
+        return self._get_cnn_features_batch(
+            image_dir=image_dir, recursive=recursive, num_workers=num_enc_workers
+        )
 
     @staticmethod
     def _check_threshold_bounds(thresh: float) -> None:
@@ -276,9 +274,9 @@ class CNN:
             ValueError: If wrong value is provided.
         """
         if not isinstance(thresh, float):
-            raise TypeError('Threshold must be a float between -1.0 and 1.0')
+            raise TypeError("Threshold must be a float between -1.0 and 1.0")
         if thresh < -1.0 or thresh > 1.0:
-            raise ValueError('Threshold must be a float between -1.0 and 1.0')
+            raise ValueError("Threshold must be a float between -1.0 and 1.0")
 
     def _find_duplicates_dict(
         self,
@@ -286,7 +284,7 @@ class CNN:
         min_similarity_threshold: float,
         scores: bool,
         outfile: Optional[str] = None,
-        num_sim_workers: int = cpu_count()
+        num_sim_workers: int = cpu_count(),
     ) -> Dict:
         """
         Take in dictionary {filename: encoded image}, detects duplicates above the given cosine similarity threshold
@@ -313,15 +311,17 @@ class CNN:
         # put image encodings into feature matrix
         features = np.array([*encoding_map.values()])
 
-        self.logger.info('Start: Calculating cosine similarities...')
+        self.logger.info("Start: Calculating cosine similarities...")
 
-        self.cosine_scores = get_cosine_similarity(features, self.verbose, num_workers=num_sim_workers)
+        self.cosine_scores = get_cosine_similarity(
+            features, self.verbose, num_workers=num_sim_workers
+        )
 
         np.fill_diagonal(
             self.cosine_scores, 2.0
         )  # allows to filter diagonal in results, 2 is a placeholder value
 
-        self.logger.info('End: Calculating cosine similarities.')
+        self.logger.info("End: Calculating cosine similarities.")
 
         self.results = {}
         for i, j in enumerate(self.cosine_scores):
@@ -350,7 +350,7 @@ class CNN:
         outfile: Optional[str] = None,
         recursive: Optional[bool] = False,
         num_enc_workers: int = 0,
-        num_sim_workers: int = cpu_count()
+        num_sim_workers: int = cpu_count(),
     ) -> Dict:
         """
         Take in path of the directory in which duplicates are to be detected above the given threshold.
@@ -373,14 +373,16 @@ class CNN:
             if scores is False, then a dictionary of the form {'image1.jpg': ['image1_duplicate1.jpg',
             'image1_duplicate2.jpg'], 'image2.jpg':['image1_duplicate1.jpg',..], ..}
         """
-        self.encode_images(image_dir=image_dir, recursive=recursive, num_enc_workers=num_enc_workers)
+        self.encode_images(
+            image_dir=image_dir, recursive=recursive, num_enc_workers=num_enc_workers
+        )
 
         return self._find_duplicates_dict(
             encoding_map=self.encoding_map,
             min_similarity_threshold=min_similarity_threshold,
             scores=scores,
             outfile=outfile,
-            num_sim_workers=num_sim_workers
+            num_sim_workers=num_sim_workers,
         )
 
     def find_duplicates(
@@ -392,7 +394,7 @@ class CNN:
         outfile: Optional[str] = None,
         recursive: Optional[bool] = False,
         num_enc_workers: int = 0,
-        num_sim_workers: int = cpu_count()
+        num_sim_workers: int = cpu_count(),
     ) -> Dict:
         """
         Find duplicates for each file. Take in path of the directory or encoding dictionary in which duplicates are to
@@ -444,25 +446,28 @@ class CNN:
                 outfile=outfile,
                 recursive=recursive,
                 num_enc_workers=num_enc_workers,
-                num_sim_workers=num_sim_workers
+                num_sim_workers=num_sim_workers,
             )
         elif encoding_map:
             if recursive:
                 warnings.warn(
-                    'recursive parameter is irrelevant when using encodings.',
+                    "recursive parameter is irrelevant when using encodings.",
                     SyntaxWarning,
                 )
-            warnings.warn('Parameter num_enc_workers has no effect since encodings are already provided', RuntimeWarning)
+            warnings.warn(
+                "Parameter num_enc_workers has no effect since encodings are already provided",
+                RuntimeWarning,
+            )
             result = self._find_duplicates_dict(
                 encoding_map=encoding_map,
                 min_similarity_threshold=min_similarity_threshold,
                 scores=scores,
                 outfile=outfile,
-                num_sim_workers=num_sim_workers
+                num_sim_workers=num_sim_workers,
             )
 
         else:
-            raise ValueError('Provide either an image directory or encodings!')
+            raise ValueError("Provide either an image directory or encodings!")
 
         return result
 
@@ -474,7 +479,7 @@ class CNN:
         outfile: Optional[str] = None,
         recursive: Optional[bool] = False,
         num_enc_workers: int = 0,
-        num_sim_workers: int = cpu_count()
+        num_sim_workers: int = cpu_count(),
     ) -> List:
         """
         Give out a list of image file names to remove based on the similarity threshold. Does not remove the mentioned
@@ -517,7 +522,7 @@ class CNN:
                 scores=False,
                 recursive=recursive,
                 num_enc_workers=num_enc_workers,
-                num_sim_workers=num_sim_workers
+                num_sim_workers=num_sim_workers,
             )
 
         files_to_remove = get_files_to_remove(duplicates)
