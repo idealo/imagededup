@@ -1,5 +1,6 @@
 from collections import namedtuple
-
+from PIL.Image import Image
+from typing import Callable, NamedTuple
 import torch
 import torch.nn as nn
 from torchvision import models
@@ -8,7 +9,12 @@ from torchvision.models import vit_b_16
 from torchvision.models.vision_transformer import ViT_B_16_Weights
 
 DEFAULT_MODEL_NAME = 'default_model'
-custom_model = namedtuple('custom_model', 'model transform name', defaults=[None, None, DEFAULT_MODEL_NAME])
+
+
+class CustomModel(NamedTuple):
+    name: str = DEFAULT_MODEL_NAME
+    model: torch.nn.Module = None
+    transform: Callable[[Image], torch.tensor] = None
 
 
 class MobilenetV3(torch.nn.Module):

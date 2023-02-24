@@ -10,7 +10,7 @@ import torch
 
 from imagededup.handlers.search.retrieval import get_cosine_similarity
 from imagededup.utils.data_generator import img_dataloader
-from imagededup.utils.models import custom_model, MobilenetV3, DEFAULT_MODEL_NAME
+from imagededup.utils.models import CustomModel, MobilenetV3, DEFAULT_MODEL_NAME
 from imagededup.utils.general_utils import (
     generate_relative_names,
     get_files_to_remove,
@@ -44,7 +44,7 @@ class CNN:
     def __init__(
         self,
         verbose: Optional[bool] = True,
-        model_config: Optional[NamedTuple] = custom_model(
+        model_config: Optional[CustomModel] = CustomModel(
             model=MobilenetV3(), transform=MobilenetV3.transform, name="MobilenetV3"
         ),
     ) -> None:
@@ -78,10 +78,10 @@ class CNN:
 
     def _validate_model_config(self):
         if self.model_config.model is None or self.model_config.transform is None:
-            raise ValueError(f'No value provided for model and/or transform in config ..')
+            raise ValueError(f'No value provided for model and/or transform in model_config ..')
 
         if self.model_config.name == DEFAULT_MODEL_NAME:
-            raise Warning(f'Consider setting a custom model name in config ..')
+            raise Warning(f'Consider setting a custom model name in model_config ..')
 
     def apply_preprocess(self, im_arr: np.array) -> torch.tensor:
         """
