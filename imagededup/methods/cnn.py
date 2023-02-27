@@ -43,9 +43,9 @@ class CNN:
 
     def __init__(
         self,
-        verbose: Optional[bool] = True,
-        model_config: Optional[CustomModel] = CustomModel(
-            model=MobilenetV3(), transform=MobilenetV3.transform, name="MobilenetV3"
+        verbose: bool = True,
+        model_config: CustomModel = CustomModel(
+            model=MobilenetV3(), transform=MobilenetV3.transform, name=MobilenetV3.name
         ),
     ) -> None:
         """

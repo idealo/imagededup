@@ -1,20 +1,28 @@
-from collections import namedtuple
 from PIL.Image import Image
-from typing import Callable, NamedTuple
+from typing import Callable, NamedTuple, Optional
+
 import torch
 import torch.nn as nn
 from torchvision import models
 from torchvision.transforms import transforms
-from torchvision.models import vit_b_16
-from torchvision.models.vision_transformer import ViT_B_16_Weights
+from torchvision.models import vit_b_16, vit_h_14, efficientnet_b4, EfficientNet_B4_Weights
+from torchvision.models.vision_transformer import ViT_B_16_Weights, ViT_H_14_Weights
 
 DEFAULT_MODEL_NAME = 'default_model'
 
 
 class CustomModel(NamedTuple):
+    """
+       A named tuple that can be used to initialize a custom PyTorch model.
+
+       Args:
+        name: The name of the custom model. Default is default_model.
+        model: The PyTorch model object. Default is None.
+        transform: A function that transforms a PIL.Image object into a PyTorch tensor. Should correspond to the preprocessing logic of the supplied model. Default is None.
+    """
     name: str = DEFAULT_MODEL_NAME
-    model: torch.nn.Module = None
-    transform: Callable[[Image], torch.tensor] = None
+    model: Optional[torch.nn.Module] = None
+    transform: Optional[Callable[[Image], torch.tensor]] = None
 
 
 class MobilenetV3(torch.nn.Module):
@@ -29,6 +37,7 @@ class MobilenetV3(torch.nn.Module):
             ),
         ]
     )
+    name = 'mobilenet_v3_small'
 
     def __init__(self) -> None:
         super().__init__()
@@ -45,13 +54,14 @@ class MobilenetV3(torch.nn.Module):
 
 class ViT(torch.nn.Module):
     transform = ViT_B_16_Weights.IMAGENET1K_SWAG_E2E_V1.transforms()
+    name = 'vit_b_16'
 
     def __init__(self) -> None:
         super().__init__()
         self.model = vit_b_16(weights='ViT_B_16_Weights.IMAGENET1K_SWAG_E2E_V1').eval()
-        self.hidden_dim = 768
+        self.hidden_dim = 768 # Value inferred from here: https://github.com/pytorch/vision/blob/af048198f87da11f344ffba37d6962aa78b36218/torchvision/models/vision_transformer.py#L641
         self.patch_size = 16
-        self.image_size = 384
+        self.image_size = 384 # https://github.com/pytorch/vision/blob/af048198f87da11f344ffba37d6962aa78b36218/torchvision/models/vision_transformer.py#L378
         self.class_token = nn.Parameter(torch.zeros(1, 1, self.hidden_dim))
 
     def _process_input(self, x: torch.Tensor) -> torch.Tensor:
@@ -84,6 +94,21 @@ class ViT(torch.nn.Module):
         x = torch.cat([batch_class_token, x], dim=1)
         x = self.model.encoder(x)
 
-        # mean of all encoder outputs, performs better than the classifier "token" as used by standard language architectures
-        x = torch.mean(x, 1)
+        # mean of all encoder outputs, performs better than the classifier "token" as used by standard language
+        # architectures
+        x = x.mean(dim=1)
         return x
+
+
+class EfficientNet(torch.nn.Module):
+    transform = EfficientNet_B4_Weights.IMAGENET1K_V1.transforms()
+    name = 'efficientnet_b4'
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.effnet_b4 = models.efficientnet_b4(weights='EfficientNet_B4_Weights.IMAGENET1K_V1').eval()
+
+    def forward(self, x) -> torch.tensor:
+        x = self.effnet_b4.features(x)
+        x = self.effnet_b4.avgpool(x)
+        return x.squeeze(dim=3).squeeze(dim=2)
