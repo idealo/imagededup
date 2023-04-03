@@ -16,7 +16,7 @@ class CustomModel(NamedTuple):
        A named tuple that can be used to initialize a custom PyTorch model.
 
        Args:
-        name: The name of the custom model. Default is default_model.
+        name: The name of the custom model. Default is 'default_model'.
         model: The PyTorch model object. Default is None.
         transform: A function that transforms a PIL.Image object into a PyTorch tensor. Should correspond to the preprocessing logic of the supplied model. Default is None.
     """
@@ -36,10 +36,14 @@ class MobilenetV3(torch.nn.Module):
                 std=[0.229, 0.224, 0.225]
             ),
         ]
-    )
+    )  # A little hesitant to use pytorch transform that came packaged with mobilenetV3 to keep the transform backward
+    # compatible with the earlier releases.
     name = 'mobilenet_v3_small'
 
     def __init__(self) -> None:
+        """
+        Initialize a mobilenetv3 model, cuts it at the global average pooling layer and returns the output features.
+        """
         super().__init__()
         mobilenet = models.mobilenet_v3_small(weights='MobileNet_V3_Small_Weights.IMAGENET1K_V1').eval()
         self.mobilenet_gap_op = torch.nn.Sequential(
@@ -57,6 +61,9 @@ class ViT(torch.nn.Module):
     name = 'vit_b_16'
 
     def __init__(self) -> None:
+        """
+        Initialize a ViT model, takes mean of the final encoder layer outputs and returns those as features for a given image.
+        """
         super().__init__()
         self.model = vit_b_16(weights='ViT_B_16_Weights.IMAGENET1K_SWAG_E2E_V1').eval()
         self.hidden_dim = 768 # Value inferred from here: https://github.com/pytorch/vision/blob/af048198f87da11f344ffba37d6962aa78b36218/torchvision/models/vision_transformer.py#L641
@@ -105,6 +112,9 @@ class EfficientNet(torch.nn.Module):
     name = 'efficientnet_b4'
 
     def __init__(self) -> None:
+        """
+        Initializes an EfficientNet model, cuts it at the global average pooling layer and returns the output features.
+        """
         super().__init__()
         self.effnet_b4 = models.efficientnet_b4(weights='EfficientNet_B4_Weights.IMAGENET1K_V1').eval()
 

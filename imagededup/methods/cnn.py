@@ -1,6 +1,6 @@
 from pathlib import Path, PurePath
 import sys
-from typing import Dict, List, Optional, Union, NamedTuple
+from typing import Dict, List, Optional, Union
 import warnings
 
 from multiprocessing import cpu_count
@@ -81,7 +81,7 @@ class CNN:
             raise ValueError(f'No value provided for model and/or transform in model_config ..')
 
         if self.model_config.name == DEFAULT_MODEL_NAME:
-            raise Warning(f'Consider setting a custom model name in model_config ..')
+            warnings.warn(f'Consider setting a custom model name in model_config ..', SyntaxWarning)
 
     def apply_preprocess(self, im_arr: np.array) -> torch.tensor:
         """
