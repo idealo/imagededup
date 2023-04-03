@@ -5,8 +5,8 @@ import torch
 import torch.nn as nn
 from torchvision import models
 from torchvision.transforms import transforms
-from torchvision.models import vit_b_16, vit_h_14, efficientnet_b4, EfficientNet_B4_Weights
-from torchvision.models.vision_transformer import ViT_B_16_Weights, ViT_H_14_Weights
+from torchvision.models import vit_b_16, EfficientNet_B4_Weights
+from torchvision.models.vision_transformer import ViT_B_16_Weights
 
 DEFAULT_MODEL_NAME = 'default_model'
 
@@ -17,8 +17,8 @@ class CustomModel(NamedTuple):
 
        Args:
         name: The name of the custom model. Default is 'default_model'.
-        model: The PyTorch model object. Default is None.
-        transform: A function that transforms a PIL.Image object into a PyTorch tensor. Should correspond to the preprocessing logic of the supplied model. Default is None.
+        model: The PyTorch model object which is a subclass of `torch.nn.Module` and implements the `forward` method. Alternatively, a __call__ method is also accepted.. Default is None.
+        transform: A function that transforms a PIL.Image object into a PyTorch tensor that will be applied to each image before being fed to the model. Should correspond to the preprocessing logic of the supplied model. Default is None.
     """
     name: str = DEFAULT_MODEL_NAME
     model: Optional[torch.nn.Module] = None

@@ -114,6 +114,33 @@ def test_call_method_accepted():
         pytest.fail(f'Unexpected exception: {e}')
 
 
+class ForwardModel(torch.nn.Module):
+    transform = transforms.Compose(
+        [
+            transforms.ToTensor()
+        ]
+    )
+    name = 'test_custom_model'
+
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x):
+        return x
+
+
+def test_forward_method_accepted():
+    cnn = CNN(model_config=CustomModel(model=ForwardModel(),
+                                       transform=ForwardModel.transform,
+                                       name=ForwardModel.name))
+    assert cnn.model_config.name == ForwardModel.name
+    assert cnn.model_config.transform == ForwardModel.transform
+    try:
+        cnn.encode_images(TEST_IMAGE_DIR)
+    except Exception as e:
+        pytest.fail(f'Unexpected exception: {e}')
+
+
 def test__get_cnn_features_single(cnn):
     img = load_image(TEST_IMAGE, target_size=TEST_TARGET_SIZE)
 
