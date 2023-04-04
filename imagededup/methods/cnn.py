@@ -37,7 +37,7 @@ class CNN:
 
     - Duplicate detection:
     Find duplicates either using the encoding mapping generated previously using 'encode_images' or using a Path to the
-    directory that contains the images that need to be deduplicated. 'find_duplciates' and 'find_duplicates_to_remove'
+    directory that contains the images that need to be deduplicated. 'find_duplicates' and 'find_duplicates_to_remove'
     methods are provided to accomplish these tasks.
     """
 
