@@ -1,17 +1,19 @@
 # Using custom models for CNN
 
 To allow users to use custom models for encoding generation, we provide a `CustomModel` construct which serves as a wrapper for a user-defined feature extractor. The `CustomModel` consists of the following attributes:
-1. `name`: The name of the custom model. Can be set to any string.
-2. `model`: A PyTorch model object, which is a subclass of `torch.nn.Module` and implements the `forward` method. The output of the forward method should be a tensor of shape (batch_size x features) . Alternatively, a `__call__` method is also accepted.
-3. `transform`: A function that transforms a `PIL.Image` object into a PyTorch tensor. Should correspond to the preprocessing logic of the supplied model.
+
+- `name`: The name of the custom model. Can be set to any string.
+- `model`: A PyTorch model object, which is a subclass of `torch.nn.Module` and implements the `forward` method. The output of the forward method should be a tensor of shape (batch_size x features) . Alternatively, a `__call__` method is also accepted.
+- `transform`: A function that transforms a `PIL.Image` object into a PyTorch tensor. Should correspond to the preprocessing logic of the supplied model.
 
 
 `CustomModel` is provided while initializing the `cnn` object and can be used in the following 2 scenarios:
-1.  Using the models provided with the `imagededup` package.
+
+1. Using the models provided with the `imagededup` package.
 There are 3 models provided currently:
-- `MobileNetV3` ([MobileNetV3 Small](https://pytorch.org/vision/main/models/generated/torchvision.models.mobilenet_v3_small.html#torchvision.models.mobilenet_v3_small))- This is the default.
-- `ViT` ([Vision Transformer- B16 IMAGENET1K_SWAG_E2E_V1](https://pytorch.org/vision/main/models/generated/torchvision.models.vit_b_16.html?highlight=vit_b_16#torchvision.models.vit_b_16))
-- `EfficientNet` ([EfficientNet B4- IMAGENET1K_V1](https://pytorch.org/vision/main/models/generated/torchvision.models.efficientnet_b4.html?highlight=efficientnet_b4_weights#torchvision.models.EfficientNet_B4_Weights))
+    - `MobileNetV3` ([MobileNetV3 Small](https://pytorch.org/vision/main/models/generated/torchvision.models.mobilenet_v3_small.html#torchvision.models.mobilenet_v3_small))- This is the default.
+    - `ViT` ([Vision Transformer- B16 IMAGENET1K_SWAG_E2E_V1](https://pytorch.org/vision/main/models/generated/torchvision.models.vit_b_16.html?highlight=vit_b_16#torchvision.models.vit_b_16))    
+    - `EfficientNet` ([EfficientNet B4- IMAGENET1K_V1](https://pytorch.org/vision/main/models/generated/torchvision.models.efficientnet_b4.html?highlight=efficientnet_b4_weights#torchvision.models.EfficientNet_B4_Weights))
 
 ```python
 from imagededup.methods import CNN
@@ -36,7 +38,7 @@ cnn = CNN(model_config=custom_config)
 
 ```
 
-2.  Using a user-defined custom model.
+2.Using a user-defined custom model.
 ```python
 from imagededup.methods import CNN
 
