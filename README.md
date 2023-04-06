@@ -19,7 +19,7 @@ framework is also provided to judge the quality of deduplication for a given dat
 Following details the functionality provided by the package:
 
 - Finding duplicates in a directory using one of the following algorithms:
-  - [Convolutional Neural Network](https://arxiv.org/abs/1704.04861) (CNN)
+  - [Convolutional Neural Network](https://arxiv.org/abs/1905.02244#:~:text=MobileNetV3%20is%20tuned%20to%20mobile,improved%20through%20novel%20architecture%20advances.) (CNN) - Select from several prepackaged models or provide your own custom model.
   - [Perceptual hashing](http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html) (PHash)
   - [Difference hashing](http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html) (DHash)
   - [Wavelet hashing](https://fullstackml.com/wavelet-image-hash-in-python-3504fdd282b5) (WHash)
@@ -118,8 +118,9 @@ plot_duplicates(image_dir='path/to/image/directory',
                 duplicate_map=duplicates,
                 filename='ukbench00120.jpg')
 ```
+It is also possible to use your own custom models for finding duplicates using the CNN method.
 
-For more examples, refer [this](https://github.com/idealo/imagededup/tree/master/examples) part of the
+For examples, refer [this](https://github.com/idealo/imagededup/tree/master/examples) part of the
 repository.
 
 For more detailed usage of the package functionality, refer: [https://idealo.github.io/imagededup/](https://idealo.github.io/imagededup/)
