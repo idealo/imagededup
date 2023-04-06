@@ -54,9 +54,7 @@ class CNN:
 
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
-            model_config: A named tuple that can be used to initialize a custom PyTorch model along with the corresponding transform.
-            model: A user-provided feature extraction model.
-            transform: A transform that will be applied to each image before being fed to the model, should correspond to the supplied model.
+            model_config: A CustomModel that can be used to initialize a custom PyTorch model along with the corresponding transform.
         """
         self.model_config = model_config
         self._validate_model_config()
