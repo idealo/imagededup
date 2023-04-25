@@ -142,12 +142,13 @@ class CNN:
         feat_arr, all_filenames = [], []
         bad_im_count = 0
 
-        for ims, filenames, bad_images in self.dataloader:
-            arr = self.model(ims.to(self.device))
-            feat_arr.extend(arr)
-            all_filenames.extend(filenames)
-            if bad_images:
-                bad_im_count += 1
+        with torch.no_grad():
+            for ims, filenames, bad_images in self.dataloader:
+                arr = self.model(ims.to(self.device))
+                feat_arr.extend(arr)
+                all_filenames.extend(filenames)
+                if bad_images:
+                    bad_im_count += 1
 
         if bad_im_count:
             self.logger.info(
