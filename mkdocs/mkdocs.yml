@@ -6,8 +6,9 @@ nav:
     - User Guide:
         - Finding duplicates: user_guide/finding_duplicates.md
         - Encoding generation: user_guide/encoding_generation.md
-        - Evaluating performance: user_guide/evaluating_performance.md
+        - Custom Models: user_guide/custom_model.md
         - Plotting duplicates: user_guide/plotting_duplicates.md
+        - Evaluating performance: user_guide/evaluating_performance.md
         - Benchmarks: user_guide/benchmarks.md
     - API reference:
         - Methods:
@@ -17,6 +18,7 @@ nav:
             - Evaluation: evaluation/evaluation.md
         - Utils:
             - Plot duplicates: utils/plotter.md
+            - Custom Models: utils/models.md
     - Example:
         - CIFAR10 deduplication: examples/CIFAR10_deduplication.md
     - Contribution: CONTRIBUTING.md

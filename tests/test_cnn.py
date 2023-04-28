@@ -5,11 +5,14 @@ from pathlib import Path
 import os
 import json
 import numpy as np
+import torch
 from PIL import Image
 import pytest
+from torchvision.transforms import transforms
 
 from imagededup.methods.cnn import CNN
 from imagededup.utils.image_utils import load_image
+from imagededup.utils.models import MobilenetV3, CustomModel, EfficientNet, ViT
 
 
 p = Path(__file__)
@@ -42,10 +45,100 @@ def mocker_save_json(mocker):
     return mocker.patch('imagededup.methods.cnn.save_json')
 
 
-def test__init(cnn):
+def test__init_defaults(cnn):
     assert cnn.batch_size == TEST_BATCH_SIZE
-    assert cnn.target_size == TEST_TARGET_SIZE
-    assert cnn.model.__class__.__name__ == 'MobilenetV3'
+    assert cnn.model_config.name == MobilenetV3.name
+
+
+def test__init_custom():
+    cnn = CNN(model_config=CustomModel(model=EfficientNet(),
+                                       transform=EfficientNet.transform,
+                                       name=EfficientNet.name))
+    assert cnn.model_config.name == EfficientNet.name
+
+    cnn = CNN(model_config=CustomModel(model=ViT(),
+                                       transform=ViT.transform,
+                                       name=ViT.name))
+    assert cnn.model_config.name == ViT.name
+
+
+def test__init_missing_custom_args_raises_exception():
+    with pytest.raises(ValueError):
+        CNN(model_config=CustomModel(transform=ViT.transform,
+                                     name=ViT.name))
+
+    with pytest.raises(ValueError):
+        CNN(model_config=CustomModel(model=ViT(),
+                                     name=ViT.name))
+
+
+def test_default_custom_name_raises_warning():
+    with pytest.warns(SyntaxWarning):
+        CNN(model_config=CustomModel(model=EfficientNet(),
+                                     transform=EfficientNet.transform))
+
+
+def test_positional_init():
+    cnn = CNN(False, CustomModel(model=EfficientNet(),
+                                 transform=EfficientNet.transform,
+                                 name=EfficientNet.name))
+    assert cnn.verbose == 0
+    assert cnn.model_config.name == EfficientNet.name
+    assert cnn.model_config.transform == EfficientNet.transform
+
+
+class CallModel(torch.nn.Module):
+    transform = transforms.Compose(
+        [
+            transforms.ToTensor()
+        ]
+    )
+    name = 'test_custom_model'
+
+    def __init__(self):
+        super().__init__()
+
+    def __call__(self, x):
+        return x
+
+
+def test_call_method_accepted():
+    cnn = CNN(model_config=CustomModel(model=CallModel(),
+                                       transform=CallModel.transform,
+                                       name=CallModel.name))
+    assert cnn.model_config.name == CallModel.name
+    assert cnn.model_config.transform == CallModel.transform
+    try:
+        cnn.encode_images(TEST_IMAGE_DIR)
+    except Exception as e:
+        pytest.fail(f'Unexpected exception: {e}')
+
+
+class ForwardModel(torch.nn.Module):
+    transform = transforms.Compose(
+        [
+            transforms.ToTensor()
+        ]
+    )
+    name = 'test_custom_model'
+
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x):
+        return x
+
+
+def test_forward_method_accepted():
+    cnn = CNN(model_config=CustomModel(model=ForwardModel(),
+                                       transform=ForwardModel.transform,
+                                       name=ForwardModel.name))
+    assert cnn.model_config.name == ForwardModel.name
+    assert cnn.model_config.transform == ForwardModel.transform
+    try:
+        cnn.encode_images(TEST_IMAGE_DIR)
+    except Exception as e:
+        pytest.fail(f'Unexpected exception: {e}')
 
 
 def test__get_cnn_features_single(cnn):
@@ -102,6 +195,26 @@ def test__get_cnn_features_batch(cnn):
         assert i.shape == (576,)
 
 
+def test__get_cnn_features_batch_nondefault_models():
+    cnn = CNN(model_config=CustomModel(model=EfficientNet(),
+                                       transform=EfficientNet.transform,
+                                       name=EfficientNet.name))
+    result = cnn._get_cnn_features_batch(TEST_IMAGE_DIR)
+
+    for i in result.values():
+        assert isinstance(i, np.ndarray)
+        assert i.shape == (1792,)
+
+    cnn = CNN(model_config=CustomModel(model=ViT(),
+                                       transform=ViT.transform,
+                                       name=ViT.name))
+    result = cnn._get_cnn_features_batch(TEST_IMAGE_DIR)
+
+    for i in result.values():
+        assert isinstance(i, np.ndarray)
+        assert i.shape == (768,)
+
+
 @pytest.mark.skipif(sys.platform == 'win32' or sys.platform == 'darwin', reason='runs only on linux.')
 def test__get_cnn_features_batch_num_workers_do_not_change_final_result(cnn):
 
@@ -123,6 +236,7 @@ def test__get_cnn_features_batch_num_workers_do_not_change_final_result(cnn):
     assert list(sorted(result.keys(), key=str.lower)) == expected_predicted_files
 
 # encode_image
+
 
 def test_encode_image_expand_image_array_cnn_gets_called(cnn, mocker):
     image_arr_2d = np.random.random((3, 3))
