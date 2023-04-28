@@ -15,7 +15,7 @@
         <link rel="next" href="user_guide/finding_duplicates/">
       
       <link rel="icon" href="img/favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.6">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.8">
     
     
       
@@ -107,6 +107,8 @@
         </div>
       </div>
     </div>
+    
+      
     
     
     
@@ -370,8 +372,8 @@
   
   
     <li class="md-nav__item">
-      <a href="user_guide/evaluating_performance/" class="md-nav__link">
-        Evaluating performance
+      <a href="user_guide/custom_model/" class="md-nav__link">
+        Custom Models
       </a>
     </li>
   
@@ -386,6 +388,20 @@
     <li class="md-nav__item">
       <a href="user_guide/plotting_duplicates/" class="md-nav__link">
         Plotting duplicates
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="user_guide/evaluating_performance/" class="md-nav__link">
+        Evaluating performance
       </a>
     </li>
   
@@ -586,6 +602,20 @@
     <li class="md-nav__item">
       <a href="utils/plotter/" class="md-nav__link">
         Plot duplicates
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="utils/models/" class="md-nav__link">
+        Custom Models
       </a>
     </li>
   
@@ -801,7 +831,7 @@ framework is also provided to judge the quality of deduplication for a given dat
 <p>Following details the functionality provided by the package:</p>
 <ul>
 <li>Finding duplicates in a directory using one of the following algorithms:</li>
-<li><a href="https://arxiv.org/abs/1704.04861">Convolutional Neural Network</a> (CNN)</li>
+<li><a href="https://arxiv.org/abs/1905.02244#:~:text=MobileNetV3%20is%20tuned%20to%20mobile,improved%20through%20novel%20architecture%20advances.">Convolutional Neural Network</a> (CNN) - Select from several prepackaged models or provide your own custom model.</li>
 <li><a href="http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html">Perceptual hashing</a> (PHash)</li>
 <li><a href="http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html">Difference hashing</a> (DHash)</li>
 <li><a href="https://fullstackml.com/wavelet-image-hash-in-python-3504fdd282b5">Wavelet hashing</a> (WHash)</li>
@@ -892,7 +922,8 @@ python<span class="w"> </span>setup.py<span class="w"> </span>install
                 <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;ukbench00120.jpg&#39;</span><span class="p">)</span>
 </code></pre></div>
 
-<p>For more examples, refer <a href="https://github.com/idealo/imagededup/tree/master/examples">this</a> part of the
+<p>It is also possible to use your own custom models for finding duplicates using the CNN method.</p>
+<p>For examples, refer <a href="https://github.com/idealo/imagededup/tree/master/examples">this</a> part of the
 repository.</p>
 <p>For more detailed usage of the package functionality, refer: <a href="https://idealo.github.io/imagededup/">https://idealo.github.io/imagededup/</a></p>
 <h2 id="benchmarks">⏳ Benchmarks</h2>

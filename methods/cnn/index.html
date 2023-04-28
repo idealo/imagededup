@@ -17,7 +17,7 @@
         <link rel="next" href="../hashing/">
       
       <link rel="icon" href="../../img/favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.6">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.8">
     
     
       
@@ -109,6 +109,8 @@
         </div>
       </div>
     </div>
+    
+      
     
     
     
@@ -282,8 +284,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user_guide/evaluating_performance/" class="md-nav__link">
-        Evaluating performance
+      <a href="../../user_guide/custom_model/" class="md-nav__link">
+        Custom Models
       </a>
     </li>
   
@@ -298,6 +300,20 @@
     <li class="md-nav__item">
       <a href="../../user_guide/plotting_duplicates/" class="md-nav__link">
         Plotting duplicates
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user_guide/evaluating_performance/" class="md-nav__link">
+        Evaluating performance
       </a>
     </li>
   
@@ -448,11 +464,11 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#apply_mobilenet_preprocess" class="md-nav__link">
-    apply_mobilenet_preprocess
+  <a href="#apply_preprocess" class="md-nav__link">
+    apply_preprocess
   </a>
   
-    <nav class="md-nav" aria-label="apply_mobilenet_preprocess">
+    <nav class="md-nav" aria-label="apply_preprocess">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -734,6 +750,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../utils/models/" class="md-nav__link">
+        Custom Models
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -879,11 +909,11 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#apply_mobilenet_preprocess" class="md-nav__link">
-    apply_mobilenet_preprocess
+  <a href="#apply_preprocess" class="md-nav__link">
+    apply_preprocess
   </a>
   
-    <nav class="md-nav" aria-label="apply_mobilenet_preprocess">
+    <nav class="md-nav" aria-label="apply_preprocess">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1074,20 +1104,25 @@
 <p>Encodings generation: To propagate an image through a Convolutional Neural Network architecture and generate encodings. The generated encodings can be used at a later time for deduplication. Using the method 'encode_image', the CNN encodings for a single image can be obtained while the 'encode_images' method can be used to get encodings for all images in a directory.</p>
 </li>
 <li>
-<p>Duplicate detection: Find duplicates either using the encoding mapping generated previously using 'encode_images' or using a Path to the directory that contains the images that need to be deduplicated. 'find_duplciates' and 'find_duplicates_to_remove' methods are provided to accomplish these tasks.</p>
+<p>Duplicate detection: Find duplicates either using the encoding mapping generated previously using 'encode_images' or using a Path to the directory that contains the images that need to be deduplicated. 'find_duplicates' and 'find_duplicates_to_remove' methods are provided to accomplish these tasks.</p>
 </li>
 </ul>
 <h3 id="__init__">__init__</h3>
-<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">model_config</span><span class="p">)</span>
 </code></pre></div>
 
 <p>Initialize a pytorch MobileNet model v3 that is sliced at the last convolutional layer. Set the batch size for pytorch dataloader to be 64 samples.</p>
 <h5 id="args">Args</h5>
 <ul>
-<li><strong>verbose</strong>: Display progress bar if True else disable it. Default value is True.</li>
+<li>
+<p><strong>verbose</strong>: Display progress bar if True else disable it. Default value is True.</p>
+</li>
+<li>
+<p><strong>model_config</strong>: A CustomModel that can be used to initialize a custom PyTorch model along with the corresponding transform.</p>
+</li>
 </ul>
-<h3 id="apply_mobilenet_preprocess">apply_mobilenet_preprocess</h3>
-<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">apply_mobilenet_preprocess</span><span class="p">(</span><span class="n">im_arr</span><span class="p">)</span>
+<h3 id="apply_preprocess">apply_preprocess</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">apply_preprocess</span><span class="p">(</span><span class="n">im_arr</span><span class="p">)</span>
 </code></pre></div>
 
 <p>Apply preprocessing function for mobilenet to images.</p>

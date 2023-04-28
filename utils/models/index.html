@@ -11,17 +11,17 @@
       
       
       
-        <link rel="prev" href="../../methods/hashing/">
+        <link rel="prev" href="../plotter/">
       
       
-        <link rel="next" href="../../utils/plotter/">
+        <link rel="next" href="../../examples/CIFAR10_deduplication/">
       
       <link rel="icon" href="../../img/favicon.ico">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.8">
     
     
       
-        <title>Evaluation - Imagededup</title>
+        <title>Custom Models - Imagededup</title>
       
     
     
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#evaluate" class="md-skip">
+        <a href="#class-custommodel" class="md-skip">
           Skip to content
         </a>
       
@@ -103,7 +103,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Evaluation
+              Custom Models
             
           </span>
         </div>
@@ -437,16 +437,14 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
       
       
       
@@ -455,7 +453,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_2">
           <span class="md-nav__icon md-icon"></span>
           Evaluation
@@ -466,68 +464,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Evaluation
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../evaluation/evaluation/" class="md-nav__link">
         Evaluation
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#evaluate" class="md-nav__link">
-    evaluate
-  </a>
-  
-    <nav class="md-nav" aria-label="evaluate">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#args" class="md-nav__link">
-    Args
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#returns" class="md-nav__link">
-    Returns
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -544,14 +485,16 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
       
       
       
@@ -560,7 +503,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_3_3">
           <span class="md-nav__icon md-icon"></span>
           Utils
@@ -573,7 +516,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utils/plotter/" class="md-nav__link">
+      <a href="../plotter/" class="md-nav__link">
         Plot duplicates
       </a>
     </li>
@@ -585,11 +528,142 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../utils/models/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Custom Models
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Custom Models
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#class-custommodel" class="md-nav__link">
+    class CustomModel
+  </a>
+  
+    <nav class="md-nav" aria-label="class CustomModel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#args" class="md-nav__link">
+    Args
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-mobilenetv3" class="md-nav__link">
+    class MobilenetV3
+  </a>
+  
+    <nav class="md-nav" aria-label="class MobilenetV3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__" class="md-nav__link">
+    __init__
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forward" class="md-nav__link">
+    forward
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-vit" class="md-nav__link">
+    class ViT
+  </a>
+  
+    <nav class="md-nav" aria-label="class ViT">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init___1" class="md-nav__link">
+    __init__
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forward_1" class="md-nav__link">
+    forward
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-efficientnet" class="md-nav__link">
+    class EfficientNet
+  </a>
+  
+    <nav class="md-nav" aria-label="class EfficientNet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init___2" class="md-nav__link">
+    __init__
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forward_2" class="md-nav__link">
+    forward
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -712,11 +786,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#evaluate" class="md-nav__link">
-    evaluate
+  <a href="#class-custommodel" class="md-nav__link">
+    class CustomModel
   </a>
   
-    <nav class="md-nav" aria-label="evaluate">
+    <nav class="md-nav" aria-label="class CustomModel">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -726,9 +800,83 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-mobilenetv3" class="md-nav__link">
+    class MobilenetV3
+  </a>
+  
+    <nav class="md-nav" aria-label="class MobilenetV3">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
-  <a href="#returns" class="md-nav__link">
-    Returns
+  <a href="#__init__" class="md-nav__link">
+    __init__
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forward" class="md-nav__link">
+    forward
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-vit" class="md-nav__link">
+    class ViT
+  </a>
+  
+    <nav class="md-nav" aria-label="class ViT">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init___1" class="md-nav__link">
+    __init__
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forward_1" class="md-nav__link">
+    forward
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#class-efficientnet" class="md-nav__link">
+    class EfficientNet
+  </a>
+  
+    <nav class="md-nav" aria-label="class EfficientNet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init___2" class="md-nav__link">
+    __init__
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forward_2" class="md-nav__link">
+    forward
   </a>
   
 </li>
@@ -756,39 +904,51 @@
   
 
 
-  <h1>Evaluation</h1>
+  <h1>Custom Models</h1>
 
-<h3 id="evaluate">evaluate</h3>
-<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">ground_truth_map</span><span class="p">,</span> <span class="n">retrieved_map</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
-</code></pre></div>
-
-<p>Given a ground truth map and a duplicate map retrieved from a deduplication algorithm, get metrics to evaluate the effectiveness of the applied deduplication algorithm.</p>
+<h2 id="class-custommodel">class CustomModel</h2>
+<p>A named tuple that can be used to initialize a custom PyTorch model.</p>
 <h5 id="args">Args</h5>
 <ul>
 <li>
-<p><strong>ground_truth_map</strong>: A dictionary representing ground truth with filenames as key and a list of duplicate filenames
-                  as value.</p>
+<p><strong>name</strong>: The name of the custom model. Default is 'default_model'.</p>
 </li>
 <li>
-<p><strong>retrieved_map</strong>: A dictionary representing retrieved duplicates with filenames as key and a list of retrieved
-               duplicate filenames as value.</p>
+<p><strong>model</strong>: The PyTorch model object which is a subclass of <code>torch.nn.Module</code> and implements the <code>forward</code> method and output a tensor of shape (batch_size x features). Alternatively, a <strong>call</strong> method is also accepted.. Default is None.</p>
 </li>
 <li>
-<p><strong>metric</strong>:  Name of metric to be evaluated and returned. Accepted values are: 'map', 'ndcg', 'jaccard',
-        'classification', 'all'(default, returns every metric).</p>
+<p><strong>transform</strong>: A function that transforms a PIL.Image object into a PyTorch tensor that will be applied to each image before being fed to the model. Should correspond to the preprocessing logic of the supplied model. Default is None.</p>
 </li>
 </ul>
-<h5 id="returns">Returns</h5>
-<ul>
-<li><strong>dictionary</strong>: A dictionary with metric name as key and corresponding calculated metric as the value. 'map', 'ndcg'
-            and 'jaccard' return a single number denoting the corresponding information retrieval metric.
-            'classification' metrics include 'precision', 'recall' and 'f1-score' which are returned in the form
-            of individual entries in the returned dictionary. The value for each of the classification metric
-            is a numpy array with first entry as the score for non-duplicate file pairs(class-0) and second
-            entry as the score for duplicate file pairs (class-1). Additionally, a support is also returned as
-            another key with first entry denoting number of non-duplicate file pairs and second entry having
-            duplicate file pairs.</li>
-</ul>
+<h2 id="class-mobilenetv3">class MobilenetV3</h2>
+<h3 id="__init__">__init__</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Initialize a mobilenetv3 model, cuts it at the global average pooling layer and returns the output features.</p>
+<h3 id="forward">forward</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="class-vit">class ViT</h2>
+<h3 id="__init___1">__init__</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Initialize a ViT model, takes mean of the final encoder layer outputs and returns those as features for a given image.</p>
+<h3 id="forward_1">forward</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="class-efficientnet">class EfficientNet</h2>
+<h3 id="__init___2">__init__</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Initializes an EfficientNet model, cuts it at the global average pooling layer and returns the output features.</p>
+<h3 id="forward_2">forward</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div>
 
 
 
