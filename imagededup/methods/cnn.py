@@ -44,9 +44,7 @@ class CNN:
     def __init__(
         self,
         verbose: bool = True,
-        model_config: CustomModel = CustomModel(
-            model=MobilenetV3(), transform=MobilenetV3.transform, name=MobilenetV3.name
-        ),
+        model_config: Optional[CustomModel] = None
     ) -> None:
         """
         Initialize a pytorch MobileNet model v3 that is sliced at the last convolutional layer.
@@ -56,7 +54,9 @@ class CNN:
             verbose: Display progress bar if True else disable it. Default value is True.
             model_config: A CustomModel that can be used to initialize a custom PyTorch model along with the corresponding transform.
         """
-        self.model_config = model_config
+        self.model_config = model_config if model_config is not None else CustomModel(
+            model=MobilenetV3(), transform=MobilenetV3.transform, name=MobilenetV3.name
+        )
         self._validate_model_config()
 
         self.logger = return_logger(
