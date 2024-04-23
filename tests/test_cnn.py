@@ -8,6 +8,7 @@ import numpy as np
 import torch
 from PIL import Image
 import pytest
+import warnings
 from torchvision.transforms import transforms
 
 from imagededup.methods.cnn import CNN
@@ -891,7 +892,8 @@ def test_find_duplicates_encoding_integration(cnn):
     }
 
     encodings = cnn.encode_images(TEST_IMAGE_DIR_MIXED)
-    with pytest.warns(None):
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
         duplicates = cnn.find_duplicates(
             encoding_map=encodings, min_similarity_threshold=0.9, scores=True, outfile=False
         )
