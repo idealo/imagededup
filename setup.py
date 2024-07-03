@@ -89,13 +89,14 @@ else:
 
 setup(
     name='imagededup',
-    version='0.3.1',
+    version='0.3.2',
     author='Tanuj Jain, Christopher Lennan, Zubin John, Dat Tran',
     author_email='tanuj.jain.10@gmail.com, christopherlennan@gmail.com, zrjohn@yahoo.com, datitran@gmail.com',
     description='Package for image deduplication',
     long_description=long_description,
     license='Apache 2.0',
     install_requires=[
+        'numpy==1.26.4',
         'torch',
         'torchvision',
         'Pillow>=9.0',
