@@ -46,6 +46,44 @@ def mocker_save_json(mocker):
     return mocker.patch('imagededup.methods.cnn.save_json')
 
 
+def test_import_defaults():
+    """Ensure that MobileNet does not get downloaded on import"""
+    from torch.hub import get_dir
+    from pathlib import Path
+
+    checkpoint_dir = Path(get_dir()) / "checkpoints"
+
+    # Clear cached MobileNet model
+    for model_path in checkpoint_dir.iterdir():
+        if model_path.name.startswith("mobilenet_v3_small"):
+            os.remove(model_path)
+    assert not [
+        m_path
+        for m_path in checkpoint_dir.iterdir()
+        if m_path.name.startswith("mobilenet_v3_small")
+    ]
+
+    # Re-import cnn and assert model is not downloaded
+    import sys
+
+    del sys.modules["imagededup.methods.cnn"]
+    from imagededup.methods.cnn import CNN
+
+    assert not [
+        m_path
+        for m_path in checkpoint_dir.iterdir()
+        if m_path.name.startswith("mobilenet_v3_small")
+    ]
+
+    # Instantiate CNN class and assert model was downloaded
+    _ = CNN()
+    assert [
+        m_path
+        for m_path in checkpoint_dir.iterdir()
+        if m_path.name.startswith("mobilenet_v3_small")
+    ]
+
+
 def test__init_defaults(cnn):
     assert cnn.batch_size == TEST_BATCH_SIZE
     assert cnn.model_config.name == MobilenetV3.name
