@@ -96,6 +96,7 @@ setup(
     long_description=long_description,
     license='Apache 2.0',
     install_requires=[
+        'numpy==1.26.4',
         'torch',
         'torchvision',
         'Pillow>=9.0',
