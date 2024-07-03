@@ -1,4 +1,5 @@
 import sys
+import warnings
 from multiprocessing import cpu_count
 from pathlib import Path
 
@@ -891,7 +892,8 @@ def test_find_duplicates_encoding_integration(cnn):
     }
 
     encodings = cnn.encode_images(TEST_IMAGE_DIR_MIXED)
-    with pytest.warns(None):
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
         duplicates = cnn.find_duplicates(
             encoding_map=encodings, min_similarity_threshold=0.9, scores=True, outfile=False
         )
