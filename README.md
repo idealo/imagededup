@@ -8,6 +8,8 @@
 
 imagededup is a python package that simplifies the task of finding **exact** and **near duplicates** in an image collection.
 
+Since this project is no longer actively maintained, it will be archived on 2025-01-03.
+
 <p align="center">
   <img src="readme_figures/mona_lisa.png" width="600" />
 </p>
