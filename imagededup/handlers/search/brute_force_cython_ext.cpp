@@ -4,20 +4,7 @@
 {
     "distutils": {
         "depends": [
-            "imagededup/handlers/search/builtin/builtin.h"
-        ],
-        "extra_compile_args": [
-            "-O3",
-            "-march=native",
-            "-mtune=native",
-            "-stdlib=libc++"
-        ],
-        "extra_link_args": [
-            "-O3",
-            "-march=native",
-            "-mtune=native",
-            "-lc++",
-            "-nodefaultlibs"
+            "imagededup\\handlers\\search\\builtin\\builtin.h"
         ],
         "include_dirs": [
             "imagededup/handlers/search"
@@ -1004,7 +991,7 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "imagededup/handlers/search/brute_force_cython_ext.pyx",
+  "imagededup\\handlers\\search\\brute_force_cython_ext.pyx",
   "stringsource",
 };
 
@@ -1324,7 +1311,7 @@ static const char __pyx_k_all_filenames[] = "all_filenames";
 static const char __pyx_k_query_hash_val[] = "query_hash_val";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_brute_force_cython_ext[] = "brute_force_cython_ext";
-static const char __pyx_k_imagededup_handlers_search_brute[] = "imagededup/handlers/search/brute_force_cython_ext.pyx";
+static const char __pyx_k_imagededup_handlers_search_brute[] = "imagededup\\handlers\\search\\brute_force_cython_ext.pyx";
 static PyObject *__pyx_n_s_all_filenames;
 static PyObject *__pyx_n_s_all_hashes;
 static PyObject *__pyx_n_s_brute_force_cython_ext;
