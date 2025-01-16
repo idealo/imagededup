@@ -7,4 +7,4 @@ scikit-learn
 PyWavelets
 matplotlib
 # Development dependencies
-cython>=0.29
+cython>=0.29.34
