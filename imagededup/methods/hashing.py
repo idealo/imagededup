@@ -166,6 +166,17 @@ class Hashing:
 
         logger.info(f'End: Calculating hashes!')
         return hash_dict
+    
+    def encode_images(self, files: List[str], num_enc_workers: int = cpu_count()):
+        logger.info(f'Start: Calculating hashes...')
+        hashes = parallelise(function=self.encode_image, data=files, verbose=self.verbose, num_workers=num_enc_workers)
+        hash_initial_dict = dict(zip(generate_relative_names(image_dir, files), hashes))
+        hash_dict = {
+            k: v for k, v in hash_initial_dict.items() if v
+        }  # To ignore None (returned if some probelm with image file)
+        logger.info(f'End: Calculating hashes!')
+        return hash_dict
+
 
     def _hash_algo(self, image_array: np.ndarray):
         pass
