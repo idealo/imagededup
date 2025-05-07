@@ -22,7 +22,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.23.3
         env:
           CIBW_BEFORE_BUILD: pip install "cython>=0.29"
-          CIBW_SKIP: cp36-* cp37-* pp* *-musllinux* *-manylinux_i686
+          CIBW_SKIP: cp36-* cp37-* cp313-* pp* *-musllinux* *-manylinux_i686
 
       - uses: actions/upload-artifact@v4
         with:
