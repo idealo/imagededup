@@ -800,7 +800,7 @@ def test_find_duplicates_encoding_map_input():
         'ukbench09268.jpg': 'c73c36c2da2f29c9',
     }
     phasher = PHash()
-    with pytest.warns(None):
+    with pytest.warns():
         duplicate_dict = phasher.find_duplicates(
             encoding_map=encoding, max_distance_threshold=10
         )
