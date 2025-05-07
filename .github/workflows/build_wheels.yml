@@ -26,4 +26,5 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
+          name: wheels-${{ matrix.os }}-${{ github.run_id }}
           path: ./wheelhouse/*.whl
