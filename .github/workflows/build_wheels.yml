@@ -14,16 +14,17 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-11, windows-2019]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.11.1
+        uses: pypa/cibuildwheel@v2.23.3
         env:
           CIBW_BEFORE_BUILD: pip install "cython>=0.29"
-          CIBW_SKIP: cp36-* cp37-* cp311-* pp37-* pp38-* pp39-* cp38-manylinux_i686 cp39-manylinux_i686 cp310-manylinux_i686 cp38-musllinux* cp39-musllinux* cp310-musllinux*
+          CIBW_SKIP: cp36-* cp37-* cp313-* pp* *-musllinux* *-manylinux_i686
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
+          name: wheels-${{ matrix.os }}-${{ github.run_id }}
           path: ./wheelhouse/*.whl
