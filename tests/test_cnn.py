@@ -892,12 +892,8 @@ def test_find_duplicates_encoding_integration(cnn):
     }
 
     encodings = cnn.encode_images(TEST_IMAGE_DIR_MIXED)
-<<<<<<< HEAD
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-=======
-    with pytest.warns():
->>>>>>> master
         duplicates = cnn.find_duplicates(
             encoding_map=encodings, min_similarity_threshold=0.9, scores=True, outfile=False
         )
