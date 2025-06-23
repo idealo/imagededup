@@ -1,0 +1,81 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+    "cython>=0.29",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "imagededup"
+version = "0.3.3"
+description = "Package for image deduplication"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Tanuj Jain", email = "tanuj.jain.10@gmail.com" },
+    { name = "Christopher Lennan", email = "christopherlennan@gmail.com" },
+    { name = "Zubin John", email = "zrjohn@yahoo.com" },
+    { name = "Dat Tran", email = "datitran@gmail.com" }
+]
+requires-python = ">=3.8"
+dependencies = [
+    "torch",
+    "torchvision",
+    "Pillow>=9.0",
+    "tqdm",
+    "scikit-learn",
+    "PyWavelets",
+    "matplotlib"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Cython",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.optional-dependencies]
+tests = ["pytest", "pytest-cov", "pytest-mock", "codecov"]
+docs = ["mkdocs", "mkdocs-material"]
+
+[dependency-groups]
+dev = [
+  "bump-my-version"
+]
+
+[tool.bumpversion]
+current_version = "0.3.3"
+commit = false
+tag = true
+parse = "^(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)(\\-post(?P<post>\\d+))?$"
+serialize = [
+  "{major}.{minor}.{patch}-post{post}",
+  "{major}.{minor}.{patch}"
+]
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = '^version = ".*"$'
+replace = 'version = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "imagededup/__init__.py"
+
+[project.urls]
+Documentation = "https://idealo.github.io/imagededup/"
+
+[tool.setuptools.packages.find]
+exclude = ["tests*"]
