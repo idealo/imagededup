@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "imagededup"
-version = "0.3.3"
+version = "0.3.3-post1"
 description = "Package for image deduplication"
 readme = "README.md"
 license = { text = "Apache-2.0" }
@@ -57,7 +57,7 @@ dev = [
 ]
 
 [tool.bumpversion]
-current_version = "0.3.3"
+current_version = "0.3.3-post1"
 commit = false
 tag = true
 parse = "^(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)(\\-post(?P<post>\\d+))?$"
@@ -68,7 +68,7 @@ serialize = [
 
 [[tool.bumpversion.files]]
 filename = "pyproject.toml"
-search = '^version = ".*"$'
+search = 'version = "0.3.3-post1"'
 replace = 'version = "{new_version}"'
 
 [[tool.bumpversion.files]]
