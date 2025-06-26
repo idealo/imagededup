@@ -18,7 +18,7 @@ authors = [
     { name = "Zubin John", email = "zrjohn@yahoo.com" },
     { name = "Dat Tran", email = "datitran@gmail.com" }
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
     "torch",
     "torchvision",
@@ -52,7 +52,8 @@ docs = ["mkdocs", "mkdocs-material"]
 
 [dependency-groups]
 dev = [
-  "bump-my-version"
+  "bump-my-version",
+  "twine"
 ]
 
 [tool.bumpversion]
