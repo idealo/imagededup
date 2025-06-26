@@ -23,8 +23,8 @@ jobs:
         env:
           CIBW_TEST_COMMAND: "pytest tests/"
           CIBW_TEST_REQUIRES: pytest
-          CIBW_SKIP: cp36-* cp37-* cp313-* pp* *-musllinux* *-manylinux_i686
-
+          CIBW_SKIP: cp36-* cp37-* cp38-* cp313-* pp* *-musllinux* *-manylinux_i686
+ 
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}-${{ github.run_id }}

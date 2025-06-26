@@ -1,7 +1,7 @@
 uv tool install bump-my-version
 bump-my-version bump $1
 git add .
-git commit -m "Bump version to $(bump-my-version current)"
+git commit -m "Bump version to $(bump-my-version show current_version)"
 git push
 
 uv build --sdist
