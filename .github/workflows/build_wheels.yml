@@ -21,8 +21,8 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.23.3
         env:
-          CIBW_TEST_SOURCES: tests
-          CIBW_TEST_COMMAND: "pytest tests/"
+          CIBW_TEST_SOURCES: "tests"
+          CIBW_TEST_COMMAND: "ls -R && pwd && python -m pytest -v tests/" # "pytest tests/"
           CIBW_TEST_REQUIRES: pytest pytest-cov pytest-mock codecov
           CIBW_SKIP: cp36-* cp37-* cp38-* cp313-* pp* *-musllinux* *-manylinux_i686
  
