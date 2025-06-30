@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - update-cicd
   pull_request:
     branches:
       - master
@@ -19,9 +20,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.23.3
+        uses: pypa/cibuildwheel@v3.0.0
         env:
-          CIBW_SKIP: cp36-* cp37-* cp38-* cp313-* pp* *-musllinux* *-manylinux_i686
+          CIBW_TEST_SOURCES: tests
+          CIBW_TEST_COMMAND: "pytest tests"
+          CIBW_TEST_REQUIRES: pytest pytest-cov pytest-mock codecov
+          CIBW_SKIP: cp38-* cp313-* pp* *-musllinux* *-manylinux_i686
  
       - uses: actions/upload-artifact@v4
         with:
