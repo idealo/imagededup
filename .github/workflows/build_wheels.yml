@@ -25,7 +25,7 @@ jobs:
           CIBW_TEST_SOURCES: tests
           CIBW_TEST_COMMAND: ${{ matrix.os != 'windows-latest' && 'pytest tests' || '' }}
           CIBW_TEST_REQUIRES: pytest pytest-cov pytest-mock codecov 
-          CIBW_SKIP: cp38-* cp39-* cp310-* cp311-* cp313-* *-musllinux* *-manylinux_i686
+          CIBW_SKIP: cp38-* cp313-* *-musllinux* *-manylinux_i686
  
       - uses: actions/upload-artifact@v4
         with:
