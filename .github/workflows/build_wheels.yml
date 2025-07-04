@@ -23,8 +23,7 @@ jobs:
         uses: pypa/cibuildwheel@v3.0.0
         env:
           CIBW_TEST_SOURCES: tests
-          CIBW_TEST_COMMAND: "pytest tests"
-          CIBW_TEST_EXTRAS: torch --index-url https://download.pytorch.org/whl/cpu
+          CIBW_TEST_COMMAND: pip install torch torchvision -f https://download.pytorch.org/whl/cpu && pytest tests
           CIBW_TEST_REQUIRES: pytest pytest-cov pytest-mock codecov 
           CIBW_SKIP: cp38-* cp39-* cp310-* cp311-* cp313-* *-musllinux* *-manylinux_i686
  
