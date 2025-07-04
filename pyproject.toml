@@ -11,7 +11,7 @@ name = "imagededup"
 version = "0.3.3-post1"
 description = "Package for image deduplication"
 readme = "README.md"
-license = { text = "Apache-2.0" }
+license = "Apache-2.0"
 authors = [
     { name = "Tanuj Jain", email = "tanuj.jain.10@gmail.com" },
     { name = "Christopher Lennan", email = "christopherlennan@gmail.com" },
