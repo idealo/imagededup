@@ -3,3 +3,4 @@ include imagededup/handlers/search/builtin/README.md
 include imagededup/handlers/search/brute_force_cython_ext.pyx
 include LICENSE
 include requirements.txt
+include pyproject.toml
