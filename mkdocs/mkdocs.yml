@@ -10,6 +10,7 @@ nav:
         - Plotting duplicates: user_guide/plotting_duplicates.md
         - Evaluating performance: user_guide/evaluating_performance.md
         - Benchmarks: user_guide/benchmarks.md
+        - Windows: user_guide/windows.md
     - API reference:
         - Methods:
             - CNN: methods/cnn.md
