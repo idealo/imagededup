@@ -11,10 +11,10 @@
       
       
       
-        <link rel="prev" href="../encoding_generation/">
+        <link rel="prev" href="../benchmarks/">
       
       
-        <link rel="next" href="../plotting_duplicates/">
+        <link rel="next" href="../../methods/cnn/">
       
       
       <link rel="icon" href="../../img/favicon.ico">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Custom Models - Imagededup</title>
+        <title>Windows - Imagededup</title>
       
     
     
@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#using-custom-models-for-cnn" class="md-skip">
+        <a href="#windows" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Custom Models
+              Windows
             
           </span>
         </div>
@@ -331,19 +331,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../custom_model/" class="md-nav__link">
         
   
   
@@ -354,7 +345,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -433,10 +423,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../windows/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Windows
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -447,6 +459,35 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-fix" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Fix
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -889,6 +930,23 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-fix" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Fix
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -906,83 +964,62 @@
   
 
 
-<h1 id="using-custom-models-for-cnn">Using custom models for CNN</h1>
-<p>To allow users to use custom models for encoding generation, we provide a <code>CustomModel</code> construct which serves as a wrapper for a user-defined feature extractor. The <code>CustomModel</code> consists of the following attributes:</p>
-<ul>
-<li><code>name</code>: The name of the custom model. Can be set to any string.</li>
-<li><code>model</code>: A PyTorch model object, which is a subclass of <code>torch.nn.Module</code> and implements the <code>forward</code> method. The output of the forward method should be a tensor of shape (batch_size x features) . Alternatively, a <code>__call__</code> method is also accepted.</li>
-<li><code>transform</code>: A function that transforms a <code>PIL.Image</code> object into a PyTorch tensor. Should correspond to the preprocessing logic of the supplied model.</li>
-</ul>
-<p><code>CustomModel</code> is provided while initializing the <code>cnn</code> object and can be used in the following 2 scenarios:</p>
-<ol>
-<li>Using the models provided with the <code>imagededup</code> package.
-There are 3 models provided currently:<ul>
-<li><code>MobileNetV3</code> (<a href="https://pytorch.org/vision/main/models/generated/torchvision.models.mobilenet_v3_small.html#torchvision.models.mobilenet_v3_small">MobileNetV3 Small</a>)- This is the default.</li>
-<li><code>ViT</code> (<a href="https://pytorch.org/vision/main/models/generated/torchvision.models.vit_b_16.html?highlight=vit_b_16#torchvision.models.vit_b_16">Vision Transformer- B16 IMAGENET1K_SWAG_E2E_V1</a>)    </li>
-<li><code>EfficientNet</code> (<a href="https://pytorch.org/vision/main/models/generated/torchvision.models.efficientnet_b4.html?highlight=efficientnet_b4_weights#torchvision.models.EfficientNet_B4_Weights">EfficientNet B4- IMAGENET1K_V1</a>)</li>
-</ul>
-</li>
-</ol>
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">CNN</span>
+<h1 id="windows">Windows</h1>
+<p>The following code snippet on Windows is likely to break with a <code>RuntimeError</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">PHash</span>
+<span class="n">phasher</span> <span class="o">=</span> <span class="n">PHash</span><span class="p">()</span>
 
-<span class="c1"># Get CustomModel construct</span>
-<span class="kn">from</span> <span class="nn">imagededup.utils</span> <span class="kn">import</span> <span class="n">CustomModel</span>
+<span class="c1"># Generate encodings for all images in an image directory</span>
+<span class="n">encodings</span> <span class="o">=</span> <span class="n">phasher</span><span class="o">.</span><span class="n">encode_images</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/image/directory&#39;</span><span class="p">)</span>
 
-<span class="c1"># Get the prepackaged models from imagededup</span>
-<span class="kn">from</span> <span class="nn">imagededup.utils.models</span> <span class="kn">import</span> <span class="n">ViT</span><span class="p">,</span> <span class="n">MobilenetV3</span><span class="p">,</span> <span class="n">EfficientNet</span>
+<span class="c1"># Find duplicates using the generated encodings</span>
+<span class="n">duplicates</span> <span class="o">=</span> <span class="n">phasher</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">encoding_map</span><span class="o">=</span><span class="n">encodings</span><span class="p">)</span>
 
-
-<span class="c1"># Declare a custom config with CustomModel, the prepackaged models come with a name and transform function</span>
-<span class="n">custom_config</span> <span class="o">=</span> <span class="n">CustomModel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">EfficientNet</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                            <span class="n">model</span><span class="o">=</span><span class="n">EfficientNet</span><span class="p">(),</span> 
-                            <span class="n">transform</span><span class="o">=</span><span class="n">EfficientNet</span><span class="o">.</span><span class="n">transform</span><span class="p">)</span>
-
-<span class="c1"># Use model_config argument to pass the custom config</span>
-<span class="n">cnn</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">(</span><span class="n">model_config</span><span class="o">=</span><span class="n">custom_config</span><span class="p">)</span>
-
-<span class="c1"># Use the model as usual</span>
-<span class="o">...</span>
+<span class="c1"># plot duplicates obtained for a given file using the duplicates dictionary</span>
+<span class="kn">from</span> <span class="nn">imagededup.utils</span> <span class="kn">import</span> <span class="n">plot_duplicates</span>
+<span class="n">plot_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/image/directory&#39;</span><span class="p">,</span>
+                <span class="n">duplicate_map</span><span class="o">=</span><span class="n">duplicates</span><span class="p">,</span>
+                <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;ukbench00120.jpg&#39;</span><span class="p">)</span>
 </code></pre></div>
 
-<p>2.Using a user-defined custom model.</p>
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">CNN</span>
+<div class="codehilite"><pre><span></span><code><span class="n">RuntimeError</span><span class="o">:</span>
+<span class="w">    </span><span class="n">An</span><span class="w"> </span><span class="n">attempt</span><span class="w"> </span><span class="n">has</span><span class="w"> </span><span class="n">been</span><span class="w"> </span><span class="n">made</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">process</span><span class="w"> </span><span class="n">before</span><span class="w"> </span><span class="n">the</span>
+<span class="w">    </span><span class="n">current</span><span class="w"> </span><span class="n">process</span><span class="w"> </span><span class="n">has</span><span class="w"> </span><span class="n">finished</span><span class="w"> </span><span class="n">its</span><span class="w"> </span><span class="n">bootstrapping</span><span class="w"> </span><span class="n">phase</span><span class="o">.</span>
 
-<span class="c1"># Get CustomModel construct</span>
-<span class="kn">from</span> <span class="nn">imagededup.utils</span> <span class="kn">import</span> <span class="n">CustomModel</span>
+<span class="w">    </span><span class="n">This</span><span class="w"> </span><span class="n">probably</span><span class="w"> </span><span class="n">means</span><span class="w"> </span><span class="n">that</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="n">are</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="n">using</span><span class="w"> </span><span class="n">fork</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="n">your</span>
+<span class="w">    </span><span class="n">child</span><span class="w"> </span><span class="n">processes</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="n">have</span><span class="w"> </span><span class="n">forgotten</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">use</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">proper</span><span class="w"> </span><span class="n">idiom</span>
+<span class="w">    </span><span class="k">in</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">main</span><span class="w"> </span><span class="n">module</span><span class="o">:</span>
 
-<span class="c1"># Import necessary pytorch constructs for initializing a custom feature extractor</span>
-<span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torchvision.transforms</span> <span class="kn">import</span> <span class="n">transforms</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">__name__</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;__main__&#39;</span><span class="o">:</span>
+<span class="w">            </span><span class="n">freeze_support</span><span class="o">()</span>
+<span class="w">            </span><span class="o">...</span>
 
-<span class="c1"># Declare custom feature extractor class</span>
-<span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">(</span>
-        <span class="p">[</span>
-            <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">()</span>
-        <span class="p">]</span>
-    <span class="p">)</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;my_custom_model&#39;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="c1"># Define the layers of the model here</span>
-
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="c1"># Do something with x</span>
-        <span class="k">return</span> <span class="n">x</span>
-
-<span class="n">custom_config</span> <span class="o">=</span> <span class="n">CustomModel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">MyModel</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                            <span class="n">model</span><span class="o">=</span><span class="n">MyModel</span><span class="p">(),</span>
-                            <span class="n">transform</span><span class="o">=</span><span class="n">MyModel</span><span class="o">.</span><span class="n">transform</span><span class="p">)</span>
-
-<span class="n">cnn</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">(</span><span class="n">model_config</span><span class="o">=</span><span class="n">custom_config</span><span class="p">)</span>
-
-<span class="c1"># Use the model as usual</span>
-<span class="o">...</span>
+<span class="w">    </span><span class="n">The</span><span class="w"> </span><span class="s2">&quot;freeze_support()&quot;</span><span class="w"> </span><span class="n">line</span><span class="w"> </span><span class="n">can</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">omitted</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">program</span>
+<span class="w">    </span><span class="k">is</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="n">going</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">frozen</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">produce</span><span class="w"> </span><span class="n">an</span><span class="w"> </span><span class="n">executable</span><span class="o">.</span>
 </code></pre></div>
 
-<p>It is not necessary to bundle <code>name</code> and <code>transform</code> functions with the <code>model</code> class. They can be passed separately as well.</p>
-<p>Examples for both scenarios can be found in the <a href="https://github.com/idealo/imagededup/tree/master/examples">examples section</a>.</p>
+<p>The error occurs due to the underlying dependency <code>multiprocessing</code> which observes certain restrictions when working on Windows as explained <a href="https://docs.python.org/2/library/multiprocessing.html#windows">here</a>.</p>
+<h2 id="the-fix">The Fix</h2>
+<p>Just enclose the logic in a <code>if __name__ == '__main__':</code> entry point:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">imagededup.methods</span> <span class="kn">import</span> <span class="n">PHash</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">phasher</span> <span class="o">=</span> <span class="n">PHash</span><span class="p">()</span>
+
+    <span class="c1"># Generate encodings for all images in an image directory</span>
+    <span class="n">encodings</span> <span class="o">=</span> <span class="n">phasher</span><span class="o">.</span><span class="n">encode_images</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/image/directory&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Find duplicates using the generated encodings</span>
+    <span class="n">duplicates</span> <span class="o">=</span> <span class="n">phasher</span><span class="o">.</span><span class="n">find_duplicates</span><span class="p">(</span><span class="n">encoding_map</span><span class="o">=</span><span class="n">encodings</span><span class="p">)</span>
+
+    <span class="c1"># plot duplicates obtained for a given file using the duplicates dictionary</span>
+    <span class="kn">from</span> <span class="nn">imagededup.utils</span> <span class="kn">import</span> <span class="n">plot_duplicates</span>
+    <span class="n">plot_duplicates</span><span class="p">(</span><span class="n">image_dir</span><span class="o">=</span><span class="s1">&#39;path/to/image/directory&#39;</span><span class="p">,</span>
+                    <span class="n">duplicate_map</span><span class="o">=</span><span class="n">duplicates</span><span class="p">,</span>
+                    <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;ukbench00120.jpg&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Also see issues <a href="https://github.com/idealo/imagededup/issues/194">194</a> and <a href="https://github.com/idealo/imagededup/issues/214">214</a>.</p>
 
 
 
