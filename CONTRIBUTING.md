@@ -23,6 +23,10 @@ You may look through the [GitHub issues](https://github.com/idealo/image-dedup/i
 2. For bug fixes, add new tests and for new features, please add changes to the documentation.
 3. Do a PR from your new branch to our `dev` branch of the original Imagededup repo.
 
+## Style
+1. Use single quotes for strings instead of double quotes.
+2. Keep import order and groups as specified by [PEP-0008](https://www.python.org/dev/peps/pep-0008/#imports).
+
 ## Documentation
 - Make sure any new function or class you introduce has proper docstrings.
 

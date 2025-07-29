@@ -412,7 +412,7 @@ class CNN:
             image_dir: Path to the directory containing all the images or dictionary with keys as file names
             and values as numpy arrays which represent the CNN encoding for the key image file.
             encoding_map: Optional, used instead of image_dir, a dictionary containing mapping of filenames and
-                          corresponding CNN encodings.
+                          corresponding CNN encodings. An encoding is a numpy array with shape (features,).
             min_similarity_threshold: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9
             scores: Optional, boolean indicating whether similarity scores are to be returned along with retrieved
                     duplicates.
@@ -495,7 +495,7 @@ class CNN:
             image_dir: Path to the directory containing all the images or dictionary with keys as file names
                        and values as numpy arrays which represent the CNN encoding for the key image file.
             encoding_map: Optional, used instead of image_dir, a dictionary containing mapping of filenames and
-                          corresponding CNN encodings.
+                          corresponding CNN encodings. An encoding is a numpy array with shape (features,).
             min_similarity_threshold: Optional, threshold value (must be float between -1.0 and 1.0). Default is 0.9
             outfile: Optional, name of the file to save the results, must be a json. Default is None.
             recursive: Optional, find images recursively in a nested image directory structure, set to False by default.
