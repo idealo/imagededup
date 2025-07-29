@@ -117,6 +117,7 @@ plot_duplicates(image_dir='path/to/image/directory',
                 duplicate_map=duplicates,
                 filename='ukbench00120.jpg')
 ```
+To run the above snippet on Windows, have a look [here](https://idealo.github.io/imagededup/user_guide/windows/).
 It is also possible to use your own custom models for finding duplicates using the CNN method.
 
 For examples, refer [this](https://github.com/idealo/imagededup/tree/master/examples) part of the
