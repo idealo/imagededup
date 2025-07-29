@@ -52,6 +52,9 @@ def test_import_defaults():
 
     checkpoint_dir = Path(get_dir()) / "checkpoints"
 
+    # Ensure the directory exists
+    checkpoint_dir.mkdir(parents=True, exist_ok=True)
+
     # Clear cached MobileNet model
     for model_path in checkpoint_dir.iterdir():
         if model_path.name.startswith("mobilenet_v3_small"):
