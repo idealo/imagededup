@@ -62,12 +62,10 @@ def save_json(results: Dict, filename: str, float_scores: bool = False) -> None:
 
 def parallelise(function: Callable, data: List, verbose: bool, num_workers: int) -> List:
     num_workers = 1 if num_workers < 1 else num_workers  # Pool needs to have at least 1 worker.
-    pool = Pool(processes=num_workers)
-    results = list(
-        tqdm.tqdm(pool.imap(function, data, 100), total=len(data), disable=not verbose)
-    )
-    pool.close()
-    pool.join()
+    with Pool(processes=num_workers) as pool:
+        results = list(
+            tqdm.tqdm(pool.imap(function, data, 100), total=len(data), disable=not verbose)
+        )
     return results
 
 

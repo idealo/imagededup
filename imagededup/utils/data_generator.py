@@ -46,6 +46,10 @@ def _collate_fn(batch: List[Dict]) -> Tuple[torch.tensor, str, str]:
             filenames.append(b['filename'])
         else:
             bad_images.append(b['filename'])
+
+    if not ims:
+        return None, filenames, bad_images
+
     return torch.stack(ims), filenames, bad_images
 
 

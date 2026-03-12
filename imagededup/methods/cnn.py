@@ -44,15 +44,17 @@ class CNN:
     def __init__(
         self,
         verbose: bool = True,
-        model_config: Optional[CustomModel] = None
+        model_config: Optional[CustomModel] = None,
+        batch_size: int = 64
     ) -> None:
         """
         Initialize a pytorch MobileNet model v3 that is sliced at the last convolutional layer.
-        Set the batch size for pytorch dataloader to be 64 samples.
+        Set the batch size for pytorch dataloader to be 64 samples by default.
 
         Args:
             verbose: Display progress bar if True else disable it. Default value is True.
             model_config: A CustomModel that can be used to initialize a custom PyTorch model along with the corresponding transform.
+            batch_size: Batch size for the dataloader during encoding generation. Lower values use less GPU memory. Default value is 64.
         """
         self.model_config = model_config if model_config is not None else CustomModel(
             model=MobilenetV3(), transform=MobilenetV3.transform, name=MobilenetV3.name
@@ -64,7 +66,9 @@ class CNN:
         )  # The logger needs to be bound to the class, otherwise stderr also gets
         # directed to stdout (Don't know why that is the case)
 
-        self.batch_size = 64
+        if not isinstance(batch_size, int) or batch_size < 1:
+            raise ValueError('batch_size must be a positive integer')
+        self.batch_size = batch_size
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.logger.info(f"Device set to {self.device} ..")
 
@@ -109,12 +113,7 @@ class CNN:
         image_pp = image_pp.unsqueeze(0)
         img_features_tensor = self.model(image_pp.to(self.device))
 
-        if self.device.type == "cuda":
-            unpacked_img_features_tensor = img_features_tensor.cpu().detach().numpy()
-        else:
-            unpacked_img_features_tensor = img_features_tensor.detach().numpy()
-
-        return unpacked_img_features_tensor
+        return img_features_tensor.cpu().detach().numpy()
 
     def _get_cnn_features_batch(
         self,
@@ -146,31 +145,36 @@ class CNN:
 
         with torch.no_grad():
             for ims, filenames, bad_images in self.dataloader:
+                if ims is None or len(ims) == 0:
+                    bad_im_count += len(bad_images)
+                    continue
                 arr = self.model(ims.to(self.device))
-                feat_arr.extend(arr)
+                feat_arr.append(arr.cpu().detach().numpy())
+                del arr
+                if self.device.type == 'cuda':
+                    torch.cuda.empty_cache()
                 all_filenames.extend(filenames)
-                if bad_images:
-                    bad_im_count += 1
+                bad_im_count += len(bad_images)
 
         if bad_im_count:
             self.logger.info(
                 f"Found {bad_im_count} bad images, ignoring for encoding generation .."
             )
 
-        feat_vec = torch.stack(feat_arr).squeeze()
-        feat_vec = (
-            feat_vec.detach().numpy()
-            if self.device.type == "cpu"
-            else feat_vec.detach().cpu().numpy()
-        )
+        if not feat_arr:
+            self.logger.info('No valid images found for encoding generation ..')
+            self.encoding_map = {}
+            return self.encoding_map
+
+        feat_vec = np.vstack(feat_arr)
         valid_image_files = [filename for filename in all_filenames if filename]
         self.logger.info("End: Image encoding generation")
 
         filenames = generate_relative_names(image_dir, valid_image_files)
         if (
-            len(feat_vec.shape) == 1
+            feat_vec.shape[0] == 1
         ):  # can happen when encode_images is called on a directory containing a single image
-            self.encoding_map = {filenames[0]: feat_vec}
+            self.encoding_map = {filenames[0]: feat_vec[0]}
         else:
             self.encoding_map = {j: feat_vec[i, :] for i, j in enumerate(filenames)}
         return self.encoding_map

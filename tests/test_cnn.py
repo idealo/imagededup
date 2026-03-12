@@ -88,6 +88,25 @@ def test__init_defaults(cnn):
     assert cnn.model_config.name == MobilenetV3.name
 
 
+def test__init_custom_batch_size():
+    cnn = CNN(batch_size=32)
+    assert cnn.batch_size == 32
+
+    cnn = CNN(batch_size=1)
+    assert cnn.batch_size == 1
+
+
+def test__init_invalid_batch_size():
+    with pytest.raises(ValueError):
+        CNN(batch_size=0)
+
+    with pytest.raises(ValueError):
+        CNN(batch_size=-1)
+
+    with pytest.raises(ValueError):
+        CNN(batch_size='abc')
+
+
 def test__init_custom():
     cnn = CNN(model_config=CustomModel(model=EfficientNet(),
                                        transform=EfficientNet.transform,
@@ -981,6 +1000,58 @@ def test_find_duplicates_to_remove_encoding_integration(cnn):
     assert set(duplicates_list) == set(
         ['ukbench00120_resize.jpg', 'ukbench00120_hflip.jpg', 'ukbench00120_rotation.jpg']
     )
+
+
+# batch_size
+
+
+def test_small_batch_size_produces_same_results(cnn):
+    cnn_small = CNN(batch_size=2)
+    encodings_default = cnn.encode_images(TEST_IMAGE_DIR)
+    encodings_small = cnn_small.encode_images(TEST_IMAGE_DIR)
+
+    assert set(encodings_default.keys()) == set(encodings_small.keys())
+    for k in encodings_default:
+        np.testing.assert_allclose(encodings_default[k], encodings_small[k], atol=1e-5)
+
+
+def test_batch_size_one_produces_same_results(cnn):
+    cnn_one = CNN(batch_size=1)
+    encodings_default = cnn.encode_images(TEST_IMAGE_DIR)
+    encodings_one = cnn_one.encode_images(TEST_IMAGE_DIR)
+
+    assert set(encodings_default.keys()) == set(encodings_one.keys())
+    for k in encodings_default:
+        np.testing.assert_allclose(encodings_default[k], encodings_one[k], atol=1e-5)
+
+
+def test_batch_size_larger_than_dataset():
+    cnn_large = CNN(batch_size=128)
+    encodings = cnn_large.encode_images(TEST_IMAGE_DIR)
+    assert len(encodings) == 10
+
+
+def test_small_batch_size_find_duplicates_integration():
+    cnn_small = CNN(batch_size=2)
+    duplicates = cnn_small.find_duplicates(
+        image_dir=TEST_IMAGE_DIR_MIXED,
+        min_similarity_threshold=0.9,
+        scores=False,
+    )
+    assert 'ukbench00120.jpg' in duplicates
+    assert len(duplicates['ukbench00120.jpg']) > 0
+    assert len(duplicates['ukbench09268.jpg']) == 0
+
+
+def test_all_bad_images_returns_empty_encoding(tmp_path):
+    bad_file = tmp_path / 'corrupt.jpg'
+    bad_file.write_bytes(b'not an image')
+    bad_file2 = tmp_path / 'corrupt2.jpg'
+    bad_file2.write_bytes(b'also not an image')
+
+    cnn_inst = CNN()
+    result = cnn_inst.encode_images(tmp_path)
+    assert result == {}
 
 
 def test_scores_saving(cnn):
